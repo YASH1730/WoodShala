@@ -2,7 +2,7 @@
 const { parse } = require("dotenv")
 const product = require("../../database/models/products")
 
-const localhost = 'https://woodshala-dashboard.herokuapp.com/'
+const localhost = 'https://woodshala-dashboard.herokuapp.com'
 
 // ================================================= Apis for Gallery  ======================================================= 
 //==============================================================================================================================
