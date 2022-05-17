@@ -1,0 +1,88 @@
+.topNav {
+    position: fixed;
+    background-color: rgb(247, 247, 247);
+    z-index: 2;
+}
+
+.darkNav {
+    position: fixed;
+    background-color: rgb(0, 0, 0);
+    z-index: 2;
+}
+
+.tabPanel {
+    position: absolute;
+    top: 8%;
+    left: 15%;
+    width: 85%;
+    /* background-color : rgba(224, 223, 223, 0.233); */
+    z-index: -1;
+}
+
+.tabs {
+    position: fixed;
+    top: 5%;
+    height: 100%;
+    background-color: rgb(247, 247, 247);
+    width: 200px !important;
+}
+
+.darkTabs {
+    position: fixed;
+    top: 5%;
+    height: 100%;
+    background-color: rgb(3, 3, 3);
+    width: 200px !important;
+}
+
+.tabs2 {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    background-color: rgb(247, 247, 247);
+    width: 200px !important;
+}
+
+.darkTabs2 {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    height: 100%;
+    background-color: rgb(2, 2, 2);
+    width: 200px !important;
+}
+
+.hamIcon {
+    display: none !important;
+}
+
+@media (max-width: 800px) {
+    .tabPanel {
+        left: 30%;
+        width: 70%;
+    }
+}
+
+@media (max-width: 600px) {
+    .hamIcon {
+        display: block !important;
+    }
+    .tabs {
+        width: 0px !important;
+    }
+    .darkTabs {
+        width: 0px !important;
+    }
+    .hamMenu {
+        display: block !important;
+    }
+    .tabPanel {
+        position: absolute;
+        top: 8%;
+        left: auto;
+        width: inherit;
+        /* background-color : rgba(224, 223, 223, 0.233); */
+        z-index: -1;
+    }
+}

@@ -1,0 +1,53 @@
+.mainContainer  {
+    border : 2;
+    z-index: 10 !important;
+    height : 100vh;
+    width : 50vw;
+    background-color : rgb(250, 250, 250);
+    position : absolute;
+    right : 0%;
+    overflow-y: scroll;
+}
+
+.mainDarkContainer{
+    border : 2;
+    z-index: 10 !important;
+    height : 100vh;
+    width : 50vw;
+    background-color : rgb(22, 22, 22);
+    position : absolute;
+    right : 0%;
+    overflow-y: scroll;
+}
+
+.form{
+    display: grid;
+    gap : 10px;
+}
+
+.dorpContainer {
+    display: grid;
+    margin-top: 2%;
+    margin-bottom: 20px ;
+    color: rgb(138, 138, 138);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border: 2px dotted brown;
+}
+
+.crossButton{
+    float : right;
+    padding-right: 20px !important;
+}
+
+@media (max-width : 800px){
+
+.mainContainer  {
+    width: 100vw;
+}
+.mainDarkContainer{
+
+    width: 100vw;
+}
+}
