@@ -1,7 +1,7 @@
 
 const banner = require("../../database/models/banner");
 
-const localBaseUrl = 'http://localhost:8000'
+const localBaseUrl = 'https://woodshala-dashboard.herokuapp.com/ap'
 
 
 

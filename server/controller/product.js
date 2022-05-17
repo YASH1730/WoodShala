@@ -1,6 +1,6 @@
 
 const product = require('../../database/models/products')
-const localhost = 'http://localhost:8000'
+const localhost = 'https://woodshala-dashboard.herokuapp.com/api'
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 

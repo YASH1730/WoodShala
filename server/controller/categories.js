@@ -7,7 +7,7 @@ const categories = require("../../database/models/categories");
 
 // add categoier ======================
 
-const loacalBaseUrl = 'http://localhost:8000'
+const loacalBaseUrl = 'https://woodshala-dashboard.herokuapp.com/api'
 
 exports.addCatagories = async (req, res) => {
 
