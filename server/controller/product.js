@@ -1,6 +1,6 @@
 
 const product = require('../../database/models/products')
-const localhost = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'https://woodshala-dashboard.herokuapp.com'
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 
@@ -19,15 +19,15 @@ exports.addProduct = async (req,res) =>{
     if (req.files['product_image'] !== null)
     {
         req.files['product_image'].map((val)=>{
-                image_urls.push(`${localhost}/${val.path}`)
+                image_urls.push(`${official}/${val.path}`)
         })
     }
 
     req.body.product_image = image_urls;
     
-    req.body.featured_image = `${localhost}/${req.files['featured_image'][0].path}`;
+    req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
 
-   req.body.specification_image = `${localhost}/${req.files['specification_image'][0].path}`;
+   req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
 
     
     console.log(req.body);
@@ -107,9 +107,9 @@ exports.updateProduct = async (req,res)=>{
    console.log(req.files);
 
    if (req.files['featured_image'] !== undefined)
-    req.body.featured_image = `${localhost}/${req.files['featured_image'][0].path}`;
+    req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
    if (req.files['specification_image'] !== undefined)
-    req.body.specification_image = `${localhost}/${req.files['specification_image'][0].path}`;
+    req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
 
 
 

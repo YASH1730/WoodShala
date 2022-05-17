@@ -1,7 +1,7 @@
 
 const banner = require("../../database/models/banner");
 
-const localBaseUrl = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'https://woodshala-dashboard.herokuapp.com'
 
 
 
@@ -13,7 +13,7 @@ console.log(req.file)
 
 
 if(req.file !== undefined)
-    req.body.banner_URL = `${localBaseUrl}/${req.file.path}`;
+    req.body.banner_URL = `${official}/${req.file.path}`;
 else 
     return res.status(203);
 
