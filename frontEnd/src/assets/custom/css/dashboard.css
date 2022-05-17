@@ -1,0 +1,61 @@
+
+
+.overviewBoard {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    border-radius : 10px !important;
+    padding: 20px !important;
+    /* border: 2px solid black; */
+}
+
+.overviewContainer{
+    justify-content: center !important;
+    gap : 10px;
+}
+
+.overviewBoardSec2{
+    display: flex !important;
+    /* justify-content: center !important; */
+    align-items: center !important;
+    border-radius : 10px !important;
+    padding: 10px 10px 10px 10px !important;
+    text-align: center;
+}
+
+.sec2Icon{
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    border-radius: 100px;
+    margin-right: 5%;
+}
+
+.item1{
+    background-color: rgb(247, 202, 202);
+    color: rgb(255, 105, 5);
+}
+
+.item2{
+    background-color: rgb(202, 229, 247);
+    color: rgb(5, 84, 255);
+    
+    
+}
+
+.item3{
+    background-color: rgb(126, 241, 206);
+    color: rgb(8, 109, 109);
+    
+}
+
+.item4{
+    background-color: rgb(160, 252, 232);
+    color: rgb(27, 139, 13);
+    
+}
+
+.chart{
+    width: 500px;
+}

@@ -1,0 +1,29 @@
+.imageCard:hover {
+    opacity: 0.5;
+    transition: opacity 500ms;
+}
+
+.containerDiv {
+    position: absolute !important;
+    width: 100%;
+    padding: 5%;
+    top: 50%;
+    gap: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    row-gap: 10px;
+}
+
+
+/* @media (max-width: 800px) {
+    .containerDiv {
+        top: 50%;
+    }
+} */

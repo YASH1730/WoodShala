@@ -1,0 +1,89 @@
+.formStyle {
+  margin-top: 8%;
+}
+
+.fbButton {
+  width: 100%;
+  display: contents;
+  padding: 5px !important;
+}
+
+.goggleButton {
+  display: inline-flex;
+  align-items: center;
+  color: rgb(0, 0, 0) !important;
+  padding: 0px;
+  border: 1px solid transparent;
+  font-size: 0.9rem !important;
+  font-family: Roboto, sans-serif;
+  opacity: 1;
+  margin-top: 5% !important;
+  width: 100% !important;
+  justify-content: center;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  background-color: rgba(218, 218, 218, 0.116) !important;
+}
+
+.goggleButton div {
+  border-radius: 10px !important;
+  background-color: rgba(235, 235, 235, 0.116) !important;
+}
+
+.goggleButton:hover {
+  background-color: rgb(243, 46, 46) !important;
+  color: aliceblue !important;
+}
+.goggleButton svg {
+  filter: brightness(0) !important ;
+}
+
+.goggleButton:hover svg {
+  filter: brightness(20) !important;
+}
+
+.goggleButton:hover div {
+  background-color: rgb(243, 46, 46) !important;
+  color: aliceblue !important;
+}
+
+.FacebookButton {
+  display: inline-flex;
+  align-items: center;
+  color: rgb(0, 0, 0) !important;
+  padding: 10px !important;
+  border: 1px solid transparent;
+  font-family: Roboto, sans-serif;
+  opacity: 1;
+  margin-top: 5% !important;
+  width: 100% !important;
+  justify-content: center;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  background-color: rgba(218, 218, 218, 0.116) !important;
+}
+
+.FacebookButton svg {
+  font-size: 1.5rem !important;
+  margin: inherit !important;
+}
+
+.FacebookButton:hover {
+  background-color: rgba(81, 113, 252, 0.932) !important;
+  color: aliceblue !important;
+}
+
+.links {
+  text-decoration: none !important;
+  color: #91441f;
+}
+
+@media (max-width: 900px) {
+  .css-1ndc9we {
+    padding: 0% !important;
+  }
+
+  #imgBox {
+    max-height: 500px;
+  }
+}
