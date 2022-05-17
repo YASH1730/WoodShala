@@ -25,7 +25,7 @@ app.set('views','views')
 app.use('/upload', express.static('upload'));
 
 // requiring the routes
-app.use('/api/',require('./server/routes'))
+app.use(require('./server/routes'))
 
 if(process.env.NODE_ENV == "production")
 {
