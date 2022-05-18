@@ -14,7 +14,7 @@ exports.addBanner = async(req,res) => {
 if(req.files !== undefined)
 req.body.banner_URL = `${localBaseUrl}/${req.files['banner_image'].path}`;
 else 
-return res.status(203).send('Banner not added !!');
+return res.status(203).send('Banner not added !!!');
 
 const data = banner(req.body)
 
@@ -24,7 +24,7 @@ await data.save()
 return res.send('Banner Added Successfully !!!')
 })
 .catch((err)=>{
-return res.send('Something went worng')
+return res.send('Something Went Worng')
 })
 
 }
