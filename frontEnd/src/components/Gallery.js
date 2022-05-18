@@ -156,7 +156,7 @@ export default function Knob() {
                         startIcon={<AddIcon />}
                         variant="contained"
                     >
-                        Add Category
+                        Add Image
                     </Button>
                 </Grid>
 

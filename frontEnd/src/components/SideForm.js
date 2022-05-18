@@ -963,7 +963,7 @@ const Sideform = () => {
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1017,7 +1017,7 @@ const Sideform = () => {
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1323,7 +1323,7 @@ const Sideform = () => {
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1528,7 +1528,7 @@ const Sideform = () => {
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Worang !!!"
 
         })
       })
@@ -1580,7 +1580,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1633,7 +1633,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1688,7 +1688,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1743,7 +1743,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1792,7 +1792,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1842,7 +1842,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1890,7 +1890,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1939,7 +1939,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -1987,7 +1987,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2036,7 +2036,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2083,7 +2083,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2131,7 +2131,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2179,7 +2179,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2228,7 +2228,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2276,7 +2276,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2324,7 +2324,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2386,7 +2386,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })
@@ -2450,7 +2450,7 @@ const res = addSecondaryMaterial(FD)
         dispatchAlert.setNote({
           open: true,
           variant: 'error',
-          message: "Somthing Went Worang !!!"
+          message: "Something Went Wrong !!!"
 
         })
       })

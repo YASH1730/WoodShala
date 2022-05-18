@@ -71,7 +71,7 @@ exports.editCatagories = async (req, res) => {
       })
       .catch((error) => {
         console.log(error)
-        return res.status(203).send({message : 'Somthing went worang !!!'})
+        return res.status(203).send({message : 'Something Went Wrong !!!'})
       })
 
 }
@@ -102,7 +102,7 @@ exports.changeStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.status(203).send('Somthing went worang !!!')
+      res.status(203).send('Something Went Wrong !!!')
   })
 }
 

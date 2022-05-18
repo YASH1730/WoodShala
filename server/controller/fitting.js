@@ -89,7 +89,7 @@ exports.changeFittingStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.send('Somthing went worang !!!')
+      res.send('Something Went Wrong !!!')
   })
 }
 

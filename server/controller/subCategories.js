@@ -92,7 +92,7 @@ exports.changeSubStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.status(203).send('Somthing went worang !!!')
+      res.status(203).send('Something Went Wrong !!!')
   })
 }
 
