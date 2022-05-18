@@ -156,11 +156,7 @@ export default function Knob() {
                         startIcon={<AddIcon />}
                         variant="contained"
                     >
-<<<<<<< HEAD
                         Add Image
-=======
-                        Add Category
->>>>>>> 320e31090029ca7000e9889b160b1d0157d3d445
                     </Button>
                 </Grid>
 
