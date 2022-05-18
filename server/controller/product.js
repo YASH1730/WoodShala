@@ -1,10 +1,6 @@
 
 const product = require('../../database/models/products')
-<<<<<<< HEAD
 const official = 'https://woodshala-dashboard.herokuapp.com'
-=======
-const localhost = 'http://localhost:8000'
->>>>>>> 320e31090029ca7000e9889b160b1d0157d3d445
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 
@@ -23,25 +19,15 @@ exports.addProduct = async (req,res) =>{
     if (req.files['product_image'] !== null)
     {
         req.files['product_image'].map((val)=>{
-<<<<<<< HEAD
                 image_urls.push(`${official}/${val.path}`)
-=======
-                image_urls.push(`${localhost}/${val.path}`)
->>>>>>> 320e31090029ca7000e9889b160b1d0157d3d445
         })
     }
 
     req.body.product_image = image_urls;
     
-<<<<<<< HEAD
     req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
 
    req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
-=======
-    req.body.featured_image = `${localhost}/${req.files['featured_image'][0].path}`;
-
-   req.body.specification_image = `${localhost}/${req.files['specification_image'][0].path}`;
->>>>>>> 320e31090029ca7000e9889b160b1d0157d3d445
 
     
     console.log(req.body);
@@ -121,15 +107,9 @@ exports.updateProduct = async (req,res)=>{
    console.log(req.files);
 
    if (req.files['featured_image'] !== undefined)
-<<<<<<< HEAD
     req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
    if (req.files['specification_image'] !== undefined)
     req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
-=======
-    req.body.featured_image = `${localhost}/${req.files['featured_image'][0].path}`;
-   if (req.files['specification_image'] !== undefined)
-    req.body.specification_image = `${localhost}/${req.files['specification_image'][0].path}`;
->>>>>>> 320e31090029ca7000e9889b160b1d0157d3d445
 
 
 

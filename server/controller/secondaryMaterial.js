@@ -7,7 +7,7 @@ const secondaryMaterial = require("../../database/models/secondaryMaterial");
 
 // add categoier ======================
 
-const loacalBaseUrl = 'http://localhost:8000'
+const loacalBaseUrl = 'https://woodshala-dashboard.herokuapp.com'
 
 exports.addSecondaryMaterial = async (req, res) => {
 
