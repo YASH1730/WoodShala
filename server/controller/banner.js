@@ -12,7 +12,7 @@ exports.addBanner = async(req,res) => {
 console.log(req.files)
 
 if(req.files !== undefined)
-req.body.banner_URL = `${official}/${req.files['banner_image'].path}`;
+req.body.banner_URL = `${official}/${req.files['banner_image'][0].path}`;
 else
 return res.status(203);
 
