@@ -9,12 +9,12 @@ const official = 'https://woodshala-dashboard.herokuapp.com'
 //==============================================================================================================================
 
 exports.addBanner = async(req,res) => {
-
+console.log(req.files)
 
 if(req.files !== undefined)
-req.body.banner_URL = `${localBaseUrl}/${req.files['banner_image'].path}`;
-else 
-return res.status(203).send('Banner not added !!!');
+req.body.banner_URL = `${official}/${req.files['banner_image'].path}`;
+else
+return res.status(203);
 
 const data = banner(req.body)
 
