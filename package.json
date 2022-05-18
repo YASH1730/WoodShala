@@ -8,10 +8,6 @@
         "start": "node server.js",
         "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontEnd && npm run build --prefix frontEnd"
     },
-    "engines": {
-        "npm": "8.9.0",
-        "node": "18.1.0"
-    },
     "author": "",
     "license": "ISC",
     "dependencies": {
