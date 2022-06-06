@@ -359,23 +359,6 @@ route.delete("/deleteBLog", AuthJwt, upload, blog.deleteBLog)
 // updateBlog 
 route.patch("/updateBlog", AuthJwt, upload, blog.updateBlog)
 
-// ====================== For like Blog =========================
-
-
-// post like
-route.post("/like", AuthJwt, upload, like.like)
-
-// get like
-
-route.get("/getLike", AuthJwt, upload, like.like)
-
-// ====================== For review Blog =========================
-
-
-// post comment
-
-route.post("/comment", AuthJwt, upload, review.comment)
-
 
 
 module.exports = route;
