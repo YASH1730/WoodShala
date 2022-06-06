@@ -20,6 +20,9 @@ const knob = require("./controller/knob");
 const Door = require("./controller/door");
 const Handle = require("./controller/handle");
 const Gallery = require("./controller/gallery");
+const blog = require("./controller/blog");
+const like = require("./controller/like");
+const review = require("./controller/review");
 
 // middilwear for the multer setup
 
@@ -335,6 +338,43 @@ route.patch("/updateImage", AuthJwt, upload, Gallery.updateImage)
 
 route.post("/addImage", AuthJwt, upload, Gallery.addImage)
 
+// =================== Curd for Blog  ==================
+
+// create Blog
+route.post("/createBlog", AuthJwt, upload, blog.createBlog)
+
+// post Blog Image
+
+route.post("/uploadImage", AuthJwt, upload, blog.uploadImage)
+
+// get Blog Home
+route.get("/getBlogHome", AuthJwt, upload, blog.getBlogHome)
+
+// getBlog description
+route.get("/getBlog", AuthJwt, upload, blog.getBlog)
+
+// deleteBLog 
+route.delete("/deleteBLog", AuthJwt, upload, blog.deleteBLog)
+
+// updateBlog 
+route.patch("/updateBlog", AuthJwt, upload, blog.updateBlog)
+
+// ====================== For like Blog =========================
+
+
+// post like
+route.post("/like", AuthJwt, upload, like.like)
+
+// get like
+
+route.get("/getLike", AuthJwt, upload, like.like)
+
+// ====================== For review Blog =========================
+
+
+// post comment
+
+route.post("/comment", AuthJwt, upload, review.comment)
 
 
 

@@ -1,0 +1,31 @@
+.footerContainer {
+    height: 150px;
+    background-color: rgb(126, 42, 0);
+}
+
+.lableContainer {
+    height: 80%;
+    background-color: white;
+    box-shadow: 0px 0px 1px 0px black;
+    padding: 2%;
+}
+
+.bottomBox {
+    background-color: rgb(126, 42, 0);
+    height: 15%;
+    text-align: center;
+}
+
+.address {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.socialLinks {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center;
+    align-items: center;
+}

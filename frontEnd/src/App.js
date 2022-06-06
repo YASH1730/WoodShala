@@ -4,13 +4,16 @@ import EntryPoints from "./components/EntryPoints";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Auth, OpenBox, Mode, Notify } from "./context/context";
 import Home from "./components/Home";
-import SideForm from "./components/SideForm";
+import Blog from "./components/Blog";
+import BlogContent from "./components/BlogContent";
+import SideForm from "./components/dashboard/SideForm";
 import SnackBar from "./components/SnackBar";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Buffer } from 'buffer';
+global.Buffer = Buffer;
 
 function App() {
-  // const initialval = localStorage.getItem('mode') || false;
   // states for the authentication
   const [auth, setAuth] = useState({
     isLogin : false,
@@ -69,6 +72,8 @@ function App() {
                 <Mode.Provider value={{ mode, setMode }}>
                   <Routes>
                     <Route path="/adminpanel" element={<Home />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blogcontent" element={<BlogContent />} />
                     <Route path="/" element={<EntryPoints />} />
                     {/* <Route path="/register" element={<EntryPoints />} /> */}
                   </Routes>

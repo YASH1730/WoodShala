@@ -1,0 +1,87 @@
+                    * {
+                        margin: 0%;
+                        padding: 0%;
+                        scroll-behavior: smooth;
+                    }
+                    
+                    .navBar {
+                        position: fixed;
+                        box-shadow: 10px -1px 4px 2px #ad9a9a4f;
+                        padding: 1%;
+                        z-index: 1;
+                        height: 65px;
+                    }
+                    
+                    .logo {
+                        justify-content: center;
+                        display: flex;
+                        align-items: center;
+                    }
+                    
+                    .readBox {
+                        margin-top: 65px;
+                        position: fixed;
+                        max-height: 100vh !important;
+                    }
+                    
+                    .TOC {
+                        padding: 2% 0% 0% 2%;
+                        overflow-y: scroll;
+                        box-shadow: 1px 5px 7px 2px #ad9a9a4f;
+                    }
+                    
+                    .listText {
+                        cursor: pointer;
+                    }
+                    /* Hide scrollbar for Chrome, Safari and Opera */
+                    
+                    .TOC::-webkit-scrollbar {
+                        display: none;
+                    }
+                    /* Hide scrollbar for IE, Edge and Firefox */
+                    
+                    .TOC {
+                        -ms-overflow-style: none;
+                        /* IE and Edge */
+                        scrollbar-width: none;
+                        /* Firefox */
+                    }
+                    
+                    .backBtn {
+                        display: flex;
+                        justify-content: end;
+                        align-items: end;
+                    }
+                    
+                    .content::-webkit-scrollbar {
+                        display: none;
+                    }
+                    /* Hide scrollbar for IE, Edge and Firefox */
+                    
+                    .content {
+                        -ms-overflow-style: none;
+                        /* IE and Edge */
+                        scrollbar-width: none;
+                        /* Firefox */
+                    }
+                    
+                    .content {
+                        overflow-y: scroll;
+                        padding: 2% 0% 0% 5%;
+                        max-height: inherit;
+                        padding-bottom: 5%;
+                    }
+                    
+                    .banner {
+                        width: 100%;
+                        height: 50vh;
+                    }
+                    
+                    @media (max-width:907px) {
+                        .TOC {
+                            display: none;
+                        }
+                        .content {
+                            width: 100% !important;
+                        }
+                    }

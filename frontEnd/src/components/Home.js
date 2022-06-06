@@ -8,35 +8,39 @@ import {
   MenuItem,
   Box,
   Grid,
-  Button,ListItemIcon
+  Button,
+  ListItemIcon,
 } from "@mui/material";
 import "../assets/custom/css/home.css";
 import Slide from "@mui/material/Slide";
 import Backdrop from "@mui/material/Backdrop";
 import { Mode, Auth } from "../App";
+import logo from "../assets/img/Blog/logo.webp";
 
 // inner components
-import Dashboard from "./Dashboard";
-import Products from "./Products";
-import Category from "./Category";
-import Customers from "./Customers";
-import Orders from "./Orders";
-import Coupons from "./Coupons";
-import OurStaff from "./OurStaff";
-import Setting from "./Setting";
-import Banner from "./Banner";
-import SubCategory from "./SubCategory";
-import PrimaryMaterial from "./PrimaryMaterial";
-import SecondaryMaterial from "./SecondaryMaterial";
-import Polish from "./Polish";
-import Hinge from "./Hinge";
-import Fitting  from "./Fitting";
-import Knob  from "./Knob";
-import Door  from "./Door";
-import Handle  from "./Handle";
-import Gallery  from "./Gallery";
+import Dashboard from "./dashboard/Dashboard";
+import Products from "./dashboard/Products";
+import Category from "./dashboard/Category";
+import Customers from "./dashboard/Customers";
+import Orders from "./dashboard/Orders";
+import Coupons from "./dashboard/Coupons";
+import OurStaff from "./dashboard/OurStaff";
+import Setting from "./dashboard/Setting";
+import Banner from "./dashboard/Banner";
+import SubCategory from "./dashboard/SubCategory";
+import PrimaryMaterial from "./dashboard/PrimaryMaterial";
+import SecondaryMaterial from "./dashboard/SecondaryMaterial";
+import Polish from "./dashboard/Polish";
+import Hinge from "./dashboard/Hinge";
+import Fitting from "./dashboard/Fitting";
+import Knob from "./dashboard/Knob";
+import Door from "./dashboard/Door";
+import Handle from "./dashboard/Handle";
+import Gallery from "./dashboard/Gallery";
+import Blog from "./dashboard/Blog";
 
 // icons
+import ArticleIcon from '@mui/icons-material/Article';
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
@@ -52,42 +56,39 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
-import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import ForestIcon from '@mui/icons-material/Forest';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import ConstructionIcon from '@mui/icons-material/Construction';
-import AdjustIcon from '@mui/icons-material/Adjust';
-import DoorSlidingIcon from '@mui/icons-material/DoorSliding';
-import DragHandleIcon from '@mui/icons-material/DragHandle';
-import CollectionsIcon from '@mui/icons-material/Collections';
+import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import ForestIcon from "@mui/icons-material/Forest";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import InsertLinkIcon from "@mui/icons-material/InsertLink";
+import ConstructionIcon from "@mui/icons-material/Construction";
+import AdjustIcon from "@mui/icons-material/Adjust";
+import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
+import CollectionsIcon from "@mui/icons-material/Collections";
 const Home = () => {
   const [ShowTabs, setShowTabs] = useState(false);
 
   // context
   const viewMode = useContext(Mode);
-  const userAuth = useContext(Auth);
 
   // states
   const [anchor, setAnchor] = useState(null);
 
-
   useEffect(() => {
-    if(localStorage.getItem('isLogin') !== 'true')
-    {
-      window.location.href = '/'
+    if (localStorage.getItem("isLogin") !== "true") {
+      window.location.href = "/";
     }
   }, []);
 
   const handleMenuClose = () => {
-      setAnchor(null)
-  }
+    setAnchor(null);
+  };
 
-  const handleMenu = (e) =>{
-      setAnchor(e.currentTarget)
-  }
+  const handleMenu = (e) => {
+    setAnchor(e.currentTarget);
+  };
 
   const handleClose = () => {
     setShowTabs(false);
@@ -110,9 +111,7 @@ const Home = () => {
             <Typography>{children}</Typography>
           </Box>
         )}
-        {
-          index !== 12 && localStorage.removeItem('SKU')
-        }
+        {index !== 12 && localStorage.removeItem("SKU")}
       </div>
     );
   }
@@ -187,151 +186,6 @@ const Home = () => {
                 <Tab
                   wrapped
                   icon={<ViewCarouselIcon />}
-                  label="Sub Category"
-                  {...a11yProps(3)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ForestIcon />}
-                  label="Primary Material"
-                  {...a11yProps(4)}
-                />
-                <Tab
-                  wrapped
-                  icon={<FilterListIcon />}
-                  label="Secondary Mattirial"
-                  {...a11yProps(5)}
-                />
-                <Tab
-                  wrapped
-                  icon={<AutoAwesomeIcon />}
-                  label="Polish"
-                  {...a11yProps(6)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ConstructionIcon />}
-                  label="Fitting"
-                  {...a11yProps(7)}
-                />
-                <Tab
-                  wrapped
-                  icon={<InsertLinkIcon />}
-                  label="Hinge"
-                  {...a11yProps(8)}
-                />
-                <Tab
-                  wrapped
-                  icon={<AdjustIcon />}
-                  label="Knob"
-                  {...a11yProps(9)}
-                />
-                  <Tab
-                  wrapped
-                  icon={<DoorSlidingIcon />}
-                  label="Door"
-                  {...a11yProps(10)}
-                />
-                  <Tab
-                  wrapped
-                  icon={<DragHandleIcon />}
-                  label="Handle Material"
-                  {...a11yProps(11)}
-                />
-                <Tab
-                  wrapped
-                  icon={<CollectionsIcon />}
-                  label="Gallery"
-                  {...a11yProps(12)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ViewCarouselIcon />}
-                  label="Banner"
-                  {...a11yProps(13)}
-                />
-                <Tab
-                  wrapped
-                  icon={<PeopleAltOutlinedIcon />}
-                  label="Customer"
-                  {...a11yProps(14)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ExploreOutlinedIcon />}
-                  label="Order"
-                  {...a11yProps(15)}
-                />
-                <Tab
-                  wrapped
-                  icon={<CardGiftcardOutlinedIcon />}
-                  label="Coupons"
-                  {...a11yProps(16)}
-                />
-                <Tab
-                  wrapped
-                  icon={<PersonOutlineOutlinedIcon />}
-                  label="Our Staff"
-                  {...a11yProps(17)}
-                />
-                <Tab
-                  wrapped
-                  icon={<SettingsOutlinedIcon />}
-                  label="Settings"
-                  {...a11yProps(18)}
-                />
-                <Button
-                  color="primary"
-                  sx={{ margin: "auto" }}
-                  startIcon={<LogoutIcon />}
-                  variant="contained"
-                >
-                  Log Out
-                </Button>
-              </Tabs>
-            </Backdrop>
-          </Slide>
-        )}
-        <Tabs
-          orientation="vertical"
-          value={value}
-          variant="scrollable"
-
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="Vertical tabs example"
-          className={viewMode.mode === true ? "darkTabs" : "tabs"}
-          sx={{
-            borderRight: 1,
-            borderColor: "divider",
-            ".MuiTabs-indicator": {
-              left: 0,
-              width: "5px",
-            },
-          }}
-        >
-          <Tab
-            wrapped
-            icon={<GridViewIcon />}
-            label="Dashboard"
-            {...a11yProps(0)}
-          />
-          <Tab
-            wrapped
-            icon={<ShoppingBagOutlinedIcon />}
-            label="Product"
-            {...a11yProps(1)}
-          />
-         <Tab
-                  wrapped
-                  icon={<FormatListBulletedOutlinedIcon />}
-                  label="Category"
-                  {...a11yProps(2)}
-                />
-                <Tab
-                  wrapped
-                  icon={<MenuOpenIcon />}
                   label="Sub Category"
                   {...a11yProps(3)}
                 />
@@ -421,10 +275,161 @@ const Home = () => {
                 />
                 <Tab
                   wrapped
-                  icon={<SettingsOutlinedIcon />}
-                  label="Settings"
+                  icon={<ArticleIcon />}
+                  label="Blog"
                   {...a11yProps(18)}
                 />
+                <Tab
+                  wrapped
+                  icon={<SettingsOutlinedIcon />}
+                  label="Settings"
+                  {...a11yProps(19)}
+                />
+                <Button
+                  color="primary"
+                  sx={{ margin: "auto" }}
+                  startIcon={<LogoutIcon />}
+                  variant="contained"
+                >
+                  Log Out
+                </Button>
+              </Tabs>
+            </Backdrop>
+          </Slide>
+        )}
+        <Tabs
+          orientation="vertical"
+          value={value}
+          variant="scrollable"
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          aria-label="Vertical tabs example"
+          className={viewMode.mode === true ? "darkTabs" : "tabs"}
+          sx={{
+            borderRight: 1,
+            borderColor: "divider",
+            ".MuiTabs-indicator": {
+              left: 0,
+              width: "5px",
+            },
+          }}
+        >
+          <Tab
+            wrapped
+            icon={<GridViewIcon />}
+            label="Dashboard"
+            {...a11yProps(0)}
+          />
+          <Tab
+            wrapped
+            icon={<ShoppingBagOutlinedIcon />}
+            label="Product"
+            {...a11yProps(1)}
+          />
+          <Tab
+            wrapped
+            icon={<FormatListBulletedOutlinedIcon />}
+            label="Category"
+            {...a11yProps(2)}
+          />
+          <Tab
+            wrapped
+            icon={<MenuOpenIcon />}
+            label="Sub Category"
+            {...a11yProps(3)}
+          />
+          <Tab
+            wrapped
+            icon={<ForestIcon />}
+            label="Primary Material"
+            {...a11yProps(4)}
+          />
+          <Tab
+            wrapped
+            icon={<FilterListIcon />}
+            label="Secondary Material"
+            {...a11yProps(5)}
+          />
+          <Tab
+            wrapped
+            icon={<AutoAwesomeIcon />}
+            label="Polish"
+            {...a11yProps(6)}
+          />
+          <Tab
+            wrapped
+            icon={<ConstructionIcon />}
+            label="Fitting"
+            {...a11yProps(7)}
+          />
+          <Tab
+            wrapped
+            icon={<InsertLinkIcon />}
+            label="Hinge"
+            {...a11yProps(8)}
+          />
+          <Tab wrapped icon={<AdjustIcon />} label="Knob" {...a11yProps(9)} />
+          <Tab
+            wrapped
+            icon={<DoorSlidingIcon />}
+            label="Door"
+            {...a11yProps(10)}
+          />
+          <Tab
+            wrapped
+            icon={<DragHandleIcon />}
+            label="Handle Material"
+            {...a11yProps(11)}
+          />
+          <Tab
+            wrapped
+            icon={<CollectionsIcon />}
+            label="Gallery"
+            {...a11yProps(12)}
+          />
+          <Tab
+            wrapped
+            icon={<ViewCarouselIcon />}
+            label="Banner"
+            {...a11yProps(13)}
+          />
+          <Tab
+            wrapped
+            icon={<PeopleAltOutlinedIcon />}
+            label="Customer"
+            {...a11yProps(14)}
+          />
+          <Tab
+            wrapped
+            icon={<ExploreOutlinedIcon />}
+            label="Order"
+            {...a11yProps(15)}
+          />
+          <Tab
+            wrapped
+            icon={<CardGiftcardOutlinedIcon />}
+            label="Coupons"
+            {...a11yProps(16)}
+          />
+          <Tab
+            wrapped
+            icon={<PersonOutlineOutlinedIcon />}
+            label="Our Staff"
+            {...a11yProps(17)}
+          />
+          <Tab
+            wrapped
+            icon={<ArticleIcon />}
+            label="Blog"
+            {...a11yProps(18)}
+          />
+          <Tab
+            wrapped
+            icon={<SettingsOutlinedIcon />}
+            label="Settings"
+            {...a11yProps(19)}
+          />
         </Tabs>
 
         <TabPanel value={value} index={0}>
@@ -438,51 +443,51 @@ const Home = () => {
         <TabPanel value={value} index={2}>
           <Category />
         </TabPanel>
-        
+
         <TabPanel value={value} index={3}>
           <SubCategory />
         </TabPanel>
-        
+
         <TabPanel value={value} index={4}>
           <PrimaryMaterial />
         </TabPanel>
-        
+
         <TabPanel value={value} index={5}>
           <SecondaryMaterial />
         </TabPanel>
-        
+
         <TabPanel value={value} index={6}>
           <Polish />
         </TabPanel>
-        
+
         <TabPanel value={value} index={7}>
           <Fitting />
         </TabPanel>
-        
+
         <TabPanel value={value} index={8}>
-        <Hinge />
+          <Hinge />
         </TabPanel>
-        
+
         <TabPanel value={value} index={9}>
           <Knob />
         </TabPanel>
-        
+
         <TabPanel value={value} index={10}>
           <Door />
         </TabPanel>
-        
+
         <TabPanel value={value} index={11}>
           <Handle />
         </TabPanel>
-        
+
         <TabPanel value={value} index={12}>
           <Gallery />
         </TabPanel>
-        
+
         <TabPanel value={value} index={13}>
           <Banner />
         </TabPanel>
-        
+
         <TabPanel value={value} index={14}>
           <Customers />
         </TabPanel>
@@ -500,47 +505,44 @@ const Home = () => {
         </TabPanel>
 
         <TabPanel value={value} index={18}>
-          <Setting />
+          <Blog />
         </TabPanel>
         
+        <TabPanel value={value} index={19}>
+          <Setting />
+        </TabPanel>
       </Box>
     );
   }
 
-  function MenuBox () {
-
+  function MenuBox() {
     return (
-
-        <Menu
-        id = {'menu'}
+      <Menu
+        id={"menu"}
         anchorEl={anchor}
         keepMounted
-        open = {Boolean(anchor)}
-        onClose = {handleMenuClose}
-        >
-            <MenuItem onClick = {handleLogout}>
-                <ListItemIcon>
-                <LogoutIcon fontSize="small" />
-                 </ListItemIcon>
-                <ListItemIcon>
-                Logout
-                 </ListItemIcon>
-            </MenuItem>
-        </Menu>
-
-    )
-
+        open={Boolean(anchor)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemIcon>Logout</ListItemIcon>
+        </MenuItem>
+      </Menu>
+    );
   }
 
-  const handleLogout = () =>{
-      localStorage.clear();
-      window.location.href = '/';
-  }
-  
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
 
   return (
     <>
       {/* Top Bar  */}
+      <title>Dashboard</title>
 
       <Grid
         container
@@ -576,7 +578,7 @@ const Home = () => {
             </IconButton>
           )}
 
-          <Typography variant="h5">WoodSala</Typography>
+          <img src={logo} alt="logo" />
         </Grid>
 
         <Grid item xs={4}>
@@ -612,7 +614,7 @@ const Home = () => {
 
           {MenuBox()}
 
-          <IconButton onClick = {handleMenu} size="small" color="primary">
+          <IconButton onClick={handleMenu} size="small" color="primary">
             <PersonIcon />
           </IconButton>
         </Grid>

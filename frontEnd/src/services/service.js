@@ -443,3 +443,53 @@ export const addImage =async (data)=>{
       'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
       
    }
+
+// =============== CURD of Blog ======================
+
+// addImage
+
+export const uploadImage =async (data)=>{
+   return await axios.post(`/api/uploadImage`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+// createBlog
+
+export const createBlog =async (data)=>{
+   return await axios.post(`/api/createBlog`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+// getBlogHome
+
+export const getBlogHome =async ()=>{
+   return await axios.get(`/api/getBlogHome`,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+// getBlog description
+
+export const getBlog =async (data)=>{
+   return await axios.get(`/api/getBlog?uuid=${data}`,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+// deleteBLog
+
+export const deleteBLog =async (data)=>{
+   return await axios.delete(`/api/deleteBLog?_id=${data}`,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+// updateBlog
+
+export const updateBlog =async (data)=>{
+   return await axios.patch(`/api/updateBlog`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }

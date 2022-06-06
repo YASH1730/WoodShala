@@ -114,6 +114,8 @@ export default function EntryPoints() {
   return (
     <>
       {/* // login module */}
+      <title>Login</title>
+
       {window.location.pathname === "/" && (
         <Container fixed sx={{ height: "content-fit" }}>
           <Box p={15} pt={3} pb={3}>
