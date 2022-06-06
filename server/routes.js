@@ -21,8 +21,6 @@ const Door = require("./controller/door");
 const Handle = require("./controller/handle");
 const Gallery = require("./controller/gallery");
 const blog = require("./controller/blog");
-const like = require("./controller/like");
-const review = require("./controller/review");
 
 // middilwear for the multer setup
 
