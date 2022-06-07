@@ -17,7 +17,7 @@ console.log(req.body)
 
   await data.save()
     .then(() => {
-      res.send({message : 'Primary Material Added sucessfully !!!'})
+      res.send({message : 'Primary Material Added successfully !!!'})
     })
     .catch((error) => {
       console.log(error)
@@ -61,7 +61,7 @@ exports.editPrimaryMaterial = async (req, res) => {
           return res.status(203).send({ message: 'No entries found' })
       })
       .catch((error) => {
-        return res.status(203).send({ message: 'Somthing Went Worang' })
+        return res.status(203).send({ message: 'Something Went Wrong' })
       })
 
 }

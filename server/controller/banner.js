@@ -1,7 +1,7 @@
 
 const banner = require("../../database/models/banner");
 
-const official = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'http://157.245.102.136'
 
 
 
@@ -24,7 +24,7 @@ await data.save()
 return res.send('Banner Added Successfully !!!')
 })
 .catch((err)=>{
-return res.send('Something Went Worng')
+return res.send('Something Went Wrong')
 })
 
 }
@@ -44,7 +44,7 @@ exports.listBanner = async(req,res)=>{
     })
     .catch((err)=>{
         console.log(err)
-        return res.send("Somthing went worng !!!")
+        return res.send("Something went wrong !!!")
     })
 
 

@@ -1,6 +1,6 @@
 
 const product = require('../../database/models/products')
-const official = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'http://157.245.102.136'
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 
@@ -41,7 +41,7 @@ exports.addProduct = async (req,res) =>{
     })
     .catch((err)=>{
         console.log(err)
-        res.status(203).send({message:'Some error occured !!!'})
+        res.status(203).send({message:'Some error occurred !!!'})
 
     })
 
@@ -82,7 +82,7 @@ exports.getLastProduct = async(req,res)=>{
  })
  .catch((err)=>{
     //  console.log(err)
-    res.status(203).send({message : 'Some error ouccers !!!'})
+    res.status(203).send({message : 'Some error occurred !!!'})
  })
 
 }
@@ -95,7 +95,7 @@ exports.deleteProduct = async (req,res)=>{
         res.send({message : "Product deleted successfully !!!"})
     })
     .catch((err)=>{
-        res.send({message : 'Some error occures !!!'})
+        res.send({message : 'Some error occurred !!!'})
 
     })
 }
@@ -124,7 +124,7 @@ exports.updateProduct = async (req,res)=>{
             })
             .catch((error) => {
             console.log(error)    
-            return res.status(203).send('Somthing Went Worang')
+            return res.status(203).send('Something Went Wrong')
             })
 }
   // ================================================= Apis for Products Ends =======================================================

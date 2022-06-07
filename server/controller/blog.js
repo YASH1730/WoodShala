@@ -73,7 +73,7 @@ exports.getBlogHome =  async(req, res) => {
 
 // upload image
 
-const official = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'http://157.245.102.136/adminpanel'
 
 
 const localBaseUrl = "http://localhost:8000";

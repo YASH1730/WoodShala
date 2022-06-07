@@ -17,7 +17,7 @@ console.log(req.body)
 
   await data.save()
     .then(() => {
-      res.send({message : 'Sub Categories Added sucessfully !!!'})
+      res.send({message : 'Sub Categories Added successfully !!!'})
     })
     .catch((error) => {
       console.log(error)

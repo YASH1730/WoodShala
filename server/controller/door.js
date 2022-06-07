@@ -15,7 +15,7 @@ console.log(req.body)
 
   await data.save()
     .then(() => {
-      res.send({message : 'Door Added sucessfully !!!'})
+      res.send({message : 'Door Added successfully !!!'})
     })
     .catch((error) => {
       console.log(error)

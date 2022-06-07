@@ -7,7 +7,7 @@ const categories = require("../../database/models/categories");
 
 // add categoier ======================
 
-const official = 'https://woodshala-dashboard.herokuapp.com'
+const official = 'http://157.245.102.136'
 
 exports.addCatagories = async (req, res) => {
 
@@ -22,7 +22,7 @@ exports.addCatagories = async (req, res) => {
 
   await data.save()
     .then(() => {
-      res.send({message : 'Categories Added sucessfully !!!'})
+      res.send({message : 'Categories Added successfully !!!'})
     })
     .catch((error) => {
       res.status(203);

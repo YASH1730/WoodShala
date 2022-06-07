@@ -17,7 +17,7 @@ console.log(req.body)
 
   await data.save()
     .then(() => {
-      res.send({message : 'Secondary Material Added sucessfully !!!'})
+      res.send({message : 'Secondary Material Added successfully !!!'})
     })
     .catch((error) => {
       console.log(error)
