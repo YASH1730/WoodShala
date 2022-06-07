@@ -5,6 +5,6 @@
 require('dotenv').config();
 const colors = require('colors');
 const mongoose = require('mongoose')
-mongoose.connect(process.env.DataBase_URI , { useNewUrlParser : true, useUnifiedTopology : true})
+mongoose.connect("mongodb+srv://woodsala:woodsala2022@woodsala.unthc.mongodb.net/woodSala?retryWrites=true&w=majority" , { useNewUrlParser : true, useUnifiedTopology : true})
 .then((res)=>console.log('> Connected...'.bgCyan))
 .catch(err=>console.log(`> Error while connecting to mongoDB : ${err.message}`.underline.red ))
