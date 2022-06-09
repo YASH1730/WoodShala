@@ -979,7 +979,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     Image[0] !== undefined && FD.append("category_image", Image[0]);
 
@@ -1113,9 +1113,9 @@ const Sideform = () => {
 
     e.preventDefault();
 
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
-    console.log(SideBox.open.payload.row.id);
+    console.log(SideBox.open.payload.row.action);
 
     FD.append("SKU", e.target.SKU.value);
 
@@ -1625,7 +1625,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.primaryMaterial_name.value !== "" &&
       FD.append("primaryMaterial_name", e.target.primaryMaterial_name.value);
@@ -1756,7 +1756,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.handle_name.value !== "" &&
       FD.append("handle_name", e.target.handle_name.value);
@@ -1840,7 +1840,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.hinge_name.value !== "" &&
       FD.append("hinge_name", e.target.hinge_name.value);
@@ -1925,7 +1925,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.door_name.value !== "" &&
       FD.append("door_name", e.target.door_name.value);
@@ -2008,7 +2008,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.knob_name.value !== "" &&
       FD.append("knob_name", e.target.knob_name.value);
@@ -2093,7 +2093,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.fitting_name.value !== "" &&
       FD.append("fitting_name", e.target.fitting_name.value);
@@ -2177,7 +2177,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.polish_name.value !== "" &&
       FD.append("polish_name", e.target.polish_name.value);
@@ -2270,7 +2270,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     category.map((item) => {
       return (
