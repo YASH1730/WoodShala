@@ -1,12 +1,8 @@
 import React, { useState, useContext,useEffect } from "react";
 import {
-  Box,
-  FormControl,
-  MenuItem,
+
   Typography,
   TextField,
-  InputLabel,
-  Select,
   Grid,
   Button,
   IconButton
@@ -14,16 +10,37 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { DataGrid } from "@mui/x-data-grid";
 import { OpenBox, Notify } from "../../App";
 import {getListProduct, deleteProduct} from '../../services/service'
+
+import {
+  DataGrid,
+  gridPageCountSelector,
+  gridPageSelector,
+  useGridApiContext,
+  useGridSelector,
+} from '@mui/x-data-grid';
+import Pagination from '@mui/material/Pagination';
+
+function CustomPagination() {
+  const apiRef = useGridApiContext();
+  const page = useGridSelector(apiRef, gridPageSelector);
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  return (
+    <Pagination
+      color="primary"
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, value) => apiRef.current.setPage(value - 1)}
+    />
+  );
+}
+
 
 export default function Products() {
   
   
-  const [age, setAge] = useState("");
-  const [price, setPrice] = useState("");
-
   // useContext 
 
   const SideBox = useContext(OpenBox);
@@ -42,10 +59,10 @@ export default function Products() {
     .then((data) => {
       console.log(data.data)
 
-      setRows(data.data.map((row) => {
+      setRows(data.data.map((row,index) => {
 
         return ({
-          id: row._id,
+          id: index+1,
           SKU: row.SKU,
           product_title: row.product_title,
           category_name: row.category_name,
@@ -481,18 +498,14 @@ export default function Products() {
           filterModel={{
             items: [{ columnField: 'SKU', operatorValue: 'contains', value: `${search}` }],
           }}
+          components={{
+            Pagination: CustomPagination,
+          }}
+          
         />
       </div>
     );
   }
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-
-  const handleChangePrice = (event) => {
-    setPrice(event.target.value);
-  };
 
   const handleSearch = (e)=>{
     // console.log(e.target.value)

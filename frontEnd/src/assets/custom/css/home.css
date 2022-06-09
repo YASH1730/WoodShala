@@ -13,8 +13,7 @@
 .tabPanel {
     position: absolute;
     top: 8%;
-    left: 15%;
-    width: 85%;
+    width: inherit;
     /* background-color : rgba(224, 223, 223, 0.233); */
     z-index: -1;
 }
@@ -54,15 +53,25 @@
 }
 
 .hamIcon {
-    display: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* 
 @media (max-width: 800px) {
     .tabPanel {
         left: 30%;
         width: 70%;
     }
-}
+} */
 
 @media (max-width: 600px) {
     .hamIcon {

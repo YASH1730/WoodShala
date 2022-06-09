@@ -20,22 +20,14 @@ import logo from "../assets/img/Blog/logo.webp";
 // inner components
 import Dashboard from "./dashboard/Dashboard";
 import Products from "./dashboard/Products";
-import Category from "./dashboard/Category";
 import Customers from "./dashboard/Customers";
 import Orders from "./dashboard/Orders";
 import Coupons from "./dashboard/Coupons";
 import OurStaff from "./dashboard/OurStaff";
 import Setting from "./dashboard/Setting";
 import Banner from "./dashboard/Banner";
-import SubCategory from "./dashboard/SubCategory";
-import PrimaryMaterial from "./dashboard/PrimaryMaterial";
-import SecondaryMaterial from "./dashboard/SecondaryMaterial";
-import Polish from "./dashboard/Polish";
-import Hinge from "./dashboard/Hinge";
-import Fitting from "./dashboard/Fitting";
-import Knob from "./dashboard/Knob";
-import Door from "./dashboard/Door";
-import Handle from "./dashboard/Handle";
+
+import Admin from "./Admin";
 import Gallery from "./dashboard/Gallery";
 import Blog from "./dashboard/Blog";
 
@@ -45,9 +37,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import GridViewIcon from "@mui/icons-material/GridView";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
@@ -57,15 +47,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import ForestIcon from "@mui/icons-material/Forest";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import InsertLinkIcon from "@mui/icons-material/InsertLink";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import AdjustIcon from "@mui/icons-material/Adjust";
-import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
-import DragHandleIcon from "@mui/icons-material/DragHandle";
+
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CollectionsIcon from "@mui/icons-material/Collections";
 const Home = () => {
   const [ShowTabs, setShowTabs] = useState(false);
@@ -142,6 +125,7 @@ const Home = () => {
               <Tabs
                 orientation="vertical"
                 value={value}
+          variant="scrollable"
                 onChange={handleChange}
                 indicatorColor="primary"
                 textColor="primary"
@@ -156,7 +140,7 @@ const Home = () => {
                   },
                 }}
               >
-                <Tab
+                {/* <Tab
                   wrapped
                   label={
                     <Typography
@@ -170,6 +154,12 @@ const Home = () => {
                     </Typography>
                   }
                   {...a11yProps(0)}
+                /> */}
+                <Tab
+                  wrapped
+                  icon={<ShoppingBagOutlinedIcon />}
+                  label="DashBoard"
+                  {...a11yProps(0)}
                 />
                 <Tab
                   wrapped
@@ -177,7 +167,7 @@ const Home = () => {
                   label="Product"
                   {...a11yProps(1)}
                 />
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<FormatListBulletedOutlinedIcon />}
                   label="Category"
@@ -236,59 +226,67 @@ const Home = () => {
                   icon={<DragHandleIcon />}
                   label="Handle Material"
                   {...a11yProps(11)}
-                />
+                /> */}
                 <Tab
                   wrapped
                   icon={<CollectionsIcon />}
                   label="Gallery"
-                  {...a11yProps(12)}
+                  {...a11yProps(2)}
                 />
                 <Tab
                   wrapped
                   icon={<ViewCarouselIcon />}
                   label="Banner"
-                  {...a11yProps(13)}
+                  {...a11yProps(3)}
                 />
                 <Tab
                   wrapped
                   icon={<PeopleAltOutlinedIcon />}
                   label="Customer"
-                  {...a11yProps(14)}
+                  {...a11yProps(4)}
                 />
                 <Tab
                   wrapped
                   icon={<ExploreOutlinedIcon />}
                   label="Order"
-                  {...a11yProps(15)}
+                  {...a11yProps(5)}
                 />
                 <Tab
                   wrapped
                   icon={<CardGiftcardOutlinedIcon />}
                   label="Coupons"
-                  {...a11yProps(16)}
+                  {...a11yProps(6)}
                 />
                 <Tab
                   wrapped
                   icon={<PersonOutlineOutlinedIcon />}
-                  label="Our Staff"
-                  {...a11yProps(17)}
+                  label="Users"
+                  {...a11yProps(7)}
                 />
                 <Tab
                   wrapped
                   icon={<ArticleIcon />}
                   label="Blog"
-                  {...a11yProps(18)}
+                  {...a11yProps(8)}
+                />
+                <Tab
+                  wrapped
+                  icon={<AdminPanelSettingsIcon />}
+                  label="Admin Tab"
+                  {...a11yProps(9)}
                 />
                 <Tab
                   wrapped
                   icon={<SettingsOutlinedIcon />}
-                  label="Settings"
-                  {...a11yProps(19)}
+                  label="Profile"
+                  {...a11yProps(10)}
                 />
+                <br></br>
                 <Button
                   color="primary"
                   sx={{ margin: "auto" }}
                   startIcon={<LogoutIcon />}
+                  onClick={handleLogout}
                   variant="contained"
                 >
                   Log Out
@@ -297,7 +295,7 @@ const Home = () => {
             </Backdrop>
           </Slide>
         )}
-        <Tabs
+        {/* <Tabs
           orientation="vertical"
           value={value}
           variant="scrollable"
@@ -430,7 +428,7 @@ const Home = () => {
             label="Settings"
             {...a11yProps(19)}
           />
-        </Tabs>
+        </Tabs> */}
 
         <TabPanel value={value} index={0}>
           <Dashboard />
@@ -439,7 +437,7 @@ const Home = () => {
         <TabPanel value={value} index={1}>
           <Products />
         </TabPanel>
-
+{/* 
         <TabPanel value={value} index={2}>
           <Category />
         </TabPanel>
@@ -478,37 +476,42 @@ const Home = () => {
 
         <TabPanel value={value} index={11}>
           <Handle />
-        </TabPanel>
+        </TabPanel> */}
 
-        <TabPanel value={value} index={12}>
+        <TabPanel value={value} index={2}>
           <Gallery />
         </TabPanel>
 
-        <TabPanel value={value} index={13}>
+        <TabPanel value={value} index={3}>
           <Banner />
         </TabPanel>
 
-        <TabPanel value={value} index={14}>
+        <TabPanel value={value} index={4}>
           <Customers />
         </TabPanel>
 
-        <TabPanel value={value} index={15}>
+        <TabPanel value={value} index={5}>
           <Orders />
         </TabPanel>
 
-        <TabPanel value={value} index={16}>
+        <TabPanel value={value} index={6}>
           <Coupons />
         </TabPanel>
 
-        <TabPanel value={value} index={17}>
+        <TabPanel value={value} index={7}>
           <OurStaff />
         </TabPanel>
 
-        <TabPanel value={value} index={18}>
+        <TabPanel value={value} index={8}>
           <Blog />
         </TabPanel>
         
-        <TabPanel value={value} index={19}>
+
+        <TabPanel value={value} index={9}>
+          <Admin />
+        </TabPanel>
+        
+        <TabPanel value={value} index={10}>
           <Setting />
         </TabPanel>
       </Box>
@@ -578,11 +581,11 @@ const Home = () => {
             </IconButton>
           )}
 
-          <img src={logo} alt="logo" />
         </Grid>
 
-        <Grid item xs={4}>
-          {/* Nothing to fill  */}
+        <Grid item xs={4} className = 'logo'>
+        <img src={logo} alt="logo" />
+
         </Grid>
 
         <Grid item sx={{ display: "flex", justifyContent: "end" }} xs={4}>

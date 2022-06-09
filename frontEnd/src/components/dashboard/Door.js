@@ -9,10 +9,33 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { DataGrid } from "@mui/x-data-grid";
 import { OpenBox, Notify } from "../../App";
 import { getDoor,changeDoorStatus } from '../../services/service'
 import '../../assets/custom/css/category.css'
+
+import {
+  DataGrid,
+  gridPageCountSelector,
+  gridPageSelector,
+  useGridApiContext,
+  useGridSelector,
+} from '@mui/x-data-grid';
+import Pagination from '@mui/material/Pagination';
+
+function CustomPagination() {
+  const apiRef = useGridApiContext();
+  const page = useGridSelector(apiRef, gridPageSelector);
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  return (
+    <Pagination
+      color="primary"
+      count={pageCount}
+      page={page + 1}
+      onChange={(event, value) => apiRef.current.setPage(value - 1)}
+    />
+  );
+}
 
 
 
@@ -32,10 +55,11 @@ export default function Knob() {
       .then((data) => {
         console.log(data)
 
-        setRows(data.data.map((row) => {
+        setRows(data.data.map((row,index) => {
 
           return ({
-            id: row._id,
+            id: index+1,
+
             door_name: row.door_name,
             door_status: row.door_status,
             action: row._id
@@ -63,7 +87,7 @@ export default function Knob() {
       field: "door_status",
       headerName: "Door Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.id}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
 
     },
     {
@@ -149,6 +173,10 @@ export default function Knob() {
           pageSize={5}
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
+
+components={{
+  Pagination: CustomPagination,
+}}
         />
       </div>
     );

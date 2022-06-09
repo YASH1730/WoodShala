@@ -21,6 +21,8 @@ const Door = require("./controller/door");
 const Handle = require("./controller/handle");
 const Gallery = require("./controller/gallery");
 const blog = require("./controller/blog");
+const like = require("./controller/like");
+const review = require("./controller/review");
 
 // middilwear for the multer setup
 
@@ -35,7 +37,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     // reject a file
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/svg') {
         cb(null, true);
     } else {
         cb(null, false);
@@ -64,7 +66,7 @@ function encode(req, res, next) {
     )
         return res
             .status(204)
-            .send({ error_massage: "Please enter all the required felids." });
+            .send({ error_massage: "Please enter all the required feilds." });
 
     // code to hash the password
 
@@ -93,7 +95,7 @@ function AuthJwt(req, res, next) {
 
     let token = req.headers.authorization.split("Bearer ")[1];
 
-    JWT.verify(token, "asdfijeh9oina3i432i4988*&*&(*&*()()ok5n3la^&*%*&T(bkjh9s8ew9(*H(OH**(H)OM)_(U)N)(Yn39873389(*u4054m5k4n5", (err, user) => {
+    JWT.verify(token, process.env.JWT_Secreet, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
         next();
@@ -356,6 +358,23 @@ route.delete("/deleteBLog", AuthJwt, upload, blog.deleteBLog)
 
 // updateBlog 
 route.patch("/updateBlog", AuthJwt, upload, blog.updateBlog)
+
+// ====================== For like Blog =========================
+
+
+// post like
+route.post("/like", AuthJwt, upload, like.like)
+
+// get like
+
+route.get("/getLike", AuthJwt, upload, like.like)
+
+// ====================== For review Blog =========================
+
+
+// post comment
+
+route.post("/comment", AuthJwt, upload, review.comment)
 
 
 

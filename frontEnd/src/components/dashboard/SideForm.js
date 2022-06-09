@@ -440,7 +440,7 @@ const Sideform = () => {
   const [cat, setCat] = useState();
   const [subCat, setSubCat] = useState();
   const [dispatchTime, setDispatch] = useState();
-  const [taxRate, setTaxRate] = useState();
+  const [taxRate, setTaxRate] = useState(18);
   const [fitting, setFitting] = useState();
   const [Polish, setPolish] = useState();
   const [Hinge, setHinge] = useState();
@@ -2347,7 +2347,6 @@ const Sideform = () => {
         } else {
           setImages([]);
           setUrl(data.data.url);
-          handleClose();
           dispatchAlert.setNote({
             open: true,
             variant: "success",
@@ -3371,7 +3370,7 @@ const Sideform = () => {
 
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
-                        Joints
+                        Joints ((Useful in products where info about joints are shown))
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -3559,7 +3558,7 @@ const Sideform = () => {
                       fullWidth
                       autoComplete={false}
                       id="fullWidth"
-                      label="Dial Size"
+                      label="Dial Size (Only Applicable on Clock And Clock Containing Items )"
                       type="number"
                       InputProps={{
                         startAdornment: (
@@ -5717,7 +5716,7 @@ const Sideform = () => {
                             disabled
                             id="outlined-select"
                             label="Image URL"
-                            value={url}
+                            value={url || ''}
                           />
 
                           <Button
@@ -5883,7 +5882,7 @@ const Sideform = () => {
                             disabled
                             id="outlined-select"
                             label="Image URL"
-                            value={url}
+                            value={url || ''}
                           />
 
                           <Button
