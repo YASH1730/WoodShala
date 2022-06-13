@@ -2,7 +2,7 @@ const blogDB = require("../../database/models/blog");
 const image = require("../../database/models/image");
 
 const uuid = require("uuid");
-
+const official  = 'http://157.245.102.136'
 // Api for card creation
 
 exports.createBlog = async (req, res) => {
@@ -71,12 +71,6 @@ exports.getBlogHome =  async(req, res) => {
     });
 };
 
-// upload image
-
-const official = 'http://157.245.102.136/adminpanel'
-
-
-const localBaseUrl = "http://localhost:8000";
 
 exports.uploadImage = async (req, res) => {
   // console.log(req.files);
