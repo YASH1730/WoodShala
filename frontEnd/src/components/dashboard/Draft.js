@@ -565,7 +565,7 @@ export default function Products() {
                       width="400"
                       sx={{ padding: 2 }}
                       image={
-                        "http://157.245.102.136/upload/2022-06-09T14:39:46.582Z_Screenshot%20from%202022-06-01%2016-45-37.png"
+                        data.featured_image
                       }
                     />
                   </Grid>
