@@ -1,7 +1,7 @@
 import "./App.css";
 import { useState } from "react";
 import EntryPoints from "./components/EntryPoints";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { Auth, OpenBox, Mode, Notify } from "./context/context";
 import Home from "./components/Home";
 import Blog from "./components/Blog";
@@ -13,12 +13,30 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Buffer } from 'buffer';
 global.Buffer = Buffer;
 
+function MyRoutes(){
+  const history  = useNavigate();
+
+  return(
+    <>
+    <Routes>
+    <Route path="/adminpanel" element={<Home history = {history} />} />
+    <Route exact path="/adminpanel?module=" element={<Home history = {history} />} />
+    <Route path="/blog" element={<Blog />} />
+    <Route path="/blogcontent" element={<BlogContent />} />
+    <Route path="/" element={<EntryPoints />} />
+    {/* <Route path="/register" element={<EntryPoints />} /> */}
+  </Routes>
+  </>
+  )
+}
+
 function App() {
   // states for the authentication
   const [auth, setAuth] = useState({
     isLogin : false,
     token : null
   });
+
 
   //state for the mode pot dark
   const [mode, setMode] = useState(false);
@@ -70,13 +88,7 @@ function App() {
             <Notify.Provider value={{ Note, setNote }}>
               <OpenBox.Provider value={{ open, setOpen }}>
                 <Mode.Provider value={{ mode, setMode }}>
-                  <Routes>
-                    <Route path="/adminpanel" element={<Home />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blogcontent" element={<BlogContent />} />
-                    <Route path="/" element={<EntryPoints />} />
-                    {/* <Route path="/register" element={<EntryPoints />} /> */}
-                  </Routes>
+                <MyRoutes></MyRoutes>
                   <SideForm />
                   <SnackBar />
                 </Mode.Provider>
