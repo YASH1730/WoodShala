@@ -59,6 +59,7 @@ export default function Knob() {
 
           return ({
             id: index+1,
+
             door_name: row.door_name,
             door_status: row.door_status,
             action: row._id
@@ -149,9 +150,7 @@ export default function Knob() {
       })
     })
 
-    
   
-
   } 
 
   const handelSearch = (e)=>{

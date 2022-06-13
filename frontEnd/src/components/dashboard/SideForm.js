@@ -440,7 +440,7 @@ const Sideform = () => {
   const [cat, setCat] = useState();
   const [subCat, setSubCat] = useState();
   const [dispatchTime, setDispatch] = useState();
-  const [taxRate, setTaxRate] = useState(18);
+  const [taxRate, setTaxRate] = useState("18");
   const [fitting, setFitting] = useState();
   const [Polish, setPolish] = useState();
   const [Hinge, setHinge] = useState();
@@ -449,13 +449,15 @@ const Sideform = () => {
   const [door, setDoor] = useState();
   const [weightCap, setWeightCap] = useState();
   const [material, setMaterial] = useState();
-  const [secMaterial, setSecMaterial] = useState();
+  const [secMaterial, setSecMaterial] = useState(undefined);
   const [mirrorVal, setMirrorVal] = useState("no");
   const [assemblyVal, setAssemblyVal] = useState();
   const [leg, setLeg] = useState();
   const [silver, setSilver] = useState();
   const [trollyVal, setTrollyVal] = useState();
   const [trolly, settrolly] = useState();
+  const [discount, setDiscount] = useState({discount_limit : 0,MRP : 0});
+  
 
   // states for the dynamic rendering
   const [SKU, setSKU] = useState("");
@@ -739,6 +741,13 @@ const Sideform = () => {
     });
   }, [SideBox.open.formType, SideBox.open.state]);
 
+  const handleDiscount = (e) =>{
+    setDiscount({
+      ...discount,
+      [e.target.name] : e.target.value
+    })
+  }
+
   const handleChangeData = (e) => {
     switch (SideBox.open.formType) {
       case "update_category":
@@ -815,6 +824,7 @@ const Sideform = () => {
 
   // ref
   const editorRef = useRef();
+  const sellingRef = useRef();
 
   const handleChange = (event) => {
     setCat(event.target.value);
@@ -1113,9 +1123,9 @@ const Sideform = () => {
 
     e.preventDefault();
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", SideBox.open.payload.row.action._id);
 
-    console.log(SideBox.open.payload.row.action);
+    // console.log(SideBox.open.payload.row.action);
 
     FD.append("SKU", e.target.SKU.value);
 
@@ -1214,8 +1224,8 @@ const Sideform = () => {
 
     editorRef.current.getContent() &&
       FD.append("product_description", editorRef.current.getContent());
-    e.target.selling_points.value &&
-      FD.append("selling_points", e.target.selling_points.value);
+    sellingRef.current.getContent()  &&
+      FD.append("selling_points", sellingRef.current.getContent());
 
     e.target.product_title.value !== "" &&
       FD.append("product_title", e.target.product_title.value);
@@ -1339,6 +1349,9 @@ const Sideform = () => {
       return FD.append("product_image", element);
     });
 
+    FD.append("status", false);
+
+
     console.log(Image);
 
     Image.map((element) => {
@@ -1425,7 +1438,7 @@ const Sideform = () => {
     FD.append("dispatch_time", e.target.dispatch_time.value);
     FD.append("product_title", e.target.product_title.value);
     FD.append("product_description", editorRef.current.getContent());
-    FD.append("selling_points", e.target.selling_points.value);
+    FD.append("selling_points", sellingRef.current.getContent());
     FD.append("SKU", e.target.SKU.value);
     FD.append("MRP", e.target.MRP.value);
     FD.append("seo_title", e.target.seo_title.value);
@@ -1668,7 +1681,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.id);
+    FD.append("_id", SideBox.open.payload.row.action);
 
     e.target.secondaryMaterial_name.value !== "" &&
       FD.append(
@@ -2270,6 +2283,8 @@ const Sideform = () => {
 
     const FD = new FormData();
 
+    console.log(SideBox.open.payload)
+
     FD.append("_id", SideBox.open.payload.row.action);
 
     category.map((item) => {
@@ -2500,7 +2515,7 @@ const Sideform = () => {
             {/* add Products */}
 
             {SideBox.open.formType === "product" && (
-              <Grid container p={5}>
+              <Grid container p={5} className = 'productPadding' >
                 {getSKU()}
 
                 <Grid item xs={12}>
@@ -2617,11 +2632,11 @@ const Sideform = () => {
                     {/* product description  */}
                     <Editor
                       apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
-                      initialValue="<p>Product Disceription !!!</p>"
+                     
                       onInit={(event, editor) => (editorRef.current = editor)}
                       init={{
                         height: 300,
-                        menubar: false,
+                        menubar: true,
                       }}
                     />
 
@@ -2780,7 +2795,7 @@ const Sideform = () => {
                       select
                       name="secondary_material"
                       label="Secondary Material"
-                      value={secMaterial}
+                      value={secMaterial || ''}
                       multiple
                       onChange={handleChangeSecMaterial}
                       helperText="Please select your Material ."
@@ -2805,7 +2820,6 @@ const Sideform = () => {
                           fullWidth
                           autoComplete={false}
                           id="fullWidth"
-                          required
                           label="Secondary Material Weight"
                           type="number"
                           InputProps={{
@@ -2821,23 +2835,7 @@ const Sideform = () => {
                       </>
                     )}
 
-                    <br></br>
-                    <TextField
-                      fullWidth
-                      required
-                      autoComplete={false}
-                      id="fullWidth"
-                      label="Selling Price"
-                      type="number"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">₹</InputAdornment>
-                        ),
-                      }}
-                      variant="outlined"
-                      name="selling_price"
-                    />
-
+                   
                     <br></br>
                     <TextField
                       fullWidth
@@ -2845,6 +2843,7 @@ const Sideform = () => {
                       id="fullWidth"
                       required
                       label="MRP"
+                      onChange={handleDiscount}
                       type="number"
                       InputProps={{
                         startAdornment: (
@@ -2861,6 +2860,7 @@ const Sideform = () => {
                       required
                       autoComplete={false}
                       id="fullWidth"
+                      onChange={handleDiscount}
                       label="Discount Limit"
                       type="number"
                       InputProps={{
@@ -2871,6 +2871,25 @@ const Sideform = () => {
                       variant="outlined"
                       name="discount_limit"
                     />
+
+<br></br>
+                    <TextField
+                      fullWidth
+                      disabled
+                      autoComplete={false}
+                      id="fullWidth"
+                      label="Selling Price"
+                      type="number"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">₹</InputAdornment>
+                        ),
+                      }}
+                      value = {discount.MRP && discount.discount_limit  ? discount.MRP - (discount.MRP/100*discount.discount_limit) : 0}
+                      variant="outlined"
+                      name="selling_price"
+                    />
+
 
                     <br></br>
 
@@ -3275,15 +3294,15 @@ const Sideform = () => {
                     {/* selling points  */}
 
                     <br></br>
-                    <TextField
-                      fullWidth
-                      required
-                      autoComplete={false}
-                      id="fullWidth"
-                      label="Selling Points"
-                      type="text"
-                      variant="outlined"
-                      name="selling_points"
+                    <FormLabel id="demo-radio-buttons-group-label">Selling Points </FormLabel>
+                  
+                    <Editor
+                      apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                      onInit={(event, editor) => (sellingRef.current = editor)}
+                      init={{
+                        height: 400,
+                        menubar: true,
+                      }}
                     />
                     {/* 
                     <br></br>
@@ -3590,7 +3609,7 @@ const Sideform = () => {
 
             {SideBox.open.formType === "update_product" && (
               <Grid container p={5}>
-                {console.log(preData)}
+                {/* {console.log(SideBox.open.payload)} */}
                 <Grid item xs={12}>
                   <Typography variant="h5">
                     Update Product
@@ -3899,7 +3918,7 @@ const Sideform = () => {
                           fullWidth
                           autoComplete={false}
                           id="fullWidth"
-                          required
+                          
                           value={preData.secondary_material_weight}
                           onChange={handleChangeData}
                           label="Secondary Material Weight"
@@ -3917,24 +3936,7 @@ const Sideform = () => {
                       </>
                     )}
 
-                    <br></br>
-                    <TextField
-                      fullWidth
-                      required
-                      autoComplete={false}
-                      id="fullWidth"
-                      label="Selling Price"
-                      value={preData.selling_price}
-                      onChange={handleChangeData}
-                      type="number"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">₹</InputAdornment>
-                        ),
-                      }}
-                      variant="outlined"
-                      name="selling_price"
-                    />
+                  
 
                     <br></br>
                     <TextField
@@ -3943,7 +3945,7 @@ const Sideform = () => {
                       id="fullWidth"
                       required
                       value={preData.MRP}
-                      onChange={handleChangeData}
+                      onChange={(e)=>{handleChangeData(e); handleDiscount(e);}}
                       label="MRP"
                       type="number"
                       InputProps={{
@@ -3963,7 +3965,7 @@ const Sideform = () => {
                       id="fullWidth"
                       label="Discount Limit"
                       value={preData.discount_limit}
-                      onChange={handleChangeData}
+                      onChange={(e)=>{handleChangeData(e); handleDiscount(e);}}
                       type="number"
                       InputProps={{
                         startAdornment: (
@@ -3974,6 +3976,24 @@ const Sideform = () => {
                       name="discount_limit"
                     />
 
+<br></br>
+                    <TextField
+                      fullWidth
+                      required
+                      autoComplete={false}
+                      id="fullWidth"
+                      label="Selling Price"
+                      onChange={handleChangeData}
+                      type="number"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">₹</InputAdornment>
+                        ),
+                      }}
+                      value = {discount.MRP && discount.discount_limit  ? discount.MRP - (discount.MRP/100*discount.discount_limit) : preData.selling_price}
+                      variant="outlined"
+                      name="selling_price"
+                    />
                     <br></br>
 
                     <TextField
@@ -4398,7 +4418,7 @@ const Sideform = () => {
                       />
                     )}
 
-                    <br></br>
+                    {/* <br></br>
 
                     <TextField
                       fullWidth
@@ -4410,8 +4430,19 @@ const Sideform = () => {
                       value={preData.selling_points}
                       variant="outlined"
                       name="selling_points"
-                    />
+                    /> */}
                     {/* selling points  */}
+                    <br></br>
+                    <FormLabel id="demo-radio-buttons-group-label">Selling Points </FormLabel>
+                  
+                    <Editor
+                      apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                      onInit={(event, editor) => (sellingRef.current = editor)}
+                      init={{
+                        height: 400,
+                        menubar: true,
+                      }}
+                    />
                     {/* <FormLabel id="demo-radio-buttons-group-label">Selling Points </FormLabel>
 
                     <Editor
@@ -4531,7 +4562,7 @@ const Sideform = () => {
                       select
                       name="tax_rate"
                       label="Tax Rate"
-                      value={taxRate || ""}
+                      value={taxRate}
                       multiple
                       onChange={handleChangeTaxRate}
                       helperText="Please select your tax rate."

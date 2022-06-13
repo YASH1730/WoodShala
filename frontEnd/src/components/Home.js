@@ -26,7 +26,7 @@ import Coupons from "./dashboard/Coupons";
 import OurStaff from "./dashboard/OurStaff";
 import Setting from "./dashboard/Setting";
 import Banner from "./dashboard/Banner";
-
+import Draft from "./dashboard/Draft";
 import Admin from "./Admin";
 import Gallery from "./dashboard/Gallery";
 import Blog from "./dashboard/Blog";
@@ -47,11 +47,49 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
-
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CollectionsIcon from "@mui/icons-material/Collections";
-const Home = () => {
+import DraftsIcon from '@mui/icons-material/Drafts';
+
+
+
+const Home = (props) => {
+  
+  const ModuleName = {
+    0 : 'dashboard',
+    1 : 'products',
+    2 : 'gallery',
+    3 : 'banner',
+    4 : 'customer',
+    5 : 'order',
+    6 : 'coupons',
+    7 : 'users',
+    8 : 'blog',
+    9 : 'admin',
+    10 : 'draft' ,
+    11 : 'profile' ,
+  }
+  const ModuleNumber = {
+     'dashboard': 0,
+     'products': 1,
+     'gallery': 2,
+     'banner': 3,
+     'customer': 4,
+     'order': 5,
+     'coupons': 6,
+     'users': 7,
+     'blog': 8,
+     'admin': 9,
+     'draft': 10,
+     'profile': 11,
+  }
+  
   const [ShowTabs, setShowTabs] = useState(false);
+  
+  
+  const [value, setValue] = useState(window.location.search !== '' ? ModuleNumber[window.location.search.split('=')[1]]: 0);
+
+  const history = props.history
 
   // context
   const viewMode = useContext(Mode);
@@ -106,10 +144,15 @@ const Home = () => {
     };
   }
 
-  function VerticalTabs() {
-    const [value, setValue] = React.useState(0);
 
-    const handleChange = (event, newValue) => {
+  function VerticalTabs() {
+  
+    const handleChange = (event, newValue) => 
+  {
+    console.log(window.location.pathname)
+      history(`/adminpanel?module=${ModuleName[newValue]}`)
+      // console.log(history)
+console.log(window.location.search)
       setValue(newValue);
     };
 
@@ -275,18 +318,22 @@ const Home = () => {
                   label="Admin Tab"
                   {...a11yProps(9)}
                 />
+                {localStorage.getItem('role') === 'Super Admin' && <Tab
+                  wrapped
+                  icon={<DraftsIcon />}
+                  label="Draft"
+                  {...a11yProps(10)}
+                />}
                 <Tab
                   wrapped
                   icon={<SettingsOutlinedIcon />}
                   label="Profile"
-                  {...a11yProps(10)}
+                  {...a11yProps(11)}
                 />
-                <br></br>
                 <Button
                   color="primary"
                   sx={{ margin: "auto" }}
                   startIcon={<LogoutIcon />}
-                  onClick={handleLogout}
                   variant="contained"
                 >
                   Log Out
@@ -512,6 +559,10 @@ const Home = () => {
         </TabPanel>
         
         <TabPanel value={value} index={10}>
+          <Draft />
+        </TabPanel>
+        
+        <TabPanel value={value} index={11}>
           <Setting />
         </TabPanel>
       </Box>

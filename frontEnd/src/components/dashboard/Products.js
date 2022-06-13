@@ -72,6 +72,7 @@ export default function Products() {
           seo_title: row.seo_title,
           seo_description: row.seo_description,
           seo_keyword: row.seo_keyword,
+          status: row.status ? 'Activated' : 'Deactivated' ,
           featured_image: row.featured_image,
           primary_material: row.primary_material_name,
           secondary_material: row.secondary_material_name ,
@@ -137,6 +138,7 @@ export default function Products() {
   const columns = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "SKU", headerName: "SKU", width: 100 },
+    { field: "status", headerName: "Status", width: 100 },
     {
       field: "featured_image",
       headerName: "Featured Image",

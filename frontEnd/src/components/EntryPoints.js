@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Container,
@@ -26,6 +26,12 @@ export default function EntryPoints() {
   const Alert = useContext(Notify)
   const userauth = useContext(Auth)
 
+  const [postVal, setPostVal] = useState("catagory");
+
+  const handleChangePost = (event) => {
+    setPostVal(event.target.value);
+  };
+
   const handelButton = () => {
     console.log("Button Clicked");
   };
@@ -36,29 +42,10 @@ export default function EntryPoints() {
       label: "Admin",
     },
     {
-      value: "Accountant",
-      label: "Accountant",
+      value: "Super Admin",
+      label: "Super Admin",
     },
-    {
-      value: "CEO",
-      label: "CEO",
-    },
-    {
-      value: "Driver",
-      label: "Driver",
-    },
-    {
-      value: "Delivery Person",
-      label: "Delivery Person",
-    },
-    {
-      value: "Manager",
-      label: "Manager",
-    },
-    {
-      value: "Security Gaurd",
-      label: "Security Gaurd",
-    },
+    
   ];
 
   const [currency, setCurrency] = React.useState("EUR");
@@ -72,6 +59,7 @@ export default function EntryPoints() {
 
     const FD = new FormData();
 
+    FD.append('role',postVal);
     FD.append('email',e.target.email.value);
     FD.append('password',e.target.password.value);
 
@@ -84,7 +72,8 @@ export default function EntryPoints() {
       {
         userauth.setAuth({
           isLogin : true,
-          token : data.data.token
+          token : data.data.token,
+          role : data.data.role
         })
 
         Alert.setNote({
@@ -95,6 +84,7 @@ export default function EntryPoints() {
 
         localStorage.setItem('isLogin',true);
         localStorage.setItem('WDToken',data.data.token);
+        localStorage.setItem('role',data.data.role);
         {window.location.href = '/adminpanel'}
 
       }
@@ -160,6 +150,23 @@ export default function EntryPoints() {
                       label="Password"
                       variant="outlined"
                     />
+ <TextField
+                fullWidth
+                id="outlined-select"
+                select
+                label="Staff Role"
+                value={postVal}
+                multiple
+                name = 'role'
+                onChange={handleChangePost}
+                helperText="Please select the staff role"
+              >
+                {post.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
 
                     <Button
                       variant="contained"
