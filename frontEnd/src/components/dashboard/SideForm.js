@@ -449,7 +449,7 @@ const Sideform = () => {
   const [door, setDoor] = useState();
   const [weightCap, setWeightCap] = useState();
   const [material, setMaterial] = useState();
-  const [secMaterial, setSecMaterial] = useState(undefined);
+  const [secMaterial, setSecMaterial] = useState();
   const [mirrorVal, setMirrorVal] = useState("no");
   const [assemblyVal, setAssemblyVal] = useState();
   const [leg, setLeg] = useState();
@@ -498,7 +498,7 @@ const Sideform = () => {
     knob: "",
     handle: "",
     door: "",
-    wwight_cap: "",
+    wight_cap: "",
     wall_hanging: "",
     assembly_required: "",
     assembly_leg: "",
@@ -634,6 +634,7 @@ const Sideform = () => {
           silver: SideBox.open.payload.row.silver,
           silver_weight: SideBox.open.payload.row.silver_weight,
           joints: SideBox.open.payload.row.joints,
+          upholstery: SideBox.open.payload.row.upholstery,
           wheel: SideBox.open.payload.row.wheel,
           trolley: SideBox.open.payload.row.trolley,
           trolley_material: SideBox.open.payload.row.trolley_material,
@@ -643,12 +644,14 @@ const Sideform = () => {
           straight_back: SideBox.open.payload.row.straight_back,
           lean_back: SideBox.open.payload.row.lean_back,
           weaving: SideBox.open.payload.row.weaving,
+          knife: SideBox.open.payload.row.knife,
           not_suitable_for_Micro_Dish:
             SideBox.open.payload.row.not_suitable_for_Micro_Dish,
           tilt_top: SideBox.open.payload.row.tilt_top,
           inside_compartments: SideBox.open.payload.row.inside_compartments,
           stackable: SideBox.open.payload.row.stackable,
           MRP: SideBox.open.payload.row.MRP,
+          showroom_price: SideBox.open.payload.row.showroom_price,
           selling_price: SideBox.open.payload.row.selling_price,
           discount_limit: SideBox.open.payload.row.discount_limit,
         });
@@ -1230,6 +1233,7 @@ const Sideform = () => {
     e.target.product_title.value !== "" &&
       FD.append("product_title", e.target.product_title.value);
     e.target.MRP.value !== "" && FD.append("MRP", e.target.MRP.value);
+    e.target.showroom_price.value !== "" && FD.append("showroom_price", e.target.showroom_price.value);
     e.target.seo_title.value !== "" &&
       FD.append("seo_title", e.target.seo_title.value);
     e.target.seo_description.value !== "" &&
@@ -1256,11 +1260,10 @@ const Sideform = () => {
     FD.append("assembly_required", e.target.assembly_required.value);
     FD.append("mirror", e.target.mirror.value);
     FD.append("joints", e.target.joints.value);
+    FD.append("upholstery", e.target.upholstery.value);
     FD.append("wheel", e.target.wheel.value);
     FD.append("trolley", e.target.trolley.value);
     FD.append("silver", e.target.silver.value);
-    FD.append("wall_hanging", e.target.wall_hanging.value);
-
     if (assemblyVal === "shipping")
       FD.append("assembly_part", e.target.assembly_part.value);
     if (assemblyVal === "yes") FD.append("legs", e.target.legs.value);
@@ -1288,6 +1291,8 @@ const Sideform = () => {
     e.target.straight_back.checked &&
       FD.append("straight_back", e.target.straight_back.checked);
     e.target.weaving.checked && FD.append("weaving", e.target.weaving.checked);
+    e.target.knife.checked && FD.append("knife", e.target.knife.checked);
+    e.target.wall_hanging.checked && FD.append("wall_hanging", e.target.wall_hanging.checked);
     e.target.not_suitable_for_Micro_Dish.checked &&
       FD.append(
         "not_suitable_for_Micro_Dish",
@@ -1441,6 +1446,7 @@ const Sideform = () => {
     FD.append("selling_points", sellingRef.current.getContent());
     FD.append("SKU", e.target.SKU.value);
     FD.append("MRP", e.target.MRP.value);
+    FD.append("showroom_price", e.target.showroom_price.value);
     FD.append("seo_title", e.target.seo_title.value);
     FD.append("seo_description", e.target.seo_description.value);
     FD.append("seo_keyword", e.target.seo_keyword.value);
@@ -1449,7 +1455,7 @@ const Sideform = () => {
     FD.append("primary_material", e.target.primary_material.value);
     FD.append("secondary_material", e.target.secondary_material.value);
     //  console.log(secMaterial)
-    if (secMaterial !== undefined)
+    if (e.target.secondary_material_weight !== undefined)
       FD.append(
         "secondary_material_weight",
         e.target.secondary_material_weight.value
@@ -1465,7 +1471,6 @@ const Sideform = () => {
     FD.append("seating_size_depth", e.target.seating_size_depth.value);
     FD.append("seating_size_height", e.target.seating_size_height.value);
     FD.append("weight_capacity", e.target.weight_capacity.value);
-    FD.append("wall_hanging", e.target.wall_hanging.value);
     FD.append("assembly_required", e.target.assembly_required.value);
 
     if (assemblyVal === "shipping")
@@ -1485,6 +1490,7 @@ const Sideform = () => {
       FD.append("mirror_width", e.target.mirror_width.value);
     }
     FD.append("joints", e.target.joints.value);
+    FD.append("upholstery", e.target.upholstery.value);
     FD.append("wheel", e.target.wheel.value);
     FD.append("trolley", e.target.trolley.value);
     FD.append("silver", e.target.silver.value);
@@ -1493,6 +1499,9 @@ const Sideform = () => {
     FD.append("no_chemical", e.target.no_chemical.checked);
     FD.append("lean_back", e.target.lean_back.checked);
     FD.append("weaving", e.target.weaving.checked);
+    FD.append("knife", e.target.knife.checked);
+    FD.append("wall_hanging", e.target.wall_hanging.checked);
+    
     FD.append(
       "not_suitable_for_Micro_Dish",
       e.target.not_suitable_for_Micro_Dish.checked
@@ -2842,6 +2851,24 @@ const Sideform = () => {
                       autoComplete={false}
                       id="fullWidth"
                       required
+                      label="Showroom Price"
+                      // onChange={handleDiscount}
+                      type="number"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">₹</InputAdornment>
+                        ),
+                      }}
+                      variant="outlined"
+                      name="showroom_price"
+                    />
+                   
+                    <br></br>
+                    <TextField
+                      fullWidth
+                      autoComplete={false}
+                      id="fullWidth"
+                      required
                       label="MRP"
                       onChange={handleDiscount}
                       type="number"
@@ -3068,7 +3095,7 @@ const Sideform = () => {
                       </MenuItem>
                     </TextField>
 
-                    <br></br>
+                    {/* <br></br>
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
                         Wall Hanging
@@ -3089,7 +3116,7 @@ const Sideform = () => {
                           label="No"
                         />
                       </RadioGroup>
-                    </FormControl>
+                    </FormControl> */}
 
                     <br></br>
 
@@ -3245,6 +3272,14 @@ const Sideform = () => {
                       <FormControlLabel
                         control={<Checkbox name="stackable" />}
                         label="Stackable"
+                      />
+                      <FormControlLabel
+                        control={<Checkbox name="knife" />}
+                        label="Knife Friendly Surface"
+                      />
+                      <FormControlLabel
+                        control={<Checkbox name="wall_hanging" />}
+                        label="Wall Hanging"
                       />
                     </FormGroup>
 
@@ -3407,6 +3442,31 @@ const Sideform = () => {
                         />
                       </RadioGroup>
                     </FormControl>
+
+                    <br></br>
+
+<FormControl>
+  <FormLabel id="demo-radio-buttons-group-label">
+  Upholstery
+  </FormLabel>
+  <RadioGroup
+    aria-labelledby="demo-radio-buttons-group-label"
+    
+    name="upholstery"
+  >
+    <FormControlLabel
+      value="Yes"
+      control={<Radio />}
+      label="Yes"
+    />
+    <FormControlLabel
+      value="No"
+      control={<Radio />}
+      label="No"
+    />
+  </RadioGroup>
+</FormControl>
+
 
                     <br></br>
 
@@ -3944,6 +4004,25 @@ const Sideform = () => {
                       autoComplete={false}
                       id="fullWidth"
                       required
+                      value={preData.showroom_price}
+                      onChange={handleChangeData}
+                      label="Showroom Price"
+                      type="number"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">₹</InputAdornment>
+                        ),
+                      }}
+                      variant="outlined"
+                      name="showroom_price"
+                    />
+
+                    <br></br>
+                    <TextField
+                      fullWidth
+                      autoComplete={false}
+                      id="fullWidth"
+                      required
                       value={preData.MRP}
                       onChange={(e)=>{handleChangeData(e); handleDiscount(e);}}
                       label="MRP"
@@ -4171,7 +4250,7 @@ const Sideform = () => {
                       </MenuItem>
                     </TextField>
 
-                    <br></br>
+                    {/* <br></br>
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
                         Wall Hanging
@@ -4193,7 +4272,7 @@ const Sideform = () => {
                           label="No"
                         />
                       </RadioGroup>
-                    </FormControl>
+                    </FormControl> */}
 
                     <br></br>
 
@@ -4370,6 +4449,18 @@ const Sideform = () => {
                         control={<Checkbox name="stackable" />}
                         label="Stackable"
                       />
+                  
+                    <FormControlLabel
+                        control={<Checkbox name="knife" />}
+                        checked={preData.knife}
+                        
+                        label="Knife Friendly Surface"
+                        />
+                    <FormControlLabel
+                        checked={preData.wall_hanging}
+                        control={<Checkbox name="wall_hanging" />}
+                        label="Wall Hanging"
+                      />
                     </FormGroup>
 
                     <br></br>
@@ -4532,7 +4623,7 @@ const Sideform = () => {
 
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
-                        Joints
+                        Joints ((Useful in products where info about joints are shown))
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -4549,6 +4640,31 @@ const Sideform = () => {
                           value="multi"
                           control={<Radio />}
                           label="Multiple"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+
+                    <br></br>
+
+                    <FormControl>
+                      <FormLabel id="demo-radio-buttons-group-label">
+                      Upholstery
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        value={preData.upholstery || ""}
+                        onChange={handleChangeData}
+                        name="upholstery"
+                      >
+                        <FormControlLabel
+                          value="Yes"
+                          control={<Radio />}
+                          label="Yes"
+                        />
+                        <FormControlLabel
+                          value="No"
+                          control={<Radio />}
+                          label="No"
                         />
                       </RadioGroup>
                     </FormControl>

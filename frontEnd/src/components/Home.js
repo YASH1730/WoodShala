@@ -50,6 +50,7 @@ import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CollectionsIcon from "@mui/icons-material/Collections";
 import DraftsIcon from '@mui/icons-material/Drafts';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 
 
@@ -200,7 +201,7 @@ console.log(window.location.search)
                 /> */}
                 <Tab
                   wrapped
-                  icon={<ShoppingBagOutlinedIcon />}
+                  icon={<GridViewIcon />}
                   label="DashBoard"
                   {...a11yProps(0)}
                 />

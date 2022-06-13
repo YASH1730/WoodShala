@@ -88,6 +88,7 @@ export default function Products() {
           door: row.door_name,
           fitting: row.fitting_name,
           selling_points: row.selling_points,
+          showroom_price: row.showroom_price,
           top_size: row.top_size,
           dial_size: row.dial_size,
           seating_size_width: row.seating_size_width,
@@ -104,6 +105,7 @@ export default function Products() {
           silver: row.silver,
           silver_weight: row.silver_weight,
           joints: row.joints,
+          upholstery: row.upholstery,
           wheel: row.wheel,
           trolley: row.trolley,
           trolley_material: row.trolley_material,
@@ -117,6 +119,7 @@ export default function Products() {
           tilt_top: row.tilt_top,
           inside_compartments: row.inside_compartments,
           stackable: row.stackable,
+          knife: row.knife,
           MRP: row.MRP,
           tax_rate: row.tax_rate,
           selling_price: row.selling_price,
@@ -260,6 +263,11 @@ export default function Products() {
       width: 160,
     },
     {
+      field: "showroom_price",
+      headerName: "Showroom Price",
+      width: 160,
+    },
+    {
       field: "top_size",
       headerName: "Top Size",
       width: 160,
@@ -338,6 +346,13 @@ export default function Products() {
     {
       field: "joints",
       headerName: "Joints",
+      width: 160,
+    },
+    
+    
+    {
+      field: "upholstery",
+      headerName: "Upholstery",
       width: 160,
     },
     
@@ -421,6 +436,18 @@ export default function Products() {
     {
       field: "stackable",
       headerName: "Stackable",
+      width: 160,
+    },
+    
+    {
+      field: "Knife",
+      headerName: "knife",
+      width: 160,
+    },
+    
+    {
+      field: "Wall Hanging",
+      headerName: "wall_hanging",
       width: 160,
     },
     
