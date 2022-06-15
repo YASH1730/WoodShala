@@ -20,7 +20,7 @@ import AdjustIcon from "@mui/icons-material/Adjust";
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
-
+import WavesIcon from '@mui/icons-material/Waves';
 // conponents
 import Category from "./dashboard/Category";
 import SubCategory from "./dashboard/SubCategory";
@@ -32,6 +32,7 @@ import Fitting from "./dashboard/Fitting";
 import Knob from "./dashboard/Knob";
 import Door from "./dashboard/Door";
 import Handle from "./dashboard/Handle";
+import Fabric from "./dashboard/Fabric";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -147,6 +148,12 @@ function BasicTabs() {
                   label="Handle Material"
                   {...a11yProps(9)}
                 />
+                <Tab
+                  wrapped
+                  icon={<WavesIcon />}
+                  label="Fabric"
+                  {...a11yProps(10)}
+                />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -187,6 +194,10 @@ function BasicTabs() {
 
         <TabPanel value={value} index={9}>
           <Handle />
+        </TabPanel> 
+
+        <TabPanel value={value} index={10}>
+          <Fabric />
         </TabPanel> 
 
     </Box>

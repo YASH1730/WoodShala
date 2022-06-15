@@ -491,8 +491,8 @@ export const deleteBLog =async (data)=>{
       'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
       
    }
-
-// updateBlog
+   
+   // updateBlog
 
 export const updateBlog =async (data)=>{
    return await axios.patch(`${official}/updateBlog`,data,{headers: { 
@@ -514,3 +514,35 @@ export const changeProductStatus = async (data)=>{
       'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`
    }})
 }
+
+// ================== CURD for Fabric ==========================
+
+export const addFabric = async (data) => {
+   return await axios.post(`${official}/addFabric`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+export const editFabric = async (data) => {
+   return await axios.patch(`${official}/editFabric`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+export const getFabric = async () => {
+   return await axios.get(`${official}/getFabric`,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+      
+   }
+
+export const changeFabricStatus = async (data)=>{
+   return await axios.patch(`${official}/changeFabricStatus`,data,{headers: { 
+      'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`
+   }})
+}
+   
+export const deleteFabric =async (data)=>{
+      return await axios.delete(`${official}/deleteFabric?_id=${data}`,{headers: { 
+         'Authorization' : `Bearer ${localStorage.getItem('WDToken')}`}})
+         
+      }

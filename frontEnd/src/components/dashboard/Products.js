@@ -106,6 +106,7 @@ export default function Products() {
           silver_weight: row.silver_weight,
           joints: row.joints,
           upholstery: row.upholstery,
+          fabric: row.fabric_name,
           wheel: row.wheel,
           trolley: row.trolley,
           trolley_material: row.trolley_material,
@@ -353,6 +354,12 @@ export default function Products() {
     {
       field: "upholstery",
       headerName: "Upholstery",
+      width: 160,
+    },
+    
+    {
+      field: "fabric",
+      headerName: "Fabric",
       width: 160,
     },
     

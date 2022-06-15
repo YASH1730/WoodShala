@@ -66,6 +66,9 @@ import {
   uploadImage,
   createBlog,
   updateBlog,
+  addFabric,
+  editFabric,
+  getFabric,
 } from "../../services/service.js";
 
 const thumbsContainer = {
@@ -441,6 +444,7 @@ const Sideform = () => {
   const [subCat, setSubCat] = useState();
   const [dispatchTime, setDispatch] = useState();
   const [taxRate, setTaxRate] = useState("18");
+  const [fabric, setFabric] = useState();
   const [fitting, setFitting] = useState();
   const [Polish, setPolish] = useState();
   const [Hinge, setHinge] = useState();
@@ -456,8 +460,8 @@ const Sideform = () => {
   const [silver, setSilver] = useState();
   const [trollyVal, setTrollyVal] = useState();
   const [trolly, settrolly] = useState();
-  const [discount, setDiscount] = useState({discount_limit : 0,MRP : 0});
-  
+  const [discount, setDiscount] = useState({ discount_limit: 0, MRP: 0 });
+  const [showFabric, setShowFabric] = useState();
 
   // states for the dynamic rendering
   const [SKU, setSKU] = useState("");
@@ -471,6 +475,7 @@ const Sideform = () => {
   const [knobCatalog, setKnobCatalog] = useState([]);
   const [doorCatalog, setDoorCatalog] = useState([]);
   const [handleCatalog, setHandleCatalog] = useState([]);
+  const [fabricCatalog, setFabricCatalog] = useState([]);
 
   // pres data
   const [preData, setPreData] = useState({
@@ -742,14 +747,20 @@ const Sideform = () => {
 
       return setHandleCatalog(data.data);
     });
+
+    getFabric().then((data) => {
+      if (data.data === null) return setFabricCatalog([]);
+
+      return setFabricCatalog(data.data);
+    });
   }, [SideBox.open.formType, SideBox.open.state]);
 
-  const handleDiscount = (e) =>{
+  const handleDiscount = (e) => {
     setDiscount({
       ...discount,
-      [e.target.name] : e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleChangeData = (e) => {
     switch (SideBox.open.formType) {
@@ -819,6 +830,12 @@ const Sideform = () => {
           [e.target.name]: e.target.value,
         });
         break;
+      case "update_fabric":
+        setPreData({
+          ...preData,
+          [e.target.name]: e.target.value,
+        });
+        break;
 
       default:
         console.log("");
@@ -848,6 +865,10 @@ const Sideform = () => {
 
   const handleChangeTaxRate = (event) => {
     setTaxRate(event.target.value);
+  };
+
+  const handleChangeFabric = (event) => {
+    setFabric(event.target.value);
   };
 
   const handleChangeFitting = (event) => {
@@ -941,6 +962,52 @@ const Sideform = () => {
   };
 
   // function for handling category
+  const handleFabric = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    FD.append("fabric_image", Image[0]);
+    FD.append("fabric_name", e.target.fabric_name.value);
+    FD.append("fabric_status", e.target.fabric_status.checked);
+
+    // console.log(acceptedFiles[0].name, e.target.category_name.value)
+
+    const res = addFabric(FD);
+
+    res
+      .then((data) => {
+        console.log(data.status);
+
+        if (data.status === 203) {
+          setImages([]);
+          dispatchAlert.setNote({
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          });
+        } else {
+          setImages([]);
+          handleClose();
+          dispatchAlert.setNote({
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setImages([]);
+        dispatchAlert.setNote({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        });
+      });
+  };
+
+  // function for handling category
   const handleCategory = (e) => {
     e.preventDefault();
 
@@ -986,6 +1053,52 @@ const Sideform = () => {
       });
   };
 
+  // function for handling update category
+  const handleUpdateFabric = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    FD.append("_id", SideBox.open.payload.row.action);
+
+    Image[0] !== undefined && FD.append("fabric_image", Image[0]);
+
+    e.target.fabric_name.value !== undefined
+      ? FD.append("fabric_name", e.target.fabric_name.value)
+      : console.log();
+
+    const res = editFabric(FD);
+    res
+      .then((data) => {
+        console.log(data.status);
+
+        if (data.status === 203) {
+          setImages([]);
+          dispatchAlert.setNote({
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          });
+        } else {
+          setImages([]);
+          handleClose();
+          dispatchAlert.setNote({
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setImages([]);
+        dispatchAlert.setNote({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        });
+      });
+  };
   // function for handling update category
   const handleUpdateCategory = (e) => {
     e.preventDefault();
@@ -1207,6 +1320,15 @@ const Sideform = () => {
       );
     });
 
+    e.target.upholstery.value === "Yes"
+      ? fabricCatalog.map((item) => {
+          return (
+            item._id === e.target.fabric.value &&
+            FD.append("fabric_name", item.fabric_name)
+          );
+        })
+      : FD.append("fabric_name", "");
+
     // DROPDOWNs
     e.target.dispatch_time.value !== null &&
       FD.append("dispatch_time", e.target.dispatch_time.value);
@@ -1227,13 +1349,14 @@ const Sideform = () => {
 
     editorRef.current.getContent() &&
       FD.append("product_description", editorRef.current.getContent());
-    sellingRef.current.getContent()  &&
+    sellingRef.current.getContent() &&
       FD.append("selling_points", sellingRef.current.getContent());
 
     e.target.product_title.value !== "" &&
       FD.append("product_title", e.target.product_title.value);
     e.target.MRP.value !== "" && FD.append("MRP", e.target.MRP.value);
-    e.target.showroom_price.value !== "" && FD.append("showroom_price", e.target.showroom_price.value);
+    e.target.showroom_price.value !== "" &&
+      FD.append("showroom_price", e.target.showroom_price.value);
     e.target.seo_title.value !== "" &&
       FD.append("seo_title", e.target.seo_title.value);
     e.target.seo_description.value !== "" &&
@@ -1274,6 +1397,9 @@ const Sideform = () => {
     if (trolly === "yes")
       FD.append("trolly_matterial", e.target.trollyMat.value);
 
+    if (e.target.upholstery.value === "Yes")
+      FD.append("fabric", e.target.fabric.value);
+
     if (e.target.mirror.value === "yes") {
       FD.append("mirror_length", e.target.mirror_length.value);
       FD.append("mirror_width", e.target.mirror_width.value);
@@ -1292,7 +1418,8 @@ const Sideform = () => {
       FD.append("straight_back", e.target.straight_back.checked);
     e.target.weaving.checked && FD.append("weaving", e.target.weaving.checked);
     e.target.knife.checked && FD.append("knife", e.target.knife.checked);
-    e.target.wall_hanging.checked && FD.append("wall_hanging", e.target.wall_hanging.checked);
+    e.target.wall_hanging.checked &&
+      FD.append("wall_hanging", e.target.wall_hanging.checked);
     e.target.not_suitable_for_Micro_Dish.checked &&
       FD.append(
         "not_suitable_for_Micro_Dish",
@@ -1355,7 +1482,6 @@ const Sideform = () => {
     });
 
     FD.append("status", false);
-
 
     console.log(Image);
 
@@ -1431,6 +1557,13 @@ const Sideform = () => {
       );
     });
 
+    fabricCatalog.map((item) => {
+      return (
+        item._id === e.target.fabric.value &&
+        FD.append("fabric_name", item.fabric_name)
+      );
+    });
+
     FD.append("polish", e.target.polish.value);
     FD.append("hinge", e.target.hinge.value);
     FD.append("knob", e.target.knob.value);
@@ -1454,6 +1587,7 @@ const Sideform = () => {
     FD.append("selling_price", e.target.selling_price.value);
     FD.append("primary_material", e.target.primary_material.value);
     FD.append("secondary_material", e.target.secondary_material.value);
+    FD.append("fabric", e.target.fabric.value);
     //  console.log(secMaterial)
     if (e.target.secondary_material_weight !== undefined)
       FD.append(
@@ -1483,6 +1617,9 @@ const Sideform = () => {
     if (trolly === "yes")
       FD.append("trolley_material", e.target.trolley_material.value);
 
+    if (e.target.upholstery.value === "Yes")
+      FD.append("fabric", e.target.fabric.value);
+
     FD.append("mirror", e.target.mirror.value);
 
     if (e.target.mirror.value === "yes") {
@@ -1501,7 +1638,7 @@ const Sideform = () => {
     FD.append("weaving", e.target.weaving.checked);
     FD.append("knife", e.target.knife.checked);
     FD.append("wall_hanging", e.target.wall_hanging.checked);
-    
+
     FD.append(
       "not_suitable_for_Micro_Dish",
       e.target.not_suitable_for_Micro_Dish.checked
@@ -2292,7 +2429,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    console.log(SideBox.open.payload)
+    console.log(SideBox.open.payload);
 
     FD.append("_id", SideBox.open.payload.row.action);
 
@@ -2508,7 +2645,8 @@ const Sideform = () => {
               viewMode.mode === true ? "mainDarkContainer" : "mainContainer"
             }
             sx={
-              SideBox.open.formType === "product" || SideBox.open.formType === "update_product"
+              SideBox.open.formType === "product" ||
+              SideBox.open.formType === "update_product"
                 ? { width: "100vw !important", padding: "0 5% !important" }
                 : {}
             }
@@ -2524,7 +2662,7 @@ const Sideform = () => {
             {/* add Products */}
 
             {SideBox.open.formType === "product" && (
-              <Grid container p={5} className = 'productPadding' >
+              <Grid container p={5} className="productPadding">
                 {getSKU()}
 
                 <Grid item xs={12}>
@@ -2641,7 +2779,6 @@ const Sideform = () => {
                     {/* product description  */}
                     <Editor
                       apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
-                     
                       onInit={(event, editor) => (editorRef.current = editor)}
                       init={{
                         height: 300,
@@ -2804,7 +2941,7 @@ const Sideform = () => {
                       select
                       name="secondary_material"
                       label="Secondary Material"
-                      value={secMaterial || ''}
+                      value={secMaterial || ""}
                       multiple
                       onChange={handleChangeSecMaterial}
                       helperText="Please select your Material ."
@@ -2844,7 +2981,6 @@ const Sideform = () => {
                       </>
                     )}
 
-                   
                     <br></br>
                     <TextField
                       fullWidth
@@ -2862,7 +2998,7 @@ const Sideform = () => {
                       variant="outlined"
                       name="showroom_price"
                     />
-                   
+
                     <br></br>
                     <TextField
                       fullWidth
@@ -2899,7 +3035,7 @@ const Sideform = () => {
                       name="discount_limit"
                     />
 
-<br></br>
+                    <br></br>
                     <TextField
                       fullWidth
                       disabled
@@ -2912,11 +3048,15 @@ const Sideform = () => {
                           <InputAdornment position="start">₹</InputAdornment>
                         ),
                       }}
-                      value = {discount.MRP && discount.discount_limit  ? discount.MRP - (discount.MRP/100*discount.discount_limit) : 0}
+                      value={
+                        discount.MRP && discount.discount_limit
+                          ? discount.MRP -
+                            (discount.MRP / 100) * discount.discount_limit
+                          : 0
+                      }
                       variant="outlined"
                       name="selling_price"
                     />
-
 
                     <br></br>
 
@@ -3329,8 +3469,10 @@ const Sideform = () => {
                     {/* selling points  */}
 
                     <br></br>
-                    <FormLabel id="demo-radio-buttons-group-label">Selling Points </FormLabel>
-                  
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Selling Points{" "}
+                    </FormLabel>
+
                     <Editor
                       apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                       onInit={(event, editor) => (sellingRef.current = editor)}
@@ -3424,7 +3566,8 @@ const Sideform = () => {
 
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
-                        Joints ((Useful in products where info about joints are shown))
+                        Joints ((Useful in products where info about joints are
+                        shown))
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -3445,28 +3588,61 @@ const Sideform = () => {
 
                     <br></br>
 
-<FormControl>
-  <FormLabel id="demo-radio-buttons-group-label">
-  Upholstery
-  </FormLabel>
-  <RadioGroup
-    aria-labelledby="demo-radio-buttons-group-label"
-    
-    name="upholstery"
-  >
-    <FormControlLabel
-      value="Yes"
-      control={<Radio />}
-      label="Yes"
-    />
-    <FormControlLabel
-      value="No"
-      control={<Radio />}
-      label="No"
-    />
-  </RadioGroup>
-</FormControl>
+                    <FormControl>
+                      <FormLabel id="demo-radio-buttons-group-label">
+                        Upholstery
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        onChange={(e) => {
+                          setShowFabric(e.target.value);
+                        }}
+                        name="upholstery"
+                      >
+                        <FormControlLabel
+                          value="Yes"
+                          control={<Radio />}
+                          label="Yes"
+                        />
+                        <FormControlLabel
+                          value="No"
+                          control={<Radio />}
+                          label="No"
+                        />
+                      </RadioGroup>
 
+                      {showFabric === "Yes" && (
+                        <>
+                          <br></br>
+                          <TextField
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="fabric"
+                            label="Fabric"
+                            value={fabric}
+                            multiple
+                            onChange={handleChangeFabric}
+                            helperText="Please select your fabric."
+                          >
+                            {fabricCatalog.map(
+                              (option) =>
+                                option.fabric_status && (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option._id}
+                                  >
+                                    {option.fabric_name}
+                                  </MenuItem>
+                                )
+                            )}
+                            <MenuItem key={"none"} value={undefined}>
+                              {"None"}
+                            </MenuItem>
+                          </TextField>{" "}
+                        </>
+                      )}
+                    </FormControl>
 
                     <br></br>
 
@@ -3978,7 +4154,6 @@ const Sideform = () => {
                           fullWidth
                           autoComplete={false}
                           id="fullWidth"
-                          
                           value={preData.secondary_material_weight}
                           onChange={handleChangeData}
                           label="Secondary Material Weight"
@@ -3995,8 +4170,6 @@ const Sideform = () => {
                         />
                       </>
                     )}
-
-                  
 
                     <br></br>
                     <TextField
@@ -4024,7 +4197,10 @@ const Sideform = () => {
                       id="fullWidth"
                       required
                       value={preData.MRP}
-                      onChange={(e)=>{handleChangeData(e); handleDiscount(e);}}
+                      onChange={(e) => {
+                        handleChangeData(e);
+                        handleDiscount(e);
+                      }}
                       label="MRP"
                       type="number"
                       InputProps={{
@@ -4044,7 +4220,10 @@ const Sideform = () => {
                       id="fullWidth"
                       label="Discount Limit"
                       value={preData.discount_limit}
-                      onChange={(e)=>{handleChangeData(e); handleDiscount(e);}}
+                      onChange={(e) => {
+                        handleChangeData(e);
+                        handleDiscount(e);
+                      }}
                       type="number"
                       InputProps={{
                         startAdornment: (
@@ -4055,7 +4234,7 @@ const Sideform = () => {
                       name="discount_limit"
                     />
 
-<br></br>
+                    <br></br>
                     <TextField
                       fullWidth
                       required
@@ -4069,7 +4248,12 @@ const Sideform = () => {
                           <InputAdornment position="start">₹</InputAdornment>
                         ),
                       }}
-                      value = {discount.MRP && discount.discount_limit  ? discount.MRP - (discount.MRP/100*discount.discount_limit) : preData.selling_price}
+                      value={
+                        discount.MRP && discount.discount_limit
+                          ? discount.MRP -
+                            (discount.MRP / 100) * discount.discount_limit
+                          : preData.selling_price
+                      }
                       variant="outlined"
                       name="selling_price"
                     />
@@ -4449,14 +4633,13 @@ const Sideform = () => {
                         control={<Checkbox name="stackable" />}
                         label="Stackable"
                       />
-                  
-                    <FormControlLabel
+
+                      <FormControlLabel
                         control={<Checkbox name="knife" />}
                         checked={preData.knife}
-                        
                         label="Knife Friendly Surface"
-                        />
-                    <FormControlLabel
+                      />
+                      <FormControlLabel
                         checked={preData.wall_hanging}
                         control={<Checkbox name="wall_hanging" />}
                         label="Wall Hanging"
@@ -4524,8 +4707,10 @@ const Sideform = () => {
                     /> */}
                     {/* selling points  */}
                     <br></br>
-                    <FormLabel id="demo-radio-buttons-group-label">Selling Points </FormLabel>
-                  
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Selling Points{" "}
+                    </FormLabel>
+
                     <Editor
                       apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                       onInit={(event, editor) => (sellingRef.current = editor)}
@@ -4623,7 +4808,8 @@ const Sideform = () => {
 
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
-                        Joints ((Useful in products where info about joints are shown))
+                        Joints ((Useful in products where info about joints are
+                        shown))
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -4648,12 +4834,15 @@ const Sideform = () => {
 
                     <FormControl>
                       <FormLabel id="demo-radio-buttons-group-label">
-                      Upholstery
+                        Upholstery
                       </FormLabel>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
                         value={preData.upholstery || ""}
-                        onChange={handleChangeData}
+                        onChange={(e) => {
+                          handleChangeData(e);
+                          setShowFabric(e.target.value);
+                        }}
                         name="upholstery"
                       >
                         <FormControlLabel
@@ -4668,6 +4857,37 @@ const Sideform = () => {
                         />
                       </RadioGroup>
                     </FormControl>
+
+                    {showFabric === "Yes" && preData.upholstery === "Yes" ? (
+                      <>
+                        <br></br>
+                        <TextField
+                          fullWidth
+                          id="outlined-select"
+                          select
+                          name="fabric"
+                          label="Fabric"
+                          value={fabric}
+                          multiple
+                          onChange={handleChangeFabric}
+                          helperText="Please select your fabric."
+                        >
+                          {fabricCatalog.map(
+                            (option) =>
+                              option.fabric_status && (
+                                <MenuItem key={option.value} value={option._id}>
+                                  {option.fabric_name}
+                                </MenuItem>
+                              )
+                          )}
+                          <MenuItem key={"none"} value={undefined}>
+                            {"None"}
+                          </MenuItem>
+                        </TextField>{" "}
+                      </>
+                    ) : (
+                      console.log("")
+                    )}
 
                     <br></br>
 
@@ -4881,6 +5101,125 @@ const Sideform = () => {
             )}
 
             {/* update Products Ends */}
+
+            {/*  add fabric */}
+
+            {SideBox.open.formType === "fabric" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography variant="h5">
+                    Add Fabric
+                    <Typography
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add Fabric and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    onSubmit={handleFabric}
+                    id="myForm"
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+                    <ImagePreviews
+                      text={"Please Drag and Drop the fabric image"}
+                    >
+                      {" "}
+                    </ImagePreviews>
+
+                    <TextField
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="fabric_name"
+                      label="Fabric"
+                      type="text"
+                      helperText="Please enter your fabric"
+                    />
+
+                    <br></br>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={<Checkbox name="fabric_status" />}
+                        label="Status (On/Off)"
+                      />
+                    </FormGroup>
+
+                    <br></br>
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Fabric
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add fabric Ends */}
+
+            {/*  update fabric */}
+
+            {SideBox.open.formType === "update_fabric" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography variant="h5">
+                    Update Fabric
+                    <Typography
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Update your fabric and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={handleUpdateFabric}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+                    <ImagePreviews
+                      text={"Please Drag and Drop the Fabric image"}
+                    >
+                      {" "}
+                    </ImagePreviews>
+
+                    <TextField
+                      fullWidth
+                      id="outlined-select"
+                      onChange={handleChangeData}
+                      value={preData.fabric_name}
+                      name="fabric_name"
+                      label="Fabric"
+                      helperText="Please enter the update"
+                    />
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Update Fabric
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* update fabric Ends */}
 
             {/*  add Catagory */}
 
@@ -5863,7 +6202,7 @@ const Sideform = () => {
                             disabled
                             id="outlined-select"
                             label="Image URL"
-                            value={url || ''}
+                            value={url || ""}
                           />
 
                           <Button
@@ -6029,7 +6368,7 @@ const Sideform = () => {
                             disabled
                             id="outlined-select"
                             label="Image URL"
-                            value={url || ''}
+                            value={url || ""}
                           />
 
                           <Button
