@@ -684,6 +684,12 @@ const Sideform = () => {
 
         break;
 
+      case "update_fabric":
+        setPreData({
+          ...preData,
+          fabric_name: SideBox.open.payload.row.fabric_name,
+        });
+        break;
       default:
         console.log("");
     }
@@ -1063,7 +1069,7 @@ const Sideform = () => {
 
     Image[0] !== undefined && FD.append("fabric_image", Image[0]);
 
-    e.target.fabric_name.value !== undefined
+    e.target.fabric_name.value !== ""
       ? FD.append("fabric_name", e.target.fabric_name.value)
       : console.log();
 
