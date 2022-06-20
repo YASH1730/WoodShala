@@ -79,16 +79,11 @@ export default function SubCategory() {
       headerName: "ID",
       width: 100
     },
-    {
-      field: 'category_id',
-      align: 'center',
-      headerName: 'Category Id',
-      width: 200
-    },
+
     {
       field: 'category_name',
       align: 'center',
-      headerName: 'Category Name',
+      headerName: 'Parent Category Name',
       width: 200
     },
     {

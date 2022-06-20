@@ -85,7 +85,7 @@ export default function Category() {
       align: 'center',
       headerName: 'Image',
       width: 200,
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='category' /></div>,
+      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='category' /> : "Image Not Give"}</div>,
     },
     {
       field: "category_name",
