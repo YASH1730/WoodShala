@@ -762,6 +762,11 @@ const Sideform = () => {
   }, [SideBox.open.formType, SideBox.open.state]);
 
   const handleDiscount = (e) => {
+    if(e.target.name === "discount_limit")
+    {
+      if(e.target.value > 25)
+        e.target.value = 25;
+    }
     setDiscount({
       ...discount,
       [e.target.name]: e.target.value,
@@ -1593,7 +1598,7 @@ const Sideform = () => {
     FD.append("selling_price", e.target.selling_price.value);
     FD.append("primary_material", e.target.primary_material.value);
     FD.append("secondary_material", e.target.secondary_material.value);
-    FD.append("fabric", e.target.fabric.value);
+    // FD.append("fabric", e.target.fabric.value);
     //  console.log(secMaterial)
     if (e.target.secondary_material_weight !== undefined)
       FD.append(
@@ -2994,7 +2999,6 @@ const Sideform = () => {
                       id="fullWidth"
                       required
                       label="Showroom Price"
-                      // onChange={handleDiscount}
                       type="number"
                       InputProps={{
                         startAdornment: (
@@ -3055,7 +3059,7 @@ const Sideform = () => {
                         ),
                       }}
                       value={
-                        discount.MRP && discount.discount_limit
+                        discount.MRP > 0 && discount.discount_limit > 0
                           ? discount.MRP -
                             (discount.MRP / 100) * discount.discount_limit
                           : 0
@@ -4227,8 +4231,8 @@ const Sideform = () => {
                       label="Discount Limit"
                       value={preData.discount_limit}
                       onChange={(e) => {
-                        handleChangeData(e);
                         handleDiscount(e);
+                        handleChangeData(e);
                       }}
                       type="number"
                       InputProps={{
@@ -4255,7 +4259,7 @@ const Sideform = () => {
                         ),
                       }}
                       value={
-                        discount.MRP && discount.discount_limit
+                        discount.MRP > 0 && discount.discount_limit > 0
                           ? discount.MRP -
                             (discount.MRP / 100) * discount.discount_limit
                           : preData.selling_price
