@@ -461,7 +461,7 @@ const Sideform = () => {
   const [trollyVal, setTrollyVal] = useState();
   const [trolly, settrolly] = useState();
   const [discount, setDiscount] = useState({ discount_limit: 0, MRP: 0 });
-  const [showFabric, setShowFabric] = useState();
+  const [showFabric, setShowFabric] = useState("No");
 
   // states for the dynamic rendering
   const [SKU, setSKU] = useState("");
@@ -1163,6 +1163,7 @@ const Sideform = () => {
     setImages([]);
     setFeatured([]);
     setFiles([]);
+    setFabric(null);
     setCat(null);
     setSubCat(null);
     setDispatch(null);
@@ -1182,6 +1183,7 @@ const Sideform = () => {
     setSilver(null);
     setTrollyVal(null);
     settrolly(null);
+    setShowFabric("No")
     document.getElementById("myForm").reset();
   };
 
@@ -1568,13 +1570,15 @@ const Sideform = () => {
       );
     });
 
+    if(showFabric === "Yes")
+{
     fabricCatalog.map((item) => {
       return (
         item._id === e.target.fabric.value &&
         FD.append("fabric_name", item.fabric_name)
       );
     });
-
+}
     FD.append("polish", e.target.polish.value);
     FD.append("hinge", e.target.hinge.value);
     FD.append("knob", e.target.knob.value);
