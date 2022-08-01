@@ -33,6 +33,21 @@ import Knob from "./dashboard/Knob";
 import Door from "./dashboard/Door";
 import Handle from "./dashboard/Handle";
 import Fabric from "./dashboard/Fabric";
+import Textile from "./dashboard/Textile";
+
+const components = [
+Category,
+SubCategory,
+PrimaryMaterial,
+Polish,
+Hinge,
+Fitting,
+Knob,
+Door,
+Handle,
+Fabric,
+Textile,
+]
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -106,12 +121,12 @@ function BasicTabs() {
                   label="Primary Material"
                   {...a11yProps(2)}
                 />
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<FilterListIcon />}
                   label="Secondary Material"
                   {...a11yProps(3)}
-                />
+                /> */}
                 <Tab
                   wrapped
                   icon={<AutoAwesomeIcon />}
@@ -154,51 +169,22 @@ function BasicTabs() {
                   label="Fabric"
                   {...a11yProps(10)}
                 />
+                <Tab
+                  wrapped
+                  icon={<WavesIcon />}
+                  label="Textile"
+                  {...a11yProps(11)}
+                />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-          <Category />
+
+      {components.map((Component,index)=>{
+
+      return <TabPanel value={value} index={index}>
+          <Component />
         </TabPanel>
 
-        <TabPanel value={value} index={1}>
-          <SubCategory />
-        </TabPanel>
-
-        <TabPanel value={value} index={2}>
-          <PrimaryMaterial />
-        </TabPanel>
-
-        <TabPanel value={value} index={3}>
-          <SecondaryMaterial />
-        </TabPanel>
-
-        <TabPanel value={value} index={4}>
-          <Polish />
-        </TabPanel>
-
-        <TabPanel value={value} index={5}>
-          <Fitting />
-        </TabPanel>
-
-        <TabPanel value={value} index={6}>
-          <Hinge />
-        </TabPanel>
-
-        <TabPanel value={value} index={7}>
-          <Knob />
-        </TabPanel>
-
-        <TabPanel value={value} index={8}>
-          <Door />
-        </TabPanel>
-
-        <TabPanel value={value} index={9}>
-          <Handle />
-        </TabPanel> 
-
-        <TabPanel value={value} index={10}>
-          <Fabric />
-        </TabPanel> 
+      })}
 
     </Box>
   );

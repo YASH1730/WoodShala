@@ -57,4 +57,30 @@
     .mainDarkContainer {
         width: 100vw;
     }
+    .productPadding {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
+
+.productPadding {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.stepper {
+    width: 100%;
+}
+
+.stepAction {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fields {
+    display: flex;
+    row-gap: 2px;
+    flex-direction: column;
 }
