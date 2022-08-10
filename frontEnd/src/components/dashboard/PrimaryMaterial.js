@@ -59,6 +59,8 @@ export default function PrimaryMaterial() {
           return ({
             id: index+1,
             primaryMaterial_name: row.primaryMaterial_name,
+            primaryMaterial_image : row.primaryMaterial_image,
+            primaryMaterial_description: row.primaryMaterial_description,
             primaryMaterial_status: row.primaryMaterial_status,
             action: row._id
           })
@@ -80,6 +82,21 @@ export default function PrimaryMaterial() {
       field: "primaryMaterial_name",
       headerName: "Primary Material Name",
       width: 200,
+      
+    },
+    {
+      field: "primaryMaterial_image",
+      headerName: "Primary Material Image",
+      width: 200,
+      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='material' /> : "Image Not Give"}</div>,
+
+
+    },
+    {
+      field: "primaryMaterial_description",
+      headerName: "Primary Material Description",
+      width: 200,
+      
     },
     {
       field: "primaryMaterial_status",

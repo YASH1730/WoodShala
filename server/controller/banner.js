@@ -1,7 +1,8 @@
 
 const banner = require("../../database/models/banner");
 
-const official = 'http://157.245.102.136'
+const localBaseUrl = 'http://localhost:8000'
+const official  = 'http://157.245.102.136'
 
 
 
@@ -9,22 +10,22 @@ const official = 'http://157.245.102.136'
 //==============================================================================================================================
 
 exports.addBanner = async(req,res) => {
-console.log(req.files)
+
 
 if(req.files !== undefined)
-req.body.banner_URL = `${official}/${req.files['banner_image'][0].path}`;
-else
-return res.status(203);
+    req.body.banner_URL = `${official}/${req.files['banner_image'].path}`;
+else 
+    return res.status(203);
 
 const data = banner(req.body)
 
 await data.save()
 .then((data)=>{
-// console.log(data)
-return res.send('Banner Added Successfully !!!')
+    // console.log(data)
+    return res.send('Banner Added Successfully !!!')
 })
 .catch((err)=>{
-return res.send('Something Went Wrong')
+    return res.send('Something went worng')
 })
 
 }
@@ -44,7 +45,7 @@ exports.listBanner = async(req,res)=>{
     })
     .catch((err)=>{
         console.log(err)
-        return res.send("Something went wrong !!!")
+        return res.send("Something went worng !!!")
     })
 
 
@@ -61,7 +62,7 @@ exports.changeStatus = async(req,res) =>{
     })
     .catch((err)=>{
         console.log(err)
-        res.send('Something Went Wrong !!!')
+        res.send('Something went Wrong !!!')
     })
 }
 

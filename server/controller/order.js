@@ -39,7 +39,7 @@ exports.listOrder = async(req,res) => {
 
     .catch((err)=>{
         console.log(err)
-        return res.send('Something went wrong !!!')
+        return res.send('Something went Wrong !!!')
     })
     
 

@@ -1,6 +1,7 @@
 
 const product = require('../../database/models/products')
-const official = 'http://157.245.102.136'
+const localhost = 'http://localhost:8000'
+const official  = 'http://157.245.102.136'
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 
@@ -82,7 +83,7 @@ exports.getLastProduct = async(req,res)=>{
  })
  .catch((err)=>{
     //  console.log(err)
-    res.status(203).send({message : 'Some error occurred !!!'})
+    res.status(203).send({message : 'Some error ouccers !!!'})
  })
 
 }
@@ -95,7 +96,7 @@ exports.deleteProduct = async (req,res)=>{
         res.send({message : "Product deleted successfully !!!"})
     })
     .catch((err)=>{
-        res.send({message : 'Some error occurred !!!'})
+        res.send({message : 'Some error occures !!!'})
 
     })
 }
@@ -126,6 +127,30 @@ exports.updateProduct = async (req,res)=>{
             console.log(error)    
             return res.status(203).send('Something Went Wrong')
             })
+}
+
+// update in bulk 
+exports.updateBulk = async (req,res)=>{
+
+    let arr = [];
+
+    let skus = JSON.parse(req.body.SKUs);
+    await skus.map((obj,index)=>{
+
+        arr.push({SKU : obj.SKU});
+    })
+
+
+    await product.updateMany({ $or : arr }, req.body)
+    .then((data) => {
+        res.status(200).send({ message: 'Product is updated successfully.' })
+    })
+    .catch((error) => {
+    console.log(error)    
+     res.status(203).send('Something Went Wrong')
+
+    })
+        
 }
   // ================================================= Apis for Products Ends =======================================================
   

@@ -622,6 +622,15 @@ export const changeProductStatus = async (data) => {
   });
 };
 
+export const updateBulk = async (data) => {
+  console.log(data)
+  return await axios.post(`${official}/updateBulk`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
 // ================== CURD for Fabric ==========================
 
 export const addFabric = async (data) => {

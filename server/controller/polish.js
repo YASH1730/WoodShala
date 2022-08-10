@@ -15,7 +15,7 @@ console.log(req.body)
 
   await data.save()
     .then(() => {
-      res.send({message : 'Polish Added successfully !!!'})
+      res.send({message : 'Polish Added sucessfully !!!'})
     })
     .catch((error) => {
       console.log(error)
@@ -89,7 +89,7 @@ exports.changePolishStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.status(203).send('Something Went Wrong !!!')
+      res.status(203).send('Something went Wrong !!!')
   })
 }
 

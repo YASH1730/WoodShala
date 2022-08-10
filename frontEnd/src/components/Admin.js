@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import '../assets/custom/css/admin.css'
 // icons 
 import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
-
+import PolicyIcon from '@mui/icons-material/Policy';
 import ForestIcon from "@mui/icons-material/Forest";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -25,7 +25,7 @@ import WavesIcon from '@mui/icons-material/Waves';
 import Category from "./dashboard/Category";
 import SubCategory from "./dashboard/SubCategory";
 import PrimaryMaterial from "./dashboard/PrimaryMaterial";
-import SecondaryMaterial from "./dashboard/SecondaryMaterial";
+// import SecondaryMaterial from "./dashboard/SecondaryMaterial";
 import Polish from "./dashboard/Polish";
 import Hinge from "./dashboard/Hinge";
 import Fitting from "./dashboard/Fitting";
@@ -34,6 +34,7 @@ import Door from "./dashboard/Door";
 import Handle from "./dashboard/Handle";
 import Fabric from "./dashboard/Fabric";
 import Textile from "./dashboard/Textile";
+import Policy from "./dashboard/Policy";
 
 const components = [
 Category,
@@ -47,6 +48,7 @@ Door,
 Handle,
 Fabric,
 Textile,
+Policy
 ]
 
 function TabPanel(props) {
@@ -174,6 +176,12 @@ function BasicTabs() {
                   icon={<WavesIcon />}
                   label="Textile"
                   {...a11yProps(11)}
+                />
+                <Tab
+                  wrapped
+                  icon={<PolicyIcon />}
+                  label="Policy"
+                  {...a11yProps(12)}
                 />
         </Tabs>
       </Box>

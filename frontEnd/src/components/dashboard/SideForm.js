@@ -22,9 +22,8 @@ import {
   StepLabel,
   StepContent,
   Slider,
-  Tooltip,
   Select,
-  OutlinedInput,
+  TextareaAutosize,
   ListItemText,
   InputLabel
 } from "@mui/material";
@@ -128,7 +127,7 @@ const style = {
 };
 
 const Sideform = () => {
-  // multple images
+  // multiple images
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
 
@@ -628,6 +627,7 @@ const Sideform = () => {
         setPreData({
           ...preData,
           priMater: SideBox.open.payload.row.primaryMaterial_name,
+          primaryMaterial_description: SideBox.open.payload.row.primaryMaterial_description,
         });
         break;
       case "update_polish":
@@ -1049,15 +1049,7 @@ const Sideform = () => {
   const handleChangeSecMaterial = (event) => {
     setSecMaterial(event.target.value);
   };
-  const handleChangeMirror = (event) => {
-    // console.log(event.target.value);
-    setMirrorVal(event.target.value);
-  };
-
-  const handleChangeAssembly = (event) => {
-    // console.log(event.target.value);
-    setAssemblyVal(event.target.value);
-  };
+ 
 
   const handleChangeLeg = (event) => {
     // console.log(event.target.value);
@@ -1069,9 +1061,6 @@ const Sideform = () => {
     SideBox.setOpen({ state: false, formType: null });
   };
 
-  const handleChangeSilver = (e) => {
-    setSilver(e.target.value);
-  };
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     maxFiles: 10,
@@ -1379,7 +1368,7 @@ const Sideform = () => {
       });
   };
 
-  // function fo reseting the values
+  // function fo resting the values
 
   const resetAll = () => {
     setImages([]);
@@ -2018,6 +2007,12 @@ const Sideform = () => {
 
     const FD = new FormData();
 
+
+    Image.map((element) => {
+      return FD.append("primaryMaterial_image", element);
+    });
+    FD.append("primaryMaterial_description", e.target.primaryMaterial_description.value);
+
     FD.append("primaryMaterial_name", e.target.primaryMaterial_name.value);
     FD.append(
       "primaryMaterial_status",
@@ -2065,7 +2060,14 @@ const Sideform = () => {
 
     const FD = new FormData();
 
+
     FD.append("_id", SideBox.open.payload.row.action);
+
+    Image.map((element) => {
+      return FD.append("primaryMaterial_image", element);
+    });
+    FD.append("primaryMaterial_description", e.target.primaryMaterial_description.value);
+
 
     e.target.primaryMaterial_name.value !== "" &&
       FD.append("primaryMaterial_name", e.target.primaryMaterial_name.value);
@@ -6086,7 +6088,7 @@ const Sideform = () => {
                     method="post"
                   >
                     <ImagePreviews
-                      text={"Plese Drag and Drop the Category image"}
+                      text={"Please Drag and Drop the Category image"}
                     >
                       {" "}
                     </ImagePreviews>
@@ -6206,7 +6208,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    <ImagePreviews text={'Please Drag and Drop the Material image'}> </ImagePreviews>
 
                     <TextField
                       fullWidth
@@ -6216,6 +6218,17 @@ const Sideform = () => {
                       label="Primary Material"
                       type="text"
                       helperText="Please enter your primary material"
+                    />
+
+                    <br></br>
+                    <TextareaAutosize
+                      fullWidth 
+                      minRows = {5}
+                      id="outlined-select"
+                      name="primaryMaterial_description"
+                      defaultValue={'Primary Material Description'}
+                      type="text"
+                      helperText="Please enter your primary material description"
                     />
 
                     <br></br>
@@ -6267,7 +6280,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    <ImagePreviews text={'Please Drag and Drop the Material image'}> </ImagePreviews>
 
                     <TextField
                       fullWidth
@@ -6277,6 +6290,17 @@ const Sideform = () => {
                       label="Primary Material"
                       value={preData.priMater}
                       helperText="Please enter the update"
+                    />
+                     <br></br>
+                    <TextareaAutosize
+                      fullWidth 
+                      minRows = {5}
+                      id="outlined-select"
+                      name="primaryMaterial_description"
+                      onChange={handleChangeData}
+                      value = {preData.primaryMaterial_description}
+                      type="text"
+                      helperText="Please enter your primary material description"
                     />
 
                     <Button
@@ -6317,7 +6341,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
                     <TextField
                       fullWidth
                       // required
@@ -6428,7 +6452,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
                     <TextField
                       fullWidth
                       // required
@@ -6539,7 +6563,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
                     <TextField
                       fullWidth
                       // required
@@ -6650,7 +6674,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
                     <TextField
                       fullWidth
                       // required
@@ -6761,7 +6785,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
                     <TextField
                       fullWidth
                       // required
@@ -6872,7 +6896,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <TextField
                       fullWidth
@@ -6932,7 +6956,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <TextField
                       fullWidth
@@ -7324,7 +7348,7 @@ const Sideform = () => {
                     </FormLabel>
 
                     <ProductsPreviews
-                      text={"Plese Drag and Drop the Product Image "}
+                      text={"Please Drag and Drop the Product Image "}
                     >
                       {" "}
                     </ProductsPreviews>
@@ -7382,7 +7406,7 @@ const Sideform = () => {
                     </FormLabel>
 
                     <ImagePreviews
-                      text={"Plese Drag and Drop the Product Image "}
+                      text={"Please Drag and Drop the Product Image "}
                     >
                       {" "}
                     </ImagePreviews>
@@ -7428,7 +7452,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <TextField
                       fullWidth
@@ -7489,7 +7513,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <TextField
                       fullWidth
@@ -7515,7 +7539,7 @@ const Sideform = () => {
             )}
             {/* update secondaryMaterial Ends */}
 
-            {/*  add subCatagory */}
+            {/*  add subCategory */}
 
             {SideBox.open.formType === "subcategory" && (
               <Grid container p={5}>
@@ -7539,7 +7563,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <TextField
                       fullWidth
@@ -7622,7 +7646,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Plese Drag and Drop the Category image'}> </ImagePreviews> */}
+                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Category
@@ -7815,7 +7839,7 @@ const Sideform = () => {
                       autoComplete={false}
                       id="fullWidth"
                       label="Campaign Name"
-                      type="textl"
+                      type="text"
                       variant="outlined"
                     />
 
@@ -7823,7 +7847,7 @@ const Sideform = () => {
                       fullWidth
                       autoComplete={false}
                       id="fullWidth"
-                      label="Couponse Code"
+                      label="Coupons Code"
                       type="text"
                       variant="outlined"
                     />
@@ -7878,7 +7902,7 @@ const Sideform = () => {
                 </Grid>
               </Grid>
             )}
-            {/* Coupone Ends */}
+            {/* Coupons Ends */}
           </Box>
         </Backdrop>
       </Slide>
