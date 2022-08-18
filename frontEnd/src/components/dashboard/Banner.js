@@ -1,7 +1,7 @@
 import React, { useEffect,useState,useContext } from "react";
 import {Notify} from '../../App'
 import { useDropzone } from "react-dropzone";
-import {listBanner,addBanner, chaneStatus} from '../../services/service'
+import {listBanner,addBanner, changeStatus} from '../../services/service'
 import {
   Box,
   Typography,
@@ -155,7 +155,7 @@ export default function Banner() {
     FD.append('_id',e.target.name)
     FD.append('banner_Status',e.target.checked)
 
-    const res = chaneStatus(FD);
+    const res = changeStatus(FD);
 
     res.then((data)=>{
       console.log(data)

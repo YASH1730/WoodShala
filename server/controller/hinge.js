@@ -89,7 +89,7 @@ exports.changeHingeStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.status(203).send('Something Went Wrong !!!')
+      res.status(203).send('Something went wrong !!!')
   })
 }
 

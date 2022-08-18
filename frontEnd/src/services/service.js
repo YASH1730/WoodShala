@@ -1,4 +1,6 @@
+
 import axios from "axios";
+
 
 const localURL = "http://localhost:8000/api";
 const official = "http://157.245.102.136/api";
@@ -110,6 +112,16 @@ export const getLastProduct = async () => {
   });
 };
 
+// for getting the last product
+
+export const getPresentSKUs = async () => {
+  return await axios.get(`${official}/getPresentSKUs`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
 //  =========================== CURD For Bannner ========================
 
 // add banner
@@ -134,8 +146,8 @@ export const listBanner = async () => {
 
 // change status banner
 
-export const chaneStatus = async (data) => {
-  return await axios.patch(`${official}/chaneStatusBanner`, data, {
+export const changeStatus = async (data) => {
+  return await axios.patch(`${official}/changeStatusBanner`, data, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
@@ -709,6 +721,79 @@ export const changeTextileStatus = async (data) => {
 
 export const deleteTextile = async (data) => {
   return await axios.delete(`${official}/deleteTextile?_id=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// =========================== CURD FOR MERGE PRODUCTS  ===========================
+
+// for  adding category to the list
+
+export const addMergeProduct = async (data) => {
+  return await axios.post(`${official}/addMergeProduct`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// for listing the MergeProducts
+
+export const getListMergeProduct = async () => {
+  return await axios.get(`${official}/getListMergeProduct`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// for deleting the MergeProduct
+
+export const deleteMergeProduct = async (ID) => {
+  return await axios.delete(`${official}/deleteMergeProduct/?ID=${ID}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// for update the MergeProduct
+
+export const updateMergeProduct = async (data) => {
+  return await axios.patch(`${official}/updateMergeProduct`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// for getting the last MergeProduct
+
+export const getLastMergeProduct = async () => {
+  return await axios.get(`${official}/getLastMergeProduct`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// =========================== CURD FOR MERGE PRODUCTS  ===========================
+
+// for  adding category to the list
+
+export const getOrder = async () => {
+  return await axios.get(`${official}/listOrders`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// change status 
+export const changeOrderStatus = async (data) => {
+  return await axios.post(`${official}/changeOrderStatus`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },

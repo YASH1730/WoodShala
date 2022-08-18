@@ -1,8 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState} from "react";
 import {
   Typography,
 } from "@mui/material";
-import { OpenBox, Notify } from "../App"
+// import { OpenBox, Notify } from "../App"
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -12,7 +12,7 @@ import '../assets/custom/css/admin.css'
 import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
 import PolicyIcon from '@mui/icons-material/Policy';
 import ForestIcon from "@mui/icons-material/Forest";
-import FilterListIcon from "@mui/icons-material/FilterList";
+// import FilterListIcon from "@mui/icons-material/FilterList";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
 import ConstructionIcon from "@mui/icons-material/Construction";
@@ -41,8 +41,8 @@ Category,
 SubCategory,
 PrimaryMaterial,
 Polish,
-Hinge,
 Fitting,
+Hinge,
 Knob,
 Door,
 Handle,
@@ -123,65 +123,59 @@ function BasicTabs() {
                   label="Primary Material"
                   {...a11yProps(2)}
                 />
-                {/* <Tab
-                  wrapped
-                  icon={<FilterListIcon />}
-                  label="Secondary Material"
-                  {...a11yProps(3)}
-                /> */}
                 <Tab
                   wrapped
                   icon={<AutoAwesomeIcon />}
                   label="Polish"
-                  {...a11yProps(4)}
+                  {...a11yProps(3)}
                 />
                 <Tab
                   wrapped
                   icon={<ConstructionIcon />}
                   label="Fitting"
-                  {...a11yProps(5)}
+                  {...a11yProps(4)}
                 />
                 <Tab
                   wrapped
                   icon={<InsertLinkIcon />}
                   label="Hinge"
-                  {...a11yProps(6)}
+                  {...a11yProps(5)}
                 />
                 <Tab
                   wrapped
                   icon={<AdjustIcon />}
                   label="Knob"
-                  {...a11yProps(7)}
+                  {...a11yProps(6)}
                 />
                 <Tab
                   wrapped
                   icon={<DoorSlidingIcon />}
                   label="Door"
-                  {...a11yProps(8)}
+                  {...a11yProps(7)}
                 />
                 <Tab
                   wrapped
                   icon={<DragHandleIcon />}
                   label="Handle Material"
-                  {...a11yProps(9)}
+                  {...a11yProps(8)}
                 />
                 <Tab
                   wrapped
                   icon={<WavesIcon />}
                   label="Fabric"
-                  {...a11yProps(10)}
+                  {...a11yProps(9)}
                 />
                 <Tab
                   wrapped
                   icon={<WavesIcon />}
                   label="Textile"
-                  {...a11yProps(11)}
+                  {...a11yProps(10)}
                 />
                 <Tab
                   wrapped
                   icon={<PolicyIcon />}
                   label="Policy"
-                  {...a11yProps(12)}
+                  {...a11yProps(11)}
                 />
         </Tabs>
       </Box>

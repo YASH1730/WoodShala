@@ -47,7 +47,7 @@ export default function PrimaryMaterial() {
 
 
   const [Row, setRows] = useState()
-  // function for get cetegory list
+  // function for get category list
 
   useEffect(() => {
     getPrimaryMaterial()
@@ -161,7 +161,7 @@ export default function PrimaryMaterial() {
       despatchAlert.setNote({
         open : true,
         variant : 'error',
-        message : "Somthing Went Worang !!!"
+        message : "Something Went Wrong !!!"
   
       })
     })
@@ -224,7 +224,7 @@ export default function PrimaryMaterial() {
             fullWidth
             autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
-            label="Search by mterial name"
+            label="Search by material name"
             type="text"
             onChange={handelSearch}
           />
@@ -234,7 +234,7 @@ export default function PrimaryMaterial() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "primaryMeterial" });
+              SideBox.setOpen({ state: true, formType: "primaryMaterial" });
             }}
             sx={{ width: "100%" }}
             color="primary"

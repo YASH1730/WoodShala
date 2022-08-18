@@ -292,9 +292,9 @@ export default function Policy() {
     if (e.target.returnable.value !== '') FD.append('returnable', e.target.returnable.value)
     FD.append('SKUs',JSON.stringify(selectedSKU))
 
-    console.log(e.target.COD.value,
-      e.target.returnable.value,
-      selectedSKU)
+    // console.log(e.target.COD.value,
+    //   e.target.returnable.value,
+    //   selectedSKU)
 
     const res = updateBulk(FD);
 

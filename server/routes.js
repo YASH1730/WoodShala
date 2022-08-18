@@ -8,6 +8,7 @@ const multer = require('multer')
 const user = require("./controller/user");
 const categories = require("./controller/categories");
 const products = require("./controller/product");
+const mergeProduct = require("./controller/mergeProduct");
 const banner = require("./controller/banner");
 const order = require("./controller/order");
 const subCategories = require("./controller/subCategories");
@@ -27,7 +28,7 @@ const draft = require("./controller/draft");
 const fabric = require("./controller/fabric");
 const textile = require("./controller/textile");
 
-// middilwear for the multer setup
+// middleware for the multer setup
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -56,7 +57,7 @@ const upload = multer({
 }).fields([{ name: "product_image" }, { name: "featured_image" }, { name: "category_image" }, { name: 'banner_image' }, { name: 'specification_image' },  { name: 'fabric_image' } ,  { name: 'textile_image' } ,  { name: 'primaryMaterial_image' } ]);
 
 
-// middilwear for encryption
+// middleware for encryption
 function encode(req, res, next) {
     const saltRounds = 10;
 
@@ -87,10 +88,10 @@ function encode(req, res, next) {
 }
 
 
-// midilwear to parse the body 
+// middleware to parse the body 
 route.use(bodyParser.urlencoded({ extended: true }));
 route.use(bodyParser.json());
-// Midilwear For Authentication
+// Middleware For Authentication
 
 function AuthJwt(req, res, next) {
     // console.log(req.headers)
@@ -160,6 +161,37 @@ route.get('/getLastProduct', AuthJwt, products.getLastProduct);
 
 route.post('/updateBulk', AuthJwt,upload, products.updateBulk);
 
+// Get SKUs
+
+route.get('/getPresentSKUs',AuthJwt,upload, products.getPresentSKUs);
+
+
+// =============== Merge Product routes =======================
+
+// add product
+
+route.post('/addMergeProduct', AuthJwt, upload, mergeProduct.addMergeProduct);
+
+// Get the list product
+
+route.get('/getListMergeProduct', AuthJwt, mergeProduct.getListMergeProduct);
+
+// delete MergeProduct
+
+route.delete('/deleteMergeProduct', AuthJwt, mergeProduct.deleteMergeProduct);
+
+// update MergeProduct
+
+route.patch('/updateMergeProduct', AuthJwt, upload, mergeProduct.updateMergeProduct);
+
+// Find last document for SKU id increment
+
+route.get('/getLastMergeProduct', AuthJwt, mergeProduct.getLastMergeProduct);
+
+// Update Bulk
+
+// route.post('/updateBulk', AuthJwt,upload, mergeMergeProduct.updateBulk);
+
 // ================== Banner Routes =============================
 
 // add banners
@@ -172,18 +204,26 @@ route.get('/listBanner', AuthJwt, banner.listBanner);
 
 // change status banners
 
-route.patch('/chaneStatusBanner', upload, AuthJwt, banner.changeStatus);
+route.patch('changStatusBanner', upload, AuthJwt, banner.changeStatus);
 
 
 // ================== Order Routes =============================
 
 // Make Order
 
-route.post('/makeOrder', upload, AuthJwt, order.makeOrder);
+route.post('/placeOrder',  upload, order.placeOrder);
 
 // List Order
 
-route.get('/listOrder', AuthJwt, order.listOrder);
+route.get('/listOrders', AuthJwt, order.listOrder);
+
+// Change Status
+
+route.post('/changeOrderStatus', AuthJwt,upload, order.changeOrderStatus);
+
+// Search Order
+
+route.get('/searchOrder', order.searchOrder);
 
 // ================== sub categories Routes =============================
 
@@ -194,7 +234,7 @@ route.post("/addSubCategories", AuthJwt, upload, subCategories.addSubCatagories)
 // list sub cat route
 route.get("/getSubCatagories", AuthJwt, subCategories.getSubCatagories);
 
-// cahge status of sub cat route
+// change  status of sub cat route
 route.patch("/changeSubStatus", AuthJwt, upload, subCategories.changeSubStatus);
 
 // edit sub cat 
@@ -209,7 +249,7 @@ route.post("/addPrimaryMaterial", AuthJwt, upload, primaryMaterial.addPrimaryMat
 // list sub cat route
 route.get("/getPrimaryMaterial", AuthJwt, primaryMaterial.getPrimaryMaterial);
 
-// cahge status of changePrimaryMaterialStatus route
+// change status of changePrimaryMaterialStatus route
 route.patch("/changePrimaryMaterialStatus", AuthJwt, upload, primaryMaterial.changePrimaryMaterialStatus);
 
 // edit editPrimaryMaterial 
@@ -225,7 +265,7 @@ route.post("/addSecondaryMaterial", AuthJwt, upload, secondaryMaterial.addSecond
 // list sub cat route
 route.get("/getSecondaryMaterial", AuthJwt, secondaryMaterial.getSecondaryMaterial);
 
-// cahge status of changeSecondaryMaterialStatus route
+// change  status of changeSecondaryMaterialStatus route
 route.patch("/changeSecondaryMaterialStatus", AuthJwt, upload, secondaryMaterial.changeSecondaryMaterialStatus);
 
 // edit editPrimaryMaterial 
@@ -241,7 +281,7 @@ route.post("/addPolish", AuthJwt, upload, polish.addPolish);
 // list sub cat route
 route.get("/getPolish", AuthJwt, polish.getPolish);
 
-// cahge status of changePolishStatus route
+// change  status of changePolishStatus route
 route.patch("/changePolishStatus", AuthJwt, upload, polish.changePolishStatus);
 
 // edit editPrimaryMaterial 
@@ -258,7 +298,7 @@ route.post("/addHinge", AuthJwt, upload, hinge.addHinge);
 // list sub cat route
 route.get("/getHinge", AuthJwt, hinge.getHinge);
 
-// cahge status of changePolishStatus route
+// change  status of changePolishStatus route
 route.patch("/changeHingeStatus", AuthJwt, upload, hinge.changeHingeStatus);
 
 // edit editPrimaryMaterial 
@@ -274,7 +314,7 @@ route.post("/addFitting", AuthJwt, upload, fitting.addFitting);
 // list getFitting route
 route.get("/getFitting", AuthJwt, fitting.getFitting);
 
-// cahge status of changeFittingStatus route
+// change  status of changeFittingStatus route
 route.patch("/changeFittingStatus", AuthJwt, upload, fitting.changeFittingStatus);
 
 // edit editPrimaryMaterial 
@@ -291,7 +331,7 @@ route.post("/addKnob", AuthJwt, upload, knob.addKnob);
 // list getKnob route
 route.get("/getKnob", AuthJwt, knob.getKnob);
 
-// cahge status of changeKnobStatus route
+// change  status of changeKnobStatus route
 route.patch("/changeKnobStatus", AuthJwt, upload, knob.changeKnobStatus);
 
 // edit editKnob 
@@ -306,7 +346,7 @@ route.post("/addDoor", AuthJwt, upload, Door.addDoor);
 // list getDoor route
 route.get("/getDoor", AuthJwt, Door.getDoor);
 
-// cahge status of changeDoorStatus route
+// change  status of changeDoorStatus route
 route.patch("/changeDoorStatus", AuthJwt, upload, Door.changeDoorStatus);
 
 // edit editDoor 
@@ -323,7 +363,7 @@ route.post("/addHandle", AuthJwt, upload, Handle.addHandle);
 // list getHandle route
 route.get("/getHandle", AuthJwt, Handle.getHandle);
 
-// cahge status of changeHandleStatus route
+// change  status of changeHandleStatus route
 route.patch("/changeHandleStatus", AuthJwt, upload, Handle.changeHandleStatus);
 
 // edit editHandle 

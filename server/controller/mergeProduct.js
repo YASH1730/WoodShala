@@ -1,16 +1,16 @@
 
-const product = require('../../database/models/products')
+const merge = require('../../database/models/mergeProduct')
 const localhost = 'http://localhost:8000'
 const official  = 'http://157.245.102.136'
-// ================================================= Apis for Products ======================================================= 
+// ================================================= Apis for merges ======================================================= 
 //==============================================================================================================================
 
-// Add Products 
+// Add merges 
      
-exports.addProduct = async (req,res) =>{
+exports.addMergeProduct = async (req,res) =>{
     console.log(req.files);
 
-    // console.log(req.files['product_image'])
+    // console.log(req.files['merge_image'])
 
     if (req.files['specification_image'] === undefined || req.files['featured_image'] === undefined || req.files['product_image'] === undefined) return res.status(203).send({message : 'Please Provide the required images !!!'})
     
@@ -30,29 +30,25 @@ exports.addProduct = async (req,res) =>{
 
    req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
 
-    
     console.log(req.body);
 
-    const data = product(req.body);
+    const data = merge(req.body);
 
     await data.save()
     .then((response)=>{
         console.log(response)
-        res.send({message:'Product added successfully !!!'})
+        res.send({message:'Merge added successfully !!!'})
     })
     .catch((err)=>{
         console.log(err)
         res.status(203).send({message:'Some error occurred !!!'})
-
     })
-
-
   }
  
-// Get Product List 
+// Get merge List 
 
-exports.getListProduct = async(req,res)=>{
-    await product.find()
+exports.getListMergeProduct = async(req,res)=>{
+    await merge.find()
     .then((response)=>{
     //   console.log(response)
       res.send(response)
@@ -64,21 +60,20 @@ exports.getListProduct = async(req,res)=>{
 }
 
 
-//   Get last product
+//   Get last merge
 
-exports.getLastProduct = async(req,res)=>{
+exports.getLastMergeProduct = async(req,res)=>{
  
- await product.find({},'SKU')
+ await merge.find({},'SKU')
  .sort({_id:-1})
  .limit(1)
  .then((response)=>{
      if(response !== null)
      {
-        //  console.log(response);
          res.send(response);
      }
      else{
-         res.status(203).send('WS-01001')
+         res.status(203).send('MS-01001')
      }
  })
  .catch((err)=>{
@@ -88,12 +83,12 @@ exports.getLastProduct = async(req,res)=>{
 
 }
 
-// delete products 
+// delete merges 
 
-exports.deleteProduct = async (req,res)=>{
-    product.deleteOne({_id: req.query.ID})
+exports.deleteMergeProduct = async (req,res)=>{
+    merge.deleteOne({_id: req.query.ID})
     .then((data)=>{
-        res.send({message : "Product deleted successfully !!!"})
+        res.send({message : "Merge Product deleted successfully !!!"})
     })
     .catch((err)=>{
         res.send({message : 'Some error occurred !!!'})
@@ -101,9 +96,9 @@ exports.deleteProduct = async (req,res)=>{
     })
 }
 
-// update products 
+// update merges 
 
-exports.updateProduct = async (req,res)=>{
+exports.updateMergeProduct = async (req,res)=>{
    console.log(req.body);
    console.log(req.files);
 
@@ -116,10 +111,10 @@ exports.updateProduct = async (req,res)=>{
 
         if (req.body._id === undefined) return res.status(204).send('Payload is absent.')
 
-        await product.findOneAndUpdate({ _id: req.body._id }, req.body)
+        await merge.findOneAndUpdate({ _id: req.body._id }, req.body)
             .then((data) => {
             if (data)
-                return res.status(200).send({ message: 'Product is updated successfully.' })
+                return res.status(200).send({ message: 'Merge Product is updated successfully.' })
             else
                 return res.status(203).send({ message: 'No entries found' })
             })
@@ -141,9 +136,9 @@ exports.updateBulk = async (req,res)=>{
     })
 
 
-    await product.updateMany({ $or : arr }, req.body)
+    await merge.updateMany({ $or : arr }, req.body)
     .then((data) => {
-        res.status(200).send({ message: 'Product is updated successfully.' })
+        res.status(200).send({ message: 'Merge Product is updated successfully.' })
     })
     .catch((error) => {
     console.log(error)    
@@ -154,28 +149,5 @@ exports.updateBulk = async (req,res)=>{
 }
 
 
-
-// get present SKUs
-exports.getPresentSKUs = async (req,res) =>{
- 
-    await product.find({},'SKU')
-    .then((response)=>{
-        if(response !== null)
-        {
-            res.send(response);
-        }
-        else
-        {
-            res.status(203).send({message : 'Please Add Some Products First !!!'})
-        }
-    })
-    .catch((err)=>{
-       //  console.log(err)
-       res.status(203).send({message : 'Some error occurred !!!'})
-    })
-   
-}
-
-
-  // ================================================= Apis for Products Ends =======================================================
+// ================================================= Apis for merges Ends =======================================================
   
