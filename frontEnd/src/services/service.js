@@ -2,7 +2,7 @@
 import axios from "axios";
 
 
-const localURL = "http://localhost:8000/api";
+// const official = "http://localhost:8000/api";
 const official = "http://157.245.102.136/api";
 
 //  login
@@ -779,7 +779,7 @@ export const getLastMergeProduct = async () => {
   });
 };
 
-// =========================== CURD FOR MERGE PRODUCTS  ===========================
+// =========================== CURD FOR Order PRODUCTS  ===========================
 
 // for  adding category to the list
 
@@ -794,6 +794,45 @@ export const getOrder = async () => {
 // change status 
 export const changeOrderStatus = async (data) => {
   return await axios.post(`${official}/changeOrderStatus`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// =========================== CURD FOR Customer  ===========================
+
+// for  list customer to the list
+
+export const listCustomer = async () => {
+  return await axios.get(`${official}/listCustomer`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// for  list customer to the list
+
+export const deleteCustomer = async () => {
+  return await axios.delete(`${official}/deleteCustomer`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// change add Customer 
+export const addCustomer = async (data) => {
+  return await axios.post(`${official}/addCustomer`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+// change add Customer 
+export const updateCustomer = async (data) => {
+  return await axios.patch(`${official}/updateCustomer`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
