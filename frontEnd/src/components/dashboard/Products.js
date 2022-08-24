@@ -1,4 +1,4 @@
-import React, { useState, useContext,useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
 
   Typography,
@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import { OpenBox, Notify } from "../../App";
-import {getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct} from '../../services/service'
+import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct } from '../../services/service'
 import MergeIcon from '@mui/icons-material/Merge';
 import {
   DataGrid,
@@ -39,8 +39,8 @@ function CustomPagination() {
 
 
 export default function Products() {
-  
-  
+
+
   // useContext 
 
   const SideBox = useContext(OpenBox);
@@ -49,147 +49,147 @@ export default function Products() {
 
   // states
   const [selectedSKU, setSelection] = useState([]);
-  const [search,setSearch] = useState('')
+  const [search, setSearch] = useState('')
   const [Row, setRows] = useState()
   const [MergeRow, setMergeRows] = useState()
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
     getListProduct()
-    .then((data) => {
-      console.log(data.data)
+      .then((data) => {
+        console.log(data.data)
 
-      setRows(data.data.map((row,index) => {
+        setRows(data.data.map((row, index) => {
 
-        return ({
-          id: index+1,
-          SKU: row.SKU,
-          product_title: row.product_title,
-          category_name: row.category_name,
-          sub_category_name: row.sub_category_name,
-          product_description: row.product_description,
-          specification_image : row.specification_image,
-          seo_title: row.seo_title,
-          seo_description: row.seo_description,
-          seo_keyword: row.seo_keyword,
-          status: row.status ? 'Activated' : 'Deactivated' ,
-          featured_image: row.featured_image,
-          primary_material: row.primary_material_name,
-          secondary_material: row.secondary_material_name ,
-          secondary_material_weight: row.secondary_material_weight,
-          length: row.length_main,
-          breadth: row.breadth,
-          height: row.height,
-          weight: row.weight,
-          polish: row.polish_name,
-          hinge: row.hinge_name,
-          knob: row.knob_name,
-          handle: row.handle_name,
-          door: row.door_name,
-          fitting: row.fitting_name,
-          selling_points: row.selling_points,
-          showroom_price: row.showroom_price,
-          top_size: row.top_size,
-          dial_size: row.dial_size,
-          seating_size_width: row.seating_size_width,
-          seating_size_depth: row.seating_size_depth,
-          seating_size_height: row.seating_size_height,
-          weight_capacity: row.weight_capacity,
-          wall_hanging: row.wall_hanging,
-          assembly_required: row.assembly_required,
-          assembly_part: row.assembly_part,
-          leg : row.legs,
-          mirror: row.mirror,
-          mirror_width: row.mirror_width,
-          mirror_length: row.mirror_length,
-          silver: row.silver,
-          silver_weight: row.silver_weight,
-          joints: row.joints,
-          upholstery: row.upholstery,
-          fabric: row.fabric_name,
-          wheel: row.wheel,
-          trolley: row.trolley,
-          trolley_material: row.trolley_material,
-          rotating_seats: row.rotating_seats,
-          eatable_oil_polish: row.eatable_oil_polish,
-          no_chemical: row.no_chemical,
-          straight_back : row.straight_back,
-          lean_back: row.lean_back,
-          weaving: row.weaving,
-          not_suitable_for_Micro_Dish: row.not_suitable_for_Micro_Dish,
-          tilt_top: row.tilt_top,
-          inside_compartments: row.inside_compartments,
-          stackable: row.stackable,
-          knife: row.knife,
-          MRP: row.MRP,
-          tax_rate: row.tax_rate,
-          selling_price: row.selling_price,
-          discount_limit: row.discount_limit,
-          dispatch_time: row.dispatch_time,
-          action: row
-        })
-      }))
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+          return ({
+            id: index + 1,
+            SKU: row.SKU,
+            product_title: row.product_title,
+            category_name: row.category_name,
+            sub_category_name: row.sub_category_name,
+            product_description: row.product_description,
+            specification_image: row.specification_image,
+            seo_title: row.seo_title,
+            seo_description: row.seo_description,
+            seo_keyword: row.seo_keyword,
+            status: row.status ? 'Activated' : 'Deactivated',
+            featured_image: row.featured_image,
+            primary_material: row.primary_material_name,
+            secondary_material: row.secondary_material_name,
+            secondary_material_weight: row.secondary_material_weight,
+            length: row.length_main,
+            breadth: row.breadth,
+            height: row.height,
+            weight: row.weight,
+            polish: row.polish_name,
+            hinge: row.hinge_name,
+            knob: row.knob_name,
+            handle: row.handle_name,
+            door: row.door_name,
+            fitting: row.fitting_name,
+            selling_points: row.selling_points,
+            showroom_price: row.showroom_price,
+            top_size: row.top_size,
+            dial_size: row.dial_size,
+            seating_size_width: row.seating_size_width,
+            seating_size_depth: row.seating_size_depth,
+            seating_size_height: row.seating_size_height,
+            weight_capacity: row.weight_capacity,
+            wall_hanging: row.wall_hanging,
+            assembly_required: row.assembly_required,
+            assembly_part: row.assembly_part,
+            leg: row.legs,
+            mirror: row.mirror,
+            mirror_width: row.mirror_width,
+            mirror_length: row.mirror_length,
+            silver: row.silver,
+            silver_weight: row.silver_weight,
+            joints: row.joints,
+            upholstery: row.upholstery,
+            fabric: row.fabric_name,
+            wheel: row.wheel,
+            trolley: row.trolley,
+            trolley_material: row.trolley_material,
+            rotating_seats: row.rotating_seats,
+            eatable_oil_polish: row.eatable_oil_polish,
+            no_chemical: row.no_chemical,
+            straight_back: row.straight_back,
+            lean_back: row.lean_back,
+            weaving: row.weaving,
+            not_suitable_for_Micro_Dish: row.not_suitable_for_Micro_Dish,
+            tilt_top: row.tilt_top,
+            inside_compartments: row.inside_compartments,
+            stackable: row.stackable,
+            knife: row.knife,
+            MRP: row.MRP,
+            tax_rate: row.tax_rate,
+            selling_price: row.selling_price,
+            discount_limit: row.discount_limit,
+            dispatch_time: row.dispatch_time,
+            action: row
+          })
+        }))
+      })
+      .catch((err) => {
+        console.log(err)
+      })
 
 
     getListMergeProduct()
-    .then((data) => {
-      console.log(data.data)
+      .then((data) => {
+        console.log(data.data)
 
-      setMergeRows(data.data.map((row,index) => {
+        setMergeRows(data.data.map((row, index) => {
 
-        return ({
-          id: index+1,
-          SKU : row.SKU,
-          product_array : row.product_array,
-          product_title : row.product_title,
-          category_name : row.category_name,
-          category_id : row.category_id,
-          sub_category_name : row.sub_category_name,
-          sub_category_id : row.sub_category_id,
-          product_description : row.product_description,
-          seo_title : row.seo_title,
-          seo_description : row.seo_description,
-          seo_keyword : row.seo_keyword,
-          product_image : row.product_image,
-          featured_image : row.featured_image,
-          specification_image : row.specification_image,
-          selling_points : row.selling_points,
-          rotating_seats : row.rotating_seats,
-          eatable_oil_polish : row.eatable_oil_polish,
-          no_chemical : row.no_chemical,
-          straight_back : row.straight_back,
-          lean_back : row.lean_back,
-          weaving : row.weaving,
-          knife : row.knife,
-          not_suitable_for_Micro_Dish : row.not_suitable_for_Micro_Dish,
-          tilt_top : row.tilt_top,
-          inside_compartments : row.inside_compartments,
-          stackable : row.stackable,
-          MRP : row.MRP,
-          tax_rate : row.tax_rate,
-          selling_price : row.selling_price,
-          showroom_price : row.showroom_price,
-          discount_limit : row.discount_limit,
-          dispatch_time : row.dispatch_time,
-          status: row.status ? 'Activated' : 'Deactivated' ,
-          returnDays : row.returnDays,
-          COD : row.COD,
-          returnable : row.returnable,
-          action: row
-        })
-      }))
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+          return ({
+            id: index + 1,
+            SKU: row.SKU,
+            product_array: row.product_array,
+            product_title: row.product_title,
+            category_name: row.category_name,
+            category_id: row.category_id,
+            sub_category_name: row.sub_category_name,
+            sub_category_id: row.sub_category_id,
+            product_description: row.product_description,
+            seo_title: row.seo_title,
+            seo_description: row.seo_description,
+            seo_keyword: row.seo_keyword,
+            product_image: row.product_image,
+            featured_image: row.featured_image,
+            specification_image: row.specification_image,
+            selling_points: row.selling_points,
+            rotating_seats: row.rotating_seats,
+            eatable_oil_polish: row.eatable_oil_polish,
+            no_chemical: row.no_chemical,
+            straight_back: row.straight_back,
+            lean_back: row.lean_back,
+            weaving: row.weaving,
+            knife: row.knife,
+            not_suitable_for_Micro_Dish: row.not_suitable_for_Micro_Dish,
+            tilt_top: row.tilt_top,
+            inside_compartments: row.inside_compartments,
+            stackable: row.stackable,
+            MRP: row.MRP,
+            tax_rate: row.tax_rate,
+            selling_price: row.selling_price,
+            showroom_price: row.showroom_price,
+            discount_limit: row.discount_limit,
+            dispatch_time: row.dispatch_time,
+            status: row.status ? 'Activated' : 'Deactivated',
+            returnDays: row.returnDays,
+            COD: row.COD,
+            returnable: row.returnable,
+            action: row
+          })
+        }))
+      })
+      .catch((err) => {
+        console.log(err)
+      })
 
 
-  },[])
+  }, [])
 
 
 
@@ -201,7 +201,7 @@ export default function Products() {
       field: "featured_image",
       headerName: "Featured Image",
       width: 160,
-      align : 'center',
+      align: 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
@@ -209,7 +209,7 @@ export default function Products() {
       field: "specification_image",
       headerName: "Specification Image",
       width: 160,
-      align : 'center',
+      align: 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
@@ -217,13 +217,13 @@ export default function Products() {
       field: "product_title",
       headerName: "Product Title",
       width: 150,
-       
+
     },
     {
       field: "category_name",
       headerName: "Category Name",
       width: 150,
-       
+
     },
     {
       field: "sub_category_name",
@@ -251,7 +251,7 @@ export default function Products() {
       headerName: "SEO Keyword",
       width: 160,
     },
-    
+
     {
       field: "primary_material",
       headerName: "Primary Material",
@@ -387,68 +387,68 @@ export default function Products() {
       headerName: "Silver weight",
       width: 160,
     },
-    
+
     {
       field: "joints",
       headerName: "Joints",
       width: 160,
     },
-    
-    
+
+
     {
       field: "upholstery",
       headerName: "Upholstery",
       width: 160,
     },
-    
+
     {
       field: "fabric",
       headerName: "Fabric",
       width: 160,
     },
-    
+
     {
       field: "wheel",
       headerName: "Wheel",
       width: 160,
     },
-    
+
     {
       field: "trolley",
       headerName: "Trolley",
       width: 160,
     },
-    
+
     {
       field: "trolley_material",
       headerName: "Trolley Material",
       width: 160,
     },
-    
+
     {
       field: "rotating_seats",
       headerName: "Rotating Seats",
       width: 160,
     },
-    
+
     {
       field: "eatable_oil_polish",
       headerName: "Eatable Oil Polish",
       width: 160,
     },
-    
+
     {
       field: "no_chemical",
       headerName: "No Chemical",
       width: 160,
     },
-    
+
     {
       field: "rotating_seats",
       headerName: "Rotating Seats",
       width: 160,
     },
-    
+
     {
       field: "straight_back",
       headerName: "Straight Back",
@@ -459,73 +459,73 @@ export default function Products() {
       headerName: "Lean Back",
       width: 160,
     },
-    
+
     {
       field: "weaving",
       headerName: "Weaving",
       width: 160,
     },
-    
+
     {
       field: "not_suitable_for_Micro_Dish",
       headerName: "Suitable For Micro or Dish",
       width: 160,
     },
-    
+
     {
       field: "tilt_top",
       headerName: "Tilt Top",
       width: 160,
     },
-    
+
     {
       field: "inside_compartments",
       headerName: "Inside Compartments",
       width: 160,
     },
-    
+
     {
       field: "stackable",
       headerName: "Stackable",
       width: 160,
     },
-    
+
     {
       field: "Knife",
       headerName: "knife",
       width: 160,
     },
-    
+
     {
       field: "Wall Hanging",
       headerName: "wall_hanging",
       width: 160,
     },
-    
+
     {
       field: "MRP",
       headerName: "MRP",
       width: 160,
     },
-    
+
     {
       field: "tax_rate",
       headerName: "Tax Rate",
       width: 160,
     },
-    
+
     {
       field: "selling_price",
       headerName: "Selling Price",
       width: 160,
     },
-    
+
     {
       field: "discount_limit",
       headerName: "Discount Limit",
       width: 160,
     },
-    
+
     {
       field: "dispatch_time",
       headerName: "Dispatch Time",
@@ -535,34 +535,36 @@ export default function Products() {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) => 
-      <div>
-        
-        <IconButton onClick={() => {
-          
-          console.log(params)
-              SideBox.setOpen({
-                state : true,
-                formType : 'update_product',
-                payload : params
-              }) 
-            }} aria-label="update"  >
-              <CreateIcon />
-        </IconButton>
-        
-        <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
+      renderCell: (params) =>
+        <div>
+
+          <IconButton onClick={() => {
+
+            console.log(params)
+            SideBox.setOpen({
+              state: true,
+              formType: 'update_product',
+              payload: params
+            })
+          }} aria-label="update"  >
+            <CreateIcon />
+          </IconButton>
+
+          <IconButton onClick={() => {
+            deleteProduct(params.formattedValue._id).then((res) => {
               despatchAlert.setNote({
-                open : true,
-                variant : 'success',
-                message : "Product deleted successfully !!!"
+                open: true,
+                variant: 'success',
+                message: "Product deleted successfully !!!"
               })
-            }) }} aria-label="delete"  >
-              <DeleteIcon />
-        </IconButton>
-        
-      </div>,
+            })
+          }} aria-label="delete"  >
+            <DeleteIcon />
+          </IconButton>
+
+        </div>,
     }
-    
+
   ];
   const mergeColumns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -577,7 +579,7 @@ export default function Products() {
       field: "featured_image",
       headerName: "Featured Image",
       width: 160,
-      align : 'center',
+      align: 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
@@ -585,7 +587,7 @@ export default function Products() {
       field: "specification_image",
       headerName: "Specification Image",
       width: 160,
-      align : 'center',
+      align: 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
@@ -593,13 +595,13 @@ export default function Products() {
       field: "product_title",
       headerName: "Product Title",
       width: 150,
-       
+
     },
     {
       field: "category_name",
       headerName: "Category Name",
       width: 150,
-       
+
     },
     {
       field: "sub_category_name",
@@ -627,7 +629,7 @@ export default function Products() {
       headerName: "SEO Keyword",
       width: 160,
     },
-    
+
     {
       field: "selling_points",
       headerName: "Selling Points",
@@ -638,31 +640,31 @@ export default function Products() {
       headerName: "Showroom Price",
       width: 160,
     },
-    
+
     {
       field: "rotating_seats",
       headerName: "Rotating Seats",
       width: 160,
     },
-    
+
     {
       field: "eatable_oil_polish",
       headerName: "Eatable Oil Polish",
       width: 160,
     },
-    
+
     {
       field: "no_chemical",
       headerName: "No Chemical",
       width: 160,
     },
-    
+
     {
       field: "rotating_seats",
       headerName: "Rotating Seats",
       width: 160,
     },
-    
+
     {
       field: "straight_back",
       headerName: "Straight Back",
@@ -673,61 +675,61 @@ export default function Products() {
       headerName: "Lean Back",
       width: 160,
     },
-    
+
     {
       field: "weaving",
       headerName: "Weaving",
       width: 160,
     },
-    
+
     {
       field: "not_suitable_for_Micro_Dish",
       headerName: "Suitable For Micro or Dish",
       width: 160,
     },
-    
+
     {
       field: "tilt_top",
       headerName: "Tilt Top",
       width: 160,
     },
-    
+
     {
       field: "inside_compartments",
       headerName: "Inside Compartments",
       width: 160,
     },
-    
+
     {
       field: "stackable",
       headerName: "Stackable",
       width: 160,
     },
-    
+
     {
       field: "MRP",
       headerName: "MRP",
       width: 160,
     },
-    
+
     {
       field: "tax_rate",
       headerName: "Tax Rate",
       width: 160,
     },
-    
+
     {
       field: "selling_price",
       headerName: "Selling Price",
       width: 160,
     },
-    
+
     {
       field: "discount_limit",
       headerName: "Discount Limit",
       width: 160,
     },
-    
+
     {
       field: "dispatch_time",
       headerName: "Dispatch Time",
@@ -737,43 +739,45 @@ export default function Products() {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) => 
-      <div>
-        
-        <IconButton onClick={() => {
-          
-          console.log(params)
-              SideBox.setOpen({
-                state : true,
-                formType : 'update_merge',
-                payload : params
-              }) 
-            }} aria-label="update"  >
-              <CreateIcon />
-        </IconButton>
-        
-        <IconButton onClick={() => { deleteMergeProduct(params.formattedValue._id).then((res)=>{
+      renderCell: (params) =>
+        <div>
+
+          <IconButton onClick={() => {
+
+            console.log(params)
+            SideBox.setOpen({
+              state: true,
+              formType: 'update_merge',
+              payload: params
+            })
+          }} aria-label="update"  >
+            <CreateIcon />
+          </IconButton>
+
+          <IconButton onClick={() => {
+            deleteMergeProduct(params.formattedValue._id).then((res) => {
               despatchAlert.setNote({
-                open : true,
-                variant : 'success',
-                message : "Merged Product deleted successfully !!!"
+                open: true,
+                variant: 'success',
+                message: "Merged Product deleted successfully !!!"
               })
-            }) }} aria-label="delete"  >
-              <DeleteIcon />
-        </IconButton>
-        
-      </div>,
+            })
+          }} aria-label="delete"  >
+            <DeleteIcon />
+          </IconButton>
+
+        </div>,
     }
-    
+
   ];
 
- 
 
-  function DataGridView(Row,columns,select = true) {
+
+  function DataGridView(Row, columns, select = true) {
     return (
-       <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 400, width: "100%" }}>
         <DataGrid
-          checkboxSelection = {select}
+          checkboxSelection={select}
           rows={Row}
           columns={columns}
           pageSize={5}
@@ -789,18 +793,18 @@ export default function Products() {
             const selectedRows = Row.filter((row) =>
               selectedIDs.has(row.id),
             );
-  
+
             setSelection(selectedRows);
           }}
         />
-        </div>
-     
+      </div>
+
     );
   }
 
-  const handleSearch = (e)=>{
+  const handleSearch = (e) => {
     // console.log(e.target.value)
-     setSearch(e.target.value)
+    setSearch(e.target.value)
   }
 
   return (
@@ -824,19 +828,19 @@ export default function Products() {
           gap: "15px",
         }}
       >
-        <Grid xs={12} md = {9}>
+        <Grid xs={12} md={9}>
           <TextField
             fullWidth
             autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
-            onChange = {handleSearch}
-            name = 'seachQuery'
+            onChange={handleSearch}
+            name='seachQuery'
             type="search"
           />
         </Grid>
 
- 
+
 
         <Grid xs={12} md={2.8}>
           <Button
@@ -844,7 +848,7 @@ export default function Products() {
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
-            onClick = {()=>{SideBox.setOpen({state : true, formType : 'product'})}}
+            onClick={() => { SideBox.setOpen({ state: true, formType: 'product' }) }}
           >
             Add Product
           </Button>
@@ -857,24 +861,24 @@ export default function Products() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <div style= {
+          <div style={
             {
-              display  : 'flex',
-              justifyContent : 'space-between',
+              display: 'flex',
+              justifyContent: 'space-between',
             }
           } >
 
-          <Typography variant="h6"> Product List </Typography>
-          {selectedSKU.length > 1 &&  <Button startIcon = {<MergeIcon/>} variant = 'outlined' onClick = {()=>{
-            SideBox.setOpen({
-              state : true,
-              formType : 'merge_product',
-              payload : selectedSKU
-            }) 
-          }}>Merge</Button>}
+            <Typography variant="h6"> Product List </Typography>
+            {selectedSKU.length > 1 && <Button startIcon={<MergeIcon />} variant='outlined' onClick={() => {
+              SideBox.setOpen({
+                state: true,
+                formType: 'merge_product',
+                payload: selectedSKU
+              })
+            }}>Merge</Button>}
           </div>
           <br></br>
-          {DataGridView(Row,columns)}
+          {DataGridView(Row, columns)}
         </Grid>
       </Grid>
 
@@ -884,24 +888,24 @@ export default function Products() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <div style= {
+          <div style={
             {
-              display  : 'flex',
-              justifyContent : 'space-between',
+              display: 'flex',
+              justifyContent: 'space-between',
             }
           } >
 
-          <Typography variant="h6"> Merge Product List </Typography>
-          {selectedSKU.length > 1 &&  <Button startIcon = {<MergeIcon/>} variant = 'outlined' onClick = {()=>{
-            SideBox.setOpen({
-              state : true,
-              formType : 'merge_product',
-              payload : selectedSKU
-            }) 
-          }}>Merge</Button>}
+            <Typography variant="h6"> Merge Product List </Typography>
+            {selectedSKU.length > 1 && <Button startIcon={<MergeIcon />} variant='outlined' onClick={() => {
+              SideBox.setOpen({
+                state: true,
+                formType: 'merge_product',
+                payload: selectedSKU
+              })
+            }}>Merge</Button>}
           </div>
           <br></br>
-          {DataGridView(MergeRow,mergeColumns,false)}
+          {DataGridView(MergeRow, mergeColumns, false)}
         </Grid>
       </Grid>
 

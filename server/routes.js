@@ -32,10 +32,10 @@ const textile = require("./controller/textile");
 // middleware for the multer setup
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, './upload/');
     },
-    filename: function(req, file, cb) {
+    filename: function (req, file, cb) {
         cb(null, new Date().toISOString() + "_" + file.originalname);
     }
 });
@@ -55,7 +55,7 @@ const upload = multer({
         fileSize: 1024 * 1024 * 5
     },
     fileFilter: fileFilter
-}).fields([{ name: "product_image" }, { name: "featured_image" }, { name: "category_image" }, { name: 'banner_image' }, { name: 'specification_image' },  { name: 'fabric_image' } ,  { name: 'textile_image' } ,  { name: 'primaryMaterial_image' } , {name : 'profile_image'} ]);
+}).fields([{ name: "product_image" }, { name: "featured_image" }, { name: "category_image" }, { name: 'banner_image' }, { name: 'specification_image' }, { name: 'fabric_image' }, { name: 'textile_image' }, { name: 'primaryMaterial_image' }, { name: 'profile_image' }]);
 
 
 // middleware for encryption
@@ -77,7 +77,7 @@ function encode(req, res, next) {
     // code to hash the password
 
     bcrypt.genSalt(saltRounds, (err, salt) => {
-        bcrypt.hash(req.body.password, salt, function(err, hash) {
+        bcrypt.hash(req.body.password, salt, function (err, hash) {
             // console.log(">>>>>", hash);
             if (hash !== null) {
                 req.body.password = hash;
@@ -160,11 +160,11 @@ route.get('/getLastProduct', AuthJwt, products.getLastProduct);
 
 // Update Bulk
 
-route.post('/updateBulk', AuthJwt,upload, products.updateBulk);
+route.post('/updateBulk', AuthJwt, upload, products.updateBulk);
 
 // Get SKUs
 
-route.get('/getPresentSKUs',AuthJwt,upload, products.getPresentSKUs);
+route.get('/getPresentSKUs', AuthJwt, upload, products.getPresentSKUs);
 
 
 // =============== Merge Product routes =======================
@@ -212,7 +212,7 @@ route.patch('changStatusBanner', upload, AuthJwt, banner.changeStatus);
 
 // Make Order
 
-route.post('/placeOrder',  upload, order.placeOrder);
+route.post('/placeOrder', upload, order.placeOrder);
 
 // List Order
 
@@ -220,7 +220,7 @@ route.get('/listOrders', AuthJwt, order.listOrder);
 
 // Change Status
 
-route.post('/changeOrderStatus', AuthJwt,upload, order.changeOrderStatus);
+route.post('/changeOrderStatus', AuthJwt, upload, order.changeOrderStatus);
 
 // Search Order
 
@@ -470,7 +470,7 @@ route.patch("/changeTextileStatus", upload, AuthJwt, textile.changeTextileStatus
 // =============== Customer routes =======================
 
 // addCategory route
-route.post("/addCustomer",AuthJwt, upload, customer.addCustomer);
+route.post("/addCustomer", AuthJwt, upload, customer.addCustomer);
 
 // get list of the customer
 route.get("/listCustomer", AuthJwt, customer.listCustomer);
