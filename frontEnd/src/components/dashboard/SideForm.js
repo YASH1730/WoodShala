@@ -505,6 +505,7 @@ const Sideform = () => {
   const [changeData, setData] = useState({
     primary_material: [],
     product_array: [],
+    shipping: [],
     product_title: "",
     seo_title: "",
     seo_des: "",
@@ -3324,6 +3325,156 @@ const Sideform = () => {
                               fullWidth
                               autoComplete={false}
                               id="fullWidth"
+                              // required
+                              label="Product Title"
+                              type="text"
+                              variant="outlined"
+                              name="product_title"
+                              value={changeData.product_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Title"
+                              type="text"
+                              variant="outlined"
+                              name="seo_title"
+                              value={changeData.seo_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Description"
+                              type="text"
+                              variant="outlined"
+                              name="seo_description"
+                              value={changeData.seo_description}
+                              onChange={handleProductFelids}
+                            />
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Keyword"
+                              type="text"
+                              variant="outlined"
+                              name="seo_keyword"
+                              value={changeData.seo_keyword}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Showroom Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="showroom_price"
+                              value={changeData.showroom_price}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="MRP"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="MRP"
+                              onChange={handleProductFelids}
+                              value={changeData.MRP}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              onChange={(e) => {
+                                handleDiscount(e);
+                                handleProductFelids(e);
+                              }}
+                              label="Discount Limit"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="discount_limit"
+                              value={changeData.discount_limit}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              disabled
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="Selling Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              value={
+                                changeData.MRP > 0 &&
+                                  changeData.discount_limit > 0
+                                  ? (changeData.selling_price =
+                                    changeData.MRP -
+                                    (changeData.MRP / 100) *
+                                    changeData.discount_limit)
+                                  : 0
+                              }
+                              onChange={handleProductFelids}
+                              variant="outlined"
+                              name="selling_price"
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
                               label="Length"
                               type="number"
                               value={changeData.length_main}
@@ -3381,6 +3532,41 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
+
+                            <br></br>
+
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="tax_rate"
+                              label="Tax Rate"
+                              value={changeData.tax_rate}
+                              onChange={handleProductFelids}
+                              multiple
+                              helperText="Please select your tax rate."
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                            >
+                              {taxRateCatalog.map((option) => (
+                                <MenuItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
 
                             <br></br>
                             <InputLabel id="demo-multiple-checkbox-label">Primary Material</InputLabel>
@@ -4279,6 +4465,26 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
+                            <br></br>
+
+                            {/* product description  */}
+
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Product Description
+                            </FormLabel>
+
+                            <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (editorRef.current = editor)
+                              }
+                              init={{
+                                height: 300,
+                                menubar: true,
+                              }}
+                            />
+
                             {/* selling points  */}
 
                             <br></br>
@@ -4297,172 +4503,7 @@ const Sideform = () => {
                               }}
                             />
 
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="Product Title"
-                              type="text"
-                              variant="outlined"
-                              name="product_title"
-                              value={changeData.product_title}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Title"
-                              type="text"
-                              variant="outlined"
-                              name="seo_title"
-                              value={changeData.seo_title}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Description"
-                              type="text"
-                              variant="outlined"
-                              name="seo_description"
-                              value={changeData.seo_description}
-                              onChange={handleProductFelids}
-                            />
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Keyword"
-                              type="text"
-                              variant="outlined"
-                              name="seo_keyword"
-                              value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Product Description
-                            </FormLabel>
-
-                            {/* product description  */}
-                            <Editor
-                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
-                              onInit={(event, editor) =>
-                                (editorRef.current = editor)
-                              }
-                              init={{
-                                height: 300,
-                                menubar: true,
-                              }}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="Showroom Price"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="showroom_price"
-                              value={changeData.showroom_price}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="MRP"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="MRP"
-                              onChange={handleProductFelids}
-                              value={changeData.MRP}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              onChange={(e) => {
-                                handleDiscount(e);
-                                handleProductFelids(e);
-                              }}
-                              label="Discount Limit"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    %
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="discount_limit"
-                              value={changeData.discount_limit}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              disabled
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="Selling Price"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
-                              }
-                              onChange={handleProductFelids}
-                              variant="outlined"
-                              name="selling_price"
-                            />
+                       
 
                             <br></br>
 
@@ -4620,40 +4661,7 @@ const Sideform = () => {
                               )}
                             </FormControl>
 
-                            <br></br>
-
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              id="outlined-select"
-                              select
-                              name="tax_rate"
-                              label="Tax Rate"
-                              value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
-                              helperText="Please select your tax rate."
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    %
-                                  </InputAdornment>
-                                ),
-                              }}
-                            >
-                              {taxRateCatalog.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-                              <MenuItem key={"none"} value={undefined}>
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-
+                            
                             <br></br>
                             <TextField size="small"
                               fullWidth
@@ -5040,6 +5048,208 @@ const Sideform = () => {
                               helperText="From bottom to top"
                             />
 
+<br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Product Title"
+                              type="text"
+                              variant="outlined"
+                              name="product_title"
+                              value={changeData.product_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Title"
+                              type="text"
+                              variant="outlined"
+                              name="seo_title"
+                              value={changeData.seo_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Description"
+                              type="text"
+                              variant="outlined"
+                              name="seo_description"
+                              value={changeData.seo_description}
+                              onChange={handleProductFelids}
+                            />
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Keyword"
+                              type="text"
+                              variant="outlined"
+                              name="seo_keyword"
+                              value={changeData.seo_keyword}
+                              onChange={handleProductFelids}
+                            />
+                <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="Weight"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Kg
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="weight"
+                              value={changeData.weight}
+                              onChange={handleProductFelids}
+                            />
+
+<br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Showroom Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="showroom_price"
+                              value={changeData.showroom_price}
+                              onChange={handleProductFelids}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="MRP"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="MRP"
+                              onChange={handleProductFelids}
+                              value={changeData.MRP}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              // required
+                              autoComplete={false}
+                              id="fullWidth"
+                              onChange={(e) => {
+                                handleDiscount(e);
+                                handleProductFelids(e);
+                              }}
+                              label="Discount Limit"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="discount_limit"
+                              value={changeData.discount_limit}
+                            />
+
+                            <br></br>
+                            <TextField size="small"
+                              fullWidth
+                              disabled
+                              autoComplete={false}
+                              id="fullWidth"
+                              label="Selling Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              value={
+                                changeData.MRP > 0 &&
+                                  changeData.discount_limit > 0
+                                  ? (changeData.selling_price =
+                                    changeData.MRP -
+                                    (changeData.MRP / 100) *
+                                    changeData.discount_limit)
+                                  : 0
+                              }
+                              onChange={handleProductFelids}
+                              variant="outlined"
+                              name="selling_price"
+                            />
+                            <br></br>
+
+                          <TextField size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            select
+                            name="tax_rate"
+                            label="Tax Rate"
+                            value={changeData.tax_rate}
+                            onChange={handleProductFelids}
+                            multiple
+                            helperText="Please select your tax rate."
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  %
+                                </InputAdornment>
+                              ),
+                            }}
+                          >
+                            {taxRateCatalog.map((option) => (
+                              <MenuItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                            <MenuItem key={"none"} value={undefined}>
+                              {"None"}
+                            </MenuItem>
+                          </TextField>
+
                             <br></br>
                             <InputLabel id="demo-multiple-checkbox-label">Primary Material</InputLabel>
                             <Select
@@ -5089,25 +5299,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
  */}
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="Weight"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    Kg
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="weight"
-                              value={changeData.weight}
-                              onChange={handleProductFelids}
-                            />
+            
 
                             {/* <br></br>
 
@@ -5931,6 +6123,23 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
+                            <br></br>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Product Description
+                            </FormLabel>
+
+                            {/* product description  */}
+                            <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (editorRef.current = editor)
+                              }
+                              init={{
+                                height: 300,
+                                menubar: true,
+                              }}
+                            />
+
                             {/* selling points  */}
 
                             <br></br>
@@ -5949,172 +6158,7 @@ const Sideform = () => {
                               }}
                             />
 
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="Product Title"
-                              type="text"
-                              variant="outlined"
-                              name="product_title"
-                              value={changeData.product_title}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Title"
-                              type="text"
-                              variant="outlined"
-                              name="seo_title"
-                              value={changeData.seo_title}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Description"
-                              type="text"
-                              variant="outlined"
-                              name="seo_description"
-                              value={changeData.seo_description}
-                              onChange={handleProductFelids}
-                            />
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="SEO Keyword"
-                              type="text"
-                              variant="outlined"
-                              name="seo_keyword"
-                              value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Product Description
-                            </FormLabel>
-
-                            {/* product description  */}
-                            <Editor
-                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
-                              onInit={(event, editor) =>
-                                (editorRef.current = editor)
-                              }
-                              init={{
-                                height: 300,
-                                menubar: true,
-                              }}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="Showroom Price"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="showroom_price"
-                              value={changeData.showroom_price}
-                              onChange={handleProductFelids}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              autoComplete={false}
-                              id="fullWidth"
-                              // required
-                              label="MRP"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="MRP"
-                              onChange={handleProductFelids}
-                              value={changeData.MRP}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              autoComplete={false}
-                              id="fullWidth"
-                              onChange={(e) => {
-                                handleDiscount(e);
-                                handleProductFelids(e);
-                              }}
-                              label="Discount Limit"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    %
-                                  </InputAdornment>
-                                ),
-                              }}
-                              variant="outlined"
-                              name="discount_limit"
-                              value={changeData.discount_limit}
-                            />
-
-                            <br></br>
-                            <TextField size="small"
-                              fullWidth
-                              disabled
-                              autoComplete={false}
-                              id="fullWidth"
-                              label="Selling Price"
-                              type="number"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    ₹
-                                  </InputAdornment>
-                                ),
-                              }}
-                              value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
-                              }
-                              onChange={handleProductFelids}
-                              variant="outlined"
-                              name="selling_price"
-                            />
+                       
 
                             <br></br>
 
@@ -6272,40 +6316,7 @@ const Sideform = () => {
                               )}
                             </FormControl>
 
-                            <br></br>
-
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              id="outlined-select"
-                              select
-                              name="tax_rate"
-                              label="Tax Rate"
-                              value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
-                              helperText="Please select your tax rate."
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    %
-                                  </InputAdornment>
-                                ),
-                              }}
-                            >
-                              {taxRateCatalog.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-                              <MenuItem key={"none"} value={undefined}>
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-
+                          
                             <br></br>
                             <TextField size="small"
                               fullWidth
