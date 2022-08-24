@@ -736,16 +736,16 @@ const Sideform = () => {
       case "update_customer":
         console.log(SideBox.open.payload)
         setData({
-          CID: SideBox.open.payload.row.CID,
-          name: SideBox.open.payload.row.name,
-          mobile: SideBox.open.payload.row.mobile,
-          email: SideBox.open.payload.row.email,
-          password: SideBox.open.payload.row.password,
-          pincode: SideBox.open.payload.row.pincode,
-          city: SideBox.open.payload.row.city,
-          state: SideBox.open.payload.row.state,
-          landmark: SideBox.open.payload.row.landmark,
-          shipping: SideBox.open.payload.row.shipping,
+          CID : SideBox.open.payload.row.CID,
+          name : SideBox.open.payload.row.name,
+          mobile : SideBox.open.payload.row.mobile,
+          email : SideBox.open.payload.row.email,
+          password : SideBox.open.payload.row.password,
+          pincode : SideBox.open.payload.row.pincode,
+          city : SideBox.open.payload.row.city,
+          state : SideBox.open.payload.row.state,
+          landmark : SideBox.open.payload.row.landmark,
+          shipping : SideBox.open.payload.row.shipping,
         });
         break;
 
@@ -1024,7 +1024,7 @@ const Sideform = () => {
     // console.log(event.target.name);
     setCat(event.target.value);
   };
-
+  
   const handleClose = () => {
 
     resetAll();
@@ -1223,10 +1223,10 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-
+   
 
     FD.append("profile_image", Image[0]);
-
+    
     FD.append("name", e.target.name.value);
     FD.append("mobile", e.target.mobile.value);
     FD.append("email", e.target.email.value);
@@ -1236,7 +1236,7 @@ const Sideform = () => {
     FD.append("state", e.target.state.value);
     FD.append("landmark", e.target.landmark.value);
     FD.append("shipping", JSON.stringify(e.target.shipping.value));
-
+    
 
     const res = addCustomer(FD);
 
@@ -1279,7 +1279,7 @@ const Sideform = () => {
 
     Image[0] !== undefined && FD.append("profile_image", Image[0]);
 
-
+   
     FD.append("CID", changeData.CID);
     FD.append("name", changeData.name);
     FD.append("mobile", changeData.mobile);
@@ -1290,7 +1290,7 @@ const Sideform = () => {
     FD.append("state", changeData.state);
     FD.append("landmark", changeData.landmark);
     FD.append("shipping", changeData.shipping);
-
+    
 
     const res = updateCustomer(FD);
 
@@ -1474,8 +1474,67 @@ const Sideform = () => {
 
     setShowFabric("No");
     setData({
-      product_array: [],
-      primary_material: []
+      primary_material: [],
+    product_array: [],
+    shipping: [],
+    product_title: "",
+    seo_title: "",
+    seo_des: "",
+    seo_keyword: "",
+    product_des: "",
+    category: "",
+    sub_category: "",
+    length: "",
+    breadth: "",
+    selling_points: "",
+    height: "",
+    priMater: "",
+    priMater_weight: "",
+    secMater: "",
+    secMater_weight: "",
+    selling_price: "",
+    mrp: "",
+    discount_cap: "",
+    dispatch_time: "",
+    polish: "",
+    hinge: "",
+    knob: "",
+    handle: "",
+    door: "",
+    wight_cap: "",
+    wall_hanging: "",
+    assembly_required: "",
+    assembly_leg: "",
+    assembly_parts: "",
+    fitting: "",
+    rotating: "",
+    eatable: "",
+    no_chemical: "",
+    straight_back: "",
+    lean_back: "",
+    weaving: "",
+    not_micro_dish: "",
+    tilt_top: "",
+    inside_comp: "",
+    stackable: "",
+    silver: "",
+    selling_point: "",
+    mirror: "",
+    joints: "",
+    tax_rate: 18,
+    seat_width: "",
+    seat_depth: "",
+    seat_height: "",
+    wheel: "",
+    trolly: "",
+    returnable: false,
+    returnDays: 0,
+    trolly_mater: "",
+    top_size: 0,
+    dial_size: 0,
+    COD: false,
+    textile: ''
+
     });
     document.getElementById("myForm").reset();
   };
@@ -1811,7 +1870,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-
+    
 
     files.map((element) => {
       return FD.append("product_image", element);
@@ -1826,7 +1885,7 @@ const Sideform = () => {
     featured.map((element) => {
       return FD.append("featured_image", element);
     });
-
+  
     FD.append("primary_material_name", JSON.stringify(changeData.primary_material))
 
     category.map((item) => {
@@ -2201,7 +2260,7 @@ const Sideform = () => {
 
 
     FD.append("_id", SideBox.open.payload.value._id);
-
+    
 
     Image.map((element) => {
       return FD.append("specification_image", element);
@@ -2315,7 +2374,7 @@ const Sideform = () => {
       });
   };
 
-
+ 
   const handlePrimaryMaterial = (e) => {
     e.preventDefault();
 
@@ -2419,7 +2478,7 @@ const Sideform = () => {
         });
       });
   };
-
+ 
   const handleHandle = (e) => {
     e.preventDefault();
 
@@ -4503,7 +4562,7 @@ const Sideform = () => {
                               }}
                             />
 
-
+                       
 
                             <br></br>
 
@@ -4661,7 +4720,7 @@ const Sideform = () => {
                               )}
                             </FormControl>
 
-
+                            
                             <br></br>
                             <TextField size="small"
                               fullWidth
@@ -4934,7 +4993,7 @@ const Sideform = () => {
                               select
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name || ''}
+                              value={changeData.category_name || '' }
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -5048,7 +5107,7 @@ const Sideform = () => {
                               helperText="From bottom to top"
                             />
 
-                            <br></br>
+<br></br>
                             <TextField size="small"
                               fullWidth
                               autoComplete={false}
@@ -5102,7 +5161,7 @@ const Sideform = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-                            <br></br>
+                <br></br>
                             <TextField size="small"
                               fullWidth
                               autoComplete={false}
@@ -5122,7 +5181,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                             />
 
-                            <br></br>
+<br></br>
                             <TextField size="small"
                               fullWidth
                               autoComplete={false}
@@ -5218,37 +5277,37 @@ const Sideform = () => {
                             />
                             <br></br>
 
-                            <TextField size="small"
-                              fullWidth
-                              // required
-                              id="outlined-select"
-                              select
-                              name="tax_rate"
-                              label="Tax Rate"
-                              value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
-                              helperText="Please select your tax rate."
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    %
-                                  </InputAdornment>
-                                ),
-                              }}
-                            >
-                              {taxRateCatalog.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-                              <MenuItem key={"none"} value={undefined}>
-                                {"None"}
+                          <TextField size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            select
+                            name="tax_rate"
+                            label="Tax Rate"
+                            value={changeData.tax_rate}
+                            onChange={handleProductFelids}
+                            multiple
+                            helperText="Please select your tax rate."
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  %
+                                </InputAdornment>
+                              ),
+                            }}
+                          >
+                            {taxRateCatalog.map((option) => (
+                              <MenuItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
                               </MenuItem>
-                            </TextField>
+                            ))}
+                            <MenuItem key={"none"} value={undefined}>
+                              {"None"}
+                            </MenuItem>
+                          </TextField>
 
                             <br></br>
                             <InputLabel id="demo-multiple-checkbox-label">Primary Material</InputLabel>
@@ -5299,7 +5358,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
  */}
-
+            
 
                             {/* <br></br>
 
@@ -5381,7 +5440,7 @@ const Sideform = () => {
                           <Box className="fields">
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
 
-
+                           
                             <FormLabel id="demo-radio-buttons-group-label">
                               Featured Images
                             </FormLabel>
@@ -6158,7 +6217,7 @@ const Sideform = () => {
                               }}
                             />
 
-
+                       
 
                             <br></br>
 
@@ -6316,7 +6375,7 @@ const Sideform = () => {
                               )}
                             </FormControl>
 
-
+                          
                             <br></br>
                             <TextField size="small"
                               fullWidth
@@ -7427,7 +7486,7 @@ const Sideform = () => {
                           <Box className="fields">
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
 
-
+                          
 
                             <FormLabel id="demo-radio-buttons-group-label">
                               Featured Images
@@ -9610,7 +9669,7 @@ const Sideform = () => {
               </Grid>
             )}
             {/* add update Gallery  Ends */}
-
+        
             {/*  add subCategory */}
 
             {SideBox.open.formType === "subcategory" && (
@@ -9771,9 +9830,9 @@ const Sideform = () => {
             {/* update sebCategory Ends */}
 
 
-            {/*  add Customer */}
+              {/*  add Customer */}
 
-            {SideBox.open.formType === "add_customer" && (
+              {SideBox.open.formType === "add_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9866,13 +9925,13 @@ const Sideform = () => {
                       name="landmark"
                       label="Landmark"
                       type="text"
-                      helperText='Place nearby the main building.'
+                      helperText = 'Place nearby the main building.'
                     />
 
-                    <FormLabel id="demo-radio-buttons-group-label">
-                      Shipping Address
-                    </FormLabel>
-
+<FormLabel id="demo-radio-buttons-group-label">
+                              Shipping Address
+                            </FormLabel>
+              
                     <TextareaAutosize
                       fullWidth
                       minRows={5}
@@ -9881,9 +9940,9 @@ const Sideform = () => {
                       type="text"
                       helperText="Please enter your primary material description"
                     />
+                      
 
-
-
+                    
                     <br></br>
 
                     <Button
@@ -9899,9 +9958,9 @@ const Sideform = () => {
               </Grid>
             )}
             {/* add Customer Ends */}
-            {/*  add Customer */}
+              {/*  add Customer */}
 
-            {SideBox.open.formType === "update_customer" && (
+              {SideBox.open.formType === "update_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9993,26 +10052,26 @@ const Sideform = () => {
                       name="landmark"
                       label="Landmark"
                       type="text"
-                      helperText='Place nearby the main building.'
+                      helperText = 'Place nearby the main building.'
                     />
 
-                    <FormLabel id="demo-radio-buttons-group-label">
-                      Shipping Address
-                    </FormLabel>
-
+<FormLabel id="demo-radio-buttons-group-label">
+                              Shipping Address
+                            </FormLabel>
+              
                     <TextareaAutosize
                       fullWidth
                       minRows={5}
-                      defaultValue={changeData.shipping[0]}
+                      value={changeData.shipping[0] || ''} 
                       onChange={handleProductFelids}
                       id="outlined-select"
                       name="shipping"
                       type="text"
                       helperText="Please enter your primary material description"
                     />
+                      
 
-
-
+                    
                     <br></br>
 
                     <Button
