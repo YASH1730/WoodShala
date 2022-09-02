@@ -79,7 +79,11 @@ const product = mongoose.Schema({
     status : {required : true, type : Boolean},
     returnDays : {type : Number},
     COD : {type : Boolean},
-    returnable : {type : Boolean}
+    returnable : {type : Boolean},
+    drawer: {type : String},
+    drawer_count: {type : Number},
+    show_on_mobile : {type : Boolean},
+    range : {type : String}
 })
 
 module.exports = mongoose.model('products',product);

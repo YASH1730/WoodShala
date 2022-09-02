@@ -6,6 +6,7 @@ import {
   InputAdornment,
   IconButton,
   MenuItem,
+  Button
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
@@ -72,7 +73,7 @@ export default function Order() {
               CID: row.CID,
               customer_name: row.customer_name,
               customer_email: row.customer_email,
-              shipping_address: row.shipping_address,
+              shipping: row.shipping,
               order_time: row.order_time,
               products: row.products,
               status: row.status,
@@ -172,7 +173,7 @@ export default function Order() {
       align: "center",
     },
     {
-      field: "shipping_address",
+      field: "shipping",
       headerName: "Shipping Address",
       width: 200,
     },
@@ -385,7 +386,26 @@ export default function Order() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
+          <div style= {
+            {
+              display  : 'flex',
+              justifyContent : 'space-between',
+            }
+          } >
+
           <Typography variant="h6"> Order List </Typography>
+          <Button
+            onClick={() => {
+              SideBox.setOpen({ state: true, formType: "add_order" });
+            }}
+            color="primary"
+            variant="contained"
+          >
+            <AddIcon />
+           
+          </Button>
+          </div>
+          <></>
           <br></br>
           {DataGridView()}
         </Grid>

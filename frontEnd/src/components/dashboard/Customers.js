@@ -75,14 +75,12 @@ export default function Customer() {
               CID : row.CID ,
               register_time : row.register_time ,
               profile_image : row.profile_image ,
-              name : row.name ,
+              username : row.username ,
               mobile : row.mobile ,
               email : row.email ,
               password : row.password ,
-              pincode : row.pincode ,
               city : row.city ,
               state : row.state ,
-              landmark : row.landmark ,
               shipping : row.shipping ,
               action: row._id,
             };
@@ -116,7 +114,7 @@ export default function Customer() {
       width: 350,
     },
     {
-      field: "name",
+      field: "username",
       headerName: "Customer Name",
       width: 150,
       align: "center",
@@ -138,11 +136,11 @@ export default function Customer() {
       width: 200,
       align: "center",
     },
-    {
-      field: "pincode",
-      headerName: "Pincode",
-      width: 100,
-    },
+    // {
+    //   field: "pincode",
+    //   headerName: "Pincode",
+    //   width: 100,
+    // },
 
     {
       field: "city",
@@ -156,12 +154,12 @@ export default function Customer() {
       width: 100,
       align: "center",
     },
-    {
-      field: "landmark",
-      headerName: "Landmark",
-      width: 100,
-      align: "center",
-    },
+    // {
+    //   field: "landmark",
+    //   headerName: "Landmark",
+    //   width: 100,
+    //   align: "center",
+    // },
 
     {
       field: "action",
