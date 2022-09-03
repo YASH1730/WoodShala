@@ -89,7 +89,7 @@ exports.changeDoorStatus = async(req,res) =>{
 
   .catch((err)=>{
       console.log(err)
-      res.send('Something Went Wrong !!!')
+      res.send('Something went wrong !!!')
   })
 }
 

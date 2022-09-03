@@ -15,17 +15,17 @@ exports.home = (req, res) => {
     res.send("This Apis is written for the WoodSala!!!");
 };
 
-exports.delete = async (req, res) => {
-    userDB.deleteOne({ '_id': req.query._id })
-        .then((data) => {
-            console.log(data)
-            res.send(data)
-        })
+exports.delete = async(req,res)=>{
+    userDB.deleteOne({'_id':req.query._id})
+    .then((data)=>{
+        console.log(data)
+        res.send(data)
+    })
 }
 
 // for registration API
 
-exports.register = async (req, res) => {
+exports.register = async(req, res) => {
 
 
     const data = userDB(req.body);
@@ -47,7 +47,7 @@ exports.register = async (req, res) => {
 
 function generateJWT(data) {
     // console.log(process.env.JWT_Secrete)
-    const token = JWT.sign(data, process.env.JWT_Secrete);
+    const token = JWT.sign(data,process.env.JWT_Secrete);
     return token;
 }
 
@@ -62,18 +62,18 @@ exports.login = (req, res) => {
         .then((data) => {
             console.log(data)
             if (data != null) {
-                bcrypt.compare(req.body.password, data.password, function (err, result) {
-                    console.log(req.body.role, data.role)
+                bcrypt.compare(req.body.password, data.password, function(err, result) {
+                    console.log(req.body.role,data.role)
 
                     if (result === true) {
-
-                        if (req.body.role !== data.role)
+                        
+                        if(req.body.role !== data.role)
                             return res.status(203).send({ message: "Incorrect Role !!!" })
-
+                        
                         let token = generateJWT(req.body);
                         console.log(data)
                         console.log("User Found !!!", data);
-                        return res.send({ message: "Log In Successfully !!!", token, name: data.user_Name, email: data.email, role: data.role })
+                        return res.send({ message: "Log In Successfully !!!", token, name: data.user_Name, email: data.email, role : data.role })
 
                     } else
                         return res.status(203).send({ message: "User Not Found !!!" })
