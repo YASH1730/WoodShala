@@ -2,8 +2,8 @@
 import axios from "axios";
 
 
-// const official = "http://localhost:8000/api";
-const official = "https://woodshala.in/api";
+const localURL = "http://localhost:8000/api";
+const official = "http://157.245.102.136/api";
 
 //  login
 
@@ -781,6 +781,16 @@ export const getLastMergeProduct = async () => {
 
 // =========================== CURD FOR Order PRODUCTS  ===========================
 
+// for  adding order to the list
+
+export const addOrder = async (data) => {
+  return await axios.post(`${official}/placeOrder`,data,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
 // for  adding category to the list
 
 export const getOrder = async () => {
@@ -794,6 +804,15 @@ export const getOrder = async () => {
 // change status 
 export const changeOrderStatus = async (data) => {
   return await axios.post(`${official}/changeOrderStatus`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// order ID at last
+export const getLastOrder = async () => {
+  return await axios.get(`${official}/getLastOrder`,{
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -830,9 +849,63 @@ export const addCustomer = async (data) => {
     },
   });
 };
-// change add Customer 
+//  add Customer 
 export const updateCustomer = async (data) => {
   return await axios.patch(`${official}/updateCustomer`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+// Catalog Customer 
+export const customerCatalog = async () => {
+  return await axios.get(`${official}/customerCatalog`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// ================= CURD for Stock =========================
+
+// add stock 
+export const addStock = async (data) => {
+  return await axios.post(`${official}/addStock`,data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+// update stock 
+export const updateStock = async (data) => {
+  return await axios.patch(`${official}/updateStock`,data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// list stock 
+export const listStock = async () => {
+  return await axios.get(`${official}/listStock`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// list stock 
+export const preview = async (data) => {
+  return await axios.get(`${official}/preview?SKU=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// delete stock 
+export const deleteStock = async (data) => {
+  return await axios.delete(`${official}/deleteStock?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },

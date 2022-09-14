@@ -1,0 +1,14 @@
+.previewBox {
+    /* overflow: scroll; */
+    padding: 2%;
+    margin-top: 2%;
+}
+
+.previewBox img {
+    width: 250px;
+    border-radius: 15px;
+}
+
+.previewBox table {
+    border-radius: 15px;
+}

@@ -39,7 +39,7 @@ function CustomPagination() {
 
 
 
-export default function Knob() {
+export default function Door() {
 
   const [search, setSearch] = useState("");
 
