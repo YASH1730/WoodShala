@@ -45,6 +45,7 @@ export default function Textile() {
 
 //   const [textile, setfabric] = useState("");
   const [search, setSearch] = useState("");
+  const [check,setCheck] = useState()
 
 const {dispatch} = Store(); 
 
@@ -54,7 +55,10 @@ const {dispatch} = Store();
   useEffect(() => {
     getTextile()
       .then((data) => {
-        console.log(data)
+        setCheck(data.data.map((row,index)=>{
+          return row.textile_status
+        }))
+
 
         setRows(data.data.map((row,index) => {
 
@@ -95,7 +99,7 @@ const {dispatch} = Store();
       field: "textile_status",
       headerName: "Textile Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
     },
     {
@@ -130,23 +134,29 @@ const {dispatch} = Store();
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('textile_status',e.target.checked)
 
     const res = changeTextileStatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : "Textile Status Updated Successfully !!!"
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      // dispatch({type : Notify,payload : {
+      //   open : true,
+      //   variant : 'success',
+      //   message : "Textile Status Updated Successfully !!!"
   
-      } })
+      // } })
     })
     .catch((err)=>{
       console.log(err)

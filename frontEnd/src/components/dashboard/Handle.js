@@ -44,6 +44,7 @@ function CustomPagination() {
 export default function Knob() {
 
   const [search, setSearch] = useState("");
+  const [check,setCheck] = useState()
 
   const {dispatch} = Store()
 
@@ -54,8 +55,9 @@ export default function Knob() {
   useEffect(() => {
     getHandle()
       .then((data) => {
-        console.log(data)
-
+        setCheck(data.data.map((row,index)=>{
+          return row.handle_status
+        }))
         setRows(data.data.map((row,index) => {
 
           return ({
@@ -87,7 +89,7 @@ export default function Knob() {
       field: "handle_status",
       headerName: "Handle Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
     },
     {
@@ -122,23 +124,29 @@ export default function Knob() {
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('handle_status',e.target.checked)
 
     const res = changeHandleStatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : " Handle Material Status Updated Successfully !!!"
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+    //   dispatch({type : Notify,payload : {
+    //     open : true,
+    //     variant : 'success',
+    //     message : " Handle Material Status Updated Successfully !!!"
   
-    }})
+    // }})
     })
     .catch((err)=>{
       console.log(err)

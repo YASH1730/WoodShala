@@ -42,6 +42,7 @@ function CustomPagination() {
 export default function SubCategory() {
 
   const [search, setSearch] = useState("");
+  const [check,setCheck] = useState()
 
 const {dispatch} = Store(); 
 
@@ -51,7 +52,9 @@ const {dispatch} = Store();
   useEffect(() => {
     getSubCatagories()
       .then((data) => {
-        console.log(data)
+        setCheck(data.data.map((row,index)=>{
+          return row.sub_category_status
+        }))
 
         setRows(data.data.map((row,index) => {
 
@@ -93,7 +96,7 @@ const {dispatch} = Store();
       field: "sub_category_status",
       headerName: "Sub Category Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
 
     },
@@ -129,23 +132,29 @@ const {dispatch} = Store();
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('sub_category_status',e.target.checked)
 
     const res = changeSubSatatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : " Sub Category Status Updated Successfully !!!"
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      // dispatch({type : Notify,payload : {
+      //   open : true,
+      //   variant : 'success',
+      //   message : " Sub Category Status Updated Successfully !!!"
   
-      }})
+      // }})
     })
     .catch((err)=>{
       console.log(err)

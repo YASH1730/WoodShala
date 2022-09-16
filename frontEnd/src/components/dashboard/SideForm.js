@@ -1093,6 +1093,8 @@ const Sideform = () => {
           category_name: state.OpenBox.payload.value.category_id,
           category_id: state.OpenBox.payload.value.category_id,
           sub_category_name: state.OpenBox.payload.value.sub_category_id,
+          warehouse: state.OpenBox.payload.value.warehouse ?
+          state.OpenBox.payload.value.warehouse.split(',') : [],
           sub_category_id: state.OpenBox.payload.value.sub_category_id,
           product_description: state.OpenBox.payload.value.product_description,
           seo_title: state.OpenBox.payload.value.seo_title,
@@ -2303,8 +2305,14 @@ const Sideform = () => {
     FD.append("polish_time", changeData.polish_time);
     FD.append("manufacturing_time", changeData.manufacturing_time);
     FD.append("product_title", changeData.product_title);
-    FD.append("product_description", editorRef.current.getContent() || changeData.product_description);
-    FD.append("selling_points", sellingRef.current.getContent() || changeData.selling_points);
+   
+    if(editorRef.current)
+      FD.append("product_description", editorRef.current.getContent() )
+    else FD.append("product_description", changeData.product_description)
+    if(sellingRef.current)
+      FD.append("selling_points", sellingRef.current.getContent() )
+      else  FD.append("selling_points", changeData.selling_points)
+   
     FD.append("SKU", changeData.SKU);
     FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
     FD.append(
@@ -4106,7 +4114,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              disabled
+                              // disabled
                               autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
@@ -4119,13 +4127,14 @@ const Sideform = () => {
                                 ),
                               }}
                               value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
+                                 // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
                               }
                               onChange={handleProductFelids}
                               variant="outlined"
@@ -5906,7 +5915,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              disabled
+                              // disabled
                               autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
@@ -5919,13 +5928,14 @@ const Sideform = () => {
                                 ),
                               }}
                               value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
+                                 // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
                               }
                               onChange={handleProductFelids}
                               variant="outlined"
@@ -8107,7 +8117,6 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              disabled
                               autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
@@ -8120,13 +8129,14 @@ const Sideform = () => {
                                 ),
                               }}
                               value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
+                                // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
                               }
                               onChange={handleProductFelids}
                               variant="outlined"
@@ -8955,7 +8965,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              disabled
+                              // disabled
                               autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
@@ -8968,13 +8978,14 @@ const Sideform = () => {
                                 ),
                               }}
                               value={
-                                changeData.MRP > 0 &&
-                                  changeData.discount_limit > 0
-                                  ? (changeData.selling_price =
-                                    changeData.MRP -
-                                    (changeData.MRP / 100) *
-                                    changeData.discount_limit)
-                                  : 0
+                                 // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
                               }
                               onChange={handleProductFelids}
                               variant="outlined"

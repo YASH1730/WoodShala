@@ -47,7 +47,7 @@ export default function Category() {
 
   const {dispatch} = Store();
 
-  const [cehck,setCheck] = useState()
+  const [check,setCheck] = useState()
 
   const [search, setSearch] = useState("");
 
@@ -59,6 +59,9 @@ export default function Category() {
     categoryList()
       .then((data) => {
         
+        setCheck(data.data.map((row,index)=>{
+          return row.category_status
+        }))
 
         setRows(data.data.map((row,index) => {
 
@@ -99,7 +102,7 @@ export default function Category() {
       field: "category_status",
       headerName: "Category Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
     },
     {
@@ -134,23 +137,33 @@ export default function Category() {
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    // console.log(e.target.name)
+    // console.log(check)
 
+    const id = e.target.name.split(' ')
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('category_status',e.target.checked)
 
     const res = statusCategory(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : "Category Status Updated Successfully !!!"
+
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      
+      // dispatch({type : Notify,payload : {
+      //   open : true,
+      //   variant : 'success',
+      //   message : "Category Status Updated Successfully !!!"
   
-      }})
+      // }})
     })
     .catch((err)=>{
       console.log(err)

@@ -48,6 +48,7 @@ export default function Door() {
   const [search, setSearch] = useState("");
 
   const {dispatch} = Store();
+  const [check,setCheck] = useState()
 
 
   const [Row, setRows] = useState()
@@ -56,13 +57,14 @@ export default function Door() {
   useEffect(() => {
     getDoor()
       .then((data) => {
-        console.log(data)
-
+        setCheck(data.data.map((row,index)=>{
+          return row.door_status
+        }))
+        
         setRows(data.data.map((row,index) => {
 
           return ({
             id: index+1,
-
             door_name: row.door_name,
             door_status: row.door_status,
             action: row._id
@@ -90,8 +92,8 @@ export default function Door() {
       field: "door_status",
       headerName: "Door Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
-
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
+      
     },
     {
       field: "action",
@@ -125,23 +127,30 @@ export default function Door() {
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    // console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('door_status',e.target.checked)
 
     const res = changeDoorStatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : " Door Status Updated Successfully !!!"
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      // dispatch({type : Notify,payload : {
+      //   open : true,
+      //   variant : 'success',
+      //   message : " Door Status Updated Successfully !!!"
   
-      }})
+      // }})
     })
     .catch((err)=>{
       console.log(err)

@@ -54,7 +54,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 
 // import state 
 import {Store} from '../store/Context' 
-import {Auth, DarkMode, SideTabs} from '../store/Types' 
+import {DarkMode, SideTabs, Auth} from '../store/Types' 
 
 const Home = (props) => {
 

@@ -42,6 +42,7 @@ export default function Fitting() {
 
   const [search, setSearch] = useState("");
   const {dispatch} = Store()
+  const [check,setCheck] = useState()
 
   const [Row, setRows] = useState()
   // function for get cetegory list
@@ -49,8 +50,9 @@ export default function Fitting() {
   useEffect(() => {
     getFitting()
       .then((data) => {
-        console.log(data)
-
+        setCheck(data.data.map((row,index)=>{
+          return row.fitting_status
+        }))
         setRows(data.data.map((row,index) => {
 
           return ({
@@ -82,7 +84,7 @@ export default function Fitting() {
       field: "fitting_status",
       headerName: "Fitting Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
     },
     {
@@ -117,23 +119,29 @@ export default function Fitting() {
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('fitting_status',e.target.checked)
 
     const res = changeFittingStatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-     dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : " Fitting Status Updated Successfully !!!"
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+    //  dispatch({type : Notify,payload : {
+    //     open : true,
+    //     variant : 'success',
+    //     message : " Fitting Status Updated Successfully !!!"
   
-      }})
+    //   }})
     })
     .catch((err)=>{
       console.log(err)

@@ -54,7 +54,8 @@ function CustomPagination() {
 }
 
 export default function Products() {
-  
+  // useContext
+
   const {dispatch} = Store()
   // states
 

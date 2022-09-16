@@ -44,6 +44,7 @@ function CustomPagination() {
 export default function Fabric() {
 
   const [search, setSearch] = useState("");
+  const [check,setCheck] = useState()
 
   const {dispatch} = Store()
 
@@ -54,7 +55,9 @@ export default function Fabric() {
   useEffect(() => {
     getFabric()
       .then((data) => {
-        console.log(data)
+        setCheck(data.data.map((row,index)=>{
+          return row.fabric_status
+        }))
 
         setRows(data.data.map((row,index) => {
 
@@ -95,7 +98,7 @@ export default function Fabric() {
       field: "fabric_status",
       headerName: "Fabric Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
     },
     {
@@ -130,23 +133,30 @@ export default function Fabric() {
 
 
   const handleSwitch = (e)=>{
-    console.log(e.target.name)
+    const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
+    FD.append('_id',id[0])
     FD.append('fabric_status',e.target.checked)
 
     const res = changeFabricStatus(FD);
 
     res.then((data)=>{
-      console.log(data)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : "Fabric Status Updated Successfully !!!"
+
+      setCheck(check.map((row,index)=>{
+        // console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      // dispatch({type : Notify,payload : {
+      //   open : true,
+      //   variant : 'success',
+      //   message : "Fabric Status Updated Successfully !!!"
   
-      }})
+      // }})
     })
     .catch((err)=>{
       console.log(err)
