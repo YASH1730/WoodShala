@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -9,7 +9,8 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import {Store } from "../../store/Context";
 import { getHinge,editHinge } from '../../services/service'
 import '../../assets/custom/css/category.css'
 
@@ -44,9 +45,7 @@ export default function Hinge() {
 
   const [search, setSearch] = useState("");
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+const {dispatch} = Store(); 
 
   const [Row, setRows] = useState()
   // function for get cetegory list
@@ -97,16 +96,16 @@ export default function Hinge() {
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          SideBox.setOpen({
+         dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_hinge',
             payload : params
-          }) 
+          }}) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
         {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'Category Deleted !!!'
@@ -133,21 +132,21 @@ export default function Hinge() {
 
     res.then((data)=>{
       console.log(data)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'success',
         message : " Polish Status Updated Successfully !!!"
   
-      })
+      }})
     })
     .catch((err)=>{
       console.log(err)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
         message : "Something Went Wrong !!!"
   
-      })
+      } })
     })
 
     
@@ -219,7 +218,7 @@ export default function Hinge() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "addHinge" });
+             dispatch({type : OpenBox,payload : { state: true, formType: "addHinge" }});
             }}
             sx={{ width: "100%" }}
             color="primary"

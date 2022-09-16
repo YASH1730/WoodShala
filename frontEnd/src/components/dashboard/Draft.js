@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -21,7 +21,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import { Store } from "../../store/Context";
 import {
   getDraft,
   changeProductStatus,
@@ -53,11 +54,8 @@ function CustomPagination() {
 }
 
 export default function Products() {
-  // useContext
-
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+  
+  const {dispatch} = Store()
   // states
 
   const [search, setSearch] = useState("");
@@ -502,11 +500,11 @@ export default function Products() {
           <IconButton
             onClick={() => {
               console.log(params);
-              SideBox.setOpen({
+              dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_product",
                 payload: params,
-              });
+              }});
             }}
             aria-label="update"
           >
@@ -516,11 +514,11 @@ export default function Products() {
           <IconButton
             onClick={() => {
               deleteProduct(params.formattedValue._id).then((res) => {
-                despatchAlert.setNote({
+                dispatch({type : Notify,payload : {
                   open: true,
                   variant: "success",
                   message: "Product deleted successfully !!!",
-                });
+                }});
               });
             }}
             aria-label="delete"
@@ -912,20 +910,20 @@ export default function Products() {
                           res
                             .then((data) => {
                               console.log(data);
-                              despatchAlert.setNote({
+                              dispatch({type : Notify,payload : {
                                 open: true,
                                 variant: "success",
                                 message:
                                   " Product Status Updated Successfully !!!",
-                              });
+                             } });
                             })
                             .catch((err) => {
                               console.log(err);
-                              despatchAlert.setNote({
+                              dispatch({type : Notify,payload : {
                                 open: true,
                                 variant: "error",
                                 message: "Something Went Wrong !!!",
-                              });
+                            }});
                             });
                         }}
                       >
@@ -1018,7 +1016,7 @@ export default function Products() {
             startIcon={<AddIcon />}
             variant="contained"
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "product" });
+              dispatch({type : OpenBox,payload : { state: true, formType: "product"} });
             }}
           >
             Add Product

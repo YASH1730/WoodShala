@@ -120,7 +120,7 @@ function BasicTabs() {
                 <Tab
                   wrapped
                   icon={<ForestIcon />}
-                  label="Primary Material"
+                  label="Material"
                   {...a11yProps(2)}
                 />
                 <Tab

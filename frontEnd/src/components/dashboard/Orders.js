@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -22,7 +22,8 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import {Store } from "../../store/Context";
 import { getOrder, changeOrderStatus } from "../../services/service";
 import "../../assets/custom/css/category.css";
 
@@ -101,7 +102,8 @@ export default function Order() {
     status : 'processing',
     city : '',
     state : '',
-    paid : 0
+    paid : 0,
+    note : ''
   })
 
   //  State for stepper
@@ -109,9 +111,7 @@ export default function Order() {
 
 
   // context
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+const {dispatch} = Store(); 
 
   // stepper button
   const handleNextStep = () => {
@@ -181,11 +181,12 @@ export default function Order() {
               city : row.city,
               state : row.state,
               shipping : row.shipping,
-              quantity : row.quantity,
+              quantity : JSON.stringify(row.quantity),
               discount : row.discount,
               paid:
                 parseInt((row.paid / row.total) * 100) + "%",
               total : row.total,
+              note : row.note || '',
               action: row._id,
             };
           })
@@ -200,10 +201,7 @@ export default function Order() {
   useEffect(() => {
 
     const rows = catalogs.products.filter((row) => { console.log(data.product_array.includes(row.SKU)); return data.product_array.includes(row.SKU) && row })
-    console.log(data.product_array)
-    console.log(rows)
-
-
+  
     setproductRows(rows.map((dataOBJ, index) => {
 
         setData({ ...data, quantity: { ...data.quantity, [dataOBJ.SKU]: 1 }})
@@ -363,6 +361,12 @@ export default function Order() {
       width: 80,
       align: "center",
     },
+    {
+      field: "note",
+      headerName: "Note",
+      width: 80,
+      align: "center",
+    },
 
     {
       field: "action",
@@ -372,18 +376,18 @@ export default function Order() {
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-              SideBox.setOpen({
+             dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_order",
                 payload: params,
-              });
+              }});
             }}
             aria-label="delete"
           >
             <CreateIcon />
           </IconButton>
           {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'Category Deleted !!!'
@@ -477,19 +481,19 @@ export default function Order() {
     res
       .then((data) => {
         console.log(data);
-        despatchAlert.setNote({
-          open: true,
-          variant: "success",
-          message: " Order Status Updated Successfully !!!",
-        });
+        // dispatch({type : Notify,payload : {
+        //   open: true,
+        //   variant: "success",
+        //   message: " Order Status Updated Successfully !!!",
+        // }});
       })
       .catch((err) => {
         console.log(err);
-        despatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        // dispatch({type : Notify,payload : {
+        //   open: true,
+        //   variant: "error",
+        //   message: "Something Went Wrong !!!",
+        // }});
       });
   };
 
@@ -597,7 +601,7 @@ export default function Order() {
       [...productRow,{ id : productRow.length+1,
       SKU : e.target.SKU.value, 
       product_title : e.target.product_title.value, 
-      dimension : e.target.dimension.value, 
+      dimension : e.target.length.value+'x'+e.target.breadth.value+'x'+e.target.height.value, 
       MRP : e.target.MRP.value, 
       qty : e.target.quantity.value, 
       selling_price : e.target.MRP.value - ((e.target.MRP.value/100)*e.target.discount.value), 
@@ -648,9 +652,23 @@ export default function Order() {
                     />
                    
                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'dimension'
+                    name = 'length'
                     type = 'text'
-                    label = 'Dimension ex :- lxbxh'
+                    label = 'Length'
+                    variant = 'outlined'
+                    />
+                   
+                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
+                    name = 'breadth'
+                    type = 'text'
+                    label = 'Breadth'
+                    variant = 'outlined'
+                    />
+                   
+                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
+                    name = 'height'
+                    type = 'text'
+                    label = 'Height'
                     variant = 'outlined'
                     />
                     <TextField size = 'small' sx = {{mb : 2}} fullWidth
@@ -671,6 +689,13 @@ export default function Order() {
                     label = 'Discount'
                     variant = 'outlined'
                     />
+
+                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
+                    name = 'product_title'
+                    type = 'text'
+                    label = 'Title'
+                    variant = 'outlined'
+                    />
                     <Button size = 'small' fullWidth variant = 'contained' type = 'submit'>Add</Button>
                   </form>
                 </Grid>
@@ -688,25 +713,25 @@ export default function Order() {
       .then((data) => {
         if (data.status !== 200) {
 
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open: true,
             variant: "error",
             message: data.data.message || "Something Went Wrong !!!",
-          });
+          }});
         } else {
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open: true,
             variant: "success",
             message: data.data.message,
-          });
+          }});
         }
       })
       .catch((err) => {
-        despatchAlert.setNote({
+        dispatch({type : Notify,payload : {
           open: true,
           variant: "error",
           message: "Something Went Wrong !!!",
-        });
+        }});
       });
   }
 
@@ -795,16 +820,16 @@ export default function Order() {
           } >
 
             <Typography variant="h6"> Order List </Typography>
-            <Button
+            {/* <Button
               onClick={() => {
-                SideBox.setOpen({ state: true, formType: "add_order" });
+               dispatch({type : OpenBox,payload : { state: true, formType: "add_order" }});
               }}
               color="primary"
               variant="contained"
             >
               <AddIcon />
 
-            </Button>
+            </Button> */}
           </div>
           <></>
           <br></br>
@@ -982,6 +1007,10 @@ export default function Order() {
               }}>
                 
                 <Grid container >
+                  <Grid item xs= {12}>
+                  <TextField fullWidth sx = {{mb :2}} size = 'small' name = 'note' onChange= {handelData} label = 'Note' value = {data.note} ></TextField>
+                  </Grid>
+
                   <Grid item xs= {12}>
                   <TextField fullWidth sx = {{mb :2}} size = 'small' disabled label = 'OID' value = {data.OID} ></TextField>
                   </Grid>

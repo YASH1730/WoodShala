@@ -2,11 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Context from './store/Context'
 import reportWebVitals from './reportWebVitals';
+import CssBaseline from '@mui/material/CssBaseline';
 
 ReactDOM.render(
   <React.StrictMode>
+    <Context>
+    <CssBaseline/>
     <App />
+    </Context>
   </React.StrictMode>,
   document.getElementById('root')
 );

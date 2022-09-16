@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -8,7 +8,8 @@ import {
 } from "@mui/material";
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import {Store } from "../../store/Context";
 import { getPrimaryMaterial,changePrimaryMaterialStatus } from '../../services/service'
 import '../../assets/custom/css/category.css'
 
@@ -42,9 +43,7 @@ export default function PrimaryMaterial() {
 
   const [search, setSearch] = useState("");
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+const {dispatch} = Store(); 
 
   const [Row, setRows] = useState()
   // function for get category list
@@ -80,13 +79,13 @@ export default function PrimaryMaterial() {
     },
     {
       field: "primaryMaterial_name",
-      headerName: "Primary Material Name",
+      headerName: "Material Name",
       width: 200,
       
     },
     {
       field: "primaryMaterial_image",
-      headerName: "Primary Material Image",
+      headerName: "Material Image",
       width: 200,
       renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='material' /> : "Image Not Give"}</div>,
 
@@ -94,13 +93,13 @@ export default function PrimaryMaterial() {
     },
     {
       field: "primaryMaterial_description",
-      headerName: "Primary Material Description",
+      headerName: "Material Description",
       width: 200,
       
     },
     {
       field: "primaryMaterial_status",
-      headerName: "Primary Material Status",
+      headerName: "Material Status",
       width: 200,
       renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
 
@@ -113,16 +112,16 @@ export default function PrimaryMaterial() {
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          SideBox.setOpen({
+         dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_PrimaryMaterial',
             payload : params
-          }) 
+          }}) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
         {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'Category Deleted !!!'
@@ -149,21 +148,21 @@ export default function PrimaryMaterial() {
 
     res.then((data)=>{
       console.log(data)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'success',
-        message : " Primary Material Status Updated Successfully !!!"
+        message : " Material Status Updated Successfully !!!"
   
-      })
+      }})
     })
     .catch((err)=>{
       console.log(err)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
         message : "Something Went Wrong !!!"
   
-      })
+      }})
     })
 
     
@@ -201,7 +200,7 @@ export default function PrimaryMaterial() {
   return (
     <>
       <Typography sx={{ display: "block" }} variant="h5">
-        Primary Material
+        Material
       </Typography>
 
       <br></br>
@@ -234,14 +233,14 @@ export default function PrimaryMaterial() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "primaryMaterial" });
+             dispatch({type : OpenBox,payload : { state: true, formType: "primaryMaterial"} });
             }}
             sx={{ width: "100%" }}
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
           >
-            Add Primary Material
+            Add Material
           </Button>
         </Grid>
       </Grid>
@@ -253,7 +252,7 @@ export default function PrimaryMaterial() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Primary Material List </Typography>
+          <Typography variant="h6"> Material List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   IconButton,
@@ -33,7 +33,6 @@ import Backdrop from "@mui/material/Backdrop";
 import "../../assets/custom/css/sideForm.css";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { OpenBox, Mode, Notify } from "../../App";
 
 // service APIS 
 import {
@@ -90,6 +89,12 @@ import {
   addStock,
   updateStock
 } from "../../services/service.js";
+
+import { OpenBox, Notify } from "../../store/Types";
+
+import { Store } from '../../store/Context';
+
+
 
 const thumbsContainer = {
   display: "flex",
@@ -425,10 +430,8 @@ const Sideform = () => {
     },
   ];
 
-  // context
-  const SideBox = useContext(OpenBox);
-  const viewMode = useContext(Mode);
-  const dispatchAlert = useContext(Notify);
+  // global context 
+  const { state, dispatch } = Store();
 
   // states
   const [cat, setCat] = useState();
@@ -533,7 +536,7 @@ const Sideform = () => {
   });
 
   useEffect(() => {
-    switch (SideBox.open.formType) {
+    switch (state.OpenBox.formType) {
       case "product":
         getSKU();
         categoryList().then((data) => {
@@ -625,7 +628,7 @@ const Sideform = () => {
           return setCategory(data.data);
         });
         setData({
-          category: SideBox.open.payload.row.category_name,
+          category: state.OpenBox.payload.row.category_name,
         });
         break;
       case "update_PrimaryMaterial":
@@ -635,9 +638,9 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
         setData({
-          priMater: SideBox.open.payload.row.primaryMaterial_name,
+          priMater: state.OpenBox.payload.row.primaryMaterial_name,
           primaryMaterial_description:
-            SideBox.open.payload.row.primaryMaterial_description,
+            state.OpenBox.payload.row.primaryMaterial_description,
         });
         break;
       case "update_polish":
@@ -648,7 +651,7 @@ const Sideform = () => {
         });
 
         setData({
-          polish: SideBox.open.payload.row.polish_name,
+          polish: state.OpenBox.payload.row.polish_name,
         });
         break;
       case "update_knob":
@@ -658,7 +661,7 @@ const Sideform = () => {
           return setKnobCatalog(data.data);
         });
         setData({
-          knob: SideBox.open.payload.row.knob_name,
+          knob: state.OpenBox.payload.row.knob_name,
         });
         break;
       case "update_fitting":
@@ -668,7 +671,7 @@ const Sideform = () => {
           return setFittingCatalog(data.data);
         });
         setData({
-          fitting: SideBox.open.payload.row.fitting_name,
+          fitting: state.OpenBox.payload.row.fitting_name,
         });
         break;
       case "update_hinge":
@@ -678,7 +681,7 @@ const Sideform = () => {
           return setHingeCatalog(data.data);
         });
         setData({
-          hinge: SideBox.open.payload.row.hinge_name,
+          hinge: state.OpenBox.payload.row.hinge_name,
         });
         break;
       case "update_door":
@@ -688,7 +691,7 @@ const Sideform = () => {
           return setDoorCatalog(data.data);
         });
         setData({
-          door: SideBox.open.payload.row.door_name,
+          door: state.OpenBox.payload.row.door_name,
         });
         break;
       case "update_handle":
@@ -699,7 +702,7 @@ const Sideform = () => {
         });
 
         setData({
-          handle: SideBox.open.payload.row.handle_name,
+          handle: state.OpenBox.payload.row.handle_name,
         });
         break;
       case "subcategory":
@@ -708,8 +711,7 @@ const Sideform = () => {
 
           return setCategory(data.data);
         });
-
-        setCat(SideBox.open.payload.row.category_id);
+        // setCat(state.OpenBox.payload.row.category_id);
         break;
       case "update_Subcategory":
         categoryList().then((data) => {
@@ -718,16 +720,16 @@ const Sideform = () => {
           return setCategory(data.data);
         });
 
-        setCat(SideBox.open.payload.row.category_id);
+        setCat(state.OpenBox.payload.row.category_id);
         break;
       case "update_blog":
         setData({
-          title: SideBox.open.payload.value.title,
-          card_image: SideBox.open.payload.value.card_image,
-          seo_title: SideBox.open.payload.value.seo_title,
-          seo_description: SideBox.open.payload.value.seo_description,
-          card_description: SideBox.open.payload.value.card_description,
-          description: SideBox.open.payload.value.description,
+          title: state.OpenBox.payload.value.title,
+          card_image: state.OpenBox.payload.value.card_image,
+          seo_title: state.OpenBox.payload.value.seo_title,
+          seo_description: state.OpenBox.payload.value.seo_description,
+          card_description: state.OpenBox.payload.value.card_description,
+          description: state.OpenBox.payload.value.description,
         });
         break;
       case "update_product":
@@ -797,100 +799,100 @@ const Sideform = () => {
         });
 
         setData({
-          SKU: SideBox.open.payload.value.SKU,
-          product_title: SideBox.open.payload.value.product_title,
-          category_name: SideBox.open.payload.value.category_id,
-          category_id: SideBox.open.payload.value.category_id,
-          sub_category_name: SideBox.open.payload.value.sub_category_id,
-          sub_category_id: SideBox.open.payload.value.sub_category_id,
-          product_description: SideBox.open.payload.value.product_description,
-          seo_title: SideBox.open.payload.value.seo_title,
-          seo_description: SideBox.open.payload.value.seo_description,
-          seo_keyword: SideBox.open.payload.value.seo_keyword,
-          product_image: SideBox.open.payload.value.product_image,
-          featured_image: SideBox.open.payload.value.featured_image,
-          specification_image: SideBox.open.payload.value.specification_image,
+          SKU: state.OpenBox.payload.value.SKU,
+          product_title: state.OpenBox.payload.value.product_title,
+          category_name: state.OpenBox.payload.value.category_id,
+          category_id: state.OpenBox.payload.value.category_id,
+          sub_category_name: state.OpenBox.payload.value.sub_category_id,
+          sub_category_id: state.OpenBox.payload.value.sub_category_id,
+          product_description: state.OpenBox.payload.value.product_description,
+          seo_title: state.OpenBox.payload.value.seo_title,
+          seo_description: state.OpenBox.payload.value.seo_description,
+          seo_keyword: state.OpenBox.payload.value.seo_keyword,
+          product_image: state.OpenBox.payload.value.product_image,
+          featured_image: state.OpenBox.payload.value.featured_image,
+          specification_image: state.OpenBox.payload.value.specification_image,
           primary_material: JSON.parse(
-            SideBox.open.payload.value.primary_material_name
+            state.OpenBox.payload.value.primary_material_name
           ) || [],
-          warehouse: SideBox.open.payload.value.warehouse ?
-            SideBox.open.payload.value.warehouse.split(',') : [],
-          bangalore_stock: SideBox.open.payload.value.bangalore_stock,
-          jodhpur_stock: SideBox.open.payload.value.jodhpur_stock,
+          warehouse: state.OpenBox.payload.value.warehouse ?
+            state.OpenBox.payload.value.warehouse.split(',') : [],
+          bangalore_stock: state.OpenBox.payload.value.bangalore_stock,
+          jodhpur_stock: state.OpenBox.payload.value.jodhpur_stock,
           primary_material_name:
-            SideBox.open.payload.value.primary_material_name,
-          length_main: SideBox.open.payload.value.length_main,
-          breadth: SideBox.open.payload.value.breadth,
-          height: SideBox.open.payload.value.height,
-          weight: SideBox.open.payload.value.weight,
-          polish: SideBox.open.payload.value.polish,
-          polish_name: SideBox.open.payload.value.polish_name,
-          hinge: SideBox.open.payload.value.hinge,
-          hinge_name: SideBox.open.payload.value.hinge_name,
-          knob: SideBox.open.payload.value.knob,
-          textile: SideBox.open.payload.value.textile,
-          knob_name: SideBox.open.payload.value.knob_name,
-          textile_name: SideBox.open.payload.value.textile_name,
-          textile_type: SideBox.open.payload.value.textile_type,
-          handle: SideBox.open.payload.value.handle,
-          handle_name: SideBox.open.payload.value.handle_name,
-          door: SideBox.open.payload.value.door,
-          door_name: SideBox.open.payload.value.door_name,
-          fitting: SideBox.open.payload.value.fitting,
-          fitting_name: SideBox.open.payload.value.fitting_name,
-          selling_points: SideBox.open.payload.value.selling_points,
-          top_size: SideBox.open.payload.value.top_size,
-          dial_size: SideBox.open.payload.value.dial_size,
-          seating_size_width: SideBox.open.payload.value.seating_size_width,
-          seating_size_depth: SideBox.open.payload.value.seating_size_depth,
-          seating_size_height: SideBox.open.payload.value.seating_size_height,
-          weight_capacity: SideBox.open.payload.value.weight_capacity,
-          fabric: SideBox.open.payload.value.fabric,
-          fabric_name: SideBox.open.payload.value.fabric_name,
-          wall_hanging: SideBox.open.payload.value.wall_hanging,
-          assembly_required: SideBox.open.payload.value.assembly_required,
-          assembly_part: SideBox.open.payload.value.assembly_part,
-          legs: SideBox.open.payload.value.legs,
-          mirror: SideBox.open.payload.value.mirror,
-          mirror_length: SideBox.open.payload.value.mirror_length,
-          mirror_width: SideBox.open.payload.value.mirror_width,
-          silver: SideBox.open.payload.value.silver,
-          silver_weight: SideBox.open.payload.value.silver_weight,
-          joints: SideBox.open.payload.value.joints,
-          upholstery: SideBox.open.payload.value.upholstery,
-          wheel: SideBox.open.payload.value.wheel,
-          trolley: SideBox.open.payload.value.trolley,
-          trolley_material: SideBox.open.payload.value.trolley_material,
-          rotating_seats: SideBox.open.payload.value.rotating_seats,
-          eatable_oil_polish: SideBox.open.payload.value.eatable_oil_polish,
-          no_chemical: SideBox.open.payload.value.no_chemical,
-          straight_back: SideBox.open.payload.value.straight_back,
-          lean_back: SideBox.open.payload.value.lean_back,
-          weaving: SideBox.open.payload.value.weaving,
-          knife: SideBox.open.payload.value.knife,
+            state.OpenBox.payload.value.primary_material_name,
+          length_main: state.OpenBox.payload.value.length_main,
+          breadth: state.OpenBox.payload.value.breadth,
+          height: state.OpenBox.payload.value.height,
+          weight: state.OpenBox.payload.value.weight,
+          polish: state.OpenBox.payload.value.polish,
+          polish_name: state.OpenBox.payload.value.polish_name,
+          hinge: state.OpenBox.payload.value.hinge,
+          hinge_name: state.OpenBox.payload.value.hinge_name,
+          knob: state.OpenBox.payload.value.knob,
+          textile: state.OpenBox.payload.value.textile,
+          knob_name: state.OpenBox.payload.value.knob_name,
+          textile_name: state.OpenBox.payload.value.textile_name,
+          textile_type: state.OpenBox.payload.value.textile_type,
+          handle: state.OpenBox.payload.value.handle,
+          handle_name: state.OpenBox.payload.value.handle_name,
+          door: state.OpenBox.payload.value.door,
+          door_name: state.OpenBox.payload.value.door_name,
+          fitting: state.OpenBox.payload.value.fitting,
+          fitting_name: state.OpenBox.payload.value.fitting_name,
+          selling_points: state.OpenBox.payload.value.selling_points,
+          top_size: state.OpenBox.payload.value.top_size,
+          dial_size: state.OpenBox.payload.value.dial_size,
+          seating_size_width: state.OpenBox.payload.value.seating_size_width,
+          seating_size_depth: state.OpenBox.payload.value.seating_size_depth,
+          seating_size_height: state.OpenBox.payload.value.seating_size_height,
+          weight_capacity: state.OpenBox.payload.value.weight_capacity,
+          fabric: state.OpenBox.payload.value.fabric,
+          fabric_name: state.OpenBox.payload.value.fabric_name,
+          wall_hanging: state.OpenBox.payload.value.wall_hanging,
+          assembly_required: state.OpenBox.payload.value.assembly_required,
+          assembly_part: state.OpenBox.payload.value.assembly_part,
+          legs: state.OpenBox.payload.value.legs,
+          mirror: state.OpenBox.payload.value.mirror,
+          mirror_length: state.OpenBox.payload.value.mirror_length,
+          mirror_width: state.OpenBox.payload.value.mirror_width,
+          silver: state.OpenBox.payload.value.silver,
+          silver_weight: state.OpenBox.payload.value.silver_weight,
+          joints: state.OpenBox.payload.value.joints,
+          upholstery: state.OpenBox.payload.value.upholstery,
+          wheel: state.OpenBox.payload.value.wheel,
+          trolley: state.OpenBox.payload.value.trolley,
+          trolley_material: state.OpenBox.payload.value.trolley_material,
+          rotating_seats: state.OpenBox.payload.value.rotating_seats,
+          eatable_oil_polish: state.OpenBox.payload.value.eatable_oil_polish,
+          no_chemical: state.OpenBox.payload.value.no_chemical,
+          straight_back: state.OpenBox.payload.value.straight_back,
+          lean_back: state.OpenBox.payload.value.lean_back,
+          weaving: state.OpenBox.payload.value.weaving,
+          knife: state.OpenBox.payload.value.knife,
           not_suitable_for_Micro_Dish:
-            SideBox.open.payload.value.not_suitable_for_Micro_Dish,
-          tilt_top: SideBox.open.payload.value.tilt_top,
-          inside_compartments: SideBox.open.payload.value.inside_compartments,
-          stackable: SideBox.open.payload.value.stackable,
-          MRP: SideBox.open.payload.value.MRP,
-          tax_rate: SideBox.open.payload.value.tax_rate,
-          selling_price: SideBox.open.payload.value.selling_price,
-          showroom_price: SideBox.open.payload.value.showroom_price,
-          discount_limit: SideBox.open.payload.value.discount_limit,
-          polish_time: SideBox.open.payload.value.polish_time,
-          manufacturing_time: SideBox.open.payload.value.manufacturing_time,
-          status: SideBox.open.payload.value.status,
-          returnDays: SideBox.open.payload.value.returnDays,
-          COD: SideBox.open.payload.value.COD,
-          returnable: SideBox.open.payload.value.returnable,
-          drawer: SideBox.open.payload.value.drawer,
-          drawer_count: SideBox.open.payload.value.drawer_count,
-          range: SideBox.open.payload.value.range,
-          show_on_mobile: SideBox.open.payload.value.show_on_mobile,
+            state.OpenBox.payload.value.not_suitable_for_Micro_Dish,
+          tilt_top: state.OpenBox.payload.value.tilt_top,
+          inside_compartments: state.OpenBox.payload.value.inside_compartments,
+          stackable: state.OpenBox.payload.value.stackable,
+          MRP: state.OpenBox.payload.value.MRP,
+          tax_rate: state.OpenBox.payload.value.tax_rate,
+          selling_price: state.OpenBox.payload.value.selling_price,
+          showroom_price: state.OpenBox.payload.value.showroom_price,
+          discount_limit: state.OpenBox.payload.value.discount_limit,
+          polish_time: state.OpenBox.payload.value.polish_time,
+          manufacturing_time: state.OpenBox.payload.value.manufacturing_time,
+          status: state.OpenBox.payload.value.status,
+          returnDays: state.OpenBox.payload.value.returnDays,
+          COD: state.OpenBox.payload.value.COD,
+          returnable: state.OpenBox.payload.value.returnable,
+          drawer: state.OpenBox.payload.value.drawer,
+          drawer_count: state.OpenBox.payload.value.drawer_count,
+          range: state.OpenBox.payload.value.range,
+          show_on_mobile: state.OpenBox.payload.value.show_on_mobile,
         });
 
-        setCat(SideBox.open.payload.value.category_id);
+        setCat(state.OpenBox.payload.value.category_id);
 
         break;
       case "update_fabric":
@@ -901,7 +903,7 @@ const Sideform = () => {
         });
         setData({
           ...changeData,
-          fabric_name: SideBox.open.payload.row.fabric_name,
+          fabric_name: state.OpenBox.payload.row.fabric_name,
         });
         break;
       case "update_textile":
@@ -911,20 +913,20 @@ const Sideform = () => {
         });
         setData({
           ...changeData,
-          textile_name: SideBox.open.payload.row.textile_name,
+          textile_name: state.OpenBox.payload.row.textile_name,
         });
         break;
       case "update_customer":
-        console.log(SideBox.open.payload);
+        console.log(state.OpenBox.payload);
         setData({
-          CID: SideBox.open.payload.row.CID,
-          username: SideBox.open.payload.row.username,
-          mobile: SideBox.open.payload.row.mobile,
-          email: SideBox.open.payload.row.email,
-          password: SideBox.open.payload.row.password,
-          city: SideBox.open.payload.row.city,
-          state: SideBox.open.payload.row.state,
-          shipping: SideBox.open.payload.row.shipping,
+          CID: state.OpenBox.payload.row.CID,
+          username: state.OpenBox.payload.row.username,
+          mobile: state.OpenBox.payload.row.mobile,
+          email: state.OpenBox.payload.row.email,
+          password: state.OpenBox.payload.row.password,
+          city: state.OpenBox.payload.row.city,
+          state: state.OpenBox.payload.row.state,
+          shipping: state.OpenBox.payload.row.shipping,
         });
         break;
       case "merge_product":
@@ -1002,7 +1004,7 @@ const Sideform = () => {
 
         let productArray = [];
 
-        SideBox.open.payload.map((obj, index) => {
+        state.OpenBox.payload.map((obj, index) => {
           return productArray.push(obj.SKU);
         });
 
@@ -1085,60 +1087,60 @@ const Sideform = () => {
         });
 
         setData({
-          SKU: SideBox.open.payload.value.SKU,
-          product_array: SideBox.open.payload.value.product_array.split(","),
-          product_title: SideBox.open.payload.value.product_title,
-          category_name: SideBox.open.payload.value.category_id,
-          category_id: SideBox.open.payload.value.category_id,
-          sub_category_name: SideBox.open.payload.value.sub_category_id,
-          sub_category_id: SideBox.open.payload.value.sub_category_id,
-          product_description: SideBox.open.payload.value.product_description,
-          seo_title: SideBox.open.payload.value.seo_title,
-          seo_description: SideBox.open.payload.value.seo_description,
-          seo_keyword: SideBox.open.payload.value.seo_keyword,
-          product_image: SideBox.open.payload.value.product_image,
-          featured_image: SideBox.open.payload.value.featured_image,
-          specification_image: SideBox.open.payload.value.specification_image,
-          selling_points: SideBox.open.payload.value.selling_points,
-          rotating_seats: SideBox.open.payload.value.rotating_seats,
-          eatable_oil_polish: SideBox.open.payload.value.eatable_oil_polish,
-          no_chemical: SideBox.open.payload.value.no_chemical,
-          straight_back: SideBox.open.payload.value.straight_back,
-          lean_back: SideBox.open.payload.value.lean_back,
-          weaving: SideBox.open.payload.value.weaving,
-          knife: SideBox.open.payload.value.knife,
+          SKU: state.OpenBox.payload.value.SKU,
+          product_array: state.OpenBox.payload.value.product_array.split(","),
+          product_title: state.OpenBox.payload.value.product_title,
+          category_name: state.OpenBox.payload.value.category_id,
+          category_id: state.OpenBox.payload.value.category_id,
+          sub_category_name: state.OpenBox.payload.value.sub_category_id,
+          sub_category_id: state.OpenBox.payload.value.sub_category_id,
+          product_description: state.OpenBox.payload.value.product_description,
+          seo_title: state.OpenBox.payload.value.seo_title,
+          seo_description: state.OpenBox.payload.value.seo_description,
+          seo_keyword: state.OpenBox.payload.value.seo_keyword,
+          product_image: state.OpenBox.payload.value.product_image,
+          featured_image: state.OpenBox.payload.value.featured_image,
+          specification_image: state.OpenBox.payload.value.specification_image,
+          selling_points: state.OpenBox.payload.value.selling_points,
+          rotating_seats: state.OpenBox.payload.value.rotating_seats,
+          eatable_oil_polish: state.OpenBox.payload.value.eatable_oil_polish,
+          no_chemical: state.OpenBox.payload.value.no_chemical,
+          straight_back: state.OpenBox.payload.value.straight_back,
+          lean_back: state.OpenBox.payload.value.lean_back,
+          weaving: state.OpenBox.payload.value.weaving,
+          knife: state.OpenBox.payload.value.knife,
           not_suitable_for_Micro_Dish:
-            SideBox.open.payload.value.not_suitable_for_Micro_Dish,
-          tilt_top: SideBox.open.payload.value.tilt_top,
-          inside_compartments: SideBox.open.payload.value.inside_compartments,
-          stackable: SideBox.open.payload.value.stackable,
-          MRP: SideBox.open.payload.value.MRP,
-          tax_rate: SideBox.open.payload.value.tax_rate,
-          selling_price: SideBox.open.payload.value.selling_price,
-          showroom_price: SideBox.open.payload.value.showroom_price,
-          discount_limit: SideBox.open.payload.value.discount_limit,
-          polish_time: SideBox.open.payload.value.polish_time,
-          manufacturing_time: SideBox.open.payload.value.manufacturing_time,
-          status: SideBox.open.payload.value.status,
-          returnDays: SideBox.open.payload.value.returnDays,
-          COD: SideBox.open.payload.value.COD,
-          returnable: SideBox.open.payload.value.returnable,
+            state.OpenBox.payload.value.not_suitable_for_Micro_Dish,
+          tilt_top: state.OpenBox.payload.value.tilt_top,
+          inside_compartments: state.OpenBox.payload.value.inside_compartments,
+          stackable: state.OpenBox.payload.value.stackable,
+          MRP: state.OpenBox.payload.value.MRP,
+          tax_rate: state.OpenBox.payload.value.tax_rate,
+          selling_price: state.OpenBox.payload.value.selling_price,
+          showroom_price: state.OpenBox.payload.value.showroom_price,
+          discount_limit: state.OpenBox.payload.value.discount_limit,
+          polish_time: state.OpenBox.payload.value.polish_time,
+          manufacturing_time: state.OpenBox.payload.value.manufacturing_time,
+          status: state.OpenBox.payload.value.status,
+          returnDays: state.OpenBox.payload.value.returnDays,
+          COD: state.OpenBox.payload.value.COD,
+          returnable: state.OpenBox.payload.value.returnable,
         });
 
         break;
       case 'update_Stock':
-      setData({
-        ...changeData,
-        _id: SideBox.open.payload.row._id,
-        product_id: SideBox.open.payload.row.product_id,
-        stock: SideBox.open.payload.row.stock,
-        warehouse: SideBox.open.payload.row.warehouse,
-      });
-      break
+        setData({
+          ...changeData,
+          _id: state.OpenBox.payload.row._id,
+          product_id: state.OpenBox.payload.row.product_id,
+          stock: state.OpenBox.payload.row.stock,
+          warehouse: state.OpenBox.payload.row.warehouse,
+        });
+        break
       default:
       // console.log("");
     }
-  }, [SideBox.open.formType, SideBox.open.state]);
+  }, [state.OpenBox.formType, state.OpenBox.state]);
 
   // stepper button
   const handleNextStep = () => {
@@ -1162,7 +1164,7 @@ const Sideform = () => {
 
   // for update
   const handleChangeData = (e) => {
-    switch (SideBox.open.formType) {
+    switch (state.OpenBox.formType) {
       case "update_category":
         setData({
           ...changeData,
@@ -1283,7 +1285,7 @@ const Sideform = () => {
 
   const handleClose = () => {
     resetAll();
-    SideBox.setOpen({ state: false, formType: null });
+    dispatch({ type: OpenBox, payload: { state: false, formType: null, payload: null } });
   };
 
   // function for generating Merged product  ID
@@ -1362,28 +1364,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1406,28 +1414,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1452,28 +1466,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1503,28 +1523,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1555,28 +1581,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1587,7 +1619,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     Image[0] !== undefined && FD.append("fabric_image", Image[0]);
 
@@ -1602,28 +1634,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1633,7 +1671,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     Image[0] !== undefined && FD.append("fabric_image", Image[0]);
 
@@ -1648,28 +1686,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1679,7 +1723,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     Image[0] !== undefined && FD.append("category_image", Image[0]);
 
@@ -1694,28 +1738,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -1810,17 +1860,21 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        dispatchAlert.setNote({
-          open: true,
-          variant: "success",
-          message: data.data.message,
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }
         });
       })
       .catch((data) => {
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: data.data.message,
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }
         });
       });
   };
@@ -1831,27 +1885,29 @@ const Sideform = () => {
     e.preventDefault();
 
     FD.append("category_image", Image[0]);
-    FD.append("SKU", SideBox.open.payload.SKU);
-    FD.append("ImageIndex", SideBox.open.payload.imageIndex);
+    FD.append("SKU", state.OpenBox.payload.SKU);
+    FD.append("ImageIndex", state.OpenBox.payload.imageIndex);
 
     const res = updateImage(FD);
 
-    // console.log(SideBox.open.payload);
+    // console.log(state.OpenBox.payload);
 
     res
       .then((data) => {
-        dispatchAlert.setNote({
-          open: true,
-          variant: "success",
-          message: data.data.message,
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }});
       })
       .catch((data) => {
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: data.data.message,
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }});
       });
   };
 
@@ -2111,26 +2167,32 @@ const Sideform = () => {
         // console.log(data.status);
 
         if (data.status === 203) {
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2143,7 +2205,7 @@ const Sideform = () => {
       return FD.append("product_image", element);
     });
 
-    FD.append("_id", SideBox.open.payload.value._id);
+    FD.append("_id", state.OpenBox.payload.value._id);
 
     Image.map((element) => {
       return FD.append("specification_image", element);
@@ -2388,26 +2450,32 @@ const Sideform = () => {
         // console.log(data.status);
 
         if (data.status === 203) {
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2511,26 +2579,30 @@ const Sideform = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            } });
         }
       })
       .catch((err) => {
         // console.log(err);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2539,7 +2611,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.value._id);
+    FD.append("_id", state.OpenBox.payload.value._id);
 
     Image.map((element) => {
       return FD.append("specification_image", element);
@@ -2629,26 +2701,32 @@ const Sideform = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2682,29 +2760,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }  });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            } });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
 
@@ -2713,7 +2794,7 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     Image.map((element) => {
       return FD.append("primaryMaterial_image", element);
@@ -2734,29 +2815,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }  });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }  });
       });
   };
 
@@ -2776,29 +2860,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }  });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
 
@@ -2806,7 +2893,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.handle_name.value !== "" &&
       FD.append("handle_name", e.target.handle_name.value);
@@ -2819,28 +2906,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2860,28 +2953,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2890,7 +2989,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.hinge_name.value !== "" &&
       FD.append("hinge_name", e.target.hinge_name.value);
@@ -2903,28 +3002,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2940,33 +3045,35 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        console.log(data.status);
 
-        if (data.status === 203) {
-          setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+        if (data.status === 200) {
+          handleClose();
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         } else {
-          setImages([]);
-          handleClose();
-          handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
-        // console.log(err);
-        setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        console.log(err);
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -2975,7 +3082,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.door_name.value !== "" &&
       FD.append("door_name", e.target.door_name.value);
@@ -2988,29 +3095,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
   const handleKnob = (e) => {
@@ -3029,28 +3139,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -3058,7 +3174,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.knob_name.value !== "" &&
       FD.append("knob_name", e.target.knob_name.value);
@@ -3071,28 +3187,34 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
           });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -3113,29 +3235,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
 
@@ -3143,7 +3268,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.fitting_name.value !== "" &&
       FD.append("fitting_name", e.target.fitting_name.value);
@@ -3156,29 +3281,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
 
@@ -3198,36 +3326,39 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }  });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
   const handleUpdatePolish = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     e.target.polish_name.value !== "" &&
       FD.append("polish_name", e.target.polish_name.value);
@@ -3240,29 +3371,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            } });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
 
@@ -3290,29 +3424,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          } });
       });
   };
   const handleUpdateSubCategories = (e) => {
@@ -3320,9 +3457,9 @@ const Sideform = () => {
 
     const FD = new FormData();
 
-    // console.log(SideBox.open.payload);
+    // console.log(state.OpenBox.payload);
 
-    FD.append("_id", SideBox.open.payload.row.action);
+    FD.append("_id", state.OpenBox.payload.row.action);
 
     category.map((item) => {
       return (
@@ -3346,29 +3483,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
 
@@ -3391,29 +3531,32 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           setUrl(data.data.url);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }  });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }  });
       });
   };
 
@@ -3439,30 +3582,33 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }});
         } else {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
 
@@ -3475,7 +3621,7 @@ const Sideform = () => {
       return FD.append("banner_image", element);
     });
 
-    FD.append("_id", SideBox.open.payload.value._id);
+    FD.append("_id", state.OpenBox.payload.value._id);
 
     FD.append("description", editorRef.current.getContent());
     FD.append("title", e.target.title.value);
@@ -3491,30 +3637,33 @@ const Sideform = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            } });
         } else {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            } });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
 
@@ -3545,34 +3694,40 @@ const Sideform = () => {
       .then((data) => {
         if (data.status !== 200) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message || "Something Went Wrong !!!",
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message || "Something Went Wrong !!!",
+            }
           });
         } else {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
 
-   
+
 
   const handleAddStock = (e) => {
     e.preventDefault();
@@ -3583,37 +3738,40 @@ const Sideform = () => {
     FD.append("stock", changeData.stock);
     FD.append("warehouse", changeData.warehouse);
 
-    
+
     const res = addStock(FD);
 
     res
       .then((data) => {
         if (data.status !== 200) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message || "Something Went Wrong !!!",
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message || "Something Went Wrong !!!",
+            } });
         } else {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          });
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }});
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        });
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }});
       });
   };
   const handleUpdateStock = (e) => {
@@ -3625,36 +3783,42 @@ const Sideform = () => {
     FD.append("stock", changeData.stock);
     FD.append("warehouse", changeData.warehouse);
 
-    
+
     const res = updateStock(FD);
 
     res
       .then((data) => {
         if (data.status !== 200) {
           setImages([]);
-          dispatchAlert.setNote({
-            open: true,
-            variant: "error",
-            message: data.data.message || "Something Went Wrong !!!",
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message || "Something Went Wrong !!!",
+            }
           });
         } else {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatchAlert.setNote({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
           });
         }
       })
       .catch((err) => {
         // console.log(err);
         setImages([]);
-        dispatchAlert.setNote({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
         });
       });
   };
@@ -3663,21 +3827,21 @@ const Sideform = () => {
     <>
       <Slide
         direction="left"
-        in={SideBox.open.state}
+        in={state.OpenBox.state}
         mountOnEnter
         unmountOnExit
       >
         <Backdrop
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={SideBox.open.state}
+          open={state.OpenBox.state}
         >
           <Box
             className={
-              viewMode.mode === true ? "mainDarkContainer" : "mainContainer"
+              state.DarkMode.mode === true ? "mainDarkContainer" : "mainContainer"
             }
             sx={
-              SideBox.open.formType === "product" ||
-                SideBox.open.formType === "update_product"
+              state.OpenBox.formType === "product" ||
+                state.OpenBox.formType === "update_product"
                 ? { width: "100vw !important", padding: "0 5% !important" }
                 : {}
             }
@@ -3692,7 +3856,7 @@ const Sideform = () => {
 
             {/* add Products */}
 
-            {SideBox.open.formType === "product" && (
+            {state.OpenBox.formType === "product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -4065,7 +4229,7 @@ const Sideform = () => {
                             </TextField>
                             <br></br>
                             <InputLabel id="demo-multiple-checkbox-label">
-                              Primary Material
+                              Material
                             </InputLabel>
                             <Select
                               multiple
@@ -5410,7 +5574,7 @@ const Sideform = () => {
             {/* add Products Ends */}
             {/* Update Products */}
 
-            {SideBox.open.formType === "update_product" && (
+            {state.OpenBox.formType === "update_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -5802,7 +5966,7 @@ const Sideform = () => {
                             </TextField>
                             <br></br>
                             <InputLabel id="demo-multiple-checkbox-label">
-                              Primary Material
+                              Material
                             </InputLabel>
                             <Select
                               multiple
@@ -7201,7 +7365,7 @@ const Sideform = () => {
 
             {/* merge Products */}
 
-            {SideBox.open.formType === "merge_product" && (
+            {state.OpenBox.formType === "merge_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -8044,7 +8208,7 @@ const Sideform = () => {
 
             {/* update merge Products */}
 
-            {SideBox.open.formType === "update_merge" && (
+            {state.OpenBox.formType === "update_merge" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -8892,7 +9056,7 @@ const Sideform = () => {
 
             {/*  add textile */}
 
-            {SideBox.open.formType === "textile" && (
+            {state.OpenBox.formType === "textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -8957,7 +9121,7 @@ const Sideform = () => {
 
             {/*  update textile */}
 
-            {SideBox.open.formType === "update_textile" && (
+            {state.OpenBox.formType === "update_textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9013,7 +9177,7 @@ const Sideform = () => {
 
             {/*  add fabric */}
 
-            {SideBox.open.formType === "fabric" && (
+            {state.OpenBox.formType === "fabric" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9078,7 +9242,7 @@ const Sideform = () => {
 
             {/*  update fabric */}
 
-            {SideBox.open.formType === "update_fabric" && (
+            {state.OpenBox.formType === "update_fabric" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9134,7 +9298,7 @@ const Sideform = () => {
 
             {/*  add Category */}
 
-            {SideBox.open.formType === "category" && (
+            {state.OpenBox.formType === "category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9200,7 +9364,7 @@ const Sideform = () => {
 
             {/*  update Category */}
 
-            {SideBox.open.formType === "update_category" && (
+            {state.OpenBox.formType === "update_category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9257,16 +9421,16 @@ const Sideform = () => {
 
             {/*  add primaryMateriel */}
 
-            {SideBox.open.formType === "primaryMaterial" && (
+            {state.OpenBox.formType === "primaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
-                    Add Primary Material
+                    Add Material
                     <Typography
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Add your Primary Material and necessary information from
+                      Add your Material and necessary information from
                       here
                     </Typography>
                   </Typography>
@@ -9292,7 +9456,7 @@ const Sideform = () => {
                       // required
                       id="outlined-select"
                       name="primaryMaterial_name"
-                      label="Primary Material"
+                      label="Material"
                       type="text"
                       helperText="Please enter your primary material"
                     />
@@ -9303,7 +9467,7 @@ const Sideform = () => {
                       minRows={5}
                       id="outlined-select"
                       name="primaryMaterial_description"
-                      defaultValue={"Primary Material Description"}
+                      defaultValue={"Material Description"}
                       type="text"
                       helperText="Please enter your primary material description"
                     />
@@ -9324,7 +9488,7 @@ const Sideform = () => {
                       fullWidth
                       variant="contained"
                     >
-                      Add Primary Material
+                      Add Material
                     </Button>
                   </form>
                 </Grid>
@@ -9334,16 +9498,16 @@ const Sideform = () => {
 
             {/*  update primaryMaterial */}
 
-            {SideBox.open.formType === "update_PrimaryMaterial" && (
+            {state.OpenBox.formType === "update_PrimaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
-                    Update Primary Material
+                    Update Material
                     <Typography
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Update your Primary Material and necessary information
+                      Update your Material and necessary information
                       from here
                     </Typography>
                   </Typography>
@@ -9369,7 +9533,7 @@ const Sideform = () => {
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="primaryMaterial_name"
-                      label="Primary Material"
+                      label="Material"
                       value={changeData.priMater}
                       helperText="Please enter the update"
                     />
@@ -9392,7 +9556,7 @@ const Sideform = () => {
                       fullWidth
                       variant="contained"
                     >
-                      Update Primary Material
+                      Update Material
                     </Button>
                   </form>
                 </Grid>
@@ -9402,7 +9566,7 @@ const Sideform = () => {
 
             {/*  add knob */}
 
-            {SideBox.open.formType === "addKnob" && (
+            {state.OpenBox.formType === "addKnob" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9462,7 +9626,7 @@ const Sideform = () => {
 
             {/*  update knob  */}
 
-            {SideBox.open.formType === "update_knob" && (
+            {state.OpenBox.formType === "update_knob" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9515,7 +9679,7 @@ const Sideform = () => {
 
             {/*  add Handle */}
 
-            {SideBox.open.formType === "addHandle" && (
+            {state.OpenBox.formType === "addHandle" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9575,7 +9739,7 @@ const Sideform = () => {
 
             {/*  update Handle  */}
 
-            {SideBox.open.formType === "update_handle" && (
+            {state.OpenBox.formType === "update_handle" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9628,7 +9792,7 @@ const Sideform = () => {
 
             {/*  add Door */}
 
-            {SideBox.open.formType === "addDoor" && (
+            {state.OpenBox.formType === "addDoor" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9659,7 +9823,7 @@ const Sideform = () => {
                       name="door_name"
                       label="Door Name"
                       type="text"
-                      helperText="Please enter your knob material"
+                      helperText="Please enter your door material"
                     />
 
                     <br></br>
@@ -9688,7 +9852,7 @@ const Sideform = () => {
 
             {/*  update Door  */}
 
-            {SideBox.open.formType === "update_door" && (
+            {state.OpenBox.formType === "update_door" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9741,7 +9905,7 @@ const Sideform = () => {
 
             {/*  add Fitting */}
 
-            {SideBox.open.formType === "addFitting" && (
+            {state.OpenBox.formType === "addFitting" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9801,7 +9965,7 @@ const Sideform = () => {
 
             {/*  update fitting  */}
 
-            {SideBox.open.formType === "update_fitting" && (
+            {state.OpenBox.formType === "update_fitting" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9854,7 +10018,7 @@ const Sideform = () => {
 
             {/*  add Hinge */}
 
-            {SideBox.open.formType === "addHinge" && (
+            {state.OpenBox.formType === "addHinge" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9914,7 +10078,7 @@ const Sideform = () => {
 
             {/*  update hinge  */}
 
-            {SideBox.open.formType === "update_hinge" && (
+            {state.OpenBox.formType === "update_hinge" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -9967,7 +10131,7 @@ const Sideform = () => {
 
             {/*  add Polish Material */}
 
-            {SideBox.open.formType === "addPolish" && (
+            {state.OpenBox.formType === "addPolish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10028,7 +10192,7 @@ const Sideform = () => {
 
             {/*  update Polish  */}
 
-            {SideBox.open.formType === "update_polish" && (
+            {state.OpenBox.formType === "update_polish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10088,7 +10252,7 @@ const Sideform = () => {
 
             {/*  update blog  */}
 
-            {SideBox.open.formType === "update_blog" && (
+            {state.OpenBox.formType === "update_blog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10260,7 +10424,7 @@ const Sideform = () => {
 
             {/*   Add BLog */}
 
-            {SideBox.open.formType === "addBlog" && (
+            {state.OpenBox.formType === "addBlog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10427,7 +10591,7 @@ const Sideform = () => {
 
             {/*   Add Gallery */}
 
-            {SideBox.open.formType === "addGallery" && (
+            {state.OpenBox.formType === "addGallery" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10487,7 +10651,7 @@ const Sideform = () => {
 
             {/*  update Gallery  */}
 
-            {SideBox.open.formType === "update_gallery" && (
+            {state.OpenBox.formType === "update_gallery" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10537,7 +10701,7 @@ const Sideform = () => {
 
             {/*  add subCategory */}
 
-            {SideBox.open.formType === "subcategory" && (
+            {state.OpenBox.formType === "subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10621,7 +10785,7 @@ const Sideform = () => {
 
             {/*update subCategory */}
 
-            {SideBox.open.formType === "update_Subcategory" && (
+            {state.OpenBox.formType === "update_Subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10700,7 +10864,7 @@ const Sideform = () => {
 
             {/*  add Customer */}
 
-            {SideBox.open.formType === "add_customer" && (
+            {state.OpenBox.formType === "add_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10831,7 +10995,7 @@ const Sideform = () => {
             {/* add Customer Ends */}
             {/*  update Customer */}
 
-            {SideBox.open.formType === "update_customer" && (
+            {state.OpenBox.formType === "update_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -10964,7 +11128,7 @@ const Sideform = () => {
 
             {/* add order */}
 
-            {SideBox.open.formType === "add_order" && (
+            {state.OpenBox.formType === "add_order" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -11181,7 +11345,7 @@ const Sideform = () => {
 
             {/*  add stock */}
 
-            {SideBox.open.formType === "addStock" && (
+            {state.OpenBox.formType === "addStock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">
@@ -11271,7 +11435,7 @@ const Sideform = () => {
 
             {/*  update stock */}
 
-            {SideBox.open.formType === "update_Stock" && (
+            {state.OpenBox.formType === "update_Stock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography variant="h5">

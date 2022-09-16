@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -8,10 +8,11 @@ import {
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
 import { getBlogHome, deleteBLog } from "../../services/service";
 import "../../assets/custom/css/category.css";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { OpenBox, Notify } from "../../store/Types";
+import { Store } from "../../store/Context";
 
 
 import {
@@ -39,15 +40,15 @@ function CustomPagination() {
 }
 
 
-
 export default function Knob() {
   const [search, setSearch] = useState("");
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
+
+  const {dispatch} = Store();
+
 
   const [Row, setRows] = useState();
-  // function for get cetegory list
+  // function for get  list
 
   useEffect(() => {
     getBlogHome()
@@ -109,11 +110,11 @@ export default function Knob() {
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-              SideBox.setOpen({
+              dispatch({type : OpenBox , payload :{
                 state: true,
                 formType: "update_blog",
                 payload: params,
-              });
+              }});
             }}
             aria-label="delete"
           >
@@ -121,11 +122,11 @@ export default function Knob() {
           </IconButton>
           <IconButton onClick={() => { deleteBLog(params.id).then((res)=>{
             console.log(res)
-          despatchAlert.setNote({
+          dispatch({type : Notify, payload :{
             open : true,
             variant : 'success',
             message : 'Blog Deleted !!!'
-          })
+          }})
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton>
@@ -203,7 +204,7 @@ export default function Knob() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "addBlog" });
+              dispatch({type: OpenBox, payload : { state: true, formType: "addBlog" }});
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -222,7 +223,7 @@ export default function Knob() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Door List</Typography>
+          <Typography variant="h6"> Blog List</Typography>
           <br></br>
           {DataGridView()}
         </Grid>

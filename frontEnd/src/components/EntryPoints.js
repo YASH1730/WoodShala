@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -16,15 +16,25 @@ import FacebookLogin from "react-facebook-login";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { Link } from "react-router-dom";
 import {login} from '../services/service'
-import {Notify,Auth} from '../App'
+// import {Notify,Auth} from '../App'
+import {Notify,Auth} from '../store/Types'
+import {Store} from '../store/Context';
 
 
-export default function EntryPoints() {
+export default function EntryPoints(props) {
 
+  // history var for location and jumping throw path 
+  const history = props.history;
+
+  // store import 
+  const {state,dispatch} = Store();
+  
+  useEffect(()=>{
+    if(state.Auth.isLogin === true)
+      history('/adminpanel')
+  },[state.Auth.isLogin])
 
   // context 
-  const Alert = useContext(Notify)
-  const userauth = useContext(Auth)
 
   const [postVal, setPostVal] = useState("catagory");
 
@@ -32,10 +42,7 @@ export default function EntryPoints() {
     setPostVal(event.target.value);
   };
 
-  const handelButton = () => {
-    console.log("Button Clicked");
-  };
-
+ 
   const post = [
     {
       value: "Admin",
@@ -70,30 +77,32 @@ export default function EntryPoints() {
 
       if(data.status === 200)
       {
-        userauth.setAuth({
-          isLogin : true,
-          token : data.data.token,
-          role : data.data.role
-        })
 
-        Alert.setNote({
+        dispatch({type : Auth, payload : {
+          isLogin : true,
+          WDToken : data.data.token,
+          role : data.data.role
+        }})
+
+        dispatch({type : Notify, payload : {
           open : true,
           variant : 'success',
           message : data.data.message
-        })
+        }})
 
         localStorage.setItem('isLogin',true);
         localStorage.setItem('WDToken',data.data.token);
         localStorage.setItem('role',data.data.role);
-        {window.location.href = '/adminpanel'}
+        // redirecting to main board
+        history('/adminpanel')
 
       }
       else {
-        Alert.setNote({
+        dispatch({type : Notify, payload : {
           open : true,
           variant : 'error',
           message : data.data.message
-        })
+        }})
       }
       
     })
@@ -134,7 +143,7 @@ export default function EntryPoints() {
                     <form method="post" onSubmit= {handleLogin} className="formStyle">
                     <TextField
                       fullWidth
-                      autoComplete={false}
+                       
                       id="fullWidth"
                       label="Email"
                       type="email"
@@ -260,7 +269,7 @@ export default function EntryPoints() {
                   >
                     <TextField
                       fullWidth
-                      autoComplete={false}
+                       
                       id="fullWidth"
                       label="Name"
                       type="text"
@@ -269,7 +278,7 @@ export default function EntryPoints() {
 
                     <TextField
                       fullWidth
-                      autoComplete={false}
+                       
                       id="fullWidth"
                       label="Email"
                       type="email"

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -8,7 +8,6 @@ import {
   MenuItem,
   Switch,
   InputAdornment,
-  Checkbox,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -17,8 +16,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
-import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import {Store } from "../../store/Context";
 import {
   getDraft,
   categoryList,
@@ -54,11 +53,8 @@ function CustomPagination() {
 }
 
 export default function Policy() {
-  // useContext
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+const {dispatch} = Store(); 
   // states
 
   const [Row, setRows] = useState([]);
@@ -177,11 +173,11 @@ export default function Policy() {
           <IconButton
             onClick={() => {
               console.log(params);
-              SideBox.setOpen({
+             dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_product",
                 payload: params,
-              });
+              }});
             }}
             aria-label="update"
           >
@@ -191,11 +187,11 @@ export default function Policy() {
           <IconButton
             onClick={() => {
               deleteProduct(params.formattedValue._id).then((res) => {
-                despatchAlert.setNote({
+                dispatch({type : Notify,payload : {
                   open: true,
                   variant: "success",
                   message: "Product deleted successfully !!!",
-                });
+                }});
               });
             }}
             aria-label="delete"
@@ -221,21 +217,21 @@ export default function Policy() {
 
     res.then((data) => {
       console.log(data)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open: true,
         variant: 'success',
         message: "Status Updated Successfully !!!"
 
-      })
+      } })
     })
       .catch((err) => {
         console.log(err)
-        despatchAlert.setNote({
+        dispatch({type : Notify,payload : {
           open: true,
           variant: 'error',
           message: "Something went wrong !!!"
 
-        })
+        } })
       })
   }
 
@@ -300,21 +296,21 @@ export default function Policy() {
 
     res.then((data) => {
       console.log(data)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open: true,
         variant: 'success',
         message: "Status Updated Successfully !!!"
 
-      })
+      } })
     })
       .catch((err) => {
         console.log(err)
-        despatchAlert.setNote({
+        dispatch({type : Notify,payload : {
           open: true,
           variant: 'error',
           message: "Something went wrong !!!"
 
-        })
+        }})
       })
   }
 
@@ -419,7 +415,7 @@ export default function Policy() {
             startIcon={<AddIcon />}
             variant="contained"
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "product" });
+             dispatch({type : OpenBox,payload : { state: true, formType: "product" });
             }}
           >
             Add Product

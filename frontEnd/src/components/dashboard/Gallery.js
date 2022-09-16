@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   ImageList,
@@ -14,7 +14,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";
 import "../../assets/custom/css/gallery.css";
-import { Notify, OpenBox } from "../../App";
+import { Notify, OpenBox } from "../../store/Types";
+import { Store} from "../../store/Context";
 
 export default function Knob() {
   const [images, setImages] = useState([]);
@@ -23,8 +24,9 @@ export default function Knob() {
     index: null,
   });
 
-  const Alert = useContext(Notify);
-  const SideBox = useContext(OpenBox);
+  // global State 
+  const {dispatch} = Store();
+
 
   const [SKU, setSKU] = useState();
 
@@ -67,11 +69,11 @@ export default function Knob() {
 
     deleteImage(data).then((res) => {
       setSKU(localStorage.getItem("SKU"));
-      Alert.setNote({
+      dispatch({type : Notify, payload :{
         open: true,
         variant: "warning",
         message: "Image has been deleted !!",
-      });
+    }});
     });
   };
 
@@ -88,14 +90,14 @@ export default function Knob() {
   };
 
   const handleUpdate = (e) => {
-    SideBox.setOpen({
+    dispatch({type : OpenBox, payload :  {
       state: true,
       formType: "update_gallery",
       payload: {
         SKU: localStorage.getItem("SKU"),
         imageIndex: e.target.parentElement.getAttribute("alt"),
       },
-    });
+    }});
   };
 
   return (
@@ -136,7 +138,7 @@ export default function Knob() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "addGallery" });
+              dispatch({type : OpenBox, payload : { state: true, formType: "addGallery" }});
             }}
             sx={{ width: "100%" }}
             color="primary"

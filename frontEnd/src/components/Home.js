@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Tabs,
   Tab,
@@ -14,9 +14,7 @@ import {
 import "../assets/custom/css/home.css";
 import Slide from "@mui/material/Slide";
 import Backdrop from "@mui/material/Backdrop";
-import { Mode, Auth } from "../App";
 import logo from "../assets/img/Blog/logo.webp";
-
 // inner components
 import Dashboard from "./dashboard/Dashboard";
 import Products from "./dashboard/Products";
@@ -54,8 +52,13 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import GridViewIcon from '@mui/icons-material/GridView';
 import InventoryIcon from '@mui/icons-material/Inventory';
 
+// import state 
+import {Store} from '../store/Context' 
+import {Auth, DarkMode, SideTabs} from '../store/Types' 
 
 const Home = (props) => {
+
+  const {state,dispatch} = Store()
   
   const ModuleName = {
     0 : 'dashboard',
@@ -87,24 +90,19 @@ const Home = (props) => {
      'stock': 11,
      'profile': 12,
   }
-  
-  const [ShowTabs, setShowTabs] = useState(false);
-  
+
   
   const [value, setValue] = useState(window.location.search !== '' ? ModuleNumber[window.location.search.split('=')[1]]: 0);
 
-  const history = props.history
+  const history = props.history;
 
-  // context
-  const viewMode = useContext(Mode);
-
+ 
   // states
   const [anchor, setAnchor] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("isLogin") !== "true") {
-      window.location.href = "/";
-    }
+    if (state.Auth.isLogin !== true)
+      history("/");
   }, []);
 
   const handleMenuClose = () => {
@@ -116,7 +114,12 @@ const Home = (props) => {
   };
 
   const handleClose = () => {
-    setShowTabs(false);
+    dispatch({
+      type : SideTabs,
+      payload : {
+        open : false
+      }
+    })
   };
 
   function TabPanel(props) {
@@ -153,20 +156,20 @@ const Home = (props) => {
   
     const handleChange = (event, newValue) => 
   {
-    console.log(window.location.pathname)
+    // console.log(window.location.pathname)
       history(`/adminpanel?module=${ModuleName[newValue]}`)
       // console.log(history)
-console.log(window.location.search)
+// console.log(window.location.search)
       setValue(newValue);
     };
 
     return (
       <Box sx={{ flexGrow: 1, display: "flex", width: "100%" }}>
-        {ShowTabs === true && (
-          <Slide direction="right" in={ShowTabs} mountOnEnter unmountOnExit>
+        {state.SideTabs.open && (
+          <Slide direction="right" in={state.SideTabs.open} mountOnEnter unmountOnExit>
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={ShowTabs}
+              open={state.SideTabs.open}
               onClick={handleClose}
             >
               <Tabs
@@ -177,7 +180,7 @@ console.log(window.location.search)
                 indicatorColor="primary"
                 textColor="primary"
                 aria-label="Vertical tabs example"
-                className={viewMode.mode === true ? "darkTabs2" : "tabs2"}
+                className={state.DarkMode.mode === true ? "darkTabs2" : "tabs2"}
                 sx={{
                   borderRight: 1,
                   borderColor: "divider",
@@ -358,28 +361,37 @@ console.log(window.location.search)
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = "/";
+    dispatch({type : Auth,payload : {
+      isLogin : false,
+      WDToken : null,
+      role : null
+    }})
+    history("/");
   };
 
   return (
     <>
       {/* Top Bar  */}
       <title>Dashboard</title>
-
       <Grid
         container
         p={1}
         spacing={2}
-        className={viewMode.mode === true ? "darkNav" : "topNav"}
+        className={state.DarkMode.mode === true ? "darkNav" : "topNav"}
         sx={{ boxShadow: 1 }}
       >
         <Grid item xs={4} sx={{ display: "flex" }}>
-          {ShowTabs === false ? (
+          {state.SideTabs.open === false ? (
             <IconButton
               className="hamIcon"
               onClick={() => {
                 localStorage.setItem("mode", false);
-                setShowTabs(true);
+                dispatch({
+                  type : SideTabs,
+                  payload : {
+                    open : true
+                  }
+                })
               }}
               size="small"
               color="primary"
@@ -391,7 +403,12 @@ console.log(window.location.search)
               className="hamIcon"
               onClick={() => {
                 localStorage.setItem("mode", true);
-                setShowTabs(false);
+                dispatch({
+                  type : SideTabs,
+                  payload : {
+                    open : false
+                  }
+                })
               }}
               size="small"
               color="primary"
@@ -408,10 +425,15 @@ console.log(window.location.search)
         </Grid>
 
         <Grid item sx={{ display: "flex", justifyContent: "end" }} xs={4}>
-          {viewMode.mode === true ? (
+          {state.DarkMode.mode === true ? (
             <IconButton
               onClick={() => {
-                viewMode.setMode(false);
+                dispatch({
+                  type : DarkMode,
+                  payload : {
+                    mode : false
+                  }
+                });
               }}
               size="small"
               color="primary"
@@ -421,7 +443,12 @@ console.log(window.location.search)
           ) : (
             <IconButton
               onClick={() => {
-                viewMode.setMode(true);
+                dispatch({
+                  type : DarkMode,
+                  payload : {
+                    mode : true
+                  }
+                });
               }}
               size="small"
               color="primary"

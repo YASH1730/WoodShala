@@ -2,7 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import EntryPoints from "./components/EntryPoints";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { Auth, OpenBox, Mode, Notify } from "./context/context";
+// import { Auth, OpenBox, Mode, Notify } from "./context/context";
 import Home from "./components/Home";
 import Blog from "./components/Blog";
 import BlogContent from "./components/BlogContent";
@@ -11,7 +11,12 @@ import SnackBar from "./components/SnackBar";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Buffer } from 'buffer';
+import {Store} from './store/Context';
+import PersistData from './components/Utility/PersistData'
+
+
 global.Buffer = Buffer;
+
 
 function MyRoutes(){
   const history  = useNavigate();
@@ -23,7 +28,7 @@ function MyRoutes(){
     <Route exact path="/adminpanel?module=" element={<Home history = {history} />} />
     <Route path="/blog" element={<Blog />} />
     <Route path="/blogcontent" element={<BlogContent />} />
-    <Route path="/" element={<EntryPoints />} />
+    <Route path="/" element={<EntryPoints history = {history} />} />
     {/* <Route path="/register" element={<EntryPoints />} /> */}
   </Routes>
   </>
@@ -31,17 +36,14 @@ function MyRoutes(){
 }
 
 function App() {
-  // states for the authentication
-  const [auth, setAuth] = useState({
-    isLogin : false,
-    token : null
-  });
 
+  // store 
+  const {state} = Store();
 
   //state for the mode pot dark
   const [mode, setMode] = useState(false);
 
-  // for alert satate 
+  // for alert state 
   const [Note, setNote] = useState({
     open: null,
     variant: null,
@@ -81,20 +83,13 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={mode === true ? dark : light}>
+      <ThemeProvider theme={state.DarkMode.mode === true ? dark : light}>
         <CssBaseline enableColorScheme />
         <BrowserRouter>
-          <Auth.Provider value={{ auth, setAuth }}>
-            <Notify.Provider value={{ Note, setNote }}>
-              <OpenBox.Provider value={{ open, setOpen }}>
-                <Mode.Provider value={{ mode, setMode }}>
+                <PersistData/>
                 <MyRoutes></MyRoutes>
                   <SideForm />
                   <SnackBar />
-                </Mode.Provider>
-              </OpenBox.Provider>
-            </Notify.Provider>
-          </Auth.Provider>
         </BrowserRouter>
       </ThemeProvider>
     </>
@@ -103,4 +98,3 @@ function App() {
 
 export default App;
 
-export { Auth, OpenBox, Mode, Notify };

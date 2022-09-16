@@ -1,13 +1,13 @@
-import React, { useEffect,useState,useContext } from "react";
-import {Notify} from '../../App'
+import React, { useEffect, useState,  } from "react";
+// import {Notify} from '../../App'
 import { useDropzone } from "react-dropzone";
-import {listBanner,addBanner, changeStatus} from '../../services/service'
+import { listBanner, addBanner, changeStatus } from '../../services/service'
 import {
   Box,
   Typography,
   TextField,
   Grid,
-  Button,Switch,FormGroup,FormControlLabel,Checkbox
+  Button, Switch, FormGroup, FormControlLabel, Checkbox
 } from "@mui/material";
 
 import {
@@ -18,11 +18,14 @@ import {
   useGridSelector,
 } from '@mui/x-data-grid';
 import Pagination from '@mui/material/Pagination';
+import { Store } from '../../store/Context'
+import { Notify } from '../../store/Types'
 
 function CustomPagination() {
   const apiRef = useGridApiContext();
   const page = useGridSelector(apiRef, gridPageSelector);
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
 
   return (
     <Pagination
@@ -34,12 +37,9 @@ function CustomPagination() {
   );
 }
 
-
-
-
 export default function Banner() {
 
-  const dispatchAlert = useContext(Notify);
+  const { dispatch } = Store();
 
 
   const {
@@ -57,34 +57,39 @@ export default function Banner() {
     </li>
   ));
 
-  const handelAddBanner = (e) =>{
+  const handelAddBanner = (e) => {
 
     e.preventDefault()
 
     const FD = new FormData();
 
     FD.append('banner_image', acceptedFiles[0], acceptedFiles[0].name);
-    FD.append('banner_title',e.target.banner_title.value);
-    FD.append('banner_Status',e.target.banner_Status.checked);
+    FD.append('banner_title', e.target.banner_title.value);
+    FD.append('banner_Status', e.target.banner_Status.checked);
 
-    const  res = addBanner(FD)
+    const res = addBanner(FD)
 
-    res.then((data)=>{
-        console.log(data)
-        dispatchAlert.setNote({
-          open : true,
-          variant : 'success',
-          message : "Banner Added successfully !!!"
-    
-        })
+    res.then((data) => {
+      console.log(data)
+      dispatch({
+        type: Notify, payload: {
+          open: true,
+          variant: 'success',
+          message: "Banner Added successfully !!!"
+
+        }
       })
-      .catch((err)=>{
+    })
+      .catch((err) => {
         console.log(err)
-        dispatchAlert.setNote({
-          open : true,
-          variant : 'error',
-          message : "May be duplicate found !!!"
-    
+
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: 'error',
+            message: "May be duplicate found !!!"
+
+          }
         })
       })
 
@@ -93,7 +98,7 @@ export default function Banner() {
 
   const [Row, setRows] = useState()
 
-  const [search,setSearch] = useState([]);
+  const [search, setSearch] = useState([]);
 
 
 
@@ -102,10 +107,10 @@ export default function Banner() {
       .then((data) => {
         console.log(data)
 
-        setRows(data.data.map((row,index) => {
+        setRows(data.data.map((row, index) => {
           // setActive(row.banner_Status)
           return ({
-            id: index + 1 ,
+            id: index + 1,
             banner_title: row.banner_title,
             banner_URL: row.banner_URL,
             banner_Status: row.banner_Status
@@ -138,50 +143,54 @@ export default function Banner() {
     {
       field: "banner_Status",
       headerName: "Banner Status",
-      align : 'center',
+      align: 'center',
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {params.row.action}   checked = {params.formattedValue}></Switch> ,
-  
+      renderCell: (params) => <Switch onChange={handleSwitch} name={params.row.action} checked={params.formattedValue}></Switch>,
+
     },
-   
+
 
   ];
 
-  const handleSwitch = (e)=>{
+  const handleSwitch = (e) => {
     console.log(e.target.name)
 
     const FD = new FormData()
 
-    FD.append('_id',e.target.name)
-    FD.append('banner_Status',e.target.checked)
+    FD.append('_id', e.target.name)
+    FD.append('banner_Status', e.target.checked)
 
     const res = changeStatus(FD);
 
-    res.then((data)=>{
+    res.then((data) => {
       console.log(data)
-      dispatchAlert.setNote({
-        open : true,
-        variant : 'success',
-        message : "Banner Status Updated Successfully !!!"
-  
+      dispatch({
+        type: Notify, payload: {
+          open: true,
+          variant: 'success',
+          message: "Banner Status Updated Successfully !!!"
+
+        }
       })
     })
-    .catch((err)=>{
-      console.log(err)
-      dispatchAlert.setNote({
-        open : true,
-        variant : 'error',
-        message : "May be duplicate found !!!"
-  
+      .catch((err) => {
+        console.log(err)
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: 'error',
+            message: "May be duplicate found !!!"
+
+          }
+        })
       })
-    })
 
-    
-  
 
-  } 
 
-    function DataGridView() {
+
+  }
+
+  function DataGridView() {
     return (
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
@@ -201,7 +210,7 @@ export default function Banner() {
     );
   }
 
-  const handelSearch =  (e)=>{
+  const handelSearch = (e) => {
 
     setSearch(e.target.value)
 
@@ -229,7 +238,7 @@ export default function Banner() {
         }}
       >
         <Grid item xs={10}>
-          <form method="post" onSubmit={handelAddBanner} enctype='multipart/form-data'   className="formStyle">
+          <form method="post" onSubmit={handelAddBanner} enctype='multipart/form-data' className="formStyle">
             <Box
               sx={{
                 "& .MuiTextField-root": { mt: 2 },
@@ -256,22 +265,22 @@ export default function Banner() {
                 id="fullWidth"
                 label="Banner Title"
                 type="text"
-                name = 'banner_title'
+                name='banner_title'
                 variant="outlined"
               />
 
-          
-          <FormGroup  >
-          <br></br>
-            <FormControlLabel control={<Checkbox name = 'banner_Status' />} label="Active (checked it if you want to make it active)" />
-          </FormGroup>
+
+              <FormGroup  >
+                <br></br>
+                <FormControlLabel control={<Checkbox name='banner_Status' />} label="Active (checked it if you want to make it active)" />
+              </FormGroup>
 
 
 
               <Button
                 variant="contained"
                 color="primary"
-                type = 'submit'
+                type='submit'
                 sx={{ marginTop: "5%", marginBottom: "8%", float: "right" }}
               >
                 Add Banner
@@ -283,11 +292,11 @@ export default function Banner() {
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
-     
-     
+
+
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography variant="h6"> Banner List </Typography>
-     
+
           <br></br>
           <TextField
             fullWidth

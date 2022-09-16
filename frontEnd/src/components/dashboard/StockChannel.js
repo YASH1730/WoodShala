@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -17,7 +17,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import {Store } from "../../store/Context";
 import { listStock, deleteStock, preview } from '../../services/service'
 import '../../assets/custom/css/stock.css'
 
@@ -53,9 +54,7 @@ export default function StockChannel() {
 
   const [product, setProductData] = useState();
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
-
+const {dispatch} = Store(); 
 
   const [Row, setRows] = useState()
 
@@ -128,21 +127,21 @@ export default function StockChannel() {
       renderCell: (params) =>
         <div className="categoryImage" >
           <IconButton onClick={() => {
-            SideBox.setOpen({
+           dispatch({type : OpenBox,payload : {
               state: true,
               formType: 'update_Stock',
               payload: params
-            })
+            }})
           }} aria-label="update"  >
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => {
             deleteStock(params.formattedValue).then((res) => {
-              despatchAlert.setNote({
+              dispatch({type : Notify,payload : {
                 open: true,
                 variant: 'success',
                 message: 'Category Deleted !!!'
-              })
+              }})
             })
           }} aria-label="delete"  >
             <DeleteIcon />
@@ -166,7 +165,7 @@ export default function StockChannel() {
 
   //   res.then((data) => {
   //     console.log(data)
-  //     despatchAlert.setNote({
+  //     dispatch({type : Notify,payload : {
   //       open: true,
   //       variant: 'success',
   //       message: " Door Status Updated Successfully !!!"
@@ -175,7 +174,7 @@ export default function StockChannel() {
   //   })
   //     .catch((err) => {
   //       console.log(err)
-  //       despatchAlert.setNote({
+  //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: 'error',
   //         message: "Something Went Wrong !!!"
@@ -279,7 +278,7 @@ export default function StockChannel() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "addStock" });
+             dispatch({type : OpenBox,payload : { state: true, formType: "addStock" }});
             }}
             sx={{ width: "100%" }}
             color="primary"

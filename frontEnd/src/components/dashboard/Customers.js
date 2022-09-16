@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -10,7 +10,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
 import { listCustomer, deleteCustomer  } from "../../services/service";
 import "../../assets/custom/css/category.css";
 
@@ -21,6 +20,13 @@ import {
   useGridApiContext,
   useGridSelector,
 } from "@mui/x-data-grid";
+
+import { OpenBox, Notify } from "../../store/Types";
+import {Store} from "../../store/Context";
+
+
+
+
 import Pagination from "@mui/material/Pagination";
 
 function CustomPagination() {
@@ -46,8 +52,7 @@ export default function Customer() {
     
   });
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
+const {dispatch} = Store(); 
 
   const [Row, setRows] = useState([]);
 
@@ -92,7 +97,6 @@ export default function Customer() {
       });
   }, [search]);
 
-  const [status, setStatus] = useState({});
 
 
   const columns = [
@@ -169,22 +173,22 @@ export default function Customer() {
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-              SideBox.setOpen({
+              dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_customer",
                 payload: params,
-              });
+              }});
             }}
             aria-label="update"
           >
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => { deleteCustomer(params.formattedValue).then((res)=>{
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'Customer Deleted !!!'
-          })
+          }})
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton>
@@ -209,7 +213,7 @@ export default function Customer() {
   //   res
   //     .then((data) => {
   //       console.log(data);
-  //       despatchAlert.setNote({
+  //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: "success",
   //         message: " Customer Status Updated Successfully !!!",
@@ -217,7 +221,7 @@ export default function Customer() {
   //     })
   //     .catch((err) => {
   //       console.log(err);
-  //       despatchAlert.setNote({
+  //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: "error",
   //         message: "Something Went Wrong !!!",
@@ -342,7 +346,7 @@ export default function Customer() {
           <Typography variant="h6"> Customer List </Typography>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "add_customer" });
+              dispatch({type : OpenBox,payload : { state: true, formType: "add_customer" }});
             }}
             color="primary"
             variant="contained"

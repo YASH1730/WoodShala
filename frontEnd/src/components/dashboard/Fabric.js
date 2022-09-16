@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
@@ -9,7 +9,8 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../App";
+import { OpenBox, Notify } from "../../store/Types";
+import { Store } from "../../store/Context";
 import { getFabric , changeFabricStatus } from '../../services/service'
 import '../../assets/custom/css/category.css'
 
@@ -42,15 +43,13 @@ function CustomPagination() {
 
 export default function Fabric() {
 
-  const [fabric, setfabric] = useState("");
   const [search, setSearch] = useState("");
 
-  const SideBox = useContext(OpenBox);
-  const despatchAlert = useContext(Notify);
+  const {dispatch} = Store()
 
 
   const [Row, setRows] = useState()
-  // function for get cetegory list
+  // function for get  list
 
   useEffect(() => {
     getFabric()
@@ -106,16 +105,16 @@ export default function Fabric() {
       renderCell: (params) => 
       <div className="fabricImage" >
         <IconButton onClick={() => { 
-          SideBox.setOpen({
+          dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_fabric',
             payload : params
-          }) 
+          }}) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
         {/* <IconButton onClick={() => { deletefabric(params.formattedValue).then((res)=>{
-          despatchAlert.setNote({
+          dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'fabric Deleted !!!'
@@ -142,21 +141,21 @@ export default function Fabric() {
 
     res.then((data)=>{
       console.log(data)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'success',
         message : "Fabric Status Updated Successfully !!!"
   
-      })
+      }})
     })
     .catch((err)=>{
       console.log(err)
-      despatchAlert.setNote({
+      dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
         message : "Something went wrong !!!"
   
-      })
+      }})
     })
 
     
@@ -191,9 +190,7 @@ export default function Fabric() {
     );
   }
 
-  const handleChangeCat = (event) => {
-    setfabric(event.target.value);
-  };
+
 
   return (
     <>
@@ -231,7 +228,7 @@ export default function Fabric() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              SideBox.setOpen({ state: true, formType: "fabric" });
+              dispatch({type : OpenBox,payload : { state: true, formType: "fabric" }});
             }}
             sx={{ width: "100%" }}
             color="primary"
