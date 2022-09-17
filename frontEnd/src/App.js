@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Buffer } from 'buffer';
 import {Store} from './store/Context';
 import PersistData from './components/Utility/PersistData'
+import { ConfirmProvider } from "material-ui-confirm";
 
 
 global.Buffer = Buffer;
@@ -86,10 +87,12 @@ function App() {
       <ThemeProvider theme={state.DarkMode.mode === true ? dark : light}>
         <CssBaseline enableColorScheme />
         <BrowserRouter>
+        <ConfirmProvider  >
                 <PersistData/>
                 <MyRoutes></MyRoutes>
                   <SideForm />
                   <SnackBar />
+</ConfirmProvider>
         </BrowserRouter>
       </ThemeProvider>
     </>

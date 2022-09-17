@@ -89,12 +89,17 @@ import {
   addStock,
   updateStock
 } from "../../services/service.js";
+import { useConfirm } from "material-ui-confirm";
 
 import { OpenBox, Notify } from "../../store/Types";
 
 import { Store } from '../../store/Context';
 
 
+const option = {labels: {
+  confirmable: "Procced",
+  cancellable: "Cancel"
+}}
 
 const thumbsContainer = {
   display: "flex",
@@ -142,6 +147,18 @@ const Sideform = () => {
   // multiple images
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
+
+  const confirm = useConfirm();
+
+  // confirmBox 
+  const confirmBox = (e,action) =>{
+    e.preventDefault();
+
+    confirm({ description: `Data will listed in Database !!!` },option)
+                      .then(() => action(e))
+                      .catch((err) => {console.log(err);console.log("Opreation cancelled.")});
+  }
+
 
   // single images
   const [Image, setImages] = useState([]);
@@ -3131,7 +3148,10 @@ const Sideform = () => {
           } });
       });
   };
+
+
   const handleKnob = (e) => {
+  
     e.preventDefault();
 
     const FD = new FormData();
@@ -3882,7 +3902,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={handleProduct}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateTextile)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -5601,7 +5621,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={handleUpdateProduct}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateProduct)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -7393,7 +7413,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={handleMergeProduct}
+                     onSubmit={(e) =>{confirmBox(e,handleMergeProduct)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -8237,8 +8257,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={handleUpdateMergeProduct}
-                    enctype="multipart/form-data"
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateMergeProduct)}} enctype="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -9084,7 +9103,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleTextile}
+                    onSubmit={(e) =>{confirmBox(e,handleTextile)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9149,8 +9168,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleUpdateTextile}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpdateTextile)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -9205,7 +9223,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleFabric}
+                    onSubmit={(e) =>{confirmBox(e,handleFabric)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9271,8 +9289,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={handleUpdateFabric}
-                    enctype="multipart/form-data"
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateFabric)}}  enctype="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -9326,8 +9343,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleCategory}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleCategory)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9393,8 +9409,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleUpdateCategory}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpdateCategory)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -9449,8 +9464,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handlePrimaryMaterial}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handlePrimaryMaterial)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9527,8 +9541,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleUpdatePrimaryMaterial}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpdatePrimaryMaterial)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -9593,8 +9606,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleKnob}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleKnob)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9653,8 +9665,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdateKnob}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdateKnob)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9706,8 +9717,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleHandle}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleHandle)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9767,7 +9777,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleUpdateHandle}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateHandle)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9820,7 +9830,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleDoor}
+                    onSubmit={(e) =>{confirmBox(e,handleDoor)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9880,7 +9890,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleUpdateDoor}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateDoor)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -9933,8 +9943,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleFitting}
-                    id="myForm"
+                    onSubmit={(e) =>{confirmBox(e,handleFitting)}} id="myForm"
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -9993,7 +10002,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleUpdateFitting}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateFitting)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10045,8 +10054,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleHinge}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleHinge)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10105,8 +10113,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdateHinge}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdateHinge)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10158,8 +10165,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handlePolish}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handlePolish)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10219,8 +10225,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdatePolish}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdatePolish)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10295,8 +10300,7 @@ const Sideform = () => {
                       <Box sx={style}>
                         <form
                           className="form"
-                          id="myForm"
-                          onSubmit={handleUpload}
+                          id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpload)}}
                           enctype="multipart/form-data"
                           method="post"
                         >
@@ -10333,8 +10337,7 @@ const Sideform = () => {
 
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleUpdateBlog}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpdateBlog)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -10467,8 +10470,7 @@ const Sideform = () => {
                       <Box sx={style}>
                         <form
                           className="form"
-                          id="myForm"
-                          onSubmit={handleUpload}
+                          id="myForm" onSubmit={(e) =>{confirmBox(e,handleUpload)}}
                           enctype="multipart/form-data"
                           method="post"
                         >
@@ -10505,8 +10507,7 @@ const Sideform = () => {
 
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleAddBlog}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleAddBlog)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -10620,8 +10621,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm"
-                    onSubmit={handleAddImage}
+                    id="myForm" onSubmit={(e) =>{confirmBox(e,handleAddImage)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -10678,8 +10678,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdateGallery}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdateGallery)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10728,8 +10727,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleSubCategories}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleSubCategories)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10813,8 +10811,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdateSubCategories}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdateSubCategories)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10891,8 +10888,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleCustomer}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleCustomer)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -10908,7 +10904,7 @@ const Sideform = () => {
                       fullWidth
                       // required
                       id="outlined-select"
-                      name="name"
+                      name="username"
                       label="Customer Name"
                       type="text"
                     />
@@ -11023,8 +11019,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleUpdateCustomer}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleUpdateCustomer)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -11155,8 +11150,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleOrder}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleOrder)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -11373,8 +11367,7 @@ const Sideform = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form"
-                    onSubmit={handleAddStock}
+                    className="form" onSubmit={(e) =>{confirmBox(e,handleAddStock)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
@@ -11464,7 +11457,7 @@ const Sideform = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={handleUpdateStock}
+                    onSubmit={(e) =>{confirmBox(e,handleUpdateStock)}}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"

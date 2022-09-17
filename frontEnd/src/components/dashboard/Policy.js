@@ -456,7 +456,7 @@ const {dispatch} = Store();
       >
 
           { selectedSKU.length > 0 && <Grid xs={12} >
-          <form onSubmit={handelSubmit} enctype="multipart/form-data"
+          <form onSubmit={handelSubmit} encType="multipart/form-data"
             method="post">
             <FormControl>
               <FormLabel id="demo-radio-buttons-group-label">

@@ -17,15 +17,17 @@ import {
   InputLabel,
   Modal,
   Backdrop,
-  Fade
+  Fade,
+  FormLabel
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
-import AddIcon from "@mui/icons-material/Add";
+// import AddIcon from "@mui/icons-material/Add";
 import { OpenBox, Notify } from "../../store/Types";
 import {Store } from "../../store/Context";
 import { getOrder, changeOrderStatus } from "../../services/service";
 import "../../assets/custom/css/category.css";
+import { useDropzone } from "react-dropzone";
 
 import {
   DataGrid,
@@ -36,10 +38,43 @@ import {
 } from "@mui/x-data-grid";
 import Pagination from "@mui/material/Pagination";
 
-import { customerCatalog, getPresentSKUs, getLastOrder, addOrder } from '../../services/service'
+import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../services/service'
+import { useConfirm } from "material-ui-confirm";
 
-// icons 
-// import SearchIcon from '@mui/icons-material/Search';
+// style for drop box in custom
+const thumbsContainer = {
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  marginTop: 16,
+};
+
+const thumb = {
+  display: "inline-flex",
+  borderRadius: 2,
+  border: "1px solid #eaeaea",
+  marginBottom: 8,
+  marginRight: 8,
+  width: 100,
+  height: 100,
+  padding: 4,
+  boxSizing: "border-box",
+};
+
+const thumbInner = {
+  display: "flex",
+  minWidth: 0,
+  overflow: "hidden",
+};
+
+const img = {
+  display: "block",
+  width: "auto",
+  height: "100%",
+};
+
+// style for drop box in custom ends
+
 
 function CustomPagination() {
   const apiRef = useGridApiContext();
@@ -63,12 +98,28 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
+  maxHeight : 500,
+  overflow : 'scroll',
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 2,
 };
 
 export default function Order() {
+
+  // confirm box 
+
+  const confirm = useConfirm();
+
+  // confirmBox 
+  const confirmBox = (e) =>{
+    e.preventDefault();
+
+    confirm({ description: `Data will listed in Database !!!` })
+                      .then(() => handleSubmit(e))
+                      .catch((err) => {console.log(err);console.log("Opreation cancelled.")});
+  }
+
 
   // states 
   const [search, setSearch] = useState({
@@ -78,6 +129,9 @@ export default function Order() {
     customer: '',
 
   });
+    // multiple images
+    const [files, setFiles] = useState([]);
+    
   const [Row, setRows] = useState([]);
   const [productRow, setproductRows] = useState([]);
 
@@ -89,6 +143,7 @@ export default function Order() {
   // state for data 
   const [data, setData] = useState({
     OID : '',
+    CUS : '',
     CID : null,
     customer_email: '',
     customer_mobile: '',
@@ -129,9 +184,6 @@ const {dispatch} = Store();
 
   // catalog reload 
   useEffect(() => {
-
-    getOID()
-
     
     customerCatalog()
     .then( async (cus) => {
@@ -144,10 +196,10 @@ const {dispatch} = Store();
          customer: cus.data,
           products: res.data
         })
+        getOID()
       });
     })
 
-  
 
 
   }, [])
@@ -222,6 +274,54 @@ const {dispatch} = Store();
 
   }, [data.product_array])
 
+
+  // for image drop 
+  function ProductsPreviews(props) {
+    const { getRootProps, getInputProps } = useDropzone({
+      accept: "image/*",
+      multiple: true,
+      onDrop: (acceptedFiles) => {
+        setFiles(
+          acceptedFiles.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          )
+        );
+      },
+    });
+
+    const thumbs = files.map((file) => (
+      <div style={thumb} key={file.name}>
+        <div style={thumbInner}>
+          <img
+            src={file.preview}
+            style={img}
+            alt="Images"
+            // Revoke data uri after image is loaded
+            onLoad={() => {
+              URL.revokeObjectURL(file.preview);
+            }}
+          />
+        </div>
+      </div>
+    ));
+
+    useEffect(() => {
+      // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+      return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    }, []);
+
+    return (
+      <section className="container dorpContainer">
+        <div {...getRootProps({ className: "dropzone" })}>
+          <input {...getInputProps()} />
+          <p>{props.text}</p>
+        </div>
+        <aside style={thumbsContainer}>{thumbs}</aside>
+      </section>
+    );
+  }
 
   // for calculating subtotal
   const calSubtotal = ()=>{
@@ -498,9 +598,6 @@ const {dispatch} = Store();
       });
   };
 
-  // get OID
-    // function for generating product OID ID
-
     const getOID = () => {
       getLastOrder()
         .then((res) => {
@@ -589,18 +686,54 @@ const {dispatch} = Store();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
 
+  // custom product id 
+  const getCUS = async()=>{
+    getLastCp()
+    .then((res) => {
+      if (res.data.length > 0) {
+        let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
+
+        setData({...data,CUS : `CUS-0${index}`});
+      } else {
+        setData({...data,CUS : "CUS-01001"});
+
+      }
+    })
+    .catch((err) => {
+      // console.log(err);
+    });
+  }
+
   // custom product submit
-  const handleCustomProduct = (e)=>{
+  const handleCustomProduct = async (e)=>{
     e.preventDefault();
 
-    console.log('i am in ')
-    console.log(productRow)
+    const FD = new FormData();
 
-    setData({ ...data, quantity: { ...data.quantity, [e.target.SKU.value]: e.target.quantity.value } })
+    files.map((element) => {
+      return FD.append("product_image", element);
+    });
+
+
+    FD.append('CUS',e.target.CUS.value)
+    FD.append('product_title',e.target.product_title.value)
+    FD.append('length',e.target.length.value)
+    FD.append('height',e.target.height.value)
+    FD.append('breadth',e.target.breadth.value)
+    FD.append('selling_price',e.target.selling_price.value)
+    FD.append('MRP',e.target.MRP.value)
+    FD.append('discount',e.target.discount.value)
+    FD.append('polish_time',e.target.polish_time.value)
+
+    
+
+    await addCustomProduct(FD)
+
+    setData({ ...data, quantity: { ...data.quantity, [e.target.CUS.value]: e.target.quantity.value } })
 
     setproductRows(
       [...productRow,{ id : productRow.length+1,
-      SKU : e.target.SKU.value, 
+      SKU : e.target.CUS.value, 
       product_title : e.target.product_title.value, 
       dimension : e.target.length.value+'x'+e.target.breadth.value+'x'+e.target.height.value, 
       MRP : e.target.MRP.value, 
@@ -616,6 +749,10 @@ const {dispatch} = Store();
   
 // custom product model
   function CustomProduct() {
+
+    useEffect(()=>{
+      getCUS()
+    },[])
 
     return (
       <div>
@@ -639,8 +776,17 @@ const {dispatch} = Store();
                 <Grid item xs={12} sx = {{pb : 2}}>
                   <form enctype="multipart/form-data"
                     method="get" onSubmit = {handleCustomProduct}>
+                       {/* <FormLabel id="demo-radio-buttons-group-label">
+                              Product Images
+                            </FormLabel> */}
+                            <ProductsPreviews
+                              text={"Please Drag and Drop the product images"}
+                            ></ProductsPreviews>
+
                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'SKU'
+                    name = 'CUS'
+                    disabled
+                    value = {data.CUS}
                     type = 'text'
                     label = 'Custom SKU'
                     variant = 'outlined'
@@ -679,6 +825,12 @@ const {dispatch} = Store();
                     variant = 'outlined'
                     />
                     <TextField size = 'small' sx = {{mb : 2}} fullWidth
+                    name = 'selling_price'
+                    type = 'number'
+                    label = 'Selling Price'
+                    variant = 'outlined'
+                    />
+                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
                     name = 'MRP'
                     type = 'number'
                     label = 'MRP'
@@ -692,10 +844,11 @@ const {dispatch} = Store();
                     />
 
                     <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'product_title'
-                    type = 'text'
-                    label = 'Title'
+                    name = 'polish_time'
+                    type = 'number'
+                    label = 'Polish Time'
                     variant = 'outlined'
+                    helperText = 'Polish time in days...'
                     />
                     <Button size = 'small' fullWidth variant = 'contained' type = 'submit'>Add</Button>
                   </form>
@@ -1054,10 +1207,10 @@ const {dispatch} = Store();
                 <Button
                   variant="contained"
                   size="small"
-                  onClick={activeStep === 2 ? handleSubmit : handleNextStep}
+                  onClick={activeStep === 2 ? confirmBox : handleNextStep}
 
                 >
-                  {activeStep === 2 ? 'Save' : 'Continue'}
+                  {activeStep === 2 ? 'Save Order' : 'Continue'}
                 </Button>
               </Box>
               </form>

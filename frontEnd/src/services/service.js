@@ -818,6 +818,24 @@ export const getLastOrder = async () => {
   });
 };
 
+// cusotm product ID at last
+export const getLastCp = async () => {
+  return await axios.get(`${API}/getLastCp`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+// add custom product 
+export const addCustomProduct = async (data) => {
+  return await axios.post(`${API}/addCustomProduct`,data,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
 // =========================== CURD FOR Customer  ===========================
 
 // for  list customer to the list
