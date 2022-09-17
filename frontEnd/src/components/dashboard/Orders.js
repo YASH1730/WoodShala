@@ -197,6 +197,7 @@ const {dispatch} = Store();
           products: res.data
         })
         getOID()
+      
       });
     })
 
@@ -688,7 +689,7 @@ const {dispatch} = Store();
 
   // custom product id 
   const getCUS = async()=>{
-    getLastCp()
+    await getLastCp()
     .then((res) => {
       if (res.data.length > 0) {
         let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
@@ -751,8 +752,9 @@ const {dispatch} = Store();
   function CustomProduct() {
 
     useEffect(()=>{
-      getCUS()
-    },[])
+      getCUS();
+
+    },[open])
 
     return (
       <div>
