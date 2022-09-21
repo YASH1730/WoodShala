@@ -5,7 +5,7 @@ import {
   Grid,
   InputAdornment,
   IconButton,
-  Button,
+  Button,Box
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
@@ -70,7 +70,7 @@ const {dispatch} = Store();
           } else final.push(row);
         });
 
-        console.log(final)
+        //console.log(final)
 
 
         setRows(
@@ -87,13 +87,13 @@ const {dispatch} = Store();
               city : row.city ,
               state : row.state ,
               shipping : row.shipping ,
-              action: row._id,
+              action: row,
             };
           })
         );
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, [search]);
 
@@ -177,6 +177,8 @@ const {dispatch} = Store();
                 state: true,
                 formType: "update_customer",
                 payload: params,
+                row : Row,
+                setRow : setRows
               }});
             }}
             aria-label="update"
@@ -184,7 +186,10 @@ const {dispatch} = Store();
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => { deleteCustomer(params.formattedValue).then((res)=>{
-          dispatch({type : Notify,payload : {
+
+          setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
+          }))
+         dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
             message : 'Customer Deleted !!!'
@@ -201,7 +206,7 @@ const {dispatch} = Store();
   // const handleStatus = (e) => {
   //   setStatus({ ...status, [e.target.name]: e.target.value });
 
-  //   console.log(e.target.name);
+  //   //console.log(e.target.name);
 
   //   const FD = new FormData();
 
@@ -212,7 +217,7 @@ const {dispatch} = Store();
 
   //   res
   //     .then((data) => {
-  //       console.log(data);
+  //       //console.log(data);
   //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: "success",
@@ -220,7 +225,7 @@ const {dispatch} = Store();
   //       });
   //     })
   //     .catch((err) => {
-  //       console.log(err);
+  //       //console.log(err);
   //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: "error",
@@ -263,8 +268,8 @@ const {dispatch} = Store();
   }
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Customer
       </Typography>
 
@@ -286,7 +291,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={3.3}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             type="text"
             InputProps={{
@@ -302,7 +307,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={4}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             InputProps={{
               startAdornment: (
@@ -318,7 +323,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={4}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             type="date"
             name="date"
@@ -343,10 +348,10 @@ const {dispatch} = Store();
             }
           } >
 
-          <Typography variant="h6"> Customer List </Typography>
+          <Typography component={'span'} variant="h6"> Customer List </Typography>
           <Button
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "add_customer" }});
+              dispatch({type : OpenBox,payload : { state: true, formType: "add_customer", row : Row,setRow : setRows }});
             }}
             color="primary"
             variant="contained"
@@ -361,6 +366,6 @@ const {dispatch} = Store();
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

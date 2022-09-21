@@ -7,7 +7,7 @@ import {
   ImageListItem,
   Zoom,
   InputAdornment,
-  Button,
+  Button,Box
 } from "@mui/material";
 import { getGallery, deleteImage } from "../../services/service";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,7 +22,7 @@ export default function Knob() {
   const [buttonState, setButtonState] = useState({
     open: false,
     index: null,
-  });
+  }); 
 
   // global State 
   const {dispatch} = Store();
@@ -34,7 +34,7 @@ export default function Knob() {
     const res = getGallery(`WS-${localStorage.getItem("SKU")}`);
 
     res.then((res) => {
-      // console.log(res)
+      // //console.log(res)
       if (res.status !== 203) {
         setImages(res.data);
         setSKU(`${localStorage.getItem("SKU")}`);
@@ -47,7 +47,7 @@ export default function Knob() {
     const res = getGallery(`WS-${SKU}`);
     localStorage.setItem("SKU", e.target.value);
     res.then((res) => {
-      console.log(res);
+      //console.log(res);
       if (res.status !== 203) {
         setImages(res.data);
       }
@@ -78,7 +78,7 @@ export default function Knob() {
   };
 
   const handleHover = (e) => {
-    console.log(typeof e.target.alt);
+    //console.log(typeof e.target.alt);
     setButtonState({
       open: true,
       index: e.target.alt,
@@ -101,8 +101,8 @@ export default function Knob() {
   };
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Gallery
       </Typography>
 
@@ -121,7 +121,7 @@ export default function Knob() {
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
             name="seachQuery"
@@ -152,7 +152,7 @@ export default function Knob() {
 
       <br></br>
 
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Product Images
       </Typography>
       <br></br>
@@ -212,6 +212,6 @@ export default function Knob() {
             </Zoom>
           ))}
       </ImageList>
-    </>
+    </Box>
   );
 }

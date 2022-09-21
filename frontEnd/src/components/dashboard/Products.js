@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import {
-
+Box,
   Typography,
   TextField,
   Grid,
@@ -57,7 +57,7 @@ export default function Products() {
   useEffect(()=>{
     getListProduct()
     .then((data) => {
-      console.log(data.data)
+      //console.log(data.data)
 
       setRows(data.data.map((row,index) => {
 
@@ -125,25 +125,25 @@ export default function Products() {
           tax_rate: row.tax_rate,
           selling_price: row.selling_price,
           discount_limit: row.discount_limit,
-          dispatch_time: row.dispatch_time,
+          polish_time: row.polish_time,
           action: row
         })
       }))
     })
     .catch((err) => {
-      console.log(err)
+      //console.log(err)
     })
 
 
     getListMergeProduct()
     .then((data) => {
-      console.log(data.data)
+      //console.log(data.data)
 
       setMergeRows(data.data.map((row,index) => {
 
         return ({
           id: index+1,
-          SKU : row.SKU,
+          MS : row.MS,
           product_array : row.product_array,
           product_title : row.product_title,
           category_name : row.category_name,
@@ -174,7 +174,7 @@ export default function Products() {
           selling_price : row.selling_price,
           showroom_price : row.showroom_price,
           discount_limit : row.discount_limit,
-          dispatch_time : row.dispatch_time,
+          polish_time : row.polish_time,
           status: row.status ? 'Activated' : 'Deactivated' ,
           returnDays : row.returnDays,
           COD : row.COD,
@@ -184,7 +184,7 @@ export default function Products() {
       }))
     })
     .catch((err) => {
-      console.log(err)
+      //console.log(err)
     })
 
 
@@ -526,8 +526,8 @@ export default function Products() {
     },
     
     {
-      field: "dispatch_time",
-      headerName: "Dispatch Time",
+      field: "polish_time",
+      headerName: "Polish Time",
       width: 160,
     },
     {
@@ -539,12 +539,14 @@ export default function Products() {
         
         <IconButton onClick={() => {
           
-          console.log(params)
+          //console.log(params)
               
           dispatch({type : OpenBox, payload :{
                 state : true,
                 formType : 'update_product',
-                payload : params
+                payload : params,
+                row : Row,
+                setRow : setRows
               }}) 
 
             }} aria-label="update"  >
@@ -552,6 +554,9 @@ export default function Products() {
         </IconButton>
         
         <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
+                 setRows(Row.filter((set)=>{
+                  return  set.action._id !== params.formattedValue._id  ;
+                }))
               dispatch({type: Notify,payload:{
                 open : true,
                 variant : 'success',
@@ -569,7 +574,7 @@ export default function Products() {
   ];
   const mergeColumns = [
     { field: "id", headerName: "ID", width: 50 },
-    { field: "SKU", headerName: "SKU", width: 100 },
+    { field: "MS", headerName: "MS", width: 100 },
     { field: "status", headerName: "Status", width: 100 },
     {
       field: "product_array",
@@ -732,8 +737,8 @@ export default function Products() {
     },
     
     {
-      field: "dispatch_time",
-      headerName: "Dispatch Time",
+      field: "polish_time",
+      headerName: "Polish Time",
       width: 160,
     },
     {
@@ -744,12 +749,13 @@ export default function Products() {
       <div>
         
         <IconButton onClick={() => {
-          
-          console.log(params)
+      
               dispatch({type : OpenBox, payload :{
                 state : true,
                 formType : 'update_merge',
-                payload : params
+                payload : params,
+                row : MergeRow,
+                setRow : setMergeRows
               }}) 
 
             }} aria-label="update"  >
@@ -757,6 +763,10 @@ export default function Products() {
         </IconButton>
         
         <IconButton onClick={() => { deleteMergeProduct(params.formattedValue._id).then((res)=>{
+        setMergeRows(MergeRow.filter((set)=>{
+          return  set.action._id !== params.formattedValue._id  ;
+        }))
+       
               dispatch({type: Notify,payload:{
                 open : true,
                 variant : 'success',
@@ -803,13 +813,13 @@ export default function Products() {
   }
 
   const handleSearch = (e)=>{
-    // console.log(e.target.value)
+    // //console.log(e.target.value)
      setSearch(e.target.value)
   }
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Products
       </Typography>
 
@@ -831,7 +841,7 @@ export default function Products() {
         <Grid xs={12} md = {9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
             onChange = {handleSearch}
@@ -848,7 +858,7 @@ export default function Products() {
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
-            onClick = {()=>{dispatch({type : OpenBox, payload : {state : true, formType : 'product'}})}}
+            onClick = {()=>{dispatch({type : OpenBox, payload : {state : true, formType : 'product',row : Row,setRow : setRows}})}}
           >
             Add Product
           </Button>
@@ -860,7 +870,7 @@ export default function Products() {
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
-        <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
+        <Grid item p={2} xs={12} md = {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <div style= {
             {
               display  : 'flex',
@@ -868,12 +878,14 @@ export default function Products() {
             }
           } >
 
-          <Typography variant="h6"> Product List </Typography>
+          <Typography component={'span'} variant="h6"> Product List </Typography>
           {selectedSKU.length > 1 &&  <Button startIcon = {<MergeIcon/>} variant = 'outlined' onClick = {()=>{
              dispatch({type : OpenBox, payload :{
               state : true,
               formType : 'merge_product',
-              payload : selectedSKU
+              payload : selectedSKU,
+              row : MergeRow,
+              setRow : setMergeRows
             }}) 
             
           }}>Merge</Button>}
@@ -881,38 +893,16 @@ export default function Products() {
           <br></br>
           {DataGridView(Row,columns)}
         </Grid>
-      </Grid>
+        <Grid item p={2} xs={12} md= {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
 
-      {/* merge data grid ends  */}
-      <br></br>
-      {/* data grid  */}
-
-      <Grid container scaping={2} className="overviewContainer">
-        <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <div style= {
-            {
-              display  : 'flex',
-              justifyContent : 'space-between',
-            }
-          } >
-
-          <Typography variant="h6"> Merge Product List </Typography>
-          {selectedSKU.length > 1 &&  <Button startIcon = {<MergeIcon/>} variant = 'outlined' onClick = {()=>{
-            dispatch({type : OpenBox, payload :{
-              state : true,
-              formType : 'merge_product',
-              payload : selectedSKU
-            }}) 
-         
-            
-          }}>Merge</Button>}
-          </div>
+          <Typography component={'span'} variant="h6"> Merge Product List </Typography>
+        <br></br>
           <br></br>
           {DataGridView(MergeRow,mergeColumns,false)}
         </Grid>
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

@@ -11,7 +11,7 @@ const PersistData = () => {
     useEffect(() => {
         if (localStorage.getItem('isLogin'))
         {
-            console.log('i am in >> ')
+            //console.log('i am in >> ')
             dispatch({
                 type : Auth,
                 payload : {

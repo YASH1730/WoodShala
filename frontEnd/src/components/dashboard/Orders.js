@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Typography,
   TextField,
@@ -18,13 +18,12 @@ import {
   Modal,
   Backdrop,
   Fade,
-  FormLabel
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
 import { OpenBox, Notify } from "../../store/Types";
-import {Store } from "../../store/Context";
+import { Store } from "../../store/Context";
 import { getOrder, changeOrderStatus } from "../../services/service";
 import "../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
@@ -40,6 +39,7 @@ import Pagination from "@mui/material/Pagination";
 
 import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../services/service'
 import { useConfirm } from "material-ui-confirm";
+import { Editor } from "@tinymce/tinymce-react";
 
 // style for drop box in custom
 const thumbsContainer = {
@@ -98,8 +98,8 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  maxHeight : 500,
-  overflow : 'scroll',
+  maxHeight: 500,
+  overflow: 'scroll',
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 2,
@@ -107,17 +107,20 @@ const style = {
 
 export default function Order() {
 
+  const editorRef = useRef();
+
+
   // confirm box 
 
   const confirm = useConfirm();
 
   // confirmBox 
-  const confirmBox = (e) =>{
+  const confirmBox = (e) => {
     e.preventDefault();
 
     confirm({ description: `Data will listed in Database !!!` })
-                      .then(() => handleSubmit(e))
-                      .catch((err) => {console.log(err);console.log("Opreation cancelled.")});
+      .then(() => handleSubmit(e))
+      .catch((err) => { console.log("Operation cancelled.") });
   }
 
 
@@ -129,9 +132,9 @@ export default function Order() {
     customer: '',
 
   });
-    // multiple images
-    const [files, setFiles] = useState([]);
-    
+  // multiple images
+  const [files, setFiles] = useState([]);
+
   const [Row, setRows] = useState([]);
   const [productRow, setproductRows] = useState([]);
 
@@ -142,23 +145,23 @@ export default function Order() {
 
   // state for data 
   const [data, setData] = useState({
-    OID : '',
-    CUS : '',
-    CID : null,
+    OID: '',
+    CUS: '',
+    CID: null,
     customer_email: '',
     customer_mobile: '',
     customer_name: '',
     shipping: '',
     product_array: [],
     quantity: [],
-    subTotal : 0,
-    discount : 0,
-    total : 0,
-    status : 'processing',
-    city : '',
-    state : '',
-    paid : 0,
-    note : ''
+    subTotal: 0,
+    discount: 0,
+    total: 0,
+    status: 'processing',
+    city: '',
+    state: '',
+    paid: 0,
+    note: ''
   })
 
   //  State for stepper
@@ -166,7 +169,7 @@ export default function Order() {
 
 
   // context
-const {dispatch} = Store(); 
+  const { dispatch } = Store();
 
   // stepper button
   const handleNextStep = () => {
@@ -184,22 +187,22 @@ const {dispatch} = Store();
 
   // catalog reload 
   useEffect(() => {
-    
-    customerCatalog()
-    .then( async (cus) => {
-      console.log(cus)
 
-      getPresentSKUs().then((res) => {
-        console.log(res)
-        setCatalogs({
-          ...catalogs,
-         customer: cus.data,
-          products: res.data
-        })
-        getOID()
-      
-      });
-    })
+    customerCatalog()
+      .then(async (cus) => {
+        //console.log(cus)
+
+        getPresentSKUs().then((res) => {
+          //console.log(res)
+          setCatalogs({
+            ...catalogs,
+            customer: cus.data,
+            products: res.data
+          })
+          getOID()
+
+        });
+      })
 
 
 
@@ -224,54 +227,54 @@ const {dispatch} = Store();
           final.map((row, index) => {
             return {
               id: index + 1,
-              OID : row.OID,
-              order_time : row.order_time,
-              status : row.status,
-              CID : row.CID,
-              customer_name : row.customer_name,
-              customer_email : row.customer_email,
-              customer_mobile : row.customer_mobile,
-              city : row.city,
-              state : row.state,
-              shipping : row.shipping,
-              quantity : JSON.stringify(row.quantity),
-              discount : row.discount,
+              OID: row.OID,
+              order_time: row.order_time,
+              status: row.status,
+              CID: row.CID,
+              customer_name: row.customer_name,
+              customer_email: row.customer_email,
+              customer_mobile: row.customer_mobile,
+              city: row.city,
+              state: row.state,
+              shipping: row.shipping,
+              quantity: JSON.stringify(row.quantity),
+              discount: row.discount,
               paid:
                 parseInt((row.paid / row.total) * 100) + "%",
-              total : row.total,
-              note : row.note || '',
+              total: row.total,
+              note: row.note || '',
               action: row._id,
             };
           })
         );
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, [search]);
 
   // for product data row 
   useEffect(() => {
 
-    const rows = catalogs.products.filter((row) => { console.log(data.product_array.includes(row.SKU)); return data.product_array.includes(row.SKU) && row })
-  
+    const rows = catalogs.products.filter((row) => {  return data.product_array.includes(row.SKU) && row })
+
     setproductRows(rows.map((dataOBJ, index) => {
 
-        setData({ ...data, quantity: { ...data.quantity, [dataOBJ.SKU]: 1 }})
+      setData({ ...data, quantity: { ...data.quantity, [dataOBJ.SKU]: 1 } })
 
-        return {
-          id: index + 1,
-          SKU: dataOBJ.SKU,
-          product_title: dataOBJ.product_title,
-          product_image: dataOBJ.featured_image,
-          dimension: dataOBJ.length_main + 'X' + dataOBJ.breadth + 'X' + dataOBJ.height,
-          MRP: dataOBJ.MRP,
-          qty: data.quantity[dataOBJ.SKU] ? data.quantity[dataOBJ.SKU] : 1,
-          selling_price: dataOBJ.selling_price,
-          discount_limit: dataOBJ.discount_limit,
-          range: dataOBJ.range,
-        }
-      }))
+      return {
+        id: index + 1,
+        SKU: dataOBJ.SKU,
+        product_title: dataOBJ.product_title,
+        product_image: dataOBJ.featured_image,
+        dimension: dataOBJ.length_main + 'X' + dataOBJ.breadth + 'X' + dataOBJ.height,
+        MRP: dataOBJ.MRP,
+        qty: data.quantity[dataOBJ.SKU] ? data.quantity[dataOBJ.SKU] : 1,
+        selling_price: dataOBJ.selling_price,
+        discount_limit: dataOBJ.discount_limit,
+        range: dataOBJ.range,
+      }
+    }))
 
   }, [data.product_array])
 
@@ -325,15 +328,15 @@ const {dispatch} = Store();
   }
 
   // for calculating subtotal
-  const calSubtotal = ()=>{
-    
+  const calSubtotal = () => {
+
     let val = 0;
-    productRow.map((row)=>{
+    productRow.map((row) => {
       return val += row.selling_price * data.quantity[row.SKU]
     })
-      return val
+    return val
   }
-  
+
 
   const [status, setStatus] = useState({});
 
@@ -478,11 +481,15 @@ const {dispatch} = Store();
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-             dispatch({type : OpenBox,payload : {
-                state: true,
-                formType: "update_order",
-                payload: params,
-              }});
+              dispatch({
+                type: OpenBox, payload: {
+                  state: true,
+                  formType: "update_order",
+                  payload: params,
+                  row : Row,
+                  setRow : setRows
+                }
+              });
             }}
             aria-label="delete"
           >
@@ -503,7 +510,7 @@ const {dispatch} = Store();
     },
   ];
 
-// create order  col
+  // create order  col
   const product_columns = [
     {
       field: "id",
@@ -562,16 +569,16 @@ const {dispatch} = Store();
       headerName: "Dimension",
       width: 200,
     },
-   
+
 
 
   ];
 
-// status update 
+  // status update 
   const handleStatus = (e) => {
     setStatus({ ...status, [e.target.name]: e.target.value });
 
-    console.log(e.target.name);
+    //console.log(e.target.name);
 
     const FD = new FormData();
 
@@ -583,38 +590,38 @@ const {dispatch} = Store();
     res
       .then((data) => {
         console.log(data);
-        // dispatch({type : Notify,payload : {
-        //   open: true,
-        //   variant: "success",
-        //   message: " Order Status Updated Successfully !!!",
-        // }});
+        dispatch({type : Notify,payload : {
+          open: true,
+          variant: "success",
+          message: " Order Status Updated Successfully !!!",
+        }});
       })
       .catch((err) => {
         console.log(err);
-        // dispatch({type : Notify,payload : {
-        //   open: true,
-        //   variant: "error",
-        //   message: "Something Went Wrong !!!",
-        // }});
+        dispatch({type : Notify,payload : {
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        }});
       });
   };
 
-    const getOID = () => {
-      getLastOrder()
-        .then((res) => {
-          if (res.data.length > 0) {
-            let index = parseInt(res.data[0].OID.split("-")[1]) + 1;
-  
-            setData({...data,OID : `OID-0${index}`});
-          } else {
-            setData({...data,OID : "OID-01001"});
+  const getOID = () => {
+    getLastOrder()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].OID.split("-")[1]) + 1;
 
-          }
-        })
-        .catch((err) => {
-          // console.log(err);
-        });
-    };
+          setData({ ...data, OID: `OID-0${index}` });
+        } else {
+          setData({ ...data, OID: "OID-01001" });
+
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
 
   const handelSearch = (e) => {
     setSearch({
@@ -654,9 +661,9 @@ const {dispatch} = Store();
 
   const handelData = (e) => {
     if (e.target.name !== 'discount')
-    setData({ ...data, [e.target.name]: e.target.value })
-    else{
-    setData({ ...data, [e.target.name]: e.target.value,subTotal : calSubtotal() , total : data.subTotal-(calSubtotal()/100*e.target.value) })
+      setData({ ...data, [e.target.name]: e.target.value })
+    else {
+      setData({ ...data, [e.target.name]: e.target.value, subTotal: calSubtotal(), total: data.subTotal - (calSubtotal() / 100 * e.target.value) })
     }
 
   }
@@ -667,7 +674,7 @@ const {dispatch} = Store();
     const number = parseInt(e.split(' - ')[1])
 
     const row = catalogs.customer.filter((row) => { return row.mobile === number && row })[0]
-    // console.log(row, number)
+    // //console.log(row, number)
 
     setData({
       ...data,
@@ -688,25 +695,25 @@ const {dispatch} = Store();
   const handleClose = () => setOpen(false);
 
   // custom product id 
-  const getCUS = async()=>{
+  const getCUS = async () => {
     await getLastCp()
-    .then((res) => {
-      if (res.data.length > 0) {
-        let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
 
-        setData({...data,CUS : `CUS-0${index}`});
-      } else {
-        setData({...data,CUS : "CUS-01001"});
+          setData({ ...data, CUS: `CUS-0${index}` });
+        } else {
+          setData({ ...data, CUS: "CUS-01001" });
 
-      }
-    })
-    .catch((err) => {
-      // console.log(err);
-    });
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
   }
 
   // custom product submit
-  const handleCustomProduct = async (e)=>{
+  const handleCustomProduct = async (e) => {
     e.preventDefault();
 
     const FD = new FormData();
@@ -716,45 +723,46 @@ const {dispatch} = Store();
     });
 
 
-    FD.append('CUS',e.target.CUS.value)
-    FD.append('product_title',e.target.product_title.value)
-    FD.append('length',e.target.length.value)
-    FD.append('height',e.target.height.value)
-    FD.append('breadth',e.target.breadth.value)
-    FD.append('selling_price',e.target.selling_price.value)
-    FD.append('MRP',e.target.MRP.value)
-    FD.append('discount',e.target.discount.value)
-    FD.append('polish_time',e.target.polish_time.value)
+    FD.append('CUS', e.target.CUS.value)
+    FD.append('product_title', e.target.product_title.value)
+    FD.append('length', e.target.length.value)
+    FD.append('height', e.target.height.value)
+    FD.append('breadth', e.target.breadth.value)
+    FD.append('selling_price', e.target.selling_price.value)
+    FD.append('MRP', e.target.MRP.value)
+    FD.append('discount', e.target.discount.value)
+    FD.append('polish_time', e.target.polish_time.value)
 
-    
+
 
     await addCustomProduct(FD)
 
     setData({ ...data, quantity: { ...data.quantity, [e.target.CUS.value]: e.target.quantity.value } })
 
     setproductRows(
-      [...productRow,{ id : productRow.length+1,
-      SKU : e.target.CUS.value, 
-      product_title : e.target.product_title.value, 
-      dimension : e.target.length.value+'x'+e.target.breadth.value+'x'+e.target.height.value, 
-      MRP : e.target.MRP.value, 
-      qty : e.target.quantity.value, 
-      selling_price : e.target.MRP.value - ((e.target.MRP.value/100)*e.target.discount.value), 
-      discount_limit : e.target.discount.value, 
+      [...productRow, {
+        id: productRow.length + 1,
+        SKU: e.target.CUS.value,
+        product_title: e.target.product_title.value,
+        dimension: e.target.length.value + 'x' + e.target.breadth.value + 'x' + e.target.height.value,
+        MRP: e.target.MRP.value,
+        qty: e.target.quantity.value,
+        selling_price: e.target.MRP.value - ((e.target.MRP.value / 100) * e.target.discount.value),
+        discount_limit: e.target.discount.value,
       }])
 
-      handleClose();
+    handleClose();
   }
 
 
-  
-// custom product model
+
+  // custom product model
   function CustomProduct() {
 
-    useEffect(()=>{
+    useEffect(() => {
       getCUS();
 
-    },[open])
+    }, [open])
 
     return (
       <div>
@@ -772,87 +780,87 @@ const {dispatch} = Store();
           <Fade in={open}>
             <Box sx={style}>
               <Grid container >
-                <Grid item xs={12} sx = {{mb : 2}}><Typography id="transition-modal-title" variant="h6" component="h2">
+                <Grid item xs={12} sx={{ mb: 2 }}><Typography component={'span'} id="transition-modal-title" variant="h6" component="h2">
                   Create Product
                 </Typography></Grid>
-                <Grid item xs={12} sx = {{pb : 2}}>
+                <Grid item xs={12} sx={{ pb: 2 }}>
                   <form enctype="multipart/form-data"
-                    method="get" onSubmit = {handleCustomProduct}>
-                       {/* <FormLabel id="demo-radio-buttons-group-label">
+                    method="get" onSubmit={handleCustomProduct}>
+                    {/* <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel> */}
-                            <ProductsPreviews
-                              text={"Please Drag and Drop the product images"}
-                            ></ProductsPreviews>
+                    <ProductsPreviews
+                      text={"Please Drag and Drop the product images"}
+                    ></ProductsPreviews>
 
-                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'CUS'
-                    disabled
-                    value = {data.CUS}
-                    type = 'text'
-                    label = 'Custom SKU'
-                    variant = 'outlined'
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='CUS'
+                      disabled
+                      value={data.CUS}
+                      type='text'
+                      label='Custom SKU'
+                      variant='outlined'
                     />
-                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'product_title'
-                    type = 'text'
-                    label = 'Title'
-                    variant = 'outlined'
-                    />
-                   
-                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'length'
-                    type = 'text'
-                    label = 'Length'
-                    variant = 'outlined'
-                    />
-                   
-                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'breadth'
-                    type = 'text'
-                    label = 'Breadth'
-                    variant = 'outlined'
-                    />
-                   
-                   <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'height'
-                    type = 'text'
-                    label = 'Height'
-                    variant = 'outlined'
-                    />
-                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'quantity'
-                    type = 'number'
-                    label = 'Quantity'
-                    variant = 'outlined'
-                    />
-                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'selling_price'
-                    type = 'number'
-                    label = 'Selling Price'
-                    variant = 'outlined'
-                    />
-                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'MRP'
-                    type = 'number'
-                    label = 'MRP'
-                    variant = 'outlined'
-                    />
-                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'discount'
-                    type = 'number'
-                    label = 'Discount'
-                    variant = 'outlined'
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='product_title'
+                      type='text'
+                      label='Title'
+                      variant='outlined'
                     />
 
-                    <TextField size = 'small' sx = {{mb : 2}} fullWidth
-                    name = 'polish_time'
-                    type = 'number'
-                    label = 'Polish Time'
-                    variant = 'outlined'
-                    helperText = 'Polish time in days...'
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='length'
+                      type='text'
+                      label='Length'
+                      variant='outlined'
                     />
-                    <Button size = 'small' fullWidth variant = 'contained' type = 'submit'>Add</Button>
+
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='breadth'
+                      type='text'
+                      label='Breadth'
+                      variant='outlined'
+                    />
+
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='height'
+                      type='text'
+                      label='Height'
+                      variant='outlined'
+                    />
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='quantity'
+                      type='number'
+                      label='Quantity'
+                      variant='outlined'
+                    />
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='selling_price'
+                      type='number'
+                      label='Selling Price'
+                      variant='outlined'
+                    />
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='MRP'
+                      type='number'
+                      label='MRP'
+                      variant='outlined'
+                    />
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='discount'
+                      type='number'
+                      label='Discount'
+                      variant='outlined'
+                    />
+
+                    <TextField size='small' sx={{ mb: 2 }} fullWidth
+                      name='polish_time'
+                      type='number'
+                      label='Polish Time'
+                      variant='outlined'
+                      helperText='Polish time in days...'
+                    />
+                    <Button size='small' fullWidth variant='contained' type='submit'>Add</Button>
                   </form>
                 </Grid>
               </Grid>
@@ -863,37 +871,86 @@ const {dispatch} = Store();
     );
   }
 
-  function handleSubmit(){
-   const res =  addOrder(data)
+  function handleSubmit() {
+   
+    /// for adding the note 
+
+    setData({...data,note : editorRef.current.getContent() ? editorRef.current.getContent() : '' })
+
+    console.log(data.note) 
+
+    const res = addOrder(data)
+   
     res
       .then((data) => {
         if (data.status !== 200) {
-
-          dispatch({type : Notify,payload : {
-            open: true,
-            variant: "error",
-            message: data.data.message || "Something Went Wrong !!!",
-          }});
+          setData({ OID: '',
+          CUS: '',
+          CID: null,
+          customer_email: '',
+          customer_mobile: '',
+          customer_name: '',
+          shipping: '',
+          product_array: [],
+          quantity: [],
+          subTotal: 0,
+          discount: 0,
+          total: 0,
+          status: 'processing',
+          city: '',
+          state: '',
+          paid: 0,
+          note: ''})
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message || "Something Went Wrong !!!",
+            }
+          });
         } else {
-          dispatch({type : Notify,payload : {
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }});
+          setRows([...Row,{
+            id : Row.length + 1,
+            OID : data.data.response.OID,
+            order_time : data.data.response.order_time,
+            status : data.data.response.status,
+            CID : data.data.response.CID,
+            customer_name : data.data.response.customer_name,
+            customer_email : data.data.response.customer_email,
+            customer_mobile : data.data.response.customer_mobile,
+            city : data.data.response.city,
+            state : data.data.response.state,
+            shipping : data.data.response.shipping,
+            quantity : data.data.response.quantity,
+            discount : data.data.response.discount,
+            paid : data.data.response.paid,
+            total : data.data.response.total,
+            note : data.data.response.note,
+            action : data.data.response
+        }])
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
+          });
         }
       })
       .catch((err) => {
-        dispatch({type : Notify,payload : {
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }});
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
+        });
       });
   }
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box sx={{ pl: 4, pr: 4 }}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Order
       </Typography>
       {CustomProduct()}
@@ -916,7 +973,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={3.3}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             type="text"
             InputProps={{
@@ -932,7 +989,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={4}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             InputProps={{
               startAdornment: (
@@ -948,7 +1005,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={4}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             type="date"
             name="date"
@@ -975,7 +1032,7 @@ const {dispatch} = Store();
             }
           } >
 
-            <Typography variant="h6"> Order List </Typography>
+            <Typography component={'span'} variant="h6"> Order List </Typography>
             {/* <Button
               onClick={() => {
                dispatch({type : OpenBox,payload : { state: true, formType: "add_order" }});
@@ -994,227 +1051,236 @@ const {dispatch} = Store();
 
         {/* create order  */}
         <Grid item p={2} xs={12} md={5.9} sx={{ boxShadow: 1, borderRadius: 5 }}>
-          <Typography variant="h6"> Create Order </Typography>
+          <Typography component={'span'} variant="h6"> Create Order </Typography>
 
           <Grid container className='orderSteps' sx={{ boxShadow: 1, borderRadius: 5, mt: 2, p: 2, }}>
             <Grid item xs={12}  >
-              <form method = 'post' on submit = {handleSubmit} >
-              <Stepper
-                className="stepper"
-                activeStep={activeStep}
-              >
-                {
-                  steps.map((step, index) => { return <Step key={index}><StepLabel>{step}</StepLabel></Step> })
+              <form method='post' on submit={handleSubmit} >
+                <Stepper
+                  className="stepper"
+                  activeStep={activeStep}
+                >
+                  {
+                    steps.map((step, index) => { return <Step key={index}><StepLabel>{step}</StepLabel></Step> })
+                  }
+                </Stepper>
+
+                {/* // Select Customer */}
+
+                {activeStep === 0 &&
+                  <Box sx={{
+                    p: 2.5,
+                  }}>
+
+                    <Autocomplete
+                      id="free-solo-demo"
+                      freeSolo
+                      onChange={(event, val) => handleAutoFillCustomer(val)}
+                      options={catalogs.customer.map((option) => option.username + ' - ' + option.mobile)}
+                      renderInput={(params) => <TextField {...params}
+                        name='customer'
+                        size={'small'}
+                        label="Select Customer..."
+                      />
+                      }
+                    />
+                    <br></br>
+
+                    <TextField sx={{ pb: 2 }}
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="customer_name"
+                      value={data.customer_name || ''}
+                      onChange={handelData}
+                      label="Customer Name"
+                      type="text"
+                    />
+
+                    <TextField sx={{ pb: 2 }}
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      value={data.customer_email || ''}
+                      onChange={handelData}
+                      name="customer_email"
+                      label="Customer Email"
+                      type="email"
+                    />
+
+                    <TextField sx={{ pb: 2 }}
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="customer_mobile"
+                      value={data.customer_mobile || ''}
+                      onChange={handelData}
+                      label="Contact Number"
+                      type="number"
+                    />
+
+                    <TextField sx={{ pb: 2 }}
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="city"
+                      value={data.city || ''}
+                      onChange={handelData}
+                      label="City"
+                      type="text"
+                    />
+
+                    <TextField sx={{ pb: 2 }}
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="state"
+                      value={data.state || ''}
+                      onChange={handelData}
+                      label="State"
+                      type="text"
+                    />
+
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      required
+                      id="outlined-select"
+                      name="shipping"
+                      value={data.shipping || ''}
+                      onChange={handelData}
+                      label="Shipping"
+                      type="text"
+                    />
+
+
+                  </Box>
                 }
-              </Stepper>
+                {/* // Select Customer ends */}
 
-              {/* // Select Customer */}
-
-              {activeStep === 0 &&
-                <Box sx={{
+                {/* // Select product */}
+                {activeStep === 1 && <Box sx={{
                   p: 2.5,
                 }}>
-
-                  <Autocomplete
-                    id="free-solo-demo"
-                    freeSolo
-                    onChange={(event, val) => handleAutoFillCustomer(val)}
-                    options={catalogs.customer.map((option) => option.username + ' - ' + option.mobile)}
-                    renderInput={(params) => <TextField {...params}
-                      name='customer'
-                      size={'small'}
-                      label="Select Customer..."
-                    />
+                  <InputLabel sx={{ mb: 2 }} id="demo-multiple-checkbox-label">
+                    Select Product
+                  </InputLabel>
+                  <Select
+                    multiple
+                    sx={{ mb: 2 }}
+                    fullWidth
+                    value={data.product_array}
+                    size='small'
+                    name="product_array"
+                    onChange={handelData}
+                    renderValue={(selected) => selected.join(", ")}
+                  >
+                    {catalogs.products.map((option) => (
+                      <MenuItem key={option._id} value={option.SKU}>
+                        <Checkbox
+                          checked={
+                            data.product_array.indexOf(option.SKU) > -1
+                          }
+                        />
+                        <ListItemText primary={option.SKU} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <div style={
+                    {
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '10px'
                     }
-                  />
-                  <br></br>
-
-                  <TextField sx={{ pb: 2 }}
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    name="customer_name"
-                    value={data.customer_name || ''}
-                    onChange={handelData}
-                    label="Customer Name"
-                    type="text"
-                  />
-
-                  <TextField sx={{ pb: 2 }}
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    value={data.customer_email || ''}
-                    onChange={handelData}
-                    name="customer_email"
-                    label="Customer Email"
-                    type="email"
-                  />
-
-                  <TextField sx={{ pb: 2 }}
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    name="customer_mobile"
-                    value={data.customer_mobile || ''}
-                    onChange={handelData}
-                    label="Contact Number"
-                    type="number"
-                  />
-
-                  <TextField sx={{ pb: 2 }}
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    name="city"
-                    value={data.city || ''}
-                    onChange={handelData}
-                    label="City"
-                    type="text"
-                  />
-
-                  <TextField sx={{ pb: 2 }}
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    name="state"
-                    value={data.state || ''}
-                    onChange={handelData}
-                    label="State"
-                    type="text"
-                  />
+                  } >
+                    <InputLabel sx={{ mb: 1 }} id="demo-multiple-checkbox-label">
+                      Product List
+                    </InputLabel>
+                    <Button size='small' onClick={() => setOpen(true)} variant={'outlined'}>Custom Product </Button>
+                  </div>
+                  {/* <br></br> */}
 
 
-                  <TextField
-                    size="small"
-                    fullWidth
-                    required
-                    id="outlined-select"
-                    name="shipping"
-                    value={data.shipping || ''}
-                    onChange={handelData}
-                    label="Shipping"
-                    type="text"
-                  />
+                  {DataGridView(productRow, product_columns, 300)}
 
 
                 </Box>
-              }
-              {/* // Select Customer ends */}
+                }
+                {/* // Select products ends */}
 
-              {/* // Select product */}
-              {activeStep === 1 && <Box sx={{
-                p: 2.5,
-              }}>
-                <InputLabel sx={{ mb: 2 }} id="demo-multiple-checkbox-label">
-                  Select Product
-                </InputLabel>
-                <Select
-                  multiple
-                  sx={{ mb: 2 }}
-                  fullWidth
-                  value={data.product_array}
-                  size='small'
-                  name="product_array"
-                  onChange={handelData}
-                  renderValue={(selected) => selected.join(", ")}
-                >
-                  {catalogs.products.map((option) => (
-                    <MenuItem key={option._id} value={option.SKU}>
-                      <Checkbox
-                        checked={
-                          data.product_array.indexOf(option.SKU) > -1
-                        }
-                      />
-                      <ListItemText primary={option.SKU} />
-                    </MenuItem>
-                  ))}
-                </Select>
-                <div style={
-                  {
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '10px'
-                  }
-                } >
-                  <InputLabel sx={{ mb: 1 }} id="demo-multiple-checkbox-label">
-                    Product List
-                  </InputLabel>
-                  <Button size='small' onClick={() => setOpen(true)} variant={'outlined'}>Custom Product </Button>
-                </div>
-                {/* <br></br> */}
+                {/* // Preview receipt */}
+                {activeStep === 2 && <Box sx={{
+                  p: 2.5,
+                }}>
 
+                  <Grid container >
+                    <Grid item xs={12}>
+                    <Editor
+                      apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                      initialValue="<p>Note</p>"
+                      onInit={(event, editor) => (editorRef.current = editor)}
+                      init={{
+                        height: 400,
+                        menubar: true,
+                        plugins: "image code",
+                      }}
+                    />
+                    </Grid>
 
-                {DataGridView(productRow, product_columns, 300)}
+                    <Grid item xs={12}>
+                      <TextField fullWidth sx={{ mb: 2 }} size='small' disabled label='OID' value={data.OID} ></TextField>
+                    </Grid>
 
+                    <Grid item xs={12}>
+                      <TextField fullWidth sx={{ mb: 2 }} size='small' disabled label='CID' value={data.CID} ></TextField>
+                    </Grid>
 
-              </Box>
-              }
-              {/* // Select products ends */}
+                    <Grid item xs={12}>
+                      <TextField fullWidth sx={{ mb: 2 }} size='small' disabled label='Subtotal' value={calSubtotal()} ></TextField>
+                    </Grid>
 
-              {/* // Preview receipt */}
-              {activeStep === 2 && <Box sx={{
-                p: 2.5,
-              }}>
-                
-                <Grid container >
-                  <Grid item xs= {12}>
-                  <TextField fullWidth sx = {{mb :2}} size = 'small' name = 'note' onChange= {handelData} label = 'Note' value = {data.note} ></TextField>
+                    <Grid item xs={12}>
+                      <TextField fullWidth sx={{ mb: 2 }} label='Discount' type='number' size='small' value={data.discount} name='discount' onChange={handelData} />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField fullWidth sx={{ mb: 2 }} label='Paid' type='number' size='small' value={data.paid} name='paid' onChange={handelData} />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField disabled fullWidth label='Total' type='number' size='small' value={data.total !== 0 ? data.total : calSubtotal()} />
+                    </Grid>
+
                   </Grid>
+                </Box>
+                }
+                {/* // Preview receipt ends */}
 
-                  <Grid item xs= {12}>
-                  <TextField fullWidth sx = {{mb :2}} size = 'small' disabled label = 'OID' value = {data.OID} ></TextField>
-                  </Grid>
-                 
-                  <Grid item xs= {12}>
-                  <TextField fullWidth sx = {{mb :2}} size = 'small'  disabled label = 'CID' value = {data.CID} ></TextField>
-                  </Grid>
-                 
-                  <Grid item xs= {12}>
-                  <TextField fullWidth sx = {{mb :2}} size = 'small'  disabled label = 'Subtotal' value = {calSubtotal()} ></TextField>
-                  </Grid>
+                {/* // controlled button */}
+                <Box sx={{ display: 'flex', p: 2, pb: 0, justifyContent: 'space-between', alignItem: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    disabled={activeStep === 0}
+                    onClick={handleBackStep}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={activeStep === 2 ? confirmBox : handleNextStep}
 
-                  <Grid item xs = {12}>
-                  <TextField fullWidth sx = {{mb :2}} label = 'Discount' type = 'number' size = 'small' value = {data.discount} name = 'discount' onChange= {handelData}/> 
-                  </Grid>
-
-                  <Grid item xs = {12}>
-                  <TextField fullWidth sx = {{mb :2}} label = 'Paid' type = 'number' size = 'small' value = {data.paid} name = 'paid' onChange= {handelData}/> 
-                  </Grid>
-
-                  <Grid item xs = {12}>
-                  <TextField disabled fullWidth label = 'Total' type = 'number' size = 'small' value = {data.total !== 0 ? data.total : calSubtotal()} /> 
-                  </Grid>
-                  
-                </Grid>
-              </Box>
-              }
-              {/* // Preview receipt ends */}
-
-              {/* // controlled button */}
-              <Box sx={{ display: 'flex', p: 2, pb: 0, justifyContent: 'space-between', alignItem: 'center' }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  disabled={activeStep === 0}
-                  onClick={handleBackStep}
-                >
-                  Back
-                </Button>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={activeStep === 2 ? confirmBox : handleNextStep}
-
-                >
-                  {activeStep === 2 ? 'Save Order' : 'Continue'}
-                </Button>
-              </Box>
+                  >
+                    {activeStep === 2 ? 'Save Order' : 'Continue'}
+                  </Button>
+                </Box>
               </form>
             </Grid>
           </Grid>
@@ -1223,6 +1289,6 @@ const {dispatch} = Store();
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

@@ -12,7 +12,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  Paper,Box
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
@@ -61,7 +61,7 @@ const {dispatch} = Store();
   useEffect(() => {
     listStock()
       .then((data) => {
-        console.log(data)
+        //console.log(data)
 
         setRows(data.data.map((row, index) => {
 
@@ -70,12 +70,12 @@ const {dispatch} = Store();
             warehouse: row.warehouse,
             product_id: row.product_id,
             stock: row.stock,
-            action: row._id
+            action: row
           })
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -87,13 +87,13 @@ const {dispatch} = Store();
 
     preview(e.target.value)
       .then((data) => {
-        console.log(data)
+        //console.log(data)
 
         setProductData(data.data)
 
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }
 
@@ -130,17 +130,24 @@ const {dispatch} = Store();
            dispatch({type : OpenBox,payload : {
               state: true,
               formType: 'update_Stock',
-              payload: params
+              payload: params,
+              row : Row,
+              setRow : setRows
             }})
           }} aria-label="update"  >
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => {
-            deleteStock(params.formattedValue).then((res) => {
+            deleteStock(params.formattedValue._id).then((res) => {
+              setRows(Row.filter((set)=>{
+                return  set.action._id !== params.formattedValue._id  ;
+              }))
               dispatch({type : Notify,payload : {
                 open: true,
                 variant: 'success',
-                message: 'Category Deleted !!!'
+                message: 'Category Deleted !!!',
+                row : Row,
+              setRow : setRows
               }})
             })
           }} aria-label="delete"  >
@@ -154,7 +161,7 @@ const {dispatch} = Store();
 
 
   // const handleSwitch = (e) => {
-  //   console.log(e.target.name)
+  //   //console.log(e.target.name)
 
   //   const FD = new FormData()
 
@@ -164,7 +171,7 @@ const {dispatch} = Store();
   //   const res = changeDoorStatus(FD);
 
   //   res.then((data) => {
-  //     console.log(data)
+  //     //console.log(data)
   //     dispatch({type : Notify,payload : {
   //       open: true,
   //       variant: 'success',
@@ -173,7 +180,7 @@ const {dispatch} = Store();
   //     })
   //   })
   //     .catch((err) => {
-  //       console.log(err)
+  //       //console.log(err)
   //       dispatch({type : Notify,payload : {
   //         open: true,
   //         variant: 'error',
@@ -186,7 +193,7 @@ const {dispatch} = Store();
   // }
 
   const handelSearch = (e) => {
-    console.log(e)
+    //console.log(e)
     setSearch({
       ...search,
       [e.target.name]: e.target.value
@@ -228,8 +235,8 @@ const {dispatch} = Store();
 
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Stock Channel
       </Typography>
 
@@ -278,7 +285,8 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "addStock" }});
+             dispatch({type : OpenBox,payload : { state: true, formType: "addStock",row : Row,
+             setRow : setRows }});
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -300,13 +308,13 @@ const {dispatch} = Store();
         display: 'flex', justifyContent: 'space-between', alignItem: 'center'
       }}>
         <Grid item p={2} xs={12} md={6.8} sx={{ boxShadow: 2, borderRadius: 5, maxHeight : 490 }}>
-          <Typography variant="h6"> Stock</Typography>
+          <Typography component={'span'} variant="h6"> Stock</Typography>
           <br></br>
           {DataGridView()}
         </Grid>
         {/* // product preview */}
         <Grid item p={2} xs={12} md={5} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6">Product Preview</Typography>
+          <Typography component={'span'} variant="h6">Product Preview</Typography>
           <br></br>
           <Grid container >
             <Grid item xs={12} sx={{ mb: 2 }}>
@@ -372,6 +380,6 @@ const {dispatch} = Store();
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

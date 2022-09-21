@@ -148,6 +148,9 @@ const Sideform = () => {
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
 
+  // image link 
+  const imageLink= 'https://woodshala.in/upload/'
+
   const confirm = useConfirm();
 
   // confirmBox 
@@ -156,7 +159,7 @@ const Sideform = () => {
 
     confirm({ description: `Data will listed in Database !!!` },option)
                       .then(() => action(e))
-                      .catch((err) => {console.log(err);console.log("Opreation cancelled.")});
+                      .catch((err) => {console.log("Opreation cancelled because. ",err)});
   }
 
 
@@ -631,7 +634,7 @@ const Sideform = () => {
         });
 
         customerCatalog().then((data) => {
-          console.log(data);
+          //console.log(data);
           if (data.data === null) return setCustomerCatalog([]);
 
           return setCustomerCatalog(data.data);
@@ -655,7 +658,7 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
         setData({
-          priMater: state.OpenBox.payload.row.primaryMaterial_name,
+          primaryMaterial_name: state.OpenBox.payload.row.primaryMaterial_name,
           primaryMaterial_description:
             state.OpenBox.payload.row.primaryMaterial_description,
         });
@@ -674,7 +677,6 @@ const Sideform = () => {
       case "update_knob":
         getKnob().then((data) => {
           if (data.data === null) return setKnobCatalog([]);
-
           return setKnobCatalog(data.data);
         });
         setData({
@@ -733,11 +735,12 @@ const Sideform = () => {
       case "update_Subcategory":
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
-
           return setCategory(data.data);
         });
-
         setCat(state.OpenBox.payload.row.category_id);
+        setData({
+          sub_category_name: state.OpenBox.payload.row.sub_category_name,
+        });
         break;
       case "update_blog":
         setData({
@@ -934,9 +937,10 @@ const Sideform = () => {
         });
         break;
       case "update_customer":
-        console.log(state.OpenBox.payload);
+        //console.log(state.OpenBox.payload);
         setData({
           CID: state.OpenBox.payload.row.CID,
+          register_time: state.OpenBox.payload.row.register_time,
           username: state.OpenBox.payload.row.username,
           mobile: state.OpenBox.payload.row.mobile,
           email: state.OpenBox.payload.row.email,
@@ -1105,6 +1109,7 @@ const Sideform = () => {
 
         setData({
           SKU: state.OpenBox.payload.value.SKU,
+          MS: state.OpenBox.payload.value.MS,
           product_array: state.OpenBox.payload.value.product_array.split(","),
           product_title: state.OpenBox.payload.value.product_title,
           category_name: state.OpenBox.payload.value.category_id,
@@ -1144,6 +1149,9 @@ const Sideform = () => {
           returnDays: state.OpenBox.payload.value.returnDays,
           COD: state.OpenBox.payload.value.COD,
           returnable: state.OpenBox.payload.value.returnable,
+          bangalore_stock : state.OpenBox.payload.value.bangalore_stock ,
+          jodhpur_stock : state.OpenBox.payload.value.jodhpur_stock ,
+          
         });
 
         break;
@@ -1157,7 +1165,7 @@ const Sideform = () => {
         });
         break
       default:
-      // console.log("");
+      // //console.log("");
     }
   }, [state.OpenBox.formType, state.OpenBox.state]);
 
@@ -1256,9 +1264,15 @@ const Sideform = () => {
           [e.target.name]: e.target.value,
         });
         break;
+      case "update_textile":
+        setData({
+          ...changeData,
+          [e.target.name]: e.target.value,
+        });
+        break;
 
       default:
-      // console.log("");
+      // //console.log("");
     }
   };
 
@@ -1282,7 +1296,7 @@ const Sideform = () => {
 
   //  for product felids
   const handleProductFelids = (e) => {
-    console.log(e);
+    //console.log(e);
     if (feature.includes(e.target.name)) {
       setData({
         ...changeData,
@@ -1294,11 +1308,11 @@ const Sideform = () => {
         [e.target.name]: e.target.value,
       });
     }
-    // console.log(changeData);
+    // //console.log(changeData);
   };
 
   const handleChange = (event) => {
-    // console.log(event.target.name);
+    // //console.log(event.target.name);
     setCat(event.target.value);
   };
 
@@ -1313,9 +1327,8 @@ const Sideform = () => {
     getLastMergeProduct()
       .then((res) => {
         if (res.data.length > 0) {
-          // // console.log(res.data[0].SKU)
 
-          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
+          let index = parseInt(res.data[0].MS.split("-")[1]) + 1;
 
           setSKU(`MS-0${index}`);
         } else {
@@ -1323,7 +1336,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
       });
   };
   // function for generating product SKU ID
@@ -1332,7 +1345,7 @@ const Sideform = () => {
     getLastProduct()
       .then((res) => {
         if (res.data.length > 0) {
-          // // console.log(res.data[0].SKU)
+          // // //console.log(res.data[0].SKU)
 
           let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
 
@@ -1342,7 +1355,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
       });
   };
   // function for generating product OID ID
@@ -1359,7 +1372,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
       });
   };
 
@@ -1373,13 +1386,13 @@ const Sideform = () => {
     FD.append("textile_name", e.target.textile_name.value);
     FD.append("textile_status", e.target.textile_status.checked);
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
+    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = addTextile(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1391,6 +1404,13 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            textile_name : data.data.response.textile_name,
+            textile_status : data.data.response.textile_status,
+            textile_image : data.data.response.textile_image,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -1403,7 +1423,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1423,16 +1443,16 @@ const Sideform = () => {
     FD.append("fabric_name", e.target.fabric_name.value);
     FD.append("fabric_status", e.target.fabric_status.checked);
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
+    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = addFabric(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
-          setImages([]);
+         
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -1441,7 +1461,13 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            fabric_name : data.data.response.fabric_name,
+            fabric_status : data.data.response.fabric_status,
+            fabric_image : data.data.response.fabric_image,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -1453,8 +1479,8 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
-        setImages([]);
+        // //console.log(err);
+        
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -1475,13 +1501,13 @@ const Sideform = () => {
     FD.append("category_name", e.target.category_name.value);
     FD.append("category_status", e.target.category_status.checked);
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
+    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = addCategory(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1493,6 +1519,13 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            category_name: data.data.response.category_name,
+            category_status: data.data.response.category_status,
+            category_image: data.data.response.category_image,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -1505,7 +1538,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1538,7 +1571,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1550,6 +1583,20 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            CID : data.data.response.CID,
+            register_time : data.data.response.register_time,
+            profile_image : data.data.response.profile_image,
+            username : data.data.response.username,
+            mobile : data.data.response.mobile,
+            email : data.data.response.email,
+            password : data.data.response.password,
+            city : data.data.response.city,
+            state : data.data.response.state,
+            shipping : data.data.response.shipping,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -1596,7 +1643,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1608,6 +1655,23 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.CID = changeData.CID
+              set.register_time = changeData.register_time
+              set.profile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
+              set.username = changeData.username
+              set.mobile = changeData.mobile
+              set.email = changeData.email
+              set.password = changeData.password
+              set.city = changeData.city
+              set.state = changeData.state
+              set.shipping = changeData.shipping
+
+            } 
+            return set;
+          }))
           setImages([]);
           handleClose();
           dispatch({
@@ -1620,7 +1684,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1649,7 +1713,7 @@ const Sideform = () => {
     const res = editTextile(FD);
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1661,6 +1725,15 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.textile_name = e.target.textile_name.value;
+              set.textile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
+
+            } 
+            return set;
+          }))
           setImages([]);
           handleClose();
           dispatch({
@@ -1673,7 +1746,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1701,7 +1774,7 @@ const Sideform = () => {
     const res = editFabric(FD);
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -1713,6 +1786,15 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.fabric_name = e.target.fabric_name.value;
+              set.fabric_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
+
+            } 
+            return set;
+          }))
           setImages([]);
           handleClose();
           dispatch({
@@ -1725,7 +1807,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1745,6 +1827,7 @@ const Sideform = () => {
     FD.append("_id", state.OpenBox.payload.row.action);
 
     Image[0] !== undefined && FD.append("category_image", Image[0]);
+    console.log(Image[0])
 
     e.target.category_name.value !== undefined
       ? FD.append("category_name", e.target.category_name.value)
@@ -1753,8 +1836,7 @@ const Sideform = () => {
     const res = editCategory(FD);
     res
       .then((data) => {
-        // console.log(data.status);
-
+       
         if (data.status === 203) {
           setImages([]);
           dispatch({
@@ -1765,6 +1847,14 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.category_name = e.target.category_name.value;
+              Image[0] !== undefined ? set.category_image = `https://woodshala.in/upload/${Image[0].path}` : console.log();  
+            } 
+            return set;
+          }))
           setImages([]);
           handleClose();
           dispatch({
@@ -1777,7 +1867,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -1795,7 +1885,7 @@ const Sideform = () => {
     setImages([]);
     setFeatured([]);
     setFiles([]);
-
+    setActiveStep(0);
     setShowFabric("No");
     setData({
       searchCustomer: "",
@@ -1909,7 +1999,7 @@ const Sideform = () => {
 
     const res = updateImage(FD);
 
-    // console.log(state.OpenBox.payload);
+    // //console.log(state.OpenBox.payload);
 
     res
       .then((data) => {
@@ -2062,7 +2152,7 @@ const Sideform = () => {
         changeData.drawer_count ? changeData.drawer_count : 0
       );
 
-    //  // console.log(secMaterial)
+    //  // //console.log(secMaterial)
     if (changeData.secondary_material_weight !== undefined)
       FD.append(
         "secondary_material_weight",
@@ -2183,7 +2273,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           dispatch({
@@ -2194,6 +2284,96 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            SKU : data.data.response.SKU,
+            product_title : data.data.response.product_title,
+            category_name : data.data.response.category_name,
+            category_id : data.data.response.category_id,
+            sub_category_name : data.data.response.sub_category_name,
+            sub_category_id : data.data.response.sub_category_id,
+            product_description : data.data.response.product_description,
+            seo_title : data.data.response.seo_title,
+            seo_description : data.data.response.seo_description,
+            seo_keyword : data.data.response.seo_keyword,
+            product_image : data.data.response.product_image,
+            featured_image : data.data.response.featured_image,
+            specification_image : data.data.response.specification_image,
+            primary_material : data.data.response.primary_material,
+            warehouse : data.data.response.warehouse,
+            primary_material_name : data.data.response.primary_material_name,
+            length_main : data.data.response.length_main,
+            breadth : data.data.response.breadth,
+            height : data.data.response.height,
+            bangalore_stock : data.data.response.bangalore_stock,
+            jodhpur_stock : data.data.response.jodhpur_stock,
+            weight : data.data.response.weight,
+            polish : data.data.response.polish,
+            polish_name : data.data.response.polish_name,
+            hinge : data.data.response.hinge,
+            hinge_name : data.data.response.hinge_name,
+            knob : data.data.response.knob,
+            textile : data.data.response.textile,
+            knob_name : data.data.response.knob_name,
+            textile_name : data.data.response.textile_name,
+            textile_type : data.data.response.textile_type,
+            handle : data.data.response.handle,
+            handle_name : data.data.response.handle_name,
+            door : data.data.response.door,
+            door_name : data.data.response.door_name,
+            fitting : data.data.response.fitting,
+            fitting_name : data.data.response.fitting_name,
+            selling_points : data.data.response.selling_points,
+            top_size : data.data.response.top_size,
+            dial_size : data.data.response.dial_size,
+            seating_size_width : data.data.response.seating_size_width,
+            seating_size_depth : data.data.response.seating_size_depth,
+            seating_size_height : data.data.response.seating_size_height,
+            weight_capacity : data.data.response.weight_capacity,
+            fabric : data.data.response.fabric,
+            fabric_name : data.data.response.fabric_name,
+            wall_hanging : data.data.response.wall_hanging,
+            assembly_required : data.data.response.assembly_required,
+            assembly_part : data.data.response.assembly_part,
+            legs : data.data.response.legs,
+            mirror : data.data.response.mirror,
+            mirror_length : data.data.response.mirror_length,
+            mirror_width : data.data.response.mirror_width,
+            silver : data.data.response.silver,
+            silver_weight : data.data.response.silver_weight,
+            joints : data.data.response.joints,
+            upholstery : data.data.response.upholstery,
+            wheel : data.data.response.wheel,
+            trolley : data.data.response.trolley,
+            trolley_material : data.data.response.trolley_material,
+            rotating_seats : data.data.response.rotating_seats,
+            eatable_oil_polish : data.data.response.eatable_oil_polish,
+            no_chemical : data.data.response.no_chemical,
+            straight_back : data.data.response.straight_back,
+            lean_back : data.data.response.lean_back,
+            weaving : data.data.response.weaving,
+            knife : data.data.response.knife,
+            not_suitable_for_Micro_Dish : data.data.response.not_suitable_for_Micro_Dish,
+            tilt_top : data.data.response.tilt_top,
+            inside_compartments : data.data.response.inside_compartments,
+            stackable : data.data.response.stackable,
+            MRP : data.data.response.MRP,
+            tax_rate : data.data.response.tax_rate,
+            selling_price : data.data.response.selling_price,
+            showroom_price : data.data.response.showroom_price,
+            discount_limit : data.data.response.discount_limit,
+            polish_time : data.data.response.polish_time,
+            manufacturing_time : data.data.response.manufacturing_time,
+            status : data.data.response.status,
+            returnDays : data.data.response.returnDays,
+            COD : data.data.response.COD,
+            returnable : data.data.response.returnable,
+            drawer : data.data.response.drawer,
+            drawer_count : data.data.response.drawer_count,
+            show_on_mobile : data.data.response.show_on_mobile,
+            range : data.data.response.range,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2205,7 +2385,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -2219,6 +2399,7 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
+    let multiOBJ = {};
 
     files.map((element) => {
       return FD.append("product_image", element);
@@ -2240,6 +2421,8 @@ const Sideform = () => {
     );
 
     category.map((item) => {
+      if(item._id === changeData.category_name)  multiOBJ = {...multiOBJ,category_name : item.category_name }
+
       return (
         item._id === changeData.category_name &&
         FD.append("category_name", item.category_name)
@@ -2247,6 +2430,8 @@ const Sideform = () => {
     });
 
     subCategory.map((item) => {
+      if(item._id === changeData.sub_category_name) multiOBJ = {...multiOBJ,sub_category_name : item.sub_category_name }
+
       return (
         item._id === changeData.sub_category_name &&
         FD.append("sub_category_name", item.sub_category_name)
@@ -2254,6 +2439,8 @@ const Sideform = () => {
     });
 
     polishCatalog.map((item) => {
+      if(item._id === changeData.polish) multiOBJ = {...multiOBJ,polish_name : item.polish_name }
+
       return (
         item._id === changeData.polish &&
         FD.append("polish_name", item.polish_name)
@@ -2261,34 +2448,46 @@ const Sideform = () => {
     });
 
     textileCatalog.map((item) => {
+      if(item._id === changeData.textile_type) multiOBJ = {...multiOBJ,textile_name : item.textile_name }
+      
       return (
         item._id === changeData.textile_type &&
         FD.append("textile_name", item.textile_name)
       );
     });
     hingeCatalog.map((item) => {
+      if(item._id === changeData.hinge) multiOBJ = {...multiOBJ,hinge_name : item.hinge_name }
+      
       return (
         item._id === changeData.hinge &&
         FD.append("hinge_name", item.hinge_name)
       );
     });
     fittingCatalog.map((item) => {
+      if(item._id === changeData.fitting) multiOBJ = {...multiOBJ,fitting_name : item.fitting_name }
+
       return (
         item._id === changeData.fitting &&
         FD.append("fitting_name", item.fitting_name)
       );
     });
     knobCatalog.map((item) => {
+      if(item._id === changeData.knob) multiOBJ = {...multiOBJ,knob_name : item.knob_name }
+
       return (
         item._id === changeData.knob && FD.append("knob_name", item.knob_name)
       );
     });
     doorCatalog.map((item) => {
+      if(item._id === changeData.door) multiOBJ = {...multiOBJ,door_name : item.door_name }
+
       return (
         item._id === changeData.door && FD.append("door_name", item.door_name)
       );
     });
     handleCatalog.map((item) => {
+      if(item._id === changeData.handle) multiOBJ = {...multiOBJ,handle_name : item.handle_name }
+
       return (
         item._id === changeData.handle &&
         FD.append("handle_name", item.handle_name)
@@ -2297,6 +2496,8 @@ const Sideform = () => {
 
     if (showFabric === "Yes") {
       fabricCatalog.map((item) => {
+      if(item._id === changeData.fabric) multiOBJ = {...multiOBJ,fabric_name : item.fabric_name }
+
         return (
           item._id === changeData.fabric &&
           FD.append("fabric_name", item.fabric_name)
@@ -2359,7 +2560,7 @@ const Sideform = () => {
         changeData.drawer_count ? changeData.drawer_count : 0
       );
 
-    //  // console.log(secMaterial)
+    //  // //console.log(secMaterial)
     if (changeData.secondary_material_weight !== undefined)
       FD.append(
         "secondary_material_weight",
@@ -2472,7 +2673,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           dispatch({
@@ -2483,6 +2684,90 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+                {
+                  set.SKU = changeData.SKU
+                  set.product_title = changeData.product_title
+                  set.category_name = multiOBJ.category_name || changeData.category_name 
+                  set.sub_category_name = multiOBJ.sub_category_name || changeData.sub_category_name
+                  set.product_description = changeData.product_description
+                  set.seo_title = changeData.seo_title
+                  set.seo_description = changeData.seo_description
+                  set.seo_keyword = changeData.seo_keyword
+                  set.featured_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.featured_image
+                  set.specification_image = featured[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
+                  set.primary_material = changeData.primary_material
+                  set.warehouse = changeData.warehouse
+                  set.primary_material_name = changeData.primary_material_name
+                  set.length_main = changeData.length_main
+                  set.breadth = changeData.breadth
+                  set.height = changeData.height
+                  set.bangalore_stock = changeData.bangalore_stock
+                  set.jodhpur_stock = changeData.jodhpur_stock
+                  set.weight = changeData.weight
+                  set.polish = multiOBJ.polish_name || changeData.polish_name
+                  set.hinge =  multiOBJ.hinge_name || changeData.hinge_name
+                  set.knob =  multiOBJ.knob_name || changeData.knob_name
+                  set.textile =  multiOBJ.textile_name || changeData.textile_name
+                  set.textile_type =  multiOBJ.textile_type || changeData.textile_type
+                  set.handle =  multiOBJ.handle_name || changeData.handle_name
+                  set.door =  multiOBJ.door_name || changeData.door_name
+                  set.fitting =  multiOBJ.fitting_name || changeData.fitting_name
+                  set.selling_points = changeData.selling_points
+                  set.top_size = changeData.top_size
+                  set.dial_size = changeData.dial_size
+                  set.seating_size_width = changeData.seating_size_width
+                  set.seating_size_depth = changeData.seating_size_depth
+                  set.seating_size_height = changeData.seating_size_height
+                  set.weight_capacity = changeData.weight_capacity
+                  set.fabric = changeData.fabric
+                  set.fabric_name = changeData.fabric_name
+                  set.wall_hanging = changeData.wall_hanging
+                  set.assembly_required = changeData.assembly_required
+                  set.assembly_part = changeData.assembly_part
+                  set.legs = changeData.legs
+                  set.mirror = changeData.mirror
+                  set.mirror_length = changeData.mirror_length
+                  set.mirror_width = changeData.mirror_width
+                  set.silver = changeData.silver
+                  set.silver_weight = changeData.silver_weight
+                  set.joints = changeData.joints
+                  set.upholstery = changeData.upholstery
+                  set.wheel = changeData.wheel
+                  set.trolley = changeData.trolley
+                  set.trolley_material = changeData.trolley_material
+                  set.rotating_seats = changeData.rotating_seats
+                  set.eatable_oil_polish = changeData.eatable_oil_polish
+                  set.no_chemical = changeData.no_chemical
+                  set.straight_back = changeData.straight_back
+                  set.lean_back = changeData.lean_back
+                  set.weaving = changeData.weaving
+                  set.knife = changeData.knife
+                  set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
+                  set.tilt_top = changeData.tilt_top
+                  set.inside_compartments = changeData.inside_compartments
+                  set.stackable = changeData.stackable
+                  set.MRP = changeData.MRP
+                  set.tax_rate = changeData.tax_rate
+                  set.selling_price = changeData.selling_price
+                  set.showroom_price = changeData.showroom_price
+                  set.discount_limit = changeData.discount_limit
+                  set.polish_time = changeData.polish_time
+                  set.manufacturing_time = changeData.manufacturing_time
+                  set.status = changeData.status
+                  set.returnDays = changeData.returnDays
+                  set.COD = changeData.COD
+                  set.returnable = changeData.returnable
+                  set.drawer = changeData.drawer
+                  set.drawer_count = changeData.drawer_count
+                  set.show_on_mobile = changeData.show_on_mobile
+                  set.range = changeData.range
+                return set 
+                }
+            else return set;
+          }))
+     
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2494,7 +2779,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -2549,6 +2834,7 @@ const Sideform = () => {
     FD.append("product_title", changeData.product_title);
     FD.append("product_description", editorRef.current.getContent());
     FD.append("selling_points", sellingRef.current.getContent());
+    FD.append("MS", SKU);
     FD.append("SKU", SKU);
     FD.append("product_array", changeData.productArray);
     FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
@@ -2611,6 +2897,46 @@ const Sideform = () => {
               message: data.data.message,
             } });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            MS : data.data.response.MS,
+            product_array : data.data.response.product_array,
+            product_title : data.data.response.product_title,
+            category_name : data.data.response.category_name,
+            category_id : data.data.response.category_id,
+            sub_category_name : data.data.response.sub_category_name,
+            sub_category_id : data.data.response.sub_category_id,
+            product_description : data.data.response.product_description,
+            seo_title : data.data.response.seo_title,
+            seo_description : data.data.response.seo_description,
+            seo_keyword : data.data.response.seo_keyword,
+            product_image : data.data.response.product_image,
+            featured_image : data.data.response.featured_image,
+            specification_image : data.data.response.specification_image,
+            selling_points : data.data.response.selling_points,
+            rotating_seats : data.data.response.rotating_seats,
+            eatable_oil_polish : data.data.response.eatable_oil_polish,
+            no_chemical : data.data.response.no_chemical,
+            straight_back : data.data.response.straight_back,
+            lean_back : data.data.response.lean_back,
+            weaving : data.data.response.weaving,
+            knife : data.data.response.knife,
+            not_suitable_for_Micro_Dish : data.data.response.not_suitable_for_Micro_Dish,
+            tilt_top : data.data.response.tilt_top,
+            inside_compartments : data.data.response.inside_compartments,
+            stackable : data.data.response.stackable,
+            MRP : data.data.response.MRP,
+            tax_rate : data.data.response.tax_rate,
+            selling_price : data.data.response.selling_price,
+            showroom_price : data.data.response.showroom_price,
+            discount_limit : data.data.response.discount_limit,
+            status : data.data.response.status,
+            returnDays : data.data.response.returnDays,
+            warehouse : data.data.response.warehouse,
+            COD : data.data.response.COD,
+            returnable : data.data.response.returnable,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2621,7 +2947,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -2669,9 +2995,14 @@ const Sideform = () => {
     FD.append("polish_time", changeData.polish_time);
     FD.append("manufacturing_time", changeData.manufacturing_time);
     FD.append("product_title", changeData.product_title);
-    FD.append("product_description", editorRef.current.getContent());
-    FD.append("selling_points", sellingRef.current.getContent());
-    FD.append("SKU", SKU);
+    if(editorRef.current)
+      FD.append("product_description", editorRef.current.getContent() )
+    else FD.append("product_description", changeData.product_description)
+    if(sellingRef.current)
+      FD.append("selling_points", sellingRef.current.getContent() )
+      else  FD.append("selling_points", changeData.selling_points)
+    FD.append("MS", changeData.SKU);
+    FD.append("SKU", changeData.SKU);
     FD.append("product_array", JSON.stringify(changeData.product_array));
     FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
     FD.append(
@@ -2734,6 +3065,52 @@ const Sideform = () => {
             }
           });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+                {
+                  set.MS = changeData.SKU
+                  set.product_array = changeData.product_array
+                  set.product_title = changeData.product_title
+                  set.category_name = changeData.category_name
+                  set.category_id = changeData.category_id
+                  set.sub_category_name = changeData.sub_category_name
+                  set.sub_category_id = changeData.sub_category_id
+                  set.product_description = editorRef.current ?  editorRef.current.getContent() : changeData.product_description
+                  set.seo_title = changeData.seo_title
+                  set.seo_description = changeData.seo_description
+                  set.seo_keyword = changeData.seo_keyword
+                  set.product_image = changeData.product_image
+                  set.featured_image = changeData.featured_image
+                  set.specification_image = changeData.specification_image
+                  set.selling_points = sellingRef.current ? sellingRef.current.getContent() :changeData.selling_points
+                  set.rotating_seats = changeData.rotating_seats
+                  set.eatable_oil_polish = changeData.eatable_oil_polish
+                  set.no_chemical = changeData.no_chemical
+                  set.straight_back = changeData.straight_back
+                  set.lean_back = changeData.lean_back
+                  set.weaving = changeData.weaving
+                  set.polish_time = changeData.polish_time
+                  set.manufacturing_time = changeData.polish_time
+                  set.knife = changeData.knife
+                  set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
+                  set.tilt_top = changeData.tilt_top
+                  set.inside_compartments = changeData.inside_compartments
+                  set.stackable = changeData.stackable
+                  set.MRP = changeData.MRP
+                  set.tax_rate = changeData.tax_rate
+                  set.selling_price = changeData.selling_price
+                  set.showroom_price = changeData.showroom_price
+                  set.discount_limit = changeData.discount_limit
+                  set.returnDays = changeData.returnDays
+                  set.warehouse = changeData.warehouse
+                  set.status = changeData.status
+                  set.COD = changeData.COD
+                  set.returnable = changeData.returnable
+                  set.action = changeData
+                return set 
+                }
+            else return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2745,7 +3122,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -2775,13 +3152,13 @@ const Sideform = () => {
       e.target.primaryMaterial_status.checked
     );
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
+    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = addPrimaryMaterial(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -2792,6 +3169,14 @@ const Sideform = () => {
               message: data.data.message,
             }  });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            primaryMaterial_name : data.data.response.primaryMaterial_name,
+            primaryMaterial_description : data.data.response.primaryMaterial_description,
+            primaryMaterial_image : data.data.response.primaryMaterial_image,
+            primaryMaterial_status : data.data.response.primaryMaterial_status,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -2803,7 +3188,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -2836,7 +3221,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -2847,6 +3232,16 @@ const Sideform = () => {
               message: data.data.message,
             } });
         } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.primaryMaterial_description = e.target.primaryMaterial_description.value;
+              set.primaryMaterial_name = e.target.primaryMaterial_name.value;
+              set.primaryMaterial_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
+
+            } 
+            return set;
+          }))
           setImages([]);
           handleClose();
           dispatch({
@@ -2858,7 +3253,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -2881,10 +3276,9 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
-          setImages([]);
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -2892,7 +3286,12 @@ const Sideform = () => {
               message: data.data.message,
             } });
         } else {
-          setImages([]);
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            handle_name : data.data.response.handle_name,
+            handle_status : data.data.response.handle_status,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2903,8 +3302,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
-        setImages([]);
+        // //console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -2927,7 +3325,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -2939,7 +3337,11 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.handle_name = e.target.handle_name.value;
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2951,7 +3353,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -2974,10 +3376,9 @@ const Sideform = () => {
     const res = addHinge(FD);
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
-          setImages([]);
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -2986,7 +3387,12 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            hinge_name : data.data.response.hinge_name,
+            hinge_status : data.data.response.hinge_status,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -2998,7 +3404,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3023,7 +3429,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3035,7 +3441,11 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.hinge_name = e.target.hinge_name.value;
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3047,7 +3457,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3070,9 +3480,15 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        console.log(data.status);
+        //console.log(data.status);
 
         if (data.status === 200) {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            door_name : data.data.response.door_name,
+            door_status : data.data.response.door_status,
+            action : data.data.response
+        }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3092,7 +3508,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -3116,7 +3532,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3127,7 +3543,11 @@ const Sideform = () => {
               message: data.data.message,
             }});
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.door_name = e.target.door_name.value;
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3138,7 +3558,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3163,7 +3583,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3187,7 +3607,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3211,10 +3631,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
-
         if (data.status === 203) {
-          setImages([]);
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -3223,7 +3640,11 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.knob_name = e.target.knob_name.value;
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3235,8 +3656,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
-        setImages([]);
+        console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -3259,7 +3679,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3270,6 +3690,12 @@ const Sideform = () => {
               message: data.data.message,
             }});
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            fitting_name : data.data.response.fitting_name,
+            fitting_status : data.data.response.fitting_status,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -3281,7 +3707,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3305,10 +3731,10 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
-          setImages([]);
+
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -3316,7 +3742,11 @@ const Sideform = () => {
               message: data.data.message,
             }});
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.fitting_name = e.target.fitting_name.value;
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3327,7 +3757,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3350,7 +3780,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3361,6 +3791,12 @@ const Sideform = () => {
               message: data.data.message,
             }  });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            polish_name : data.data.response.polish_name,
+            polish_status : data.data.response.polish_status,
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -3372,7 +3808,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3395,10 +3831,9 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
-          setImages([]);
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -3406,8 +3841,14 @@ const Sideform = () => {
               message: data.data.message,
             } });
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            
+            if (set.action===state.OpenBox.payload.row.action) 
+              set.polish_name = e.target.polish_name.value;
+            return set;
+          }))
           handleClose();
+
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -3417,7 +3858,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3442,13 +3883,13 @@ const Sideform = () => {
     FD.append("sub_category_name", e.target.sub_category_name.value);
     FD.append("sub_category_status", e.target.sub_category_status.checked);
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
+    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = addSubCategories(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3459,6 +3900,14 @@ const Sideform = () => {
               message: data.data.message,
             } });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            category_id : data.data.response.category_id , 
+            category_name : data.data.response.category_name , 
+            sub_category_name : data.data.response.sub_category_name , 
+            sub_category_status : data.data.response.sub_category_status , 
+            action : data.data.response
+        }])
           setImages([]);
           handleClose();
           dispatch({
@@ -3470,7 +3919,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3484,15 +3933,16 @@ const Sideform = () => {
     e.preventDefault();
 
     const FD = new FormData();
+    let catName = ''
 
-    // console.log(state.OpenBox.payload);
+    // //console.log(state.OpenBox.payload);
 
     FD.append("_id", state.OpenBox.payload.row.action);
 
     category.map((item) => {
+      if(item._id === e.target.category_id.value) catName = item.category_name
       return (
-        item._id === e.target.category_id.value &&
-        FD.append("category_name", item.category_name)
+        item._id === e.target.category_id.value && FD.append("category_name",catName )
       );
     });
 
@@ -3501,13 +3951,12 @@ const Sideform = () => {
     e.target.sub_category_name.value !== "" &&
       FD.append("sub_category_name", e.target.sub_category_name.value);
 
-    // // console.log(acceptedFiles[0].name, e.target.category_name.value)
 
     const res = editSubCatagories(FD);
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3518,7 +3967,14 @@ const Sideform = () => {
               message: data.data.message,
             }});
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            if (set.action===state.OpenBox.payload.row.action)
+            {
+              set.sub_category_name = e.target.sub_category_name.value;
+              set.category_name = catName;
+            } 
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3529,7 +3985,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3555,7 +4011,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3577,7 +4033,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3606,7 +4062,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3629,7 +4085,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3661,7 +4117,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        // console.log(data.status);
+        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -3684,7 +4140,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3743,7 +4199,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3754,8 +4210,6 @@ const Sideform = () => {
         });
       });
   };
-
-
 
   const handleAddStock = (e) => {
     e.preventDefault();
@@ -3780,6 +4234,13 @@ const Sideform = () => {
               message: data.data.message || "Something Went Wrong !!!",
             } });
         } else {
+          state.OpenBox.setRow([...state.OpenBox.row,{
+            id : state.OpenBox.row.length + 1,
+            product_id : changeData.product_id,
+            stock : changeData.stock,
+            warehouse : changeData.warehouse,
+            action : data.data.response
+        }])
           setImages([]);
           setUrl(data.data.url);
           handleClose();
@@ -3792,7 +4253,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
+        // //console.log(err);
         setImages([]);
         dispatch({
           type: Notify, payload: {
@@ -3817,7 +4278,6 @@ const Sideform = () => {
     res
       .then((data) => {
         if (data.status !== 200) {
-          setImages([]);
           dispatch({
             type: Notify, payload: {
               open: true,
@@ -3826,7 +4286,13 @@ const Sideform = () => {
             }
           });
         } else {
-          setImages([]);
+          state.OpenBox.setRow(state.OpenBox.row.map((set)=>{
+            
+            if (set.action===state.OpenBox.payload.row.action) 
+            {
+            set.stock = changeData.stock; }
+            return set;
+          }))
           setUrl(data.data.url);
           handleClose();
           dispatch({
@@ -3839,8 +4305,7 @@ const Sideform = () => {
         }
       })
       .catch((err) => {
-        // console.log(err);
-        setImages([]);
+        console.log(err);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -3887,9 +4352,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Product
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -3902,7 +4367,7 @@ const Sideform = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) =>{confirmBox(e,handleUpdateTextile)}}
+                    onSubmit={(e) =>{confirmBox(e,handleProduct)}}
                     enctype="multipart/form-data"
                     method="post"
                   >
@@ -3939,7 +4404,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // // required
                               label="SKU"
@@ -4012,7 +4477,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Product Title"
@@ -4027,7 +4492,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Title"
                               type="text"
@@ -4041,7 +4506,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Description"
                               type="text"
@@ -4055,7 +4520,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Keyword"
                               type="text"
@@ -4068,7 +4533,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Showroom Price"
@@ -4089,7 +4554,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="MRP"
@@ -4111,7 +4576,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
@@ -4135,7 +4600,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // disabled
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
                               type="number"
@@ -4164,7 +4629,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Length"
                               type="number"
@@ -4185,7 +4650,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Breadth"
                               type="number"
@@ -4206,7 +4671,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Height"
                               type="number"
@@ -4291,7 +4756,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Weight"
                               type="number"
@@ -4474,7 +4939,7 @@ const Sideform = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography variant="Caption">
+                                <Typography component={'span'} variant="Caption">
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -4491,7 +4956,7 @@ const Sideform = () => {
                               </>
                             )}
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -4506,7 +4971,7 @@ const Sideform = () => {
                               helperText="Please select your polish time"
                             />
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -4808,7 +5273,7 @@ const Sideform = () => {
                               <TextField
                                 size="small"
                                 fullWidth
-                                autoComplete={false}
+                                // autoComplete={false}
                                 id="fullWidth"
                                 label="Sliver Weight"
                                 type="text"
@@ -5119,7 +5584,7 @@ const Sideform = () => {
                                   size="small"
                                   fullWidth
                                   // required
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Assemble Part"
                                   type="number"
@@ -5254,7 +5719,7 @@ const Sideform = () => {
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Mirror Length"
                                   type="text"
@@ -5275,7 +5740,7 @@ const Sideform = () => {
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Mirror Width"
                                   type="text"
@@ -5381,7 +5846,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Width"
                               type="number"
@@ -5401,7 +5866,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Width Depth"
                               type="number"
@@ -5421,7 +5886,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Height"
                               type="number"
@@ -5513,7 +5978,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Top Size"
                               type="number"
@@ -5533,7 +5998,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Dial Size (Only Applicable on Clock And Clock Containing Items )"
                               type="number"
@@ -5606,9 +6071,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Product
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -5658,7 +6123,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SKU"
                               type="text"
@@ -5730,7 +6195,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Length"
                               type="number"
@@ -5751,7 +6216,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Breadth"
                               type="number"
@@ -5772,7 +6237,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Height"
                               type="number"
@@ -5793,7 +6258,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Product Title"
@@ -5808,7 +6273,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Title"
                               type="text"
@@ -5822,7 +6287,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Description"
                               type="text"
@@ -5836,7 +6301,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Keyword"
                               type="text"
@@ -5849,7 +6314,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Weight"
                               type="number"
@@ -5869,7 +6334,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Showroom Price"
@@ -5890,7 +6355,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="MRP"
@@ -5912,7 +6377,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
@@ -5936,7 +6401,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // disabled
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
                               type="number"
@@ -6114,7 +6579,7 @@ const Sideform = () => {
                                 <br></br>
                                 <TextField size="small"
                                   fullWidth
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Secondary Material Weight"
                                   type="number"
@@ -6266,7 +6731,7 @@ const Sideform = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography variant="Caption">
+                                <Typography component={'span'} variant="Caption">
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -6283,7 +6748,7 @@ const Sideform = () => {
                               </>
                             )}
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -6298,7 +6763,7 @@ const Sideform = () => {
                               helperText="Please select your polish time"
                             />
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -6599,7 +7064,7 @@ const Sideform = () => {
                               <TextField
                                 size="small"
                                 fullWidth
-                                autoComplete={false}
+                                // autoComplete={false}
                                 id="fullWidth"
                                 label="Sliver Weight"
                                 type="text"
@@ -6910,7 +7375,7 @@ const Sideform = () => {
                                   size="small"
                                   fullWidth
                                   // required
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Assemble Part"
                                   type="number"
@@ -7045,7 +7510,7 @@ const Sideform = () => {
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Mirror Length"
                                   type="text"
@@ -7066,7 +7531,7 @@ const Sideform = () => {
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  autoComplete={false}
+                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Mirror Width"
                                   type="text"
@@ -7172,7 +7637,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Width"
                               type="number"
@@ -7192,7 +7657,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Width Depth"
                               type="number"
@@ -7212,7 +7677,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Seating Size Height"
                               type="number"
@@ -7304,7 +7769,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Top Size"
                               type="number"
@@ -7324,7 +7789,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Dial Size (Only Applicable on Clock And Clock Containing Items )"
                               type="number"
@@ -7398,9 +7863,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "merge_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Merge Product
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -7450,7 +7915,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // // required
                               label="SKU"
@@ -7464,7 +7929,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Merging SKUs"
                               type="text"
@@ -7674,7 +8139,7 @@ const Sideform = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography variant="Caption">
+                                <Typography component={'span'} variant="Caption">
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -7691,7 +8156,7 @@ const Sideform = () => {
                               </>
                             )}
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -7706,7 +8171,7 @@ const Sideform = () => {
                               helperText="Please select your polish time"
                             />
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -8000,7 +8465,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Product Title"
@@ -8015,7 +8480,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Title"
                               type="text"
@@ -8029,7 +8494,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Description"
                               type="text"
@@ -8043,7 +8508,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Keyword"
                               type="text"
@@ -8071,7 +8536,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Showroom Price"
@@ -8092,7 +8557,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="MRP"
@@ -8114,7 +8579,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
@@ -8137,7 +8602,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
                               type="number"
@@ -8241,9 +8706,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_merge" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Merge Product
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -8293,7 +8758,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SKU"
                               type="text"
@@ -8522,7 +8987,7 @@ const Sideform = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography variant="Caption">
+                                <Typography component={'span'} variant="Caption">
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -8539,7 +9004,7 @@ const Sideform = () => {
                               </>
                             )}
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -8554,7 +9019,7 @@ const Sideform = () => {
                               helperText="Please select your polish time"
                             />
                             <br></br>
-                            <Typography variant="Caption">
+                            <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -8847,7 +9312,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Product Title"
@@ -8862,7 +9327,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Title"
                               type="text"
@@ -8876,7 +9341,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Description"
                               type="text"
@@ -8890,7 +9355,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="SEO Keyword"
                               type="text"
@@ -8918,7 +9383,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="Showroom Price"
@@ -8939,7 +9404,7 @@ const Sideform = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               // required
                               label="MRP"
@@ -8961,7 +9426,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // required
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
@@ -8985,7 +9450,7 @@ const Sideform = () => {
                               size="small"
                               fullWidth
                               // disabled
-                              autoComplete={false}
+                              // autoComplete={false}
                               id="fullWidth"
                               label="Selling Price"
                               type="number"
@@ -9089,9 +9554,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Textile
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9154,9 +9619,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Textile
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9173,7 +9638,7 @@ const Sideform = () => {
                     method="post"
                   >
                     <ImagePreviews
-                      text={"Please Drag and Drop the Fabric image"}
+                      text={"Please Drag and Drop the Textile image"}
                     >
                       {" "}
                     </ImagePreviews>
@@ -9209,9 +9674,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "fabric" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Fabric
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9274,9 +9739,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_fabric" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Fabric
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9329,9 +9794,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Category
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9394,9 +9859,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Category
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9450,9 +9915,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "primaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Material
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9526,9 +9991,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_PrimaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Material
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9558,7 +10023,7 @@ const Sideform = () => {
                       id="outlined-select"
                       name="primaryMaterial_name"
                       label="Material"
-                      value={changeData.priMater}
+                      value={changeData.primaryMaterial_name}
                       helperText="Please enter the update"
                     />
 
@@ -9593,9 +10058,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addKnob" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Knob
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9652,9 +10117,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_knob" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Knob
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9704,9 +10169,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addHandle" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Handle Material
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9763,9 +10228,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_handle" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Handle Material
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9816,9 +10281,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addDoor" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Door
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9876,9 +10341,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_door" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Door
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9929,9 +10394,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addFitting" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Fitting
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -9988,9 +10453,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_fitting" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Fitting
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10041,9 +10506,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addHinge" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Hinge
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10100,9 +10565,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_hinge" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Hinge
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10152,9 +10617,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addPolish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Polish
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10212,9 +10677,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_polish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Polish
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10271,9 +10736,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_blog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Blog
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10441,9 +10906,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addBlog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Blog
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10606,9 +11071,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addGallery" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Images
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10665,9 +11130,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_gallery" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Gallery
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10714,9 +11179,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Sub Category
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10797,9 +11262,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_Subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Sub Category
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -10850,6 +11315,8 @@ const Sideform = () => {
                       id="outlined-select"
                       name="sub_category_name"
                       label="Sub Category"
+                      value = {changeData.sub_category_name || ''}
+                      onChange={handleProductFelids}
                       type="text"
                       helperText="Please enter your sub category"
                     />
@@ -10875,9 +11342,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "add_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Customer
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -11005,9 +11472,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Customer
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -11137,9 +11604,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "add_order" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Order
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -11242,8 +11709,7 @@ const Sideform = () => {
                               >
                                 {row.username} ({row.mobile})
                               </MenuItem>
-                            ) : (
-                              console.log()
+                            ) : (console.log()
                             );
                           })}
                       </Box>
@@ -11353,9 +11819,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "addStock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Add Stock
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -11442,9 +11908,9 @@ const Sideform = () => {
             {state.OpenBox.formType === "update_Stock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography variant="h5">
+                  <Typography component={'span'} variant="h5">
                     Update Stock
-                    <Typography
+                    <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >

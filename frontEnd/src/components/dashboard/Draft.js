@@ -84,7 +84,7 @@ export default function Products() {
   useEffect(() => {
     getDraft()
       .then((data) => {
-        console.log(data.data);
+        //console.log(data.data);
 
         setRows(
           data.data.map((row, index) => {
@@ -155,7 +155,7 @@ export default function Products() {
         );
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
@@ -498,9 +498,9 @@ export default function Products() {
       width: 200,
       renderCell: (params) => (
         <div>
-          <IconButton
+          {/* <IconButton
             onClick={() => {
-              console.log(params);
+              //console.log(params);
               dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_product",
@@ -510,11 +510,14 @@ export default function Products() {
             aria-label="update"
           >
             <CreateIcon />
-          </IconButton>
+          </IconButton> */}
 
           <IconButton
             onClick={() => {
               deleteProduct(params.formattedValue._id).then((res) => {
+                setRows(Row.filter((set)=>{
+                  return  set.action._id !== params.formattedValue._id  ;
+                }))
                 dispatch({type : Notify,payload : {
                   open: true,
                   variant: "success",
@@ -901,7 +904,7 @@ export default function Products() {
                         onClick={() => {
                           const FD = new FormData();
 
-                          console.log(data)
+                          //console.log(data)
 
                           FD.append("_id", data.action._id);
                           FD.append("status", open.value);
@@ -909,8 +912,14 @@ export default function Products() {
                           const res = changeProductStatus(FD);
 
                           res
-                            .then((data) => {
-                              console.log(data);
+                            .then((res) => {
+                              setRows(Row.map((set)=>{
+                                if (set.action._id === res.data.response._id) 
+                                    set.status = !set.status;
+                                return set;
+                              }))
+
+                              handleClose()
                               dispatch({type : Notify,payload : {
                                 open: true,
                                 variant: "success",
@@ -920,6 +929,7 @@ export default function Products() {
                             })
                             .catch((err) => {
                               console.log(err);
+                              handleClose()
                               dispatch({type : Notify,payload : {
                                 open: true,
                                 variant: "error",
@@ -942,7 +952,7 @@ export default function Products() {
   }
 
   const handleSwitch = (e) => {
-    console.log(e.target.name);
+    //console.log(e.target.name);
 
     handleOpen(e.target.name, e.target.checked);
   };
@@ -973,12 +983,12 @@ export default function Products() {
   }
 
   const handleSearch = (e) => {
-    // console.log(e.target.value)
+    // //console.log(e.target.value)
     setSearch(e.target.value);
   };
 
   return (
-    <>
+    <Box  sx = {{pl:4,pr:4}}>
       <Typography sx={{ display: "block" }} variant="h5">
         Products Draft
       </Typography>
@@ -1017,7 +1027,7 @@ export default function Products() {
             startIcon={<AddIcon />}
             variant="contained"
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "product"} });
+              dispatch({type : OpenBox,payload : { state: true, formType: "product",row : Row,setRow : setRows} });
             }}
           >
             Add Product
@@ -1040,6 +1050,6 @@ export default function Products() {
       {open.status && SpringModal()}
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

@@ -11,7 +11,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid,Box } from "@mui/material";
 import "../../assets/custom/css/dashboard.css";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -170,10 +170,10 @@ const Dashboard = () => {
   }
 
   return (
-    <>
-      {/* Dasboard Overview */}
+    <Box  sx = {{pl:4,pr:4}}>
+      {/* Dashboard Overview */}
 
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Dasboard Overview
       </Typography>
 
@@ -190,7 +190,7 @@ const Dashboard = () => {
           <svg
             stroke="currentColor"
             fill="white"
-            stroke-width="0"
+            strokeWidth="0"
             version="1.1"
             viewBox="0 0 16 16"
             width="2em"
@@ -199,11 +199,11 @@ const Dashboard = () => {
             <path d="M16 5l-8-4-8 4 8 4 8-4zM8 2.328l5.345 2.672-5.345 2.672-5.345-2.672 5.345-2.672zM14.398 7.199l1.602 0.801-8 4-8-4 1.602-0.801 6.398 3.199zM14.398 10.199l1.602 0.801-8 4-8-4 1.602-0.801 6.398 3.199z"></path>
           </svg>
 
-          <Typography color="white" variant="h6">
+          <Typography component={'span'} color="white" variant="h6">
             Today Order
           </Typography>
 
-          <Typography color="white" variant="h3">
+          <Typography component={'span'} color="white" variant="h3">
             $100
           </Typography>
         </Grid>
@@ -218,10 +218,10 @@ const Dashboard = () => {
           <svg
             stroke="white"
             fill="none"
-            stroke-width="2"
+            strokeWidth="2"
             viewBox="0 0 24 24"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             width="2em"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -229,11 +229,11 @@ const Dashboard = () => {
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
           </svg>
-          <Typography color="white" variant="h6">
+          <Typography component={'span'} color="white" variant="h6">
             Today Order
           </Typography>
 
-          <Typography color="white" variant="h3">
+          <Typography component={'span'} color="white" variant="h3">
             $100
           </Typography>
         </Grid>
@@ -248,7 +248,7 @@ const Dashboard = () => {
           <svg
             stroke="white"
             fill="white"
-            stroke-width="0"
+            strokeWidth="0"
             version="1.1"
             viewBox="0 0 16 16"
             width="2em"
@@ -256,11 +256,11 @@ const Dashboard = () => {
           >
             <path d="M14.5 2h-13c-0.825 0-1.5 0.675-1.5 1.5v9c0 0.825 0.675 1.5 1.5 1.5h13c0.825 0 1.5-0.675 1.5-1.5v-9c0-0.825-0.675-1.5-1.5-1.5zM1.5 3h13c0.271 0 0.5 0.229 0.5 0.5v1.5h-14v-1.5c0-0.271 0.229-0.5 0.5-0.5zM14.5 13h-13c-0.271 0-0.5-0.229-0.5-0.5v-4.5h14v4.5c0 0.271-0.229 0.5-0.5 0.5zM2 10h1v2h-1zM4 10h1v2h-1zM6 10h1v2h-1z"></path>
           </svg>
-          <Typography color="white" variant="h6">
+          <Typography component={'span'} color="white" variant="h6">
             Today Order
           </Typography>
 
-          <Typography color="white" variant="h3">
+          <Typography component={'span'} color="white" variant="h3">
             $100
           </Typography>
         </Grid>
@@ -281,10 +281,10 @@ const Dashboard = () => {
             <ShoppingCartOutlinedIcon />
           </div>
           <div>
-            <Typography align="center" variant="caption">
+            <Typography component={'span'} align="center" variant="caption">
               Total Order
             </Typography>
-            <Typography align="center" variant="h5">
+            <Typography component={'span'} align="center" variant="h5">
               100
             </Typography>
           </div>
@@ -301,10 +301,10 @@ const Dashboard = () => {
             <AutorenewOutlinedIcon />
           </div>
           <div>
-            <Typography align="center" variant="caption">
+            <Typography component={'span'} align="center" variant="caption">
               Order Pending
             </Typography>
-            <Typography align="center" variant="h5">
+            <Typography component={'span'} align="center" variant="h5">
               37
             </Typography>
           </div>
@@ -321,10 +321,10 @@ const Dashboard = () => {
             <LocalShippingOutlinedIcon />
           </div>
           <div>
-            <Typography align="center" variant="caption">
+            <Typography component={'span'} align="center" variant="caption">
               Order Processing
             </Typography>
-            <Typography align="center" variant="h5">
+            <Typography component={'span'} align="center" variant="h5">
               400
             </Typography>
           </div>
@@ -341,10 +341,10 @@ const Dashboard = () => {
             <DoneOutlinedIcon />
           </div>
           <div>
-            <Typography align="center" variant="caption">
+            <Typography component={'span'} align="center" variant="caption">
               Order Delivered
             </Typography>
-            <Typography align="center" variant="h5">
+            <Typography component={'span'} align="center" variant="h5">
               200
             </Typography>
           </div>
@@ -360,7 +360,7 @@ const Dashboard = () => {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item xs={12} md={5.8} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography p={2} variant="h6">
+          <Typography component={'span'} p={2} variant="h6">
             {" "}
             Conversions This Year{" "}
           </Typography>
@@ -385,7 +385,7 @@ const Dashboard = () => {
           md={5.8}
           sx={{ boxShadow: 2, borderRadius: 5 }}
         >
-          <Typography variant="h6"> Conversions This Year </Typography>
+          <Typography component={'span'} variant="h6"> Conversions This Year </Typography>
           <br></br>
           <ResponsiveContainer width="95%" height="85%">
             <PieChart className="chart">
@@ -423,14 +423,14 @@ const Dashboard = () => {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Recent Order </Typography>
+          <Typography component={'span'} variant="h6"> Recent Order </Typography>
           <br></br>
           {DataGridView()}
         </Grid>
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 };
 

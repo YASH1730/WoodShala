@@ -70,7 +70,7 @@ export default function Banner() {
     const res = addBanner(FD)
 
     res.then((data) => {
-      console.log(data)
+      //console.log(data)
       dispatch({
         type: Notify, payload: {
           open: true,
@@ -81,7 +81,7 @@ export default function Banner() {
       })
     })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
 
         dispatch({
           type: Notify, payload: {
@@ -105,7 +105,7 @@ export default function Banner() {
   useEffect(() => {
     listBanner()
       .then((data) => {
-        console.log(data)
+        //console.log(data)
 
         setRows(data.data.map((row, index) => {
           // setActive(row.banner_Status)
@@ -118,7 +118,7 @@ export default function Banner() {
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -153,7 +153,7 @@ export default function Banner() {
   ];
 
   const handleSwitch = (e) => {
-    console.log(e.target.name)
+    //console.log(e.target.name)
 
     const FD = new FormData()
 
@@ -163,7 +163,7 @@ export default function Banner() {
     const res = changeStatus(FD);
 
     res.then((data) => {
-      console.log(data)
+      //console.log(data)
       dispatch({
         type: Notify, payload: {
           open: true,
@@ -174,7 +174,7 @@ export default function Banner() {
       })
     })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -220,8 +220,8 @@ export default function Banner() {
 
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Banner Panel
       </Typography>
 
@@ -261,7 +261,7 @@ export default function Banner() {
 
               <TextField
                 fullWidth
-                autoComplete={false}
+                // autoComplete={false}
                 id="fullWidth"
                 label="Banner Title"
                 type="text"
@@ -295,12 +295,12 @@ export default function Banner() {
 
 
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Banner List </Typography>
+          <Typography component={'span'} variant="h6"> Banner List </Typography>
 
           <br></br>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by banner title"
             type="text"
@@ -313,6 +313,6 @@ export default function Banner() {
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

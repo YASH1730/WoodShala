@@ -15,20 +15,6 @@ import "../assets/custom/css/home.css";
 import Slide from "@mui/material/Slide";
 import Backdrop from "@mui/material/Backdrop";
 import logo from "../assets/img/Blog/logo.webp";
-// inner components
-import Dashboard from "./dashboard/Dashboard";
-import Products from "./dashboard/Products";
-import Customers from "./dashboard/Customers";
-import Orders from "./dashboard/Orders";
-import Coupons from "./dashboard/Coupons";
-import OurStaff from "./dashboard/OurStaff";
-import Setting from "./dashboard/Setting";
-import Banner from "./dashboard/Banner";
-import Draft from "./dashboard/Draft";
-import Admin from "./Admin";
-import Gallery from "./dashboard/Gallery";
-import Blog from "./dashboard/Blog";
-import StockChannel from "./dashboard/StockChannel";
 
 // icons
 import ArticleIcon from '@mui/icons-material/Article';
@@ -61,38 +47,36 @@ const Home = (props) => {
   const {state,dispatch} = Store()
   
   const ModuleName = {
-    0 : 'dashboard',
-    1 : 'products',
-    2 : 'gallery',
-    3 : 'banner',
-    4 : 'customer',
-    5 : 'order',
-    6 : 'coupons',
-    7 : 'users',
-    8 : 'blog',
-    9 : 'admin',
-    10 : 'draft' ,
-    11 : 'stock' ,
-    12 : 'profile' ,
+    0 : '/dashboard',
+    1 : '/products',
+    2 : '/gallery',
+    3 : '/banner',
+    4 : '/customer',
+    5 : '/order',
+    6 : '/coupons',
+    7 : '/blogModule',
+    8 : '/admin',
+    9 : '/draft' ,
+    10 : '/stock' ,
+    11 : '/profile' ,
   }
   const ModuleNumber = {
-     'dashboard': 0,
-     'products': 1,
-     'gallery': 2,
-     'banner': 3,
-     'customer': 4,
-     'order': 5,
-     'coupons': 6,
-     'users': 7,
-     'blog': 8,
-     'admin': 9,
-     'draft': 10,
-     'stock': 11,
-     'profile': 12,
+     '/dashboard': 0,
+     '/products': 1,
+     '/gallery': 2,
+     '/banner': 3,
+     '/customer': 4,
+     '/order': 5,
+     '/coupons': 6,
+     '/blogModule': 7,
+     '/admin': 8,
+     '/draft': 9,
+     '/stock': 10,
+     '/profile': 11,
   }
 
   
-  const [value, setValue] = useState(window.location.search !== '' ? ModuleNumber[window.location.search.split('=')[1]]: 0);
+  const [value, setValue] = useState(ModuleNumber[window.location.pathname]);
 
   const history = props.history;
 
@@ -103,7 +87,7 @@ const Home = (props) => {
   useEffect(() => {
     if (state.Auth.isLogin !== true)
       history("/");
-  }, []);
+  }, [state.Auth.isLogin]);
 
   const handleMenuClose = () => {
     setAnchor(null);
@@ -122,27 +106,7 @@ const Home = (props) => {
     })
   };
 
-  function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        class="tabPanel"
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-        {index !== 12 && localStorage.removeItem("SKU")}
-      </div>
-    );
-  }
+ 
 
   function a11yProps(index) {
     return {
@@ -156,10 +120,7 @@ const Home = (props) => {
   
     const handleChange = (event, newValue) => 
   {
-    // console.log(window.location.pathname)
-      history(`/adminpanel?module=${ModuleName[newValue]}`)
-      // console.log(history)
-// console.log(window.location.search)
+      history(`${ModuleName[newValue]}`)
       setValue(newValue);
     };
 
@@ -175,7 +136,7 @@ const Home = (props) => {
               <Tabs
                 orientation="vertical"
                 value={value}
-          variant="scrollable"
+                variant="scrollable"
                 onChange={handleChange}
                 indicatorColor="primary"
                 textColor="primary"
@@ -236,39 +197,33 @@ const Home = (props) => {
                 />
                 <Tab
                   wrapped
-                  icon={<PersonOutlineOutlinedIcon />}
-                  label="Users"
-                  {...a11yProps(7)}
-                />
-                <Tab
-                  wrapped
                   icon={<ArticleIcon />}
                   label="Blog"
-                  {...a11yProps(8)}
+                  {...a11yProps(7)}
                 />
                 <Tab
                   wrapped
                   icon={<AdminPanelSettingsIcon />}
                   label="Admin Tab"
-                  {...a11yProps(9)}
+                  {...a11yProps(8)}
                 />
                 {localStorage.getItem('role') === 'Super Admin' && <Tab
                   wrapped
                   icon={<DraftsIcon />}
                   label="Draft"
-                  {...a11yProps(10)}
+                  {...a11yProps(9)}
                 />}
                 <Tab
                   wrapped
                   icon={<InventoryIcon />}
                   label="Stock Channel"
-                  {...a11yProps(11)}
+                  {...a11yProps(10)}
                 />
                 <Tab
                   wrapped
                   icon={<SettingsOutlinedIcon />}
                   label="Profile"
-                  {...a11yProps(12)}
+                  {...a11yProps(11)}
                 />
                 <Button
                   color="primary"
@@ -284,7 +239,7 @@ const Home = (props) => {
         )}
       
 
-        <TabPanel value={value} index={0}>
+        {/* <TabPanel value={value} index={0}>
           <Dashboard />
         </TabPanel>
 
@@ -335,7 +290,7 @@ const Home = (props) => {
         
         <TabPanel value={value} index={12}>
           <Setting />
-        </TabPanel>
+        </TabPanel> */}
       </Box>
     );
   }
@@ -370,7 +325,7 @@ const Home = (props) => {
   };
 
   return (
-    <>
+    <Box  sx = {{mb : 10}}>
       {/* Top Bar  */}
       <title>Dashboard</title>
       <Grid
@@ -473,7 +428,7 @@ const Home = (props) => {
       {/* Sidenav  */}
       {VerticalTabs()}
       {/* Sidenav Ends  */}
-    </>
+    </Box>
   );
 };
 

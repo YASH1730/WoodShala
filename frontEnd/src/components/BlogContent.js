@@ -37,7 +37,7 @@ export default function BlogContent() {
   useEffect(()=>{
     getBlog(localStorage.getItem('uuid'))
     .then((data)=>{
-      console.log(data)
+      //console.log(data)
       setData(data.data)
     })
   },[])
@@ -56,7 +56,7 @@ export default function BlogContent() {
           const id = parameterize(node.children[0].value);
           node.properties.id = id;
           toc.push({id : `#${id}`,value : node.children[0].value})
-          console.log(toc)
+          //console.log(toc)
         }
       });
       return;
@@ -94,7 +94,7 @@ export default function BlogContent() {
         {/* Table OF COntent */}
         <Grid item xs={4} md={2} className="TOC">
           
-          <Typography variant="h6" color="primary">
+          <Typography component={'span'} variant="h6" color="primary">
             Table Of Content
           </Typography>
 
@@ -117,7 +117,7 @@ export default function BlogContent() {
 
         {/* Content Box */}
         {data && <Grid item xs={11.5} md={9.5} className="content">
-            <Typography variant= 'h5'>{data.title}</Typography>
+            <Typography component={'span'} variant= 'h5'>{data.title}</Typography>
             <br></br>
             <img
             src = {data.card_image}

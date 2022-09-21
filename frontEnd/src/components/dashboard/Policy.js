@@ -115,7 +115,7 @@ const {dispatch} = Store();
 
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, [changeData]);
 
@@ -172,7 +172,7 @@ const {dispatch} = Store();
         <div>
           <IconButton
             onClick={() => {
-              console.log(params);
+              //console.log(params);
              dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_product",
@@ -216,7 +216,7 @@ const {dispatch} = Store();
     const res = updateProduct(FD);
 
     res.then((data) => {
-      console.log(data)
+      //console.log(data)
       dispatch({type : Notify,payload : {
         open: true,
         variant: 'success',
@@ -225,7 +225,7 @@ const {dispatch} = Store();
       } })
     })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
         dispatch({type : Notify,payload : {
           open: true,
           variant: 'error',
@@ -271,7 +271,7 @@ const {dispatch} = Store();
   }
 
   const handleSearch = (e) => {
-    console.log(e.target.name)
+    //console.log(e.target.name)
     setChangeData({
       ...changeData, [e.target.name]: e.target.value
     })
@@ -288,14 +288,14 @@ const {dispatch} = Store();
     if (e.target.returnable.value !== '') FD.append('returnable', e.target.returnable.value)
     FD.append('SKUs',JSON.stringify(selectedSKU))
 
-    // console.log(e.target.COD.value,
+    // //console.log(e.target.COD.value,
     //   e.target.returnable.value,
     //   selectedSKU)
 
     const res = updateBulk(FD);
 
     res.then((data) => {
-      console.log(data)
+      //console.log(data)
       dispatch({type : Notify,payload : {
         open: true,
         variant: 'success',
@@ -304,7 +304,7 @@ const {dispatch} = Store();
       } })
     })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
         dispatch({type : Notify,payload : {
           open: true,
           variant: 'error',
@@ -318,7 +318,7 @@ const {dispatch} = Store();
 
   return (
     <>
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Policy
       </Typography>
 
@@ -339,7 +339,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={3.3}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
             type="text"
@@ -429,7 +429,7 @@ const {dispatch} = Store();
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Product List </Typography>
+          <Typography component={'span'} variant="h6"> Product List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>

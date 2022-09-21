@@ -27,7 +27,9 @@ const Context  = ({children})=>{
         OpenBox : {
             state: false,
             formType: null,
-            payload : null
+            payload : null,
+            row : null,
+            setRow : null
         }
     });
     

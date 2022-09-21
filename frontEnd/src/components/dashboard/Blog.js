@@ -4,7 +4,7 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,
+  IconButton,Box
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
@@ -53,7 +53,7 @@ export default function Knob() {
   useEffect(() => {
     getBlogHome()
       .then((data) => {
-        console.log(data);
+        //console.log(data);
 
         setRows(
           data.data.map((row,index) => {
@@ -69,7 +69,7 @@ export default function Knob() {
         );
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
@@ -121,7 +121,7 @@ export default function Knob() {
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => { deleteBLog(params.id).then((res)=>{
-            console.log(res)
+            //console.log(res)
           dispatch({type : Notify, payload :{
             open : true,
             variant : 'success',
@@ -139,7 +139,7 @@ export default function Knob() {
   
 
   const handelSearch = (e) => {
-    console.log(e.target.value);
+    //console.log(e.target.value);
     setSearch(e.target.value);
   };
 
@@ -170,8 +170,8 @@ export default function Knob() {
   }
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Blog
       </Typography>
 
@@ -193,7 +193,7 @@ export default function Knob() {
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by blog title"
             type="text"
@@ -223,13 +223,13 @@ export default function Knob() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Blog List</Typography>
+          <Typography component={'span'} variant="h6"> Blog List</Typography>
           <br></br>
           {DataGridView()}
         </Grid>
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

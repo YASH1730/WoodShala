@@ -73,7 +73,7 @@ export default function EntryPoints(props) {
     let res = login(FD)
 
     res.then((data)=>{
-      console.log(data)
+      //console.log(data)
 
       if(data.status === 200)
       {
@@ -133,7 +133,7 @@ export default function EntryPoints(props) {
 
               {/* Form Side */}
               <Grid item p={6} sm={12} md={6} lg={6}>
-                <Typography variant="h4">Login</Typography>
+                <Typography component={'span'} variant="h4">Login</Typography>
                   <Box
                     sx={{
                       "& .MuiTextField-root": { mt: 2 },
@@ -221,7 +221,7 @@ export default function EntryPoints(props) {
                   className="goggleButton"
                 /> */}
 
-                <Typography
+                <Typography component={'span'}
                   variant="caption"
                   color="primary"
                   sx={{ display: "block", marginTop: "8%" }}
@@ -229,7 +229,7 @@ export default function EntryPoints(props) {
                   Forgot Password?
                 </Typography>
 {/* 
-                <Typography variant="caption" color="primary">
+                <Typography component={'span'} variant="caption" color="primary">
                   <Link className="links" to="/register">
                     I do not have an account. Create Account
                   </Link>
@@ -259,7 +259,7 @@ export default function EntryPoints(props) {
 
               {/* Form Side */}
               <Grid item p={6} sm={12} md={6} lg={6}>
-                <Typography variant="h4">Create an account</Typography>
+                <Typography component={'span'} variant="h4">Create an account</Typography>
                 <form method="post" className="formStyle">
                   <Box
                     sx={{
@@ -352,7 +352,7 @@ export default function EntryPoints(props) {
                   className="goggleButton"
                 />
 
-                <Typography
+                <Typography component={'span'}
                   variant="caption"
                   sx={{ color: "#0e9f6e", display: "block", marginTop: "8%" }}
                 >

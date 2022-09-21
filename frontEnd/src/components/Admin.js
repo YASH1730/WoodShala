@@ -64,7 +64,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component={'span'}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -101,7 +101,7 @@ function BasicTabs() {
 
 
   return (
-    <Box sx={{ width: '100%' }} >
+    <Box  sx={{ width: '100%' }} >
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className = 'tabContainer'>
          
         <Tabs   variant="scrollable" value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -193,15 +193,15 @@ function BasicTabs() {
 }
 
   return (
-    <>
+    <Box  sx = {{pl:4,pr:4}}>
  
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
       Admin Tab
       </Typography>
 
     <br />
     {BasicTabs()}
 
-    </>
+    </Box>
   );
 }

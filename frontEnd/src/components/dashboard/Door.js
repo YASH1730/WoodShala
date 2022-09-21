@@ -72,7 +72,7 @@ export default function Door() {
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -105,7 +105,9 @@ export default function Door() {
           dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_door',
-            payload : params
+            payload : params,
+            row : Row,
+            setRow : setRows,
           }}) 
         }} aria-label="delete"  >
           <CreateIcon />
@@ -127,7 +129,7 @@ export default function Door() {
 
 
   const handleSwitch = (e)=>{
-    // console.log(e.target.name)
+    // //console.log(e.target.name)
     const id = e.target.name.split(' ')
 
     const FD = new FormData()
@@ -139,21 +141,21 @@ export default function Door() {
 
     res.then((data)=>{
       setCheck(check.map((row,index)=>{
-        // console.log(parseInt(id[1]) === index)
+        // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
         return !row
         else 
         return row
       }))
-      // dispatch({type : Notify,payload : {
-      //   open : true,
-      //   variant : 'success',
-      //   message : " Door Status Updated Successfully !!!"
+      dispatch({type : Notify,payload : {
+        open : true,
+        variant : 'success',
+        message : " Door Status Updated Successfully !!!"
   
-      // }})
+      }})
     })
     .catch((err)=>{
-      console.log(err)
+      //console.log(err)
       dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
@@ -166,7 +168,7 @@ export default function Door() {
   } 
 
   const handelSearch = (e)=>{
-    console.log(e.target.value)
+    //console.log(e.target.value)
     setSearch(e.target.value)
   }
 
@@ -195,7 +197,7 @@ components={{
 
   return (
     <>
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
       Door
       </Typography>
 
@@ -217,7 +219,7 @@ components={{
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by door type"
             type="text"
@@ -229,7 +231,7 @@ components={{
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "addDoor" }});
+              dispatch({type : OpenBox,payload : { state: true, formType: "addDoor", row : Row,setRow : setRows }});
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -248,7 +250,7 @@ components={{
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Door List</Typography>
+          <Typography component={'span'} variant="h6"> Door List</Typography>
           <br></br>
           {DataGridView()}
         </Grid>

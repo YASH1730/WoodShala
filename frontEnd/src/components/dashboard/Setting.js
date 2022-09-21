@@ -63,8 +63,8 @@ export default function Setting() {
   };
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Edit Profile
       </Typography>
 
@@ -104,7 +104,7 @@ export default function Setting() {
 
               <TextField
                 fullWidth
-                autoComplete={false}
+                // autoComplete={false}
                 id="fullWidth"
                 label="Name"
                 type="text"
@@ -113,7 +113,7 @@ export default function Setting() {
 
               <TextField
                 fullWidth
-                autoComplete={false}
+                // autoComplete={false}
                 id="fullWidth"
                 label="Email"
                 type="email"
@@ -157,6 +157,6 @@ export default function Setting() {
           </form>
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 }

@@ -69,7 +69,7 @@ const {dispatch} = Store();
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -117,7 +117,9 @@ const {dispatch} = Store();
          dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_PrimaryMaterial',
-            payload : params
+            payload : params,
+            row : Row,
+            setRow : setRows,
           }}) 
         }} aria-label="delete"  >
           <CreateIcon />
@@ -150,21 +152,21 @@ const {dispatch} = Store();
 
     res.then((data)=>{
       setCheck(check.map((row,index)=>{
-        // console.log(parseInt(id[1]) === index)
+        // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
         return !row
         else 
         return row
       }))
-      // dispatch({type : Notify,payload : {
-      //   open : true,
-      //   variant : 'success',
-      //   message : " Material Status Updated Successfully !!!"
+      dispatch({type : Notify,payload : {
+        open : true,
+        variant : 'success',
+        message : " Material Status Updated Successfully !!!"
   
-      // }})
+      }})
     })
     .catch((err)=>{
-      console.log(err)
+      //console.log(err)
       dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
@@ -179,7 +181,7 @@ const {dispatch} = Store();
   } 
 
   const handelSearch = (e)=>{
-    console.log(e.target.value)
+    //console.log(e.target.value)
     setSearch(e.target.value)
   }
 
@@ -207,7 +209,7 @@ const {dispatch} = Store();
 
   return (
     <>
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Material
       </Typography>
 
@@ -229,7 +231,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by material name"
             type="text"
@@ -241,7 +243,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "primaryMaterial"} });
+             dispatch({type : OpenBox,payload : { state: true, formType: "primaryMaterial",row : Row,setRow : setRows} });
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -260,7 +262,7 @@ const {dispatch} = Store();
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Material List </Typography>
+          <Typography component={'span'} variant="h6"> Material List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>

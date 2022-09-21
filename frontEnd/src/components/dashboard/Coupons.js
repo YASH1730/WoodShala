@@ -1,5 +1,5 @@
 import React  from "react";
-import { Typography, TextField, Grid, Button } from "@mui/material";
+import { Typography, TextField, Grid, Button , Box} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -70,8 +70,8 @@ export default function Coupons() {
   }
 
   return (
-    <>
-      <Typography sx={{ display: "block" }} variant="h5">
+    <Box  sx = {{pl:4,pr:4}}>
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Coupons
       </Typography>
 
@@ -93,7 +93,7 @@ export default function Coupons() {
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by coupon name/code"
             type="text"
@@ -121,13 +121,13 @@ export default function Coupons() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Coupons List </Typography>
+          <Typography component={'span'} variant="h6"> Coupons List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>
       </Grid>
 
       {/* data grid ends  */}
-    </>
+    </Box>
   );
 }

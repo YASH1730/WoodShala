@@ -19,17 +19,17 @@ export default function Footer() {
             {/* LINK */}
             {/* <Grid item xs={3} className="link">
               <Stack>
-                <Typography variant="Button">Links</Typography>
+                <Typography component={'span'} variant="Button">Links</Typography>
                
-                <Typography sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
+                <Typography component={'span'} sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
                   Home
                 </Link></Typography>
                 
-                <Typography sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
+                <Typography component={'span'} sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
                   Home
                 </Link></Typography>
                 
-                <Typography sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
+                <Typography component={'span'} sx = {{lineHeight: '1.66'}} variant="overline"> <Link href="#" underline="hover">
                   Home
                 </Link></Typography>
                 
@@ -44,9 +44,9 @@ export default function Footer() {
 
             {/* ADDRESS  */}
             {/* <Grid xs={3} item className="address">
-              <Typography  variant="Button">Address</Typography> */}
+              <Typography component={'span'}  variant="Button">Address</Typography> */}
 {/* <br></br> */}
-                {/* <Typography variant = 'caption' >
+                {/* <Typography component={'span'} variant = 'caption' >
                 Plot no. 25 Hasti colony, Jhalamand, Jodhpur, Rajasthan 342001
                 </Typography>
             </Grid> */}
@@ -54,7 +54,7 @@ export default function Footer() {
 
                 {/* SOCIAL lINK */}
                 <Grid item xs={12} className="socialLinks">
-              <Typography variant="Button">Let's Connect</Typography>
+              <Typography component={'span'} variant="Button">Let's Connect</Typography>
                 <div>
                 <IconButton aria-label="delete">
                   <FacebookRoundedIcon />
@@ -79,7 +79,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <Grid className="bottomBox" item xs={12}>
-          <Typography color="white" variant="button">
+          <Typography component={'span'} color="white" variant="button">
             WoodShala&#169;2022{" "}
           </Typography>
         </Grid>

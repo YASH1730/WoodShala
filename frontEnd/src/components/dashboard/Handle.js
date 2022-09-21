@@ -69,7 +69,7 @@ export default function Knob() {
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -102,7 +102,9 @@ export default function Knob() {
          dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_handle',
-            payload : params
+            payload : params,
+            row : Row,
+            setRow : setRows,
           }}) 
         }} aria-label="delete"  >
           <CreateIcon />
@@ -135,21 +137,20 @@ export default function Knob() {
 
     res.then((data)=>{
       setCheck(check.map((row,index)=>{
-        // console.log(parseInt(id[1]) === index)
+        // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
         return !row
         else 
         return row
       }))
-    //   dispatch({type : Notify,payload : {
-    //     open : true,
-    //     variant : 'success',
-    //     message : " Handle Material Status Updated Successfully !!!"
-  
-    // }})
+      dispatch({type : Notify,payload : {
+        open : true,
+        variant : 'success',
+        message : " Handle Material Status Updated Successfully !!!"
+    }})
     })
     .catch((err)=>{
-      console.log(err)
+      //console.log(err)
       dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
@@ -164,7 +165,7 @@ export default function Knob() {
   } 
 
   const handelSearch = (e)=>{
-    console.log(e.target.value)
+    //console.log(e.target.value)
     setSearch(e.target.value)
   }
 
@@ -192,7 +193,7 @@ export default function Knob() {
 
   return (
     <>
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
       Handle Material
       </Typography>
 
@@ -214,7 +215,7 @@ export default function Knob() {
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by handle name "
             type="text"
@@ -226,7 +227,7 @@ export default function Knob() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "addHandle" }});
+             dispatch({type : OpenBox,payload : { state: true, formType: "addHandle",row : Row, setRow:setRows }});
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -245,7 +246,7 @@ export default function Knob() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Handle List</Typography>
+          <Typography component={'span'} variant="h6"> Handle List</Typography>
           <br></br>
           {DataGridView()}
         </Grid>

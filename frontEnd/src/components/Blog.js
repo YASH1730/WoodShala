@@ -53,10 +53,10 @@ export default function Blog() {
             alt={card.title}
           />
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography component={'span'} gutterBottom variant="h5" component="div">
               {card.title}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography component={'span'} variant="body2" color="text.secondary">
               {card.card_description}
               </Typography>
           </CardContent>
@@ -79,8 +79,8 @@ export default function Blog() {
       {/* Top container  */}
       <Grid container className="banner">
         <Grid item xs={12} className="bannerText">
-          <Typography variant="h4">Blog</Typography>
-          <Typography align="left" variant="h6">
+          <Typography component={'span'} variant="h4">Blog</Typography>
+          <Typography component={'span'} align="left" variant="h6">
             
             WoodShala
           </Typography>

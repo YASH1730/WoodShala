@@ -69,7 +69,7 @@ const {dispatch} = Store();
         }))
       })
       .catch((err) => {
-        console.log(err)
+        //console.log(err)
       })
   }, []);
 
@@ -103,7 +103,9 @@ const {dispatch} = Store();
          dispatch({type : OpenBox,payload : {
             state : true,
             formType : 'update_polish',
-            payload : params
+            payload : params,
+            row : Row,
+            setRow : setRows,
           } }) 
         }} aria-label="delete"  >
           <CreateIcon />
@@ -136,25 +138,25 @@ const {dispatch} = Store();
 
     res.then((data)=>{
       setCheck(check.map((row,index)=>{
-        // console.log(parseInt(id[1]) === index)
+        // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
         return !row
         else 
         return row
       }))
-      // dispatch({type : Notify,payload : {
-      //   open : true,
-      //   variant : 'success',
-      //   message : " Polish Status Updated Successfully !!!"
+      dispatch({type : Notify,payload : {
+        open : true,
+        variant : 'success',
+        message : " Polish Status Updated Successfully !!!"
   
-      // } })
+      } })
     })
     .catch((err)=>{
-      console.log(err)
+      //console.log(err)
       dispatch({type : Notify,payload : {
         open : true,
         variant : 'error',
-        message : "Somthing Went Worang !!!"
+        message : "Something Went Wrong !!!"
   
       } })
     })
@@ -165,7 +167,7 @@ const {dispatch} = Store();
   } 
 
   const handelSearch = (e)=>{
-    console.log(e.target.value)
+    //console.log(e.target.value)
     setSearch(e.target.value)
   }
 
@@ -194,7 +196,7 @@ const {dispatch} = Store();
 
   return (
     <>
-      <Typography sx={{ display: "block" }} variant="h5">
+      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
       Polish
       </Typography>
 
@@ -216,7 +218,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            autoComplete={false}
+            // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search by polish name"
             type="text"
@@ -228,7 +230,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "addPolish" }});
+             dispatch({type : OpenBox,payload : { state: true, formType: "addPolish", row : Row,setRow : setRows }});
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -247,7 +249,7 @@ const {dispatch} = Store();
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography variant="h6"> Polish List </Typography>
+          <Typography component={'span'} variant="h6"> Polish List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>
