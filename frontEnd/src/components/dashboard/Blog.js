@@ -114,19 +114,37 @@ export default function Knob() {
                 state: true,
                 formType: "update_blog",
                 payload: params,
+                row : Row,
+                setRow : setRows 
               }});
             }}
-            aria-label="delete"
           >
             <CreateIcon />
           </IconButton>
-          <IconButton onClick={() => { deleteBLog(params.id).then((res)=>{
-            //console.log(res)
-          dispatch({type : Notify, payload :{
-            open : true,
-            variant : 'success',
-            message : 'Blog Deleted !!!'
-          }})
+          <IconButton onClick={() => { deleteBLog(params.formattedValue._id).then((res)=>{
+            console.log(res)
+            if (res.status !==203)
+            {
+              setRows(Row.filter((set)=>{
+                return  set.action._id !== params.formattedValue._id  ;
+              }))
+              dispatch({type : Notify, payload :{
+                open : true,
+                variant : 'success',
+                message : res.data.message
+              }})
+            }
+            else {
+              dispatch({type : Notify, payload :{
+                open : true,
+                variant : 'error',
+                message : res.data.message
+              }})
+
+            }
+
+            
+         
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton>
@@ -204,7 +222,9 @@ export default function Knob() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({type: OpenBox, payload : { state: true, formType: "addBlog" }});
+              dispatch({type: OpenBox, payload : { state: true, formType: "addBlog",
+              row : Row,
+              setRow : setRows  }});
             }}
             sx={{ width: "100%" }}
             color="primary"

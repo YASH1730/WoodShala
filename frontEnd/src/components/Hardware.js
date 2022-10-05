@@ -196,7 +196,7 @@ function BasicTabs() {
     <Box  sx = {{pl:4,pr:4}}>
  
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-      Admin Tab
+      Hardware
       </Typography>
 
     <br />

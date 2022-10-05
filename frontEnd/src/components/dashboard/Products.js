@@ -135,57 +135,57 @@ export default function Products() {
     })
 
 
-    getListMergeProduct()
-    .then((data) => {
-      //console.log(data.data)
+    // getListMergeProduct()
+    // .then((data) => {
+    //   //console.log(data.data)
 
-      setMergeRows(data.data.map((row,index) => {
+    //   setMergeRows(data.data.map((row,index) => {
 
-        return ({
-          id: index+1,
-          MS : row.MS,
-          product_array : row.product_array,
-          product_title : row.product_title,
-          category_name : row.category_name,
-          category_id : row.category_id,
-          sub_category_name : row.sub_category_name,
-          sub_category_id : row.sub_category_id,
-          product_description : row.product_description,
-          seo_title : row.seo_title,
-          seo_description : row.seo_description,
-          seo_keyword : row.seo_keyword,
-          product_image : row.product_image,
-          featured_image : row.featured_image,
-          specification_image : row.specification_image,
-          selling_points : row.selling_points,
-          rotating_seats : row.rotating_seats,
-          eatable_oil_polish : row.eatable_oil_polish,
-          no_chemical : row.no_chemical,
-          straight_back : row.straight_back,
-          lean_back : row.lean_back,
-          weaving : row.weaving,
-          knife : row.knife,
-          not_suitable_for_Micro_Dish : row.not_suitable_for_Micro_Dish,
-          tilt_top : row.tilt_top,
-          inside_compartments : row.inside_compartments,
-          stackable : row.stackable,
-          MRP : row.MRP,
-          tax_rate : row.tax_rate,
-          selling_price : row.selling_price,
-          showroom_price : row.showroom_price,
-          discount_limit : row.discount_limit,
-          polish_time : row.polish_time,
-          status: row.status ? 'Activated' : 'Deactivated' ,
-          returnDays : row.returnDays,
-          COD : row.COD,
-          returnable : row.returnable,
-          action: row
-        })
-      }))
-    })
-    .catch((err) => {
+    //     return ({
+    //       id: index+1,
+    //       MS : row.MS,
+    //       product_array : row.product_array,
+    //       product_title : row.product_title,
+    //       category_name : row.category_name,
+    //       category_id : row.category_id,
+    //       sub_category_name : row.sub_category_name,
+    //       sub_category_id : row.sub_category_id,
+    //       product_description : row.product_description,
+    //       seo_title : row.seo_title,
+    //       seo_description : row.seo_description,
+    //       seo_keyword : row.seo_keyword,
+    //       product_image : row.product_image,
+    //       featured_image : row.featured_image,
+    //       specification_image : row.specification_image,
+    //       selling_points : row.selling_points,
+    //       rotating_seats : row.rotating_seats,
+    //       eatable_oil_polish : row.eatable_oil_polish,
+    //       no_chemical : row.no_chemical,
+    //       straight_back : row.straight_back,
+    //       lean_back : row.lean_back,
+    //       weaving : row.weaving,
+    //       knife : row.knife,
+    //       not_suitable_for_Micro_Dish : row.not_suitable_for_Micro_Dish,
+    //       tilt_top : row.tilt_top,
+    //       inside_compartments : row.inside_compartments,
+    //       stackable : row.stackable,
+    //       MRP : row.MRP,
+    //       tax_rate : row.tax_rate,
+    //       selling_price : row.selling_price,
+    //       showroom_price : row.showroom_price,
+    //       discount_limit : row.discount_limit,
+    //       polish_time : row.polish_time,
+    //       status: row.status ? 'Activated' : 'Deactivated' ,
+    //       returnDays : row.returnDays,
+    //       COD : row.COD,
+    //       returnable : row.returnable,
+    //       action: row
+    //     })
+    //   }))
+    // })
+    // .catch((err) => {
       //console.log(err)
-    })
+    // })
 
 
   },[])
@@ -572,214 +572,214 @@ export default function Products() {
     }
     
   ];
-  const mergeColumns = [
-    { field: "id", headerName: "ID", width: 50 },
-    { field: "MS", headerName: "MS", width: 100 },
-    { field: "status", headerName: "Status", width: 100 },
-    {
-      field: "product_array",
-      headerName: "Merged Products",
-      width: 160,
-    },
-    {
-      field: "featured_image",
-      headerName: "Featured Image",
-      width: 160,
-      align : 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+  // const mergeColumns = [
+  //   { field: "id", headerName: "ID", width: 50 },
+  //   { field: "MS", headerName: "MS", width: 100 },
+  //   { field: "status", headerName: "Status", width: 100 },
+  //   {
+  //     field: "product_array",
+  //     headerName: "Merged Products",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "featured_image",
+  //     headerName: "Featured Image",
+  //     width: 160,
+  //     align : 'center',
+  //     renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
-    },
-    {
-      field: "specification_image",
-      headerName: "Specification Image",
-      width: 160,
-      align : 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+  //   },
+  //   {
+  //     field: "specification_image",
+  //     headerName: "Specification Image",
+  //     width: 160,
+  //     align : 'center',
+  //     renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
-    },
-    {
-      field: "product_title",
-      headerName: "Product Title",
-      width: 150,
+  //   },
+  //   {
+  //     field: "product_title",
+  //     headerName: "Product Title",
+  //     width: 150,
        
-    },
-    {
-      field: "category_name",
-      headerName: "Category Name",
-      width: 150,
+  //   },
+  //   {
+  //     field: "category_name",
+  //     headerName: "Category Name",
+  //     width: 150,
        
-    },
-    {
-      field: "sub_category_name",
-      headerName: "Sub Category Name",
-      type: "number",
-      width: 110,
-    },
-    {
-      field: "product_description",
-      headerName: "Product Description",
-      width: 160,
-    },
-    {
-      field: "seo_title",
-      headerName: "SEO Title",
-      width: 160,
-    },
-    {
-      field: "seo_description",
-      headerName: "SEO Description",
-      width: 160,
-    },
-    {
-      field: "seo_keyword",
-      headerName: "SEO Keyword",
-      width: 160,
-    },
+  //   },
+  //   {
+  //     field: "sub_category_name",
+  //     headerName: "Sub Category Name",
+  //     type: "number",
+  //     width: 110,
+  //   },
+  //   {
+  //     field: "product_description",
+  //     headerName: "Product Description",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "seo_title",
+  //     headerName: "SEO Title",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "seo_description",
+  //     headerName: "SEO Description",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "seo_keyword",
+  //     headerName: "SEO Keyword",
+  //     width: 160,
+  //   },
     
-    {
-      field: "selling_points",
-      headerName: "Selling Points",
-      width: 160,
-    },
-    {
-      field: "showroom_price",
-      headerName: "Showroom Price",
-      width: 160,
-    },
+  //   {
+  //     field: "selling_points",
+  //     headerName: "Selling Points",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "showroom_price",
+  //     headerName: "Showroom Price",
+  //     width: 160,
+  //   },
     
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
+  //   {
+  //     field: "rotating_seats",
+  //     headerName: "Rotating Seats",
+  //     width: 160,
+  //   },
     
-    {
-      field: "eatable_oil_polish",
-      headerName: "Eatable Oil Polish",
-      width: 160,
-    },
+  //   {
+  //     field: "eatable_oil_polish",
+  //     headerName: "Eatable Oil Polish",
+  //     width: 160,
+  //   },
     
-    {
-      field: "no_chemical",
-      headerName: "No Chemical",
-      width: 160,
-    },
+  //   {
+  //     field: "no_chemical",
+  //     headerName: "No Chemical",
+  //     width: 160,
+  //   },
     
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
+  //   {
+  //     field: "rotating_seats",
+  //     headerName: "Rotating Seats",
+  //     width: 160,
+  //   },
     
-    {
-      field: "straight_back",
-      headerName: "Straight Back",
-      width: 160,
-    },
-    {
-      field: "lean_back",
-      headerName: "Lean Back",
-      width: 160,
-    },
+  //   {
+  //     field: "straight_back",
+  //     headerName: "Straight Back",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "lean_back",
+  //     headerName: "Lean Back",
+  //     width: 160,
+  //   },
     
-    {
-      field: "weaving",
-      headerName: "Weaving",
-      width: 160,
-    },
+  //   {
+  //     field: "weaving",
+  //     headerName: "Weaving",
+  //     width: 160,
+  //   },
     
-    {
-      field: "not_suitable_for_Micro_Dish",
-      headerName: "Suitable For Micro or Dish",
-      width: 160,
-    },
+  //   {
+  //     field: "not_suitable_for_Micro_Dish",
+  //     headerName: "Suitable For Micro or Dish",
+  //     width: 160,
+  //   },
     
-    {
-      field: "tilt_top",
-      headerName: "Tilt Top",
-      width: 160,
-    },
+  //   {
+  //     field: "tilt_top",
+  //     headerName: "Tilt Top",
+  //     width: 160,
+  //   },
     
-    {
-      field: "inside_compartments",
-      headerName: "Inside Compartments",
-      width: 160,
-    },
+  //   {
+  //     field: "inside_compartments",
+  //     headerName: "Inside Compartments",
+  //     width: 160,
+  //   },
     
-    {
-      field: "stackable",
-      headerName: "Stackable",
-      width: 160,
-    },
+  //   {
+  //     field: "stackable",
+  //     headerName: "Stackable",
+  //     width: 160,
+  //   },
     
-    {
-      field: "MRP",
-      headerName: "MRP",
-      width: 160,
-    },
+  //   {
+  //     field: "MRP",
+  //     headerName: "MRP",
+  //     width: 160,
+  //   },
     
-    {
-      field: "tax_rate",
-      headerName: "Tax Rate",
-      width: 160,
-    },
+  //   {
+  //     field: "tax_rate",
+  //     headerName: "Tax Rate",
+  //     width: 160,
+  //   },
     
-    {
-      field: "selling_price",
-      headerName: "Selling Price",
-      width: 160,
-    },
+  //   {
+  //     field: "selling_price",
+  //     headerName: "Selling Price",
+  //     width: 160,
+  //   },
     
-    {
-      field: "discount_limit",
-      headerName: "Discount Limit",
-      width: 160,
-    },
+  //   {
+  //     field: "discount_limit",
+  //     headerName: "Discount Limit",
+  //     width: 160,
+  //   },
     
-    {
-      field: "polish_time",
-      headerName: "Polish Time",
-      width: 160,
-    },
-    {
-      field: "action",
-      headerName: "Actions",
-      width: 200,
-      renderCell: (params) => 
-      <div>
+  //   {
+  //     field: "polish_time",
+  //     headerName: "Polish Time",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "action",
+  //     headerName: "Actions",
+  //     width: 200,
+  //     renderCell: (params) => 
+  //     <div>
         
-        <IconButton onClick={() => {
+  //       <IconButton onClick={() => {
       
-              dispatch({type : OpenBox, payload :{
-                state : true,
-                formType : 'update_merge',
-                payload : params,
-                row : MergeRow,
-                setRow : setMergeRows
-              }}) 
+  //             dispatch({type : OpenBox, payload :{
+  //               state : true,
+  //               formType : 'update_merge',
+  //               payload : params,
+  //               row : MergeRow,
+  //               setRow : setMergeRows
+  //             }}) 
 
-            }} aria-label="update"  >
-              <CreateIcon />
-        </IconButton>
+  //           }} aria-label="update"  >
+  //             <CreateIcon />
+  //       </IconButton>
         
-        <IconButton onClick={() => { deleteMergeProduct(params.formattedValue._id).then((res)=>{
-        setMergeRows(MergeRow.filter((set)=>{
-          return  set.action._id !== params.formattedValue._id  ;
-        }))
+  //       <IconButton onClick={() => { deleteMergeProduct(params.formattedValue._id).then((res)=>{
+  //       setMergeRows(MergeRow.filter((set)=>{
+  //         return  set.action._id !== params.formattedValue._id  ;
+  //       }))
        
-              dispatch({type: Notify,payload:{
-                open : true,
-                variant : 'success',
-                message : "Merged Product deleted successfully !!!"
-              }})
-            }) }} aria-label="delete"  >
-              <DeleteIcon />
-        </IconButton>
+  //             dispatch({type: Notify,payload:{
+  //               open : true,
+  //               variant : 'success',
+  //               message : "Merged Product deleted successfully !!!"
+  //             }})
+  //           }) }} aria-label="delete"  >
+  //             <DeleteIcon />
+  //       </IconButton>
         
-      </div>,
-    }
+  //     </div>,
+  //   }
     
-  ];
+  // ];
 
  
 
@@ -787,7 +787,7 @@ export default function Products() {
     return (
        <div style={{ height: 400, width: "100%" }}>
         <DataGrid
-          checkboxSelection = {select}
+          // checkboxSelection = {select}
           rows={Row}
           columns={columns}
           pageSize={5}
@@ -870,7 +870,7 @@ export default function Products() {
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
-        <Grid item p={2} xs={12} md = {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
+        <Grid item p={2} xs={12} md = {12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <div style= {
             {
               display  : 'flex',
@@ -893,13 +893,13 @@ export default function Products() {
           <br></br>
           {DataGridView(Row,columns)}
         </Grid>
-        <Grid item p={2} xs={12} md= {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
+        {/* <Grid item p={2} xs={12} md= {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
 
           <Typography component={'span'} variant="h6"> Merge Product List </Typography>
         <br></br>
           <br></br>
           {DataGridView(MergeRow,mergeColumns,false)}
-        </Grid>
+        </Grid> */}
       </Grid>
 
       {/* data grid ends  */}

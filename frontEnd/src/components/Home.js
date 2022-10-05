@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Tabs,
   Tab,
-  Typography,
   IconButton,
   Menu,
   MenuItem,
@@ -26,7 +25,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+// import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
@@ -37,6 +36,7 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import DraftsIcon from '@mui/icons-material/Drafts';
 import GridViewIcon from '@mui/icons-material/GridView';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import MergeIcon from '@mui/icons-material/Merge';
 
 // import state 
 import {Store} from '../store/Context' 
@@ -49,30 +49,32 @@ const Home = (props) => {
   const ModuleName = {
     0 : '/dashboard',
     1 : '/products',
-    2 : '/gallery',
-    3 : '/banner',
-    4 : '/customer',
-    5 : '/order',
-    6 : '/coupons',
-    7 : '/blogModule',
-    8 : '/admin',
-    9 : '/draft' ,
-    10 : '/stock' ,
-    11 : '/profile' ,
+    2 : '/merge',
+    3 : '/gallery', 
+    4 : '/banner', 
+    5 : '/customer', 
+    6 : '/order', 
+    7 : '/coupons', 
+    8 : '/blogModule', 
+    9 : '/hardware', 
+    10 : '/draft'  ,
+    11 : '/stock'  ,
+    12 : '/profile' 
   }
   const ModuleNumber = {
      '/dashboard': 0,
      '/products': 1,
-     '/gallery': 2,
-     '/banner': 3,
-     '/customer': 4,
-     '/order': 5,
-     '/coupons': 6,
-     '/blogModule': 7,
-     '/admin': 8,
-     '/draft': 9,
-     '/stock': 10,
-     '/profile': 11,
+     '/merge': 2,
+     '/gallery': 3,
+     '/banner': 4,
+     '/customer': 5,
+     '/order': 6,
+     '/coupons': 7,
+     '/blogModule': 8,
+     '/hardware': 9,
+     '/draft': 10,
+     '/stock': 11,
+     '/profile': 12,
   }
 
   
@@ -85,7 +87,8 @@ const Home = (props) => {
   const [anchor, setAnchor] = useState(null);
 
   useEffect(() => {
-    if (state.Auth.isLogin !== true)
+    // console.log(state.Auth.isLogin)
+    if (state.Auth.isLogin === false)
       history("/");
   }, [state.Auth.isLogin]);
 
@@ -164,66 +167,72 @@ const Home = (props) => {
                   label="Product"
                   {...a11yProps(1)}
                 />
+                <Tab
+                  wrapped
+                  icon={<MergeIcon />}
+                  label="Merge Product"
+                  {...a11yProps(2)}
+                />
                 
                 <Tab
                   wrapped
                   icon={<CollectionsIcon />}
                   label="Gallery"
-                  {...a11yProps(2)}
+                  {...a11yProps(3)}
                 />
                 <Tab
                   wrapped
                   icon={<ViewCarouselIcon />}
                   label="Banner"
-                  {...a11yProps(3)}
+                  {...a11yProps(4)}
                 />
                 <Tab
                   wrapped
                   icon={<PeopleAltOutlinedIcon />}
                   label="Customer"
-                  {...a11yProps(4)}
+                  {...a11yProps(5)}
                 />
                 <Tab
                   wrapped
                   icon={<ExploreOutlinedIcon />}
                   label="Order"
-                  {...a11yProps(5)}
+                  {...a11yProps(6)}
                 />
                 <Tab
                   wrapped
                   icon={<CardGiftcardOutlinedIcon />}
                   label="Coupons"
-                  {...a11yProps(6)}
+                  {...a11yProps(7)}
                 />
                 <Tab
                   wrapped
                   icon={<ArticleIcon />}
                   label="Blog"
-                  {...a11yProps(7)}
+                  {...a11yProps(8)}
                 />
                 <Tab
                   wrapped
                   icon={<AdminPanelSettingsIcon />}
-                  label="Admin Tab"
-                  {...a11yProps(8)}
+                  label="Hardware"
+                  {...a11yProps(9)}
                 />
                 {localStorage.getItem('role') === 'Super Admin' && <Tab
                   wrapped
                   icon={<DraftsIcon />}
                   label="Draft"
-                  {...a11yProps(9)}
+                  {...a11yProps(10)}
                 />}
                 <Tab
                   wrapped
                   icon={<InventoryIcon />}
                   label="Stock Channel"
-                  {...a11yProps(10)}
+                  {...a11yProps(11)}
                 />
                 <Tab
                   wrapped
                   icon={<SettingsOutlinedIcon />}
                   label="Profile"
-                  {...a11yProps(11)}
+                  {...a11yProps(12)}
                 />
                 <Button
                   color="primary"
@@ -325,7 +334,9 @@ const Home = (props) => {
   };
 
   return (
-    <Box  sx = {{mb : 10}}>
+    <Box  sx = {{mb : 10,
+    display : window.location.pathname === '/blog' || window.location.pathname === '/blogContent' || window.location.pathname === '/' ? "none":'block' 
+    }}>
       {/* Top Bar  */}
       <title>Dashboard</title>
       <Grid

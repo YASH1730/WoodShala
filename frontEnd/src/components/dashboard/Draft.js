@@ -498,19 +498,21 @@ export default function Products() {
       width: 200,
       renderCell: (params) => (
         <div>
-          {/* <IconButton
+          <IconButton
             onClick={() => {
               //console.log(params);
               dispatch({type : OpenBox,payload : {
                 state: true,
                 formType: "update_product",
                 payload: params,
+                row : Row,
+                setRow : setRows
               }});
             }}
             aria-label="update"
           >
             <CreateIcon />
-          </IconButton> */}
+          </IconButton>
 
           <IconButton
             onClick={() => {

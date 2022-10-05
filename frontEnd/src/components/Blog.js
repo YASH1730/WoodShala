@@ -37,7 +37,7 @@ export default function Blog() {
 
     },[])
 
-  // function for rendring the cards
+  // function for rendering the cards
 
 
   function cardGenrator(card) {
@@ -53,7 +53,7 @@ export default function Blog() {
             alt={card.title}
           />
           <CardContent>
-            <Typography component={'span'} gutterBottom variant="h5" component="div">
+            <Typography component={'span'} gutterBottom variant="h5" >
               {card.title}
             </Typography>
             <Typography component={'span'} variant="body2" color="text.secondary">
@@ -82,7 +82,7 @@ export default function Blog() {
           <Typography component={'span'} variant="h4">Blog</Typography>
           <Typography component={'span'} align="left" variant="h6">
             
-            WoodShala
+            WoodSala
           </Typography>
         </Grid>
         <Grid item xs={12}>

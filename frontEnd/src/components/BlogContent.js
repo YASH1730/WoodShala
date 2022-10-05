@@ -53,6 +53,7 @@ export default function BlogContent() {
       visit(tree, 'element', function (node) {
         if (node.tagName[0] === 'h' && parseInt(node.tagName[1]) <= 6 )
         {
+          // console.log(node)
           const id = parameterize(node.children[0].value);
           node.properties.id = id;
           toc.push({id : `#${id}`,value : node.children[0].value})
@@ -97,11 +98,7 @@ export default function BlogContent() {
           <Typography component={'span'} variant="h6" color="primary">
             Table Of Content
           </Typography>
-
-
-
-          <List color="black">
-
+          <List className = 'TOCList' color="black">
               {toc && toc.map((jump,index)=>{
                 return <> <ListItem key = {index} component = {Link} href = {jump.id}> 
                   <ListItemIcon>
@@ -121,7 +118,7 @@ export default function BlogContent() {
             <br></br>
             <img
             src = {data.card_image}
-            className  = 'banner'
+            className  = 'banner-img'
             alt = 'banner blog'
           />
             <br></br>

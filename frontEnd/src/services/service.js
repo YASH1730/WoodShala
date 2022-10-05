@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import config from '../cofig.json'
+import config from '../config.json'
 
 const API = config.Official_API;
 
@@ -598,6 +598,7 @@ export const getBlog = async (data) => {
 // deleteBLog
 
 export const deleteBLog = async (data) => {
+  console.log(data)
   return await axios.delete(`${API}/deleteBLog?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
