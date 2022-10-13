@@ -37,11 +37,11 @@ export default function Hardware() {
     getHardware()
       .then((data) => {
         setCheck(data.data.map((row, index) => {
-          return row.fabric_status
+          return row.status
         }))
 
         setRows(data.data.map((row, index) => {
-
+// console.log(row.status)
           return ({
             id: index + 1,
             SKU: row.SKU,
@@ -78,18 +78,23 @@ export default function Hardware() {
     {
       field: "id",
       headerName: "ID",
-      width: 100
+      width: 50
     },
     {
       field: "SKU",
       headerName: "SKU",
-      width: 200,
+      width: 80,
+    },
+    {
+      field: "title",
+      headerName: "Hardware",
+      width: 150,
     },
     {
       field: 'hardware_image',
       align: 'center',
       headerName: 'Image',
-      width: 200,
+      width: 150,
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue[0]} alt='Hardware' /></div>,
     },
     {
@@ -155,7 +160,7 @@ export default function Hardware() {
     const FD = new FormData()
 
     FD.append('_id', id[0])
-    FD.append('fabric_status', e.target.checked)
+    FD.append('status', e.target.checked)
 
     const res = changeHardwareStatus(FD);
 
@@ -172,7 +177,7 @@ export default function Hardware() {
         type: Notify, payload: {
           open: true,
           variant: 'success',
-          message: "Fabric Status Updated Successfully !!!"
+          message: "Hardware Status Updated Successfully !!!"
 
         }
       })

@@ -1479,7 +1479,7 @@ const Sideform = () => {
     getLastHardware()
       .then((res) => {
         if (res.data.length > 0) {
-          let index = parseInt(res.data[0].H.split("-")[1]) + 1;
+          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
 
           setSKU(`H-0${index}`);
         } else {
