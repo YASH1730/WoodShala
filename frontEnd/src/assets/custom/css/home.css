@@ -1,11 +1,11 @@
 .topNav {
-    position: fixed;
+    /* position: fixed; */
     background-color: rgb(247, 247, 247);
     z-index: 2;
 }
 
 .darkNav {
-    position: fixed;
+    /* position: fixed; */
     background-color: rgb(0, 0, 0);
     z-index: 2;
 }

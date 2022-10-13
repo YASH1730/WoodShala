@@ -14,35 +14,37 @@ import {getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct} 
 import MergeIcon from '@mui/icons-material/Merge';
 import {
   DataGrid,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
+// gridPageCountSelector,
+  // gridPageSelector,
+  // useGridApiContext,
+  // useGridSelector,
 } from '@mui/x-data-grid';
-import Pagination from '@mui/material/Pagination';
+// import Pagination from '@mui/material/Pagination';
 import {Store} from '../../store/Context'
 import {OpenBox,Notify} from '../../store/Types'
 
-function CustomPagination() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+// this is commented because needs a custom per page size 
+// function CustomPagination() {
+//   const apiRef = useGridApiContext();
+//   const page = useGridSelector(apiRef, gridPageSelector);
+//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-  return (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, value) => apiRef.current.setPage(value - 1)}
-    />
-  );
-}
+//   return (
+//     <Pagination
+//       color="primary"
+//       count={pageCount}
+//       page={page + 1}
+//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
+//     />
+//   );
+// }
 
 
 export default function Products() {
   
   // store
   const {dispatch} = Store();
+  const [pageSize, setPageSize] = useState(50);
 
   
 
@@ -51,8 +53,7 @@ export default function Products() {
   const [search,setSearch] = useState('')
   const [Row, setRows] = useState()
   const [MergeRow, setMergeRows] = useState()
-
-
+  
 
   useEffect(()=>{
     getListProduct()
@@ -553,7 +554,7 @@ export default function Products() {
               <CreateIcon />
         </IconButton>
         
-        <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
+        {/* <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
                  setRows(Row.filter((set)=>{
                   return  set.action._id !== params.formattedValue._id  ;
                 }))
@@ -566,7 +567,7 @@ export default function Products() {
             
             )}} >
               <DeleteIcon />
-        </IconButton>
+        </IconButton> */}
         
       </div>,
     }
@@ -790,13 +791,12 @@ export default function Products() {
           // checkboxSelection = {select}
           rows={Row}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          pagination
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={[25,50, 100]}
           filterModel={{
             items: [{ columnField: 'SKU', operatorValue: 'contains', value: `${search}` }],
-          }}
-          components={{
-            Pagination: CustomPagination,
           }}
           onSelectionModelChange={(ids) => {
             const selectedIDs = new Set(ids);

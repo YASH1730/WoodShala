@@ -9,7 +9,7 @@ import { OpenBox } from "../../store/Types";
 import { Store } from "../../store/Context";
 
 export default function Coupons() {
-  const {dispatch} = Store();
+const {dispatch} = Store();
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -61,8 +61,8 @@ export default function Coupons() {
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          
+          
           disableSelectionOnClick
         />
       </div>

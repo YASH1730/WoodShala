@@ -13,6 +13,8 @@ export default function OurStaff() {
   const [order, setOrder] = useState('');
   const [status, setStatus] = useState('');
   const { dispatch } = Store();
+  const [pageSize, setPageSize] = useState(50);
+
 
 
   const columns = [
@@ -66,8 +68,8 @@ export default function OurStaff() {
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          
+          
           disableSelectionOnClick
         />
       </div>

@@ -15,10 +15,10 @@ import "../../assets/custom/css/category.css";
 
 import {
   DataGrid,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
+// gridPageCountSelector,
+  // gridPageSelector,
+  // useGridApiContext,
+  // useGridSelector,
 } from "@mui/x-data-grid";
 
 import { OpenBox, Notify } from "../../store/Types";
@@ -29,20 +29,21 @@ import {Store} from "../../store/Context";
 
 import Pagination from "@mui/material/Pagination";
 
-function CustomPagination() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-  return (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, value) => apiRef.current.setPage(value - 1)}
-    />
-  );
-}
+// function CustomPagination() {
+//   const apiRef = useGridApiContext();
+//   const page = useGridSelector(apiRef, gridPageSelector);
+//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+//   return (
+//     <Pagination
+//       color="primary"
+//       count={pageCount}
+//       page={page + 1}
+//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
+//     />
+//   );
+// }
 
 export default function Customer() {
   const [search, setSearch] = useState({
@@ -55,6 +56,7 @@ export default function Customer() {
 const {dispatch} = Store(); 
 
   const [Row, setRows] = useState([]);
+  const [pageSize, setPageSize] = useState(50);
 
   useEffect(() => {
     listCustomer()
@@ -129,41 +131,17 @@ const {dispatch} = Store();
       width: 250,
       align: "center",
     },
-    {
-      field: "shipping",
-      headerName: "Shipping Address",
-      width: 200,
-    },
+    // {
+    //   field: "shipping",
+    //   headerName: "Shipping Address",
+    //   width: 200,
+    // },
     {
       field: "register_time",
       headerName: "Registration Date",
       width: 200,
       align: "center",
     },
-    // {
-    //   field: "pincode",
-    //   headerName: "Pincode",
-    //   width: 100,
-    // },
-
-    {
-      field: "city",
-      headerName: "City",
-      width: 100,
-      align: "center",
-    },
-    {
-      field: "state",
-      headerName: "State",
-      width: 100,
-      align: "center",
-    },
-    // {
-    //   field: "landmark",
-    //   headerName: "Landmark",
-    //   width: 100,
-    //   align: "center",
-    // },
 
     {
       field: "action",
@@ -171,7 +149,7 @@ const {dispatch} = Store();
       width: 200,
       renderCell: (params) => (
         <div className="categoryImage">
-          <IconButton
+          {/* <IconButton
             onClick={() => {
               dispatch({type : OpenBox,payload : {
                 state: true,
@@ -184,7 +162,7 @@ const {dispatch} = Store();
             aria-label="update"
           >
             <CreateIcon />
-          </IconButton>
+          </IconButton> */}
           <IconButton onClick={() => { deleteCustomer(params.formattedValue).then((res)=>{
 
           setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
@@ -256,12 +234,13 @@ const {dispatch} = Store();
           }}
           rows={Row}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          
+          
           disableSelectionOnClick
-          components={{
-            Pagination: CustomPagination,
-          }}
+        pagination
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={[25,50, 100]}
         />
       </div>
     );

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const order = require("../../database/models/order");
 const customer = require("../../database/models/customer");
 const cp = require("../../database/models/customProduct");
@@ -104,7 +105,7 @@ exports.changeOrderStatus = async(req,res) =>{
 
 exports.customerCatalog = async (req,res)=>{
 
-   customer.find({},{_id:0,mobile  : 1, username : 1, email : 1,shipping : 1, city : 1, state : 1, CID : 1})
+   customer.find({},{_id:0,mobile  : 1, username : 1, email : 1,address : 1, city : 1, state : 1, CID : 1})
    .then((data)=>{
       if (data !== null)
       {
@@ -134,7 +135,7 @@ exports.addCustomProduct = async (req,res)=>{
    if (req.files['product_image'] !== undefined)
    {
       req.body.product_image = req.files['product_image'].map((val)=>{
-               return `${process.env.official}/${val.path}`
+               return `${process.env.Official}/${val.path}`
        })
    }
 

@@ -1,7 +1,7 @@
-
+require('dotenv').config();
 const product = require('../../database/models/products')
-const localhost = 'http://localhost:8000'
-const official = 'https://woodshala.in'
+const draft = require('../../database/models/draft')
+
 // ================================================= Apis for Products ======================================================= 
 //==============================================================================================================================
 
@@ -19,17 +19,17 @@ exports.addProduct = async (req, res) => {
 
     if (req.files['product_image'] !== null) {
         req.files['product_image'].map((val) => {
-            image_urls.push(`${official}/${val.path}`)
+            image_urls.push(`${process.env.Official}/${val.path}`)
         })
     }
 
     req.body.product_image = image_urls;
 
-    req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
+    req.body.featured_image = `${process.env.Official}/${req.files['featured_image'][0].path}`;
 
-    req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
+    req.body.specification_image = `${process.env.Official}/${req.files['specification_image'][0].path}`;
 
-    req.body.mannequin_image = `${official}/${req.files['mannequin_image'][0].path}`;
+    req.body.mannequin_image = `${process.env.Official}/${req.files['mannequin_image'][0].path}`;
 
 
     //console.log(req.body);
@@ -55,7 +55,7 @@ exports.addProduct = async (req, res) => {
 exports.getListProduct = async (req, res) => {
     await product.find()
         .then((response) => {
-            //   //console.log(response)
+              console.log(response)
             res.send(response)
         })
         .catch((err) => {
@@ -63,7 +63,6 @@ exports.getListProduct = async (req, res) => {
             res.send("Not Done !!!")
         })
 }
-
 
 //   Get last product
 
@@ -105,14 +104,14 @@ exports.deleteProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     //console.log(req.body);
-    console.log(req.files);
+    // console.log(req.files);
 
     if (req.files['featured_image'] !== undefined)
-        req.body.featured_image = `${official}/${req.files['featured_image'][0].path}`;
+        req.body.featured_image = `${process.env.Official}/${req.files['featured_image'][0].path}`;
     if (req.files['specification_image'] !== undefined)
-        req.body.specification_image = `${official}/${req.files['specification_image'][0].path}`;
+        req.body.specification_image = `${process.env.Official}/${req.files['specification_image'][0].path}`;
     if (req.files['mannequin_image'] !== undefined)
-        req.body.mannequin_image = `${official}/${req.files['mannequin_image'][0].path}`;
+        req.body.mannequin_image = `${process.env.Official}/${req.files['mannequin_image'][0].path}`;
 
 
 

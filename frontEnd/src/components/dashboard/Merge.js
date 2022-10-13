@@ -15,29 +15,30 @@ import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct 
 import MergeIcon from '@mui/icons-material/Merge';
 import {
   DataGrid,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
+// gridPageCountSelector,
+  // gridPageSelector,
+  // useGridApiContext,
+  // useGridSelector,
 } from '@mui/x-data-grid';
-import Pagination from '@mui/material/Pagination';
+// import Pagination from '@mui/material/Pagination';
 import { Store } from '../../store/Context'
 import { OpenBox, Notify } from '../../store/Types'
 
-function CustomPagination() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
 
-  return (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, value) => apiRef.current.setPage(value - 1)}
-    />
-  );
-}
+// function CustomPagination() {
+//   const apiRef = useGridApiContext();
+//   const page = useGridSelector(apiRef, gridPageSelector);
+//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+//   return (
+//     <Pagination
+//       color="primary"
+//       count={pageCount}
+//       page={page + 1}
+//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
+//     />
+//   );
+// }
 
 export default function Products() {
 
@@ -48,6 +49,7 @@ export default function Products() {
   const [modalState, setModal] = useState(false);
   const [selectedSKU, setSelection] = useState([]);
   const [productUnit, setUnit] = useState([]);
+  const [pageSize, setPageSize] = useState(50);
 
   const [search, setSearch] = useState({
     P: '',
@@ -802,14 +804,15 @@ export default function Products() {
           checkboxSelection={select}
           rows={Row}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          
+          
           filterModel={{
             items: [{ columnField: searchSection, operatorValue: 'contains', value: searchSection === 'MS' ? search.MS : search.P }],
           }}
-          components={{
-            Pagination: CustomPagination,
-          }}
+        pagination
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={[25,50, 100]}
           onSelectionModelChange={(ids) => {
             const selectedIDs = new Set(ids);
             const selectedRows = Row.filter((row) =>

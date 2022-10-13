@@ -5,7 +5,6 @@ import {
   MenuItem,
   Grid,
   Box,
-  
   Typography,
   TextField,
   Modal,
@@ -34,7 +33,7 @@ import Backdrop from "@mui/material/Backdrop";
 import "../../assets/custom/css/sideForm.css";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
-
+import AddIcon from '@mui/icons-material/Add';
 // service APIS 
 import {
   addCategory,
@@ -75,7 +74,11 @@ import {
   addFabric,
   editFabric,
   getFabric,
+  addHardware,
+  editHardware,
+  getHardware,
   addTextile,
+  getLastHardware,
   editTextile,
   getTextile,
   addMergeProduct,
@@ -143,7 +146,7 @@ const style = {
   width: 400,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4,
+  p: 3,
 };
 
 const Sideform = () => {
@@ -155,6 +158,7 @@ const Sideform = () => {
   const imageLink = 'https://woodshala.in/upload/'
 
   const confirm = useConfirm();
+
 
   // confirmBox 
   const confirmBox = (e, action) => {
@@ -172,6 +176,9 @@ const Sideform = () => {
 
   // modal state
   const [open, setOpen] = useState(false);
+
+  // address object 
+  const [address, setAddress] = useState([])
 
   function FeaturesPreviews(props) {
     const { getRootProps, getInputProps } = useDropzone({
@@ -510,7 +517,30 @@ const Sideform = () => {
     },
   ];
 
-  
+  const unitCatalog = [
+    {
+      value: "Pc",
+      label: "Pc",
+    },
+    {
+      value: "Kg",
+      label: "Kg",
+    },
+    {
+      value: "Ft",
+      label: "Ft",
+    },
+    {
+      value: "Set",
+      label: "Set",
+    },
+    {
+      value: "Metre",
+      label: "Metre",
+    },
+  ];
+
+
 
   // global context 
   const { state, dispatch } = Store();
@@ -614,10 +644,25 @@ const Sideform = () => {
     shipping_address: "",
     searchCustomer: "",
     show_on_mobile: false,
+    unit : 'Kg'
   });
 
   useEffect(() => {
     switch (state.OpenBox.formType) {
+      case "hardware" : 
+      getHKU();
+      categoryList().then((data) => {
+        if (data.data === null) return setCategory([]);
+
+        return setCategory(data.data);
+      });
+
+      getSubCatagories().then((data) => {
+        if (data.data === null) return setSubCategory([]);
+
+        return setSubCategory(data.data);
+      });
+      break;
       case "product":
         getSKU();
         categoryList().then((data) => {
@@ -879,12 +924,12 @@ const Sideform = () => {
           return setFabricCatalog(data.data);
         });
         console.log(state.OpenBox.payload)
-        const data = state.OpenBox.payload.row.action; 
+        const data = state.OpenBox.payload.row.action;
         setData({
           SKU: data.SKU,
           product_title: data.product_title,
           category_name: data.category_id,
-          back_style : data.back_style,
+          back_style: data.back_style,
           category_id: data.category_id,
           sub_category_name: data.sub_category_id,
           sub_category_id: data.sub_category_id,
@@ -1343,7 +1388,7 @@ const Sideform = () => {
       // //console.log("");
     }
   };
-  
+
   const feature = [
     "rotating_seats",
     "eatable_oil_polish",
@@ -1422,6 +1467,23 @@ const Sideform = () => {
           setSKU(`P-0${index}`);
         } else {
           setSKU("P-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating hardware  ID
+
+  const getHKU = () => {
+    getLastHardware()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].H.split("-")[1]) + 1;
+
+          setSKU(`H-0${index}`);
+        } else {
+          setSKU("H-01001");
         }
       })
       .catch((err) => {
@@ -1631,11 +1693,7 @@ const Sideform = () => {
     FD.append("mobile", e.target.mobile.value);
     FD.append("email", e.target.email.value);
     FD.append("password", e.target.password.value);
-    FD.append("city", e.target.city.value);
-    // FD.append("pincode", e.target.pincode.value);
-    FD.append("state", e.target.state.value);
-    // FD.append("landmark", e.target.landmark.value);
-    FD.append("shipping", e.target.shipping.value);
+    FD.append("shipping", JSON.stringify(address));
 
     const res = addCustomer(FD);
 
@@ -1662,11 +1720,10 @@ const Sideform = () => {
             mobile: data.data.response.mobile,
             email: data.data.response.email,
             password: data.data.response.password,
-            city: data.data.response.city,
-            state: data.data.response.state,
             shipping: data.data.response.shipping,
             action: data.data.response
           }])
+          setAddress([]);
           setImages([]);
           handleClose();
           dispatch({
@@ -2337,7 +2394,7 @@ const Sideform = () => {
         ? changeData.not_suitable_for_Micro_Dish
         : false
     );
-   
+
     FD.append("tilt_top", changeData.tilt_top ? changeData.tilt_top : false);
     FD.append(
       "inside_compartments",
@@ -2739,7 +2796,7 @@ const Sideform = () => {
         ? changeData.not_suitable_for_Micro_Dish
         : false
     );
-   
+
     FD.append("tilt_top", changeData.tilt_top ? changeData.tilt_top : false);
     FD.append(
       "inside_compartments",
@@ -2904,24 +2961,24 @@ const Sideform = () => {
       );
     });
 
-   
+
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
-     FD.append("product_title", changeData.product_title);
+    FD.append("product_title", changeData.product_title);
     FD.append("product_description", changeData.product_description);
     FD.append("product_quantity", state.OpenBox.unit);
     FD.append("MS", SKU);
 
-     FD.append("SKU", SKU);
+    FD.append("SKU", SKU);
     FD.append("product_array", changeData.productArray);
     FD.append(
       "showroom_price",
       changeData.showroom_price ? changeData.showroom_price : 0
     );
-    
+
     FD.append("discount_limit", changeData.discount_limit);
     FD.append("selling_price", changeData.selling_price);
-   
+
     const res = addMergeProduct(FD);
 
     res
@@ -3031,21 +3088,21 @@ const Sideform = () => {
 
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
-     FD.append("product_title", changeData.product_title);
+    FD.append("product_title", changeData.product_title);
     FD.append("product_description", changeData.product_description);
     FD.append("product_quantity", changeData.productArray);
     FD.append("MS", SKU);
 
-     FD.append("SKU", SKU);
+    FD.append("SKU", SKU);
     FD.append("product_array", changeData.productArray);
     FD.append(
       "showroom_price",
       changeData.showroom_price ? changeData.showroom_price : 0
     );
-    
+
     FD.append("discount_limit", changeData.discount_limit);
     FD.append("selling_price", changeData.selling_price);
-   
+
     const res = updateMergeProduct(FD);
 
     res
@@ -3068,7 +3125,7 @@ const Sideform = () => {
               set.category_id = changeData.category_id
               set.sub_category_name = changeData.sub_category_name
               set.sub_category_id = changeData.sub_category_id
-              set.product_description =  changeData.product_description
+              set.product_description = changeData.product_description
               set.seo_title = changeData.seo_title
               set.seo_description = changeData.seo_description
               set.seo_keyword = changeData.seo_keyword
@@ -4371,6 +4428,142 @@ const Sideform = () => {
       });
   };
 
+  const handleAddress = (e) => {
+    e.preventDefault();
+    setAddress([...address, {
+      name: e.target.customer_name.value,
+      mobile: e.target.mobile.value,
+      pincode: e.target.pincode.value,
+      city: e.target.city.value,
+      state: e.target.state.value,
+      shipping: e.target.address.value,
+      type: e.target.type.value,
+    }])
+    console.log(address)
+  }
+
+  const handleHardware = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    files.map((element) => {
+      return FD.append("hardware_image", element);
+    });
+
+    FD.append("status", changeData.status === 'on' ? true : false);
+
+    category.map((item) => {
+      return (
+        item._id === changeData.category_name &&
+        FD.append("category_name", item.category_name)
+      );
+    });
+
+    subCategory.map((item) => {
+      return (
+        item._id === changeData.sub_category_name &&
+        FD.append("sub_category_name", item.sub_category_name)
+      );
+    });
+
+    FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
+    FD.append("returnable", changeData.returnable);
+    FD.append("COD", changeData.COD);
+    
+
+    FD.append("category_id", changeData.category_name);
+    FD.append("sub_category_id", changeData.sub_category_name);
+    FD.append("polish_time", changeData.polish_time);
+    FD.append("manufacturing_time", changeData.manufacturing_time);
+    FD.append("title", changeData.title);
+   
+    FD.append("SKU", SKU);
+   
+    FD.append(
+      "showroom_price",
+      changeData.showroom_price ? changeData.showroom_price : 0
+    );
+    FD.append("selling_price", changeData.selling_price);
+    FD.append("warehouse", changeData.warehouse);
+
+
+    FD.append("unit", changeData.unit);
+    FD.append("quantity", changeData.quantity);
+
+    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
+    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
+    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+
+    
+    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+      FD.append("jodhpur_stock", changeData.jodhpur_stock);
+
+    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+      FD.append("bangalore_stock", changeData.bangalore_stock);
+
+    const res = addHardware(FD);
+
+    res
+      .then((data) => {
+        // //console.log(data.status);
+
+        if (data.status === 203) {
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
+          });
+        } else {
+          state.OpenBox.setRow([...state.OpenBox.row, {
+            id: state.OpenBox.row.length + 1,
+            SKU : data.data.response.SKU,
+            title : data.data.response.title,
+            category_name : data.data.response.category_name,
+            category_id : data.data.response.category_id,
+            sub_category_name : data.data.response.sub_category_name,
+            sub_category_id : data.data.response.sub_category_id,
+            hardware_image : data.data.response.hardware_image,
+            warehouse : data.data.response.warehouse,
+            bangalore_stock : data.data.response.bangalore_stock,
+            jodhpur_stock : data.data.response.jodhpur_stock,
+            manufacturing_time : data.data.response.manufacturing_time,
+            status : data.data.response.status,
+            returnDays : data.data.response.returnDays,
+            COD : data.data.response.COD,
+            returnable : data.data.response.returnable,
+            quantity : data.data.response.quantity,
+            package_length : data.data.response.package_length,
+            package_height : data.data.response.package_height,
+            package_breadth : data.data.response.package_breadth,
+            unit : data.data.response.unit,
+            range: data.data.response.range,
+            action: data.data.response
+          }])
+          handleClose();
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
+        });
+      });
+  };
+
   return (
     <>
       <Slide
@@ -4434,8 +4627,8 @@ const Sideform = () => {
                       {/* // Specification */}
                       <Step>
                         <StepLabel>Specifications</StepLabel>
-                        <StepContent  className="stepContent">
-                          <Box  className="fields">
+                        <StepContent className="stepContent">
+                          <Box className="fields">
                             {" "}
                             <Box className="stepAction">
                               <Button
@@ -4454,9 +4647,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4469,8 +4662,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="SKU"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -4498,8 +4691,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -4528,8 +4721,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4542,8 +4735,8 @@ const Sideform = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4563,8 +4756,8 @@ const Sideform = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -4587,8 +4780,8 @@ const Sideform = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // disabled
@@ -4617,8 +4810,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4638,8 +4831,8 @@ const Sideform = () => {
                               name="length_main"
                               helperText="From left to right"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4659,8 +4852,8 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4680,11 +4873,11 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-                           
+
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
                             </InputLabel>
-                            <Select sx = {{mb : 2}}
+                            <Select sx={{ mb: 2 }}
                               multiple
                               fullWidth
                               value={changeData.primary_material}
@@ -4711,8 +4904,8 @@ const Sideform = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -4731,8 +4924,8 @@ const Sideform = () => {
                               value={changeData.weight}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -4756,8 +4949,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -4785,7 +4978,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                           
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Assembly
@@ -4815,8 +5008,8 @@ const Sideform = () => {
                             </FormControl>
                             {changeData.assembly_required === "shipping" && (
                               <>
-                               
-                                 <TextField sx = {{mb : 2}}
+
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -4840,8 +5033,8 @@ const Sideform = () => {
                             )}
                             {changeData.assembly_required === "yes" && (
                               <>
-                               
-                                 <TextField sx = {{mb : 2}}
+
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -4868,10 +5061,10 @@ const Sideform = () => {
                                 </TextField>
                               </>
                             )}
-                           
-                            <FormControlLabel 
+
+                            <FormControlLabel
                               control={
-                                <Checkbox 
+                                <Checkbox
                                   checked={changeData.show_on_mobile}
                                   onChange={handleProductFelids}
                                   name="show_on_mobile"
@@ -4882,7 +5075,7 @@ const Sideform = () => {
                             />
 
 
-{/*                            
+                            {/*                            
                              <TextField sx = {{mb : 2}}
                               size="small"
                               fullWidth
@@ -4908,7 +5101,7 @@ const Sideform = () => {
 
 
 
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -4954,8 +5147,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
@@ -4981,7 +5174,7 @@ const Sideform = () => {
                             <MannequinPreviews
                               text={"Please Drag and Drop mannequin images"}
                             ></MannequinPreviews>
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5028,8 +5221,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             <FormGroup>
                               <FormControlLabel
                                 control={
@@ -5061,7 +5254,7 @@ const Sideform = () => {
                                 }
                                 label="No Chemical Used"
                               />
-                          
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
@@ -5134,7 +5327,7 @@ const Sideform = () => {
                                 }
                                 label="Wall Hanging"
                               />
-                                  <FormControlLabel
+                              <FormControlLabel
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_drawers}
@@ -5155,7 +5348,7 @@ const Sideform = () => {
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5200,11 +5393,11 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box> <br/>
+                            </Box> <br />
 
-                   
 
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -5229,7 +5422,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                             <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -5254,7 +5447,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                         
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Drawer
@@ -5282,10 +5475,10 @@ const Sideform = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-                           
+
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                 <TextField sx = {{mb : 2}}
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   type="number"
@@ -5297,10 +5490,10 @@ const Sideform = () => {
                                 />
                               )}
 
-                           
 
 
-                           
+
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -5325,7 +5518,7 @@ const Sideform = () => {
                               </RadioGroup>
                             </FormControl>
 
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5372,8 +5565,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -5417,7 +5610,7 @@ const Sideform = () => {
                                 />
                               </>
                             )}
-                           
+
                             <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
@@ -5432,7 +5625,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-                           
+
                             <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
@@ -5450,9 +5643,9 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-                           
+
                             <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
-                            <Select sx = {{mb : 2}}
+                            <Select sx={{ mb: 2 }}
                               multiple
                               fullWidth
                               value={changeData.warehouse}
@@ -5473,8 +5666,8 @@ const Sideform = () => {
                               changeData.warehouse.map((row) => {
                                 let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
                                 return <>
-                                 
-                                   <TextField sx = {{mb : 2}}
+
+                                  <TextField sx={{ mb: 2 }}
                                     size="small"
                                     fullWidth
                                     name={stock}
@@ -5487,7 +5680,7 @@ const Sideform = () => {
                               })
                             }
 
-                            <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -5507,8 +5700,8 @@ const Sideform = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -5528,8 +5721,8 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -5549,7 +5742,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5595,9 +5788,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -5610,8 +5803,8 @@ const Sideform = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -5624,8 +5817,8 @@ const Sideform = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -5638,22 +5831,22 @@ const Sideform = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-                           
+
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-                           
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="product_description"
-                      defaultValue={"Product Description" || changeData.product_description}
-                      type="text"
-                      helperText="Please enter your product description"
-                    />
- {/* <Editor
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              defaultValue={"Product Description" || changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+                            {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
                                 (editorRef.current = editor)
@@ -5663,22 +5856,22 @@ const Sideform = () => {
                                 menubar: true,
                               }}
                             /> */}
-                            <br/>
+                            <br />
                             {/* selling points  */}
-                           
+
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-                                     
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="selling_points"
-                      defaultValue={"Selling Points" || changeData.selling_points}
-                      type="text"
-                      helperText="Please enter your selling points."
-                    />
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="selling_points"
+                              defaultValue={"Selling Points" || changeData.selling_points}
+                              type="text"
+                              helperText="Please enter your selling points."
+                            />
 
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
@@ -5690,7 +5883,7 @@ const Sideform = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box > <br/>
+                          </Box > <br />
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5737,12 +5930,12 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > 
+                            </Box >
 
-                          </Box > <br/>
+                          </Box > <br />
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // required
@@ -5775,13 +5968,13 @@ const Sideform = () => {
                             </MenuItem>
                           </TextField>
 
-                         
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Silver
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}}
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               value={changeData.silver || "no"}
                               onChange={handleProductFelids}
@@ -5800,7 +5993,7 @@ const Sideform = () => {
                             </RadioGroup>
                           </FormControl>
                           {changeData.silver === "yes" && (
-                             <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -5821,8 +6014,8 @@ const Sideform = () => {
                             />
                           )}
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -5849,8 +6042,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -5877,8 +6070,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -5905,8 +6098,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -5933,8 +6126,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -5962,13 +6155,13 @@ const Sideform = () => {
                             </MenuItem>
                           </TextField>
 
-                         
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Mirror
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}}
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="mirror"
                               value={changeData.mirror || "no"}
@@ -5986,11 +6179,11 @@ const Sideform = () => {
                               />
                             </RadioGroup>
                           </FormControl>
-                          
+
                           {changeData.mirror === "yes" && (
                             <>
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 // autoComplete={false}
@@ -6010,8 +6203,8 @@ const Sideform = () => {
                                 name="mirror_length"
                               />
 
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 // autoComplete={false}
@@ -6033,9 +6226,9 @@ const Sideform = () => {
                             </>
                           )}
 
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -6054,10 +6247,10 @@ const Sideform = () => {
                             value={changeData.top_size}
                             onChange={handleProductFelids}
                           />
-                         
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -6076,14 +6269,14 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             name="dial_size"
                           />
-                         
-                         
+
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Wheel
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="wheel"
                               value={changeData.wheel || "no"}
@@ -6101,14 +6294,14 @@ const Sideform = () => {
                               />
                             </RadioGroup>
                           </FormControl>
-                          <br/>
-                         
+                          <br />
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Trolley
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
 
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="trolley"
@@ -6129,8 +6322,8 @@ const Sideform = () => {
                           </FormControl>
                           {changeData.trolley === "yes" && (
                             <>
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 id="outlined-select"
@@ -6153,10 +6346,10 @@ const Sideform = () => {
                               </TextField>
                             </>
                           )}
-                         
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -6175,9 +6368,9 @@ const Sideform = () => {
                             value={changeData.seating_size_width}
                             onChange={handleProductFelids}
                           />
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -6196,9 +6389,9 @@ const Sideform = () => {
                             value={changeData.seating_size_depth}
                             onChange={handleProductFelids}
                           />
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -6217,66 +6410,66 @@ const Sideform = () => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-                                  
-                            <FormControl>
-                              <FormLabel id="demo-radio-buttons-group-label">
-                                Textile
-                              </FormLabel>
-                              <RadioGroup
-                            sx = {{mb : 2}} 
 
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                value={changeData.textile || "no"}
-                                onChange={handleProductFelids}
-                                name="textile"
-                              >
-                                <FormControlLabel
-                                  value="yes"
-                                  control={<Radio />}
-                                  label="Yes"
-                                />
-                                <FormControlLabel
-                                  value="no"
-                                  control={<Radio />}
-                                  label="No"
-                                />
-                              </RadioGroup>
-                            </FormControl>
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Textile
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
 
-                           
-                            {changeData.textile === "yes" && (
-                               <TextField sx = {{mb : 2}}
-                                size="small"
-                                fullWidth
-                                id="outlined-select"
-                                select
-                                name="textile_type"
-                                label="Textile"
-                                value={changeData.textile_type}
-                                onChange={handleProductFelids}
-                                multiple
-                                helperText="Please select your textile."
-                              >
-                                {textileCatalog.map(
-                                  (option) =>
-                                    option.textile_status && (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option._id}
-                                      >
-                                        {option.textile_name}
-                                      </MenuItem>
-                                    )
-                                )}
-                                <MenuItem key={"none"} value={undefined}>
-                                  {"None"}
-                                </MenuItem>
-                              </TextField>
-                            )}
-                            
-                            <br/>
-                         
-                         
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.textile || "no"}
+                              onChange={handleProductFelids}
+                              name="textile"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.textile === "yes" && (
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              id="outlined-select"
+                              select
+                              name="textile_type"
+                              label="Textile"
+                              value={changeData.textile_type}
+                              onChange={handleProductFelids}
+                              multiple
+                              helperText="Please select your textile."
+                            >
+                              {textileCatalog.map(
+                                (option) =>
+                                  option.textile_status && (
+                                    <MenuItem
+                                      key={option.value}
+                                      value={option._id}
+                                    >
+                                      {option.textile_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                          )}
+
+                          <br />
+
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Upholstery
@@ -6287,7 +6480,7 @@ const Sideform = () => {
                               // onChange={(e) => {
                               //   setShowFabric(e.target.value);
                               // }}
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
 
                               value={changeData.upholstery || "no"}
                               onChange={handleProductFelids}
@@ -6304,40 +6497,40 @@ const Sideform = () => {
                                 label="No"
                               />
                             </RadioGroup>
-                            </FormControl>
-                            {changeData.upholstery === "yes" && (
-                              <>
-                               
-                                 <TextField sx = {{mb : 2}}
-                                  size="small"
-                                  fullWidth
-                                  id="outlined-select"
-                                  select
-                                  name="fabric"
-                                  label="Fabric"
-                                  multiple
-                                  value={changeData.fabric}
-                                  onChange={handleProductFelids}
-                                  helperText="Please select your fabric."
-                                >
-                                  {fabricCatalog.map(
-                                    (option) =>
-                                      option.fabric_status && (
-                                        <MenuItem
-                                          key={option.value}
-                                          value={option._id}
-                                        >
-                                          {option.fabric_name}
-                                        </MenuItem>
-                                      )
-                                  )}
-                                  <MenuItem key={"none"} value={undefined}>
-                                    {"None"}
-                                  </MenuItem>
-                                </TextField>{" "}
-                              </>
-                            )}
-                          
+                          </FormControl>
+                          {changeData.upholstery === "yes" && (
+                            <>
+
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                id="outlined-select"
+                                select
+                                name="fabric"
+                                label="Fabric"
+                                multiple
+                                value={changeData.fabric}
+                                onChange={handleProductFelids}
+                                helperText="Please select your fabric."
+                              >
+                                {fabricCatalog.map(
+                                  (option) =>
+                                    option.fabric_status && (
+                                      <MenuItem
+                                        key={option.value}
+                                        value={option._id}
+                                      >
+                                        {option.fabric_name}
+                                      </MenuItem>
+                                    )
+                                )}
+                                <MenuItem key={"none"} value={undefined}>
+                                  {"None"}
+                                </MenuItem>
+                              </TextField>{" "}
+                            </>
+                          )}
+
 
 
                           <Box className="stepAction">
@@ -6403,7 +6596,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                 <Stepper
+                    <Stepper
                       className="stepper"
                       activeStep={activeStep}
                       orientation="vertical"
@@ -6411,8 +6604,8 @@ const Sideform = () => {
                       {/* // Specification */}
                       <Step>
                         <StepLabel>Specifications</StepLabel>
-                        <StepContent  className="stepContent">
-                          <Box  className="fields">
+                        <StepContent className="stepContent">
+                          <Box className="fields">
                             {" "}
                             <Box className="stepAction">
                               <Button
@@ -6431,9 +6624,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6446,8 +6639,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="SKU"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -6475,8 +6668,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -6505,8 +6698,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6519,8 +6712,8 @@ const Sideform = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6540,8 +6733,8 @@ const Sideform = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -6564,8 +6757,8 @@ const Sideform = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // disabled
@@ -6594,8 +6787,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6615,8 +6808,8 @@ const Sideform = () => {
                               name="length_main"
                               helperText="From left to right"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6636,8 +6829,8 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6657,11 +6850,11 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-                           
+
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
                             </InputLabel>
-                            <Select sx = {{mb : 2}}
+                            <Select sx={{ mb: 2 }}
                               multiple
                               fullWidth
                               value={changeData.primary_material}
@@ -6688,8 +6881,8 @@ const Sideform = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -6708,8 +6901,8 @@ const Sideform = () => {
                               value={changeData.weight}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -6733,8 +6926,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -6762,7 +6955,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                           
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Assembly
@@ -6792,8 +6985,8 @@ const Sideform = () => {
                             </FormControl>
                             {changeData.assembly_required === "shipping" && (
                               <>
-                               
-                                 <TextField sx = {{mb : 2}}
+
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -6817,8 +7010,8 @@ const Sideform = () => {
                             )}
                             {changeData.assembly_required === "yes" && (
                               <>
-                               
-                                 <TextField sx = {{mb : 2}}
+
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -6845,10 +7038,10 @@ const Sideform = () => {
                                 </TextField>
                               </>
                             )}
-                           
-                            <FormControlLabel 
+
+                            <FormControlLabel
                               control={
-                                <Checkbox 
+                                <Checkbox
                                   checked={changeData.show_on_mobile}
                                   onChange={handleProductFelids}
                                   name="show_on_mobile"
@@ -6859,7 +7052,7 @@ const Sideform = () => {
                             />
 
 
-{/*                            
+                            {/*                            
                              <TextField sx = {{mb : 2}}
                               size="small"
                               fullWidth
@@ -6885,7 +7078,7 @@ const Sideform = () => {
 
 
 
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -6931,8 +7124,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
@@ -6958,7 +7151,7 @@ const Sideform = () => {
                             <MannequinPreviews
                               text={"Please Drag and Drop mannequin images"}
                             ></MannequinPreviews>
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -7005,8 +7198,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             <FormGroup>
                               <FormControlLabel
                                 control={
@@ -7038,7 +7231,7 @@ const Sideform = () => {
                                 }
                                 label="No Chemical Used"
                               />
-                          
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
@@ -7111,7 +7304,7 @@ const Sideform = () => {
                                 }
                                 label="Wall Hanging"
                               />
-                                  <FormControlLabel
+                              <FormControlLabel
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_drawers}
@@ -7132,7 +7325,7 @@ const Sideform = () => {
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -7177,11 +7370,11 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box> <br/>
+                            </Box> <br />
 
-                   
 
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -7206,7 +7399,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                             <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -7231,7 +7424,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                         
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Drawer
@@ -7259,10 +7452,10 @@ const Sideform = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-                           
+
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                 <TextField sx = {{mb : 2}}
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   type="number"
@@ -7274,10 +7467,10 @@ const Sideform = () => {
                                 />
                               )}
 
-                           
 
 
-                           
+
+
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -7302,7 +7495,7 @@ const Sideform = () => {
                               </RadioGroup>
                             </FormControl>
 
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -7349,8 +7542,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -7394,7 +7587,7 @@ const Sideform = () => {
                                 />
                               </>
                             )}
-                           
+
                             <Typography component={'span'} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
@@ -7409,7 +7602,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-                           
+
                             <Typography component={'span'} variant="Caption">
                               {" "}
                               Manufactured in {
@@ -7427,9 +7620,9 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-                           
+
                             <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
-                            <Select sx = {{mb : 2}}
+                            <Select sx={{ mb: 2 }}
                               multiple
                               fullWidth
                               value={changeData.warehouse}
@@ -7450,8 +7643,8 @@ const Sideform = () => {
                               changeData.warehouse.map((row) => {
                                 let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
                                 return <>
-                                 
-                                   <TextField sx = {{mb : 2}}
+
+                                  <TextField sx={{ mb: 2 }}
                                     size="small"
                                     fullWidth
                                     name={stock}
@@ -7464,7 +7657,7 @@ const Sideform = () => {
                               })
                             }
 
-                            <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -7484,8 +7677,8 @@ const Sideform = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -7505,8 +7698,8 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -7526,7 +7719,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-                          </Box > 
+                          </Box >
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -7572,9 +7765,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -7587,8 +7780,8 @@ const Sideform = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -7601,8 +7794,8 @@ const Sideform = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -7615,22 +7808,22 @@ const Sideform = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-                           
+
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-                           
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="product_description"
-                      defaultValue={"Product Description" || changeData.product_description}
-                      type="text"
-                      helperText="Please enter your product description"
-                    />
- {/* <Editor
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              defaultValue={"Product Description" || changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+                            {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
                                 (editorRef.current = editor)
@@ -7640,22 +7833,22 @@ const Sideform = () => {
                                 menubar: true,
                               }}
                             /> */}
-                            <br/>
+                            <br />
                             {/* selling points  */}
-                           
+
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-                                     
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="selling_points"
-                      defaultValue={"Selling Points" || changeData.selling_points}
-                      type="text"
-                      helperText="Please enter your selling points."
-                    />
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="selling_points"
+                              defaultValue={"Selling Points" || changeData.selling_points}
+                              type="text"
+                              helperText="Please enter your selling points."
+                            />
 
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
@@ -7667,7 +7860,7 @@ const Sideform = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box > <br/>
+                          </Box > <br />
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -7714,12 +7907,12 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > 
+                            </Box >
 
-                          </Box > <br/>
+                          </Box > <br />
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // required
@@ -7752,13 +7945,13 @@ const Sideform = () => {
                             </MenuItem>
                           </TextField>
 
-                         
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Silver
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}}
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               value={changeData.silver || "no"}
                               onChange={handleProductFelids}
@@ -7777,7 +7970,7 @@ const Sideform = () => {
                             </RadioGroup>
                           </FormControl>
                           {changeData.silver === "yes" && (
-                             <TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -7798,8 +7991,8 @@ const Sideform = () => {
                             />
                           )}
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -7826,8 +8019,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -7854,8 +8047,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -7882,8 +8075,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -7910,8 +8103,8 @@ const Sideform = () => {
                               {"None"}
                             </MenuItem>
                           </TextField>
-                         
-                           <TextField sx = {{mb : 2}}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -7939,13 +8132,13 @@ const Sideform = () => {
                             </MenuItem>
                           </TextField>
 
-                         
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Mirror
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}}
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="mirror"
                               value={changeData.mirror || "no"}
@@ -7963,11 +8156,11 @@ const Sideform = () => {
                               />
                             </RadioGroup>
                           </FormControl>
-                          
+
                           {changeData.mirror === "yes" && (
                             <>
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 // autoComplete={false}
@@ -7987,8 +8180,8 @@ const Sideform = () => {
                                 name="mirror_length"
                               />
 
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 // autoComplete={false}
@@ -8010,9 +8203,9 @@ const Sideform = () => {
                             </>
                           )}
 
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -8031,10 +8224,10 @@ const Sideform = () => {
                             value={changeData.top_size}
                             onChange={handleProductFelids}
                           />
-                         
 
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -8053,14 +8246,14 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             name="dial_size"
                           />
-                         
-                         
+
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Wheel
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="wheel"
                               value={changeData.wheel || "no"}
@@ -8078,14 +8271,14 @@ const Sideform = () => {
                               />
                             </RadioGroup>
                           </FormControl>
-                          <br/>
-                         
+                          <br />
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Trolley
                             </FormLabel>
                             <RadioGroup
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
 
                               aria-labelledby="demo-radio-buttons-group-label"
                               name="trolley"
@@ -8106,8 +8299,8 @@ const Sideform = () => {
                           </FormControl>
                           {changeData.trolley === "yes" && (
                             <>
-                             
-                               <TextField sx = {{mb : 2}}
+
+                              <TextField sx={{ mb: 2 }}
                                 size="small"
                                 fullWidth
                                 id="outlined-select"
@@ -8130,10 +8323,10 @@ const Sideform = () => {
                               </TextField>
                             </>
                           )}
-                         
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -8152,9 +8345,9 @@ const Sideform = () => {
                             value={changeData.seating_size_width}
                             onChange={handleProductFelids}
                           />
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -8173,9 +8366,9 @@ const Sideform = () => {
                             value={changeData.seating_size_depth}
                             onChange={handleProductFelids}
                           />
-                         
-                         
-                           <TextField sx = {{mb : 2}}
+
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             // autoComplete={false}
@@ -8194,66 +8387,66 @@ const Sideform = () => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-                                  
-                            <FormControl>
-                              <FormLabel id="demo-radio-buttons-group-label">
-                                Textile
-                              </FormLabel>
-                              <RadioGroup
-                            sx = {{mb : 2}} 
 
-                                aria-labelledby="demo-radio-buttons-group-label"
-                                value={changeData.textile || "no"}
-                                onChange={handleProductFelids}
-                                name="textile"
-                              >
-                                <FormControlLabel
-                                  value="yes"
-                                  control={<Radio />}
-                                  label="Yes"
-                                />
-                                <FormControlLabel
-                                  value="no"
-                                  control={<Radio />}
-                                  label="No"
-                                />
-                              </RadioGroup>
-                            </FormControl>
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Textile
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
 
-                           
-                            {changeData.textile === "yes" && (
-                               <TextField sx = {{mb : 2}}
-                                size="small"
-                                fullWidth
-                                id="outlined-select"
-                                select
-                                name="textile_type"
-                                label="Textile"
-                                value={changeData.textile_type}
-                                onChange={handleProductFelids}
-                                multiple
-                                helperText="Please select your textile."
-                              >
-                                {textileCatalog.map(
-                                  (option) =>
-                                    option.textile_status && (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option._id}
-                                      >
-                                        {option.textile_name}
-                                      </MenuItem>
-                                    )
-                                )}
-                                <MenuItem key={"none"} value={undefined}>
-                                  {"None"}
-                                </MenuItem>
-                              </TextField>
-                            )}
-                            
-                            <br/>
-                         
-                         
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.textile || "no"}
+                              onChange={handleProductFelids}
+                              name="textile"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.textile === "yes" && (
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              id="outlined-select"
+                              select
+                              name="textile_type"
+                              label="Textile"
+                              value={changeData.textile_type}
+                              onChange={handleProductFelids}
+                              multiple
+                              helperText="Please select your textile."
+                            >
+                              {textileCatalog.map(
+                                (option) =>
+                                  option.textile_status && (
+                                    <MenuItem
+                                      key={option.value}
+                                      value={option._id}
+                                    >
+                                      {option.textile_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                          )}
+
+                          <br />
+
+
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Upholstery
@@ -8264,7 +8457,7 @@ const Sideform = () => {
                               // onChange={(e) => {
                               //   setShowFabric(e.target.value);
                               // }}
-                            sx = {{mb : 2}} 
+                              sx={{ mb: 2 }}
 
                               value={changeData.upholstery || "no"}
                               onChange={handleProductFelids}
@@ -8281,40 +8474,40 @@ const Sideform = () => {
                                 label="No"
                               />
                             </RadioGroup>
-                            </FormControl>
-                            {changeData.upholstery === "yes" && (
-                              <>
-                               
-                                 <TextField sx = {{mb : 2}}
-                                  size="small"
-                                  fullWidth
-                                  id="outlined-select"
-                                  select
-                                  name="fabric"
-                                  label="Fabric"
-                                  multiple
-                                  value={changeData.fabric}
-                                  onChange={handleProductFelids}
-                                  helperText="Please select your fabric."
-                                >
-                                  {fabricCatalog.map(
-                                    (option) =>
-                                      option.fabric_status && (
-                                        <MenuItem
-                                          key={option.value}
-                                          value={option._id}
-                                        >
-                                          {option.fabric_name}
-                                        </MenuItem>
-                                      )
-                                  )}
-                                  <MenuItem key={"none"} value={undefined}>
-                                    {"None"}
-                                  </MenuItem>
-                                </TextField>{" "}
-                              </>
-                            )}
-                          
+                          </FormControl>
+                          {changeData.upholstery === "yes" && (
+                            <>
+
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                id="outlined-select"
+                                select
+                                name="fabric"
+                                label="Fabric"
+                                multiple
+                                value={changeData.fabric}
+                                onChange={handleProductFelids}
+                                helperText="Please select your fabric."
+                              >
+                                {fabricCatalog.map(
+                                  (option) =>
+                                    option.fabric_status && (
+                                      <MenuItem
+                                        key={option.value}
+                                        value={option._id}
+                                      >
+                                        {option.fabric_name}
+                                      </MenuItem>
+                                    )
+                                )}
+                                <MenuItem key={"none"} value={undefined}>
+                                  {"None"}
+                                </MenuItem>
+                              </TextField>{" "}
+                            </>
+                          )}
+
 
 
                           <Box className="stepAction">
@@ -8408,9 +8601,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8423,8 +8616,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="SKU"
                             />
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8436,8 +8629,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="productArray"
                             />
-                           
-                             <TextField sx = {{mb : 1}}
+
+                            <TextField sx={{ mb: 1 }}
                               size="small"
                               fullWidth
                               // required
@@ -8465,8 +8658,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -8496,8 +8689,8 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                                
-                            <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8511,24 +8704,24 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                             />
 
-                                 {/* product description  */}
-                                 <FormLabel 
-                      sx = {{mb : 2}}
-                      id="demo-radio-buttons-group-label">
+                            {/* product description  */}
+                            <FormLabel
+                              sx={{ mb: 2 }}
+                              id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-                      
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="product_description"
-                      defaultValue={"Product Description" || changeData.product_description}
-                      type="text"
-                      helperText="Please enter your product description"
-                    />
 
-                            <TextField sx = {{mt : 2,mb : 2}}
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              defaultValue={"Product Description" || changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+
+                            <TextField sx={{ mt: 2, mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8549,7 +8742,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                             />
 
-<TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // disabled
@@ -8579,7 +8772,7 @@ const Sideform = () => {
                               name="selling_price"
                             />
 
-<TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -8648,8 +8841,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
@@ -8675,7 +8868,7 @@ const Sideform = () => {
                             <MannequinPreviews
                               text={"Please Drag and Drop mannequin images"}
                             ></MannequinPreviews>
-                          </Box > <br/>
+                          </Box > <br />
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -8737,7 +8930,7 @@ const Sideform = () => {
                     onSubmit={(e) => { confirmBox(e, handleUpdateMergeProduct) }} enctype="multipart/form-data"
                     method="post"
                   >
-               
+
                     <Stepper
                       className="stepper"
                       activeStep={activeStep}
@@ -8766,9 +8959,9 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
-                             <TextField sx = {{mb : 2}}
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8781,8 +8974,8 @@ const Sideform = () => {
                               variant="outlined"
                               name="SKU"
                             />
-                           
-                           <Select sx = {{mb : 2}}
+
+                            <Select sx={{ mb: 2 }}
                               multiple
                               fullWidth
                               value={changeData.product_array}
@@ -8803,8 +8996,8 @@ const Sideform = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                           
-                             <TextField sx = {{mb : 1}}
+
+                            <TextField sx={{ mb: 1 }}
                               size="small"
                               fullWidth
                               // required
@@ -8832,8 +9025,8 @@ const Sideform = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                           
-                             <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -8863,8 +9056,8 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                                
-                            <TextField sx = {{mb : 2}}
+
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8878,24 +9071,24 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                             />
 
-                                 {/* product description  */}
-                                 <FormLabel 
-                      sx = {{mb : 2}}
-                      id="demo-radio-buttons-group-label">
+                            {/* product description  */}
+                            <FormLabel
+                              sx={{ mb: 2 }}
+                              id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-                      
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="product_description"
-                      defaultValue={"Product Description" || changeData.product_description}
-                      type="text"
-                      helperText="Please enter your product description"
-                    />
 
-                            <TextField sx = {{mt : 2,mb : 2}}
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              defaultValue={"Product Description" || changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+
+                            <TextField sx={{ mt: 2, mb: 2 }}
                               size="small"
                               fullWidth
                               // autoComplete={false}
@@ -8916,7 +9109,7 @@ const Sideform = () => {
                               onChange={handleProductFelids}
                             />
 
-<TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // disabled
@@ -8946,7 +9139,7 @@ const Sideform = () => {
                               name="selling_price"
                             />
 
-<TextField sx = {{mb : 2}}
+                            <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               // required
@@ -9015,8 +9208,8 @@ const Sideform = () => {
                               >
                                 Continue
                               </Button>
-                            </Box > <br/>
-                           
+                            </Box > <br />
+
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
@@ -9042,7 +9235,7 @@ const Sideform = () => {
                             <MannequinPreviews
                               text={"Please Drag and Drop mannequin images"}
                             ></MannequinPreviews>
-                          </Box > <br/>
+                          </Box > <br />
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -9110,7 +9303,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9121,7 +9314,7 @@ const Sideform = () => {
                       helperText="Please enter your textile"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="textile_status" />}
@@ -9129,7 +9322,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9174,7 +9367,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -9230,7 +9423,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9241,7 +9434,7 @@ const Sideform = () => {
                       helperText="Please enter your fabric"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="fabric_status" />}
@@ -9249,7 +9442,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9294,7 +9487,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -9350,7 +9543,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9361,7 +9554,7 @@ const Sideform = () => {
                       helperText="Please enter your category"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="category_status" />}
@@ -9369,7 +9562,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9415,7 +9608,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -9471,7 +9664,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9482,7 +9675,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material"
                     />
 
-                   
+
                     <TextareaAutosize
                       fullWidth
                       minRows={5}
@@ -9493,7 +9686,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material description"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="primaryMaterial_status" />}
@@ -9501,7 +9694,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9547,7 +9740,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       onChange={handleChangeData}
@@ -9568,7 +9761,7 @@ const Sideform = () => {
                       type="text"
                       helperText="Please enter your primary material description"
                     />
-                   
+
 
                     <Button
                       color="primary"
@@ -9608,7 +9801,7 @@ const Sideform = () => {
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9619,7 +9812,7 @@ const Sideform = () => {
                       helperText="Please enter your knob material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="knob_status" />}
@@ -9627,7 +9820,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9666,7 +9859,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9679,7 +9872,7 @@ const Sideform = () => {
                       helperText="Please enter your knob "
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9719,7 +9912,7 @@ const Sideform = () => {
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9730,7 +9923,7 @@ const Sideform = () => {
                       helperText="Please enter your knob material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="handle_status" />}
@@ -9738,7 +9931,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9778,7 +9971,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       onChange={handleChangeData}
                       fullWidth
@@ -9791,7 +9984,7 @@ const Sideform = () => {
                       helperText="Please enter your Door "
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9832,7 +10025,7 @@ const Sideform = () => {
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9843,7 +10036,7 @@ const Sideform = () => {
                       helperText="Please enter your door material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="door_status" />}
@@ -9851,7 +10044,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9891,7 +10084,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       onChange={handleChangeData}
@@ -9904,7 +10097,7 @@ const Sideform = () => {
                       helperText="Please enter your Door "
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -9944,7 +10137,7 @@ const Sideform = () => {
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -9955,7 +10148,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="fitting_status" />}
@@ -9963,7 +10156,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10003,7 +10196,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10016,7 +10209,7 @@ const Sideform = () => {
                       helperText="Please enter your fitting "
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10056,7 +10249,7 @@ const Sideform = () => {
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10067,7 +10260,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="hinge_status" />}
@@ -10075,7 +10268,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10114,7 +10307,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       onChange={handleChangeData}
@@ -10127,7 +10320,7 @@ const Sideform = () => {
                       helperText="Please enter your hinge "
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10168,7 +10361,7 @@ const Sideform = () => {
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10179,7 +10372,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="polish_status" />}
@@ -10187,7 +10380,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10228,7 +10421,7 @@ const Sideform = () => {
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       onChange={handleChangeData}
@@ -10246,7 +10439,7 @@ const Sideform = () => {
                       <FormControlLabel control={<Checkbox name='polish_status' />} label="Status (On/Off)" />
                     </FormGroup> */}
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10310,7 +10503,7 @@ const Sideform = () => {
                             {" "}
                           </ImagePreviews>
 
-                           <TextField sx = {{mb : 2}}
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             disabled
@@ -10343,7 +10536,7 @@ const Sideform = () => {
                       {" "}
                     </FeaturesPreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10353,7 +10546,7 @@ const Sideform = () => {
                       value={changeData.seo_title}
                       onChange={handleChangeData}
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10364,7 +10557,7 @@ const Sideform = () => {
                       onChange={handleChangeData}
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10375,7 +10568,7 @@ const Sideform = () => {
                       label="Card Description"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10399,7 +10592,7 @@ const Sideform = () => {
                     />
 
                     <div className="getLinkButton">
-                       <TextField sx = {{mb : 2}}
+                      <TextField sx={{ mb: 2 }}
                         size="small"
                         disabled
                         fullWidth
@@ -10417,7 +10610,7 @@ const Sideform = () => {
                         Upload
                       </Button>
                     </div>
-                   
+
                     <Button
                       color="primary"
                       type="submit"
@@ -10480,7 +10673,7 @@ const Sideform = () => {
                             {" "}
                           </ImagePreviews>
 
-                           <TextField sx = {{mb : 2}}
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             disabled
@@ -10517,7 +10710,7 @@ const Sideform = () => {
                       {" "}
                     </FeaturesPreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10525,7 +10718,7 @@ const Sideform = () => {
                       name="seo_title"
                       label="SEO Title"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10533,7 +10726,7 @@ const Sideform = () => {
                       name="seo_description"
                       label="SEO Description"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10542,7 +10735,7 @@ const Sideform = () => {
                       label="Card Description"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10563,7 +10756,7 @@ const Sideform = () => {
                     />
 
                     <div className="getLinkButton">
-                       <TextField sx = {{mb : 2}}
+                      <TextField sx={{ mb: 2 }}
                         size="small"
                         disabled
                         fullWidth
@@ -10581,7 +10774,7 @@ const Sideform = () => {
                         Upload
                       </Button>
                     </div>
-                   
+
                     <Button
                       color="primary"
                       type="submit"
@@ -10631,7 +10824,7 @@ const Sideform = () => {
                       {" "}
                     </ProductsPreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10689,7 +10882,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10730,7 +10923,7 @@ const Sideform = () => {
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10753,7 +10946,7 @@ const Sideform = () => {
                       )}
                     </TextField>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10764,7 +10957,7 @@ const Sideform = () => {
                       helperText="Please enter your sub category"
                     />
 
-                   
+
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="sub_category_status" />}
@@ -10772,7 +10965,7 @@ const Sideform = () => {
                       />
                     </FormGroup>
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10818,7 +11011,7 @@ const Sideform = () => {
                       Category
                     </FormLabel>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -10840,7 +11033,7 @@ const Sideform = () => {
                       )}
                     </TextField>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -10852,7 +11045,7 @@ const Sideform = () => {
                       helperText="Please enter your sub category"
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -10885,6 +11078,127 @@ const Sideform = () => {
                 </Grid>
 
                 <Grid item xs={12} mt={5}>
+                  <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={open}
+                    onClose={() => {
+                      setOpen(false);
+                    }}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                      timeout: 500,
+                    }}
+                  >
+                    <Fade in={open}>
+                      <Box sx={style}>
+                      <Typography sx = {{pb:1}} variant = 'h6'>
+                            Address
+                          </Typography>
+                        <form
+                          className="form"
+                          id="myForm" onSubmit={(e) => { confirmBox(e, handleAddress) }}
+                          enctype="multipart/form-data"
+                          method="post"
+                        >
+                          
+                          <TextField sx={{ mb: 1 }} size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            name="customer_name"
+                            label="Name"
+                            type="text"
+                          />
+                          <TextField sx={{ mb: 1 }} size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            name="mobile"
+                            label="Mobile"
+                            type="number"
+                          />
+                          <TextField sx={{ mb: 1 }} size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            name="pincode"
+                            label="Pin Code"
+                            type="number"
+                          />
+
+                          <TextField sx={{ mb: 1 }} size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            name="city"
+                            label="City"
+                            type="text"
+                          />
+
+                          <TextField sx={{ mb: 1 }}
+                            size="small"
+                            fullWidth
+                            // required
+                            id="outlined-select"
+                            name="state"
+                            label="State"
+                            type="text"
+                          />
+
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Address
+                          </FormLabel>
+
+                          <TextareaAutosize
+                            fullWidth
+                            minRows={5}
+                            id="outlined-select"
+                            name="address"
+                            type="text"
+                            placeholder="Please enter your address"
+                          />
+
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Address Type
+                          </FormLabel>
+
+                          <TextField sx={{ mb: 1 }}
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="type"
+                            displayEmpty
+                            value={cat}
+                            multiple
+                            onChange={handleChange}
+                            helperText="Please select your address type"
+                          >
+                            <MenuItem key={'home'} value={'home'}>
+                              Home
+                            </MenuItem>
+                            <MenuItem key={'office'} value={'office'}>
+                              Office
+                            </MenuItem>
+                            <MenuItem key={'none'} value={'none'}>
+                              None
+                            </MenuItem>
+                          </TextField>
+
+                          <Button
+                            color="primary"
+                            type="submit"
+                            variant="contained"
+                          >
+                            Add Address
+                          </Button>
+                        </form>
+                      </Box>
+                    </Fade>
+                  </Modal>
+
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleCustomer) }}
                     id="myForm"
@@ -10897,7 +11211,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10907,7 +11221,7 @@ const Sideform = () => {
                       type="text"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10916,7 +11230,7 @@ const Sideform = () => {
                       label="Customer Email"
                       type="text"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10925,7 +11239,7 @@ const Sideform = () => {
                       label="Contact Number"
                       type="number"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -10934,56 +11248,35 @@ const Sideform = () => {
                       label="Password"
                       type="password"
                     />
-                    {/*  <TextField sx = {{mb : 2}} size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="pincode"
-                      label="Pin-Code"
-                      type="number"
-                    /> */}
-                     <TextField sx = {{mb : 2}}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="city"
-                      label="City"
-                      type="text"
-                    />
-                     <TextField sx = {{mb : 2}}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="state"
-                      label="state"
-                      type="text"
-                    />
-                    {/*  <TextField sx = {{mb : 2}} size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="landmark"
-                      label="Landmark"
-                      type="text"
-                      helperText = 'Place nearby the main building.'
-                    /> */}
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Shipping Address
                     </FormLabel>
+                    <Grid container >
+                     {
+                      address && address.map((item)=>{
+                        return <Grid item xs = {3}>
+                          <Box sx= {{
+                                overflowWrap: 'break-word',
+                                    border: '2px solid #a52a2a80',
+                                    borderStyle: 'dashed',
+                                     p: 1,
+                                     ml : 1,
+                                     mr : 1,
+                                     width : '130px',
+                                     height : '150px',
+                                     overflow : 'hidden'
+                                     }}>
+                        <Typography variant = 'caption'>{item.shipping}</Typography></Box>
+                        </Grid>
+                      })
+                     }
+                      <Grid item xs = {3}>
+                      <Button variant='outlined' sx={{ width: '20%' }} onClick={() => { setOpen(true) }}><AddIcon/></Button>
+                      </Grid>
+                    </Grid>
 
-                    <TextareaAutosize
-                      fullWidth
-                      minRows={5}
-                      id="outlined-select"
-                      name="shipping"
-                      type="text"
-                      helperText="Please enter your primary material description"
-                    />
-
-                   
+                    
 
                     <Button
                       color="primary"
@@ -11028,7 +11321,7 @@ const Sideform = () => {
                       {" "}
                     </ImagePreviews>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       value={changeData.username}
@@ -11039,7 +11332,7 @@ const Sideform = () => {
                       type="text"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       value={changeData.email}
@@ -11049,7 +11342,7 @@ const Sideform = () => {
                       label="Customer Email"
                       type="text"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       value={changeData.mobile}
@@ -11068,7 +11361,7 @@ const Sideform = () => {
                       label="Pin-Code"
                       type="number"
                     /> */}
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       value={changeData.city}
@@ -11078,7 +11371,7 @@ const Sideform = () => {
                       label="City"
                       type="text"
                     />
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       value={changeData.state}
@@ -11114,7 +11407,7 @@ const Sideform = () => {
                       helperText="Please enter your primary material description"
                     />
 
-                   
+
 
                     <Button
                       color="primary"
@@ -11153,7 +11446,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       disabled
@@ -11168,7 +11461,7 @@ const Sideform = () => {
                     <InputLabel id="demo-multiple-checkbox-label">
                       Product
                     </InputLabel>
-                    <Select sx = {{mb : 2}}
+                    <Select sx={{ mb: 2 }}
                       multiple
                       fullWidth
                       value={changeData.product_array}
@@ -11189,7 +11482,7 @@ const Sideform = () => {
                     </Select>
 
                     <Box>
-                       <TextField sx = {{mb : 2}}
+                      <TextField sx={{ mb: 2 }}
                         size="small"
                         fullWidth
                         // required
@@ -11246,7 +11539,7 @@ const Sideform = () => {
                       </Box>
                     </Box>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -11256,7 +11549,7 @@ const Sideform = () => {
                       type="number"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -11269,7 +11562,7 @@ const Sideform = () => {
                     {changeData.searchCustomer === "" && (
                       <>
                         {" "}
-                         <TextField sx = {{mb : 2}}
+                        <TextField sx={{ mb: 2 }}
                           size="small"
                           fullWidth
                           required
@@ -11278,7 +11571,7 @@ const Sideform = () => {
                           label="Customer Name"
                           type="text"
                         />
-                         <TextField sx = {{mb : 2}}
+                        <TextField sx={{ mb: 2 }}
                           size="small"
                           fullWidth
                           required
@@ -11287,7 +11580,7 @@ const Sideform = () => {
                           label="Customer Email"
                           type="text"
                         />
-                         <TextField sx = {{mb : 2}}
+                        <TextField sx={{ mb: 2 }}
                           size="small"
                           fullWidth
                           required
@@ -11296,7 +11589,7 @@ const Sideform = () => {
                           label="Contact Number"
                           type="number"
                         />
-                         <TextField sx = {{mb : 2}}
+                        <TextField sx={{ mb: 2 }}
                           size="small"
                           fullWidth
                           required
@@ -11305,7 +11598,7 @@ const Sideform = () => {
                           label="City"
                           type="text"
                         />
-                         <TextField sx = {{mb : 2}}
+                        <TextField sx={{ mb: 2 }}
                           size="small"
                           fullWidth
                           required
@@ -11328,7 +11621,7 @@ const Sideform = () => {
                       </>
                     )}
 
-                   
+
 
                     <Button
                       color="primary"
@@ -11369,7 +11662,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       fullWidth
                       id="outlined-select"
                       select
@@ -11393,7 +11686,7 @@ const Sideform = () => {
                       </MenuItem>
                     </TextField>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -11405,7 +11698,7 @@ const Sideform = () => {
                       helperText="Please enter your product_id (SKU)"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -11418,7 +11711,7 @@ const Sideform = () => {
                     />
 
 
-                   
+
 
                     <Button
                       color="primary"
@@ -11459,7 +11752,7 @@ const Sideform = () => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       fullWidth
                       id="outlined-select"
                       select
@@ -11483,7 +11776,7 @@ const Sideform = () => {
                       </MenuItem>
                     </TextField>
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -11496,7 +11789,7 @@ const Sideform = () => {
                       helperText="Please enter your product_id (SKU)"
                     />
 
-                     <TextField sx = {{mb : 2}}
+                    <TextField sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
@@ -11509,7 +11802,7 @@ const Sideform = () => {
                     />
 
 
-                   
+
 
                     <Button
                       color="primary"
@@ -11524,6 +11817,570 @@ const Sideform = () => {
               </Grid>
             )}
             {/* update Stock Ends */}
+
+
+                 {/* add Hardware */}
+
+                 {state.OpenBox.formType === "hardware" && (
+              <Grid container p={5} className="productPadding">
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Add Hardware
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add your hardware and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => { confirmBox(e, handleHardware) }}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+                    <Stepper
+                      className="stepper"
+                      activeStep={activeStep}
+                      orientation="vertical"
+                    >
+                      {/* // Specification */}
+                      <Step>
+                        <StepLabel>Specifications</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 6}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              disabled
+                              id="fullWidth"
+                              label="SKU"
+                              type="text"
+                              variant="outlined"
+                              name="SKU"
+                              value={SKU || ''}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Title"
+                              type="text"
+                              variant="outlined"
+                              name="title"
+                              value={changeData.title}
+                              onChange={handleProductFelids}
+                            />
+
+                          
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="category_name"
+                              label="Category"
+                              value={changeData.category_name}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your category"
+                            >
+                              {category.map(
+                                (option) =>
+                                  option.category_status && (
+                                    <MenuItem
+                                      key={option._id}
+                                      value={option._id}
+                                    >
+                                      {option.category_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="sub_category_name"
+                              label="Sub Category"
+                              multiple
+                              value={changeData.sub_category_name}
+                              onChange={handleProductFelids}
+                              helperText="Please select your sub category"
+                            >
+                              {subCategory.map(
+                                (option) =>
+                                  changeData.category_name ===
+                                  option.category_id && (
+                                    <MenuItem
+                                      key={option.value}
+                                      value={option._id}
+                                    >
+                                      {option.sub_category_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            <Box sx = {{display : 'flex' ,mb: 2 }}>
+
+                            <TextField 
+                              size="small"
+                              sx = {{width : '85%'}}
+                              id="fullWidth"
+                              label="Quantity"
+                              type="Number"
+                              variant="outlined"
+                              name="quantity"
+                              value={changeData.quantity}
+                              onChange={handleProductFelids}
+                            />
+
+
+                            <TextField
+                              id="outlined-select-currency"
+                              select
+                              sx = {{ml : 1}}
+                              size = 'small'
+                              label="Unit"
+                              name = 'unit'
+                              value={changeData.unit}
+                              onChange={handleProductFelids}
+                            >
+                              {unitCatalog.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                            </Box>
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Showroom Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="showroom_price"
+                              value={changeData.showroom_price}
+                              onChange={handleProductFelids}
+                            />
+
+
+                          
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // disabled
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Selling Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              value={
+                                // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
+                              }
+                              onChange={handleProductFelids}
+                              variant="outlined"
+                              name="selling_price"
+                            />
+
+                           
+
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.status}
+                                  onChange={handleProductFelids}
+                                  name="status"
+                                  helperText="Check it if want it on mobile."
+                                />
+                              }
+                              label="Show On Website"
+                            />
+
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 6}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* // Specification Ends*/}
+
+                      {/* Images */}
+                      <Step>
+                        <StepLabel>Images</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 6}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            {/* <AcceptMaxFiles className="dorpContainer"/> */}
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Hardware Images
+                            </FormLabel>
+                            <ProductsPreviews
+                              text={"Please Drag and Drop the hardware images"}
+                            ></ProductsPreviews>
+                          
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 6}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Images End */}
+
+
+                      {/* Inventory & Shipping */}
+                      <Step>
+                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 2}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <FormGroup>
+                              <FormLabel id="demo-radio-buttons-group-label">
+                                Return & Payment Policy
+                              </FormLabel>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.COD}
+                                    onChange={handleProductFelids}
+                                    name="COD"
+                                  />
+                                }
+                                label="COD Available"
+                              />
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.returnable}
+                                    onChange={handleProductFelids}
+                                    name="returnable"
+                                  />
+                                }
+                                label="Return Item"
+                              />
+                            </FormGroup>
+                            {changeData.returnable && (
+                              <>
+                                <Typography component={'span'} variant="Caption">
+                                  {" "}
+                                  Return in {changeData.returnDays} Days
+                                </Typography>
+                                <Slider
+                                  aria-label="Return Days"
+                                  defaultValue={0}
+                                  size="small"
+                                  name="returnDays"
+                                  value={changeData.returnDays}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your return days"
+                                  valueLabelDisplay="auto"
+                                />
+                              </>
+                            )}
+
+                            <Typography component={'span'} variant="Caption">
+                              {" "}
+                              Polish in {changeData.polish_time} Days
+                            </Typography>
+                            <Slider
+                              aria-label="Construction Days"
+                              defaultValue={0}
+                              size="small"
+                              valueLabelDisplay="auto"
+                              name="polish_time"
+                              value={changeData.polish_time}
+                              onChange={handleProductFelids}
+                              helperText="Please select your polish time"
+                            />
+
+                            <Typography component={'span'} variant="Caption">
+                              {" "}
+                              Manufactured in {
+                                changeData.manufacturing_time
+                              }{" "}
+                              Days
+                            </Typography>
+                            <Slider
+                              aria-label="Construction Days"
+                              defaultValue={0}
+                              size="small"
+                              valueLabelDisplay="auto"
+                              name="manufacturing_time"
+                              value={changeData.manufacturing_time}
+                              onChange={handleProductFelids}
+                              helperText="Please select your manufacturing time"
+                            />
+
+                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <Select sx={{ mb: 2 }}
+                              multiple
+                              fullWidth
+                              value={changeData.warehouse}
+                              name="warehouse"
+                              onChange={handleProductFelids}
+                              renderValue={(selected) => selected.join(', ')}
+                            >
+                              {warehouse.map((option) => (
+                                <MenuItem key={option.label} value={option.value}>
+                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                  <ListItemText primary={option.value} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+
+                            {
+
+                              changeData.warehouse.map((row) => {
+                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
+                                return <>
+
+                                  <TextField sx={{ mb: 2 }}
+                                    size="small"
+                                    fullWidth
+                                    name={stock}
+                                    label={row + ' Stock'}
+                                    type='number'
+                                    value={changeData[stock] || ""}
+                                    onChange={handleProductFelids}
+                                  />
+                                </>
+                              })
+                            }
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Length"
+                              type="number"
+                              value={changeData.package_length}
+                              onChange={handleProductFelids}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_length"
+                              helperText="From left to right"
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Breadth"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_breadth"
+                              value={changeData.package_breadth}
+                              onChange={handleProductFelids}
+                              helperText="From front to back"
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Height"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_height"
+                              value={changeData.package_height}
+                              onChange={handleProductFelids}
+                              helperText="From bottom to top"
+                            />
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 2}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Inventory & Shipping End */}
+
+              
+
+                    </Stepper>
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Hardware
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* add Hardware Ends */}
 
           </Box>
         </Backdrop>
