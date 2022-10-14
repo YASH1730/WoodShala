@@ -663,6 +663,49 @@ const Sideform = () => {
         return setSubCategory(data.data);
       });
       break;
+      case "update_hardware" : 
+      getHKU();
+      categoryList().then((data) => {
+        if (data.data === null) return setCategory([]);
+
+        return setCategory(data.data);
+      });
+
+      getSubCatagories().then((data) => {
+        if (data.data === null) return setSubCategory([]);
+
+        return setSubCategory(data.data);
+      });
+
+      const row = state.OpenBox.payload.row; 
+console.log(row)
+      setData({
+        SKU : row.SKU,
+        title : row.title,
+        category_name : row.category_id,
+        category_id : row.category_id,
+        sub_category_name : row.sub_category_id,
+        sub_category_id : row.sub_category_id,
+        hardware_image : row.hardware_image,
+        warehouse : row.warehouse ?
+        row.warehouse.split(',') : [],
+        bangalore_stock : row.bangalore_stock,
+        jodhpur_stock : row.jodhpur_stock,
+        manufacturing_time : row.manufacturing_time,
+        status : row.status === true ? 'on' : 'off' ,
+        returnDays : row.returnDays,
+        COD : row.COD,
+        returnable : row.returnable,
+        quantity : row.quantity,
+        package_length : row.package_length,
+        package_height : row.package_height,
+        package_breadth : row.package_breadth,
+        unit : row.unit,
+        selling_price : row.selling_price,
+        showroom_price : row.showroom_price,
+        polish_time : row.polish_time
+      })
+      break;
       case "product":
         getSKU();
         categoryList().then((data) => {
@@ -1406,7 +1449,8 @@ const Sideform = () => {
     "returnable",
     "show_on_mobile",
     "ceramic_drawers",
-    "ceramic_tiles"
+    "ceramic_tiles",
+    "status"
   ];
 
   //  for product felids
@@ -2832,7 +2876,7 @@ const Sideform = () => {
               set.featured_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.featured_image
               set.specification_image = featured[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
               set.primary_material = changeData.primary_material
-              set.warehouse = changeData.warehouse
+              set.warehouse = changeData.warehouse.join(',')
               set.primary_material_name = changeData.primary_material_name
               set.length_main = changeData.length_main
               set.breadth = changeData.breadth
@@ -4490,7 +4534,7 @@ const Sideform = () => {
 
     FD.append("unit", changeData.unit);
     FD.append("quantity", changeData.quantity);
-
+   
     FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
     FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
     FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
@@ -4542,6 +4586,133 @@ const Sideform = () => {
             range: data.data.response.range,
             action: data.data.response
           }])
+          handleClose();
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+        dispatch({
+          type: Notify, payload: {
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          }
+        });
+      });
+  };
+
+  const handleUpdateHardware = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+    
+    FD.append("_id", state.OpenBox.payload.row.action);
+
+    FD.append("status", changeData.status === 'on' ? true : false);
+
+    let multiOBJ = {}
+
+    category.map((item) => {
+      if (item._id === changeData.category_name) multiOBJ = { ...multiOBJ, category_name: item.category_name }
+
+      return (
+        item._id === changeData.category_name &&
+        FD.append("category_name", item.category_name)
+      );
+    });
+
+    subCategory.map((item) => {
+      if (item._id === changeData.sub_category_name) multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name }
+
+      return (
+        item._id === changeData.sub_category_name &&
+        FD.append("sub_category_name", item.sub_category_name)
+      );
+    });
+
+    FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
+    FD.append("returnable", changeData.returnable);
+    FD.append("COD", changeData.COD);
+    
+
+    FD.append("category_id", changeData.category_name);
+    FD.append("sub_category_id", changeData.sub_category_name);
+    FD.append("polish_time", changeData.polish_time);
+    FD.append("manufacturing_time", changeData.manufacturing_time);
+    FD.append("title", changeData.title);
+   
+    FD.append("SKU", changeData.SKU);
+   
+    FD.append(
+      "showroom_price",
+      changeData.showroom_price ? changeData.showroom_price : 0
+    );
+    FD.append("selling_price", changeData.selling_price);
+    FD.append("warehouse", changeData.warehouse);
+
+
+    FD.append("unit", changeData.unit);
+    FD.append("quantity", changeData.quantity);
+
+    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
+    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
+    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+
+    
+    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+      FD.append("jodhpur_stock", changeData.jodhpur_stock);
+
+    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+      FD.append("bangalore_stock", changeData.bangalore_stock);
+
+    const res = editHardware(FD);
+
+    res
+      .then((data) => {
+        // //console.log(data.status);
+
+        if (data.status === 203) {
+          dispatch({
+            type: Notify, payload: {
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            }
+          });
+        } else {
+          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+
+            if (set.action === state.OpenBox.payload.row.action) {
+              set.title = changeData.title;
+              set.category_name = multiOBJ.category_name;
+              set.category_id = changeData.category_id;
+              set.sub_category_name = multiOBJ.sub_category_name;
+              set.sub_category_id = changeData.sub_category_id;
+              set.hardware_image = changeData.hardware_image;
+              set.warehouse = changeData.warehouse.join(',');
+              set.bangalore_stock = changeData.bangalore_stock;
+              set.jodhpur_stock = changeData.jodhpur_stock;
+              set.manufacturing_time = changeData.manufacturing_time;
+              set.status = changeData.status;
+              set.returnDays = changeData.returnDays;
+              set.COD = changeData.COD;
+              set.returnable = changeData.returnable;
+              set.quantity = changeData.quantity;
+              set.package_length = changeData.package_length;
+              set.package_height = changeData.package_height;
+              set.package_breadth = changeData.package_breadth;
+              set.unit = changeData.unit;
+              set.range = changeData.range;
+            }
+            return set;
+          }))
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -12381,6 +12552,512 @@ const Sideform = () => {
             )}
 
             {/* add Hardware Ends */}
+                 {/* update Hardware */}
+
+                 {state.OpenBox.formType === "update_hardware" && (
+              <Grid container p={5} className="productPadding">
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Update Hardware
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Update your hardware and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => { confirmBox(e, handleUpdateHardware) }}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+                    <Stepper
+                      className="stepper"
+                      activeStep={activeStep}
+                      orientation="vertical"
+                    >
+                      {/* // Specification */}
+                      <Step>
+                        <StepLabel>Specifications</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 6}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              disabled
+                              id="fullWidth"
+                              label="SKU"
+                              type="text"
+                              variant="outlined"
+                              name="SKU"
+                              value={changeData.SKU || ''}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Title"
+                              type="text"
+                              variant="outlined"
+                              name="title"
+                              value={changeData.title}
+                              onChange={handleProductFelids}
+                            />
+
+                          
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="category_name"
+                              label="Category"
+                              value={changeData.category_name || ''}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your category"
+                            >
+                              {category.map(
+                                (option) =>
+                                  option.category_status && (
+                                    <MenuItem
+                                      key={option._id}
+                                      value={option._id}
+                                    >
+                                      {option.category_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="sub_category_name"
+                              label="Sub Category"
+                              multiple
+                              value={changeData.sub_category_name || ''}
+                              onChange={handleProductFelids}
+                              helperText="Please select your sub category"
+                            >
+                              {subCategory.map(
+                                (option) =>
+                                  changeData.category_name ===
+                                  option.category_id && (
+                                    <MenuItem
+                                      key={option.value}
+                                      value={option._id}
+                                    >
+                                      {option.sub_category_name}
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value={undefined}>
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            <Box sx = {{display : 'flex' ,mb: 2 }}>
+
+                            <TextField 
+                              size="small"
+                              sx = {{width : '85%'}}
+                              id="fullWidth"
+                              label="Quantity"
+                              type="Number"
+                              variant="outlined"
+                              name="quantity"
+                              value={changeData.quantity}
+                              onChange={handleProductFelids}
+                            />
+
+
+                            <TextField
+                              id="outlined-select-currency"
+                              select
+                              sx = {{ml : 1}}
+                              size = 'small'
+                              label="Unit"
+                              name = 'unit'
+                              value={changeData.unit || ''}
+                              onChange={handleProductFelids}
+                            >
+                              {unitCatalog.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                            </Box>
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              // required
+                              label="Showroom Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="showroom_price"
+                              value={changeData.showroom_price}
+                              onChange={handleProductFelids}
+                            />
+
+
+                          
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // disabled
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Selling Price"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    ₹
+                                  </InputAdornment>
+                                ),
+                              }}
+                              value={
+                                // changeData.MRP > 0 &&
+                                //   changeData.discount_limit > 0
+                                //   ? (changeData.selling_price =
+                                //     changeData.MRP -
+                                //     (changeData.MRP / 100) *
+                                //     changeData.discount_limit)
+                                //   : 0
+                                changeData.selling_price
+                              }
+                              onChange={handleProductFelids}
+                              variant="outlined"
+                              name="selling_price"
+                            />
+
+                           
+
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.status || false }
+                                  onChange={handleProductFelids}
+                                  name="status"
+                                  helperText="Check it if want it on mobile."
+                                />
+                              }
+                              label="Show On Website"
+                            />
+
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 6}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* // Specification Ends*/}
+
+
+                      {/* Inventory & Shipping */}
+                      <Step>
+                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 1}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <FormGroup>
+                              <FormLabel id="demo-radio-buttons-group-label">
+                                Return & Payment Policy
+                              </FormLabel>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.COD}
+                                    onChange={handleProductFelids}
+                                    name="COD"
+                                  />
+                                }
+                                label="COD Available"
+                              />
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.returnable}
+                                    onChange={handleProductFelids}
+                                    name="returnable"
+                                  />
+                                }
+                                label="Return Item"
+                              />
+                            </FormGroup>
+                            {changeData.returnable && (
+                              <>
+                                <Typography component={'span'} variant="Caption">
+                                  {" "}
+                                  Return in {changeData.returnDays} Days
+                                </Typography>
+                                <Slider
+                                  aria-label="Return Days"
+                                  defaultValue={0}
+                                  size="small"
+                                  name="returnDays"
+                                  value={changeData.returnDays}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your return days"
+                                  valueLabelDisplay="auto"
+                                />
+                              </>
+                            )}
+
+                            <Typography component={'span'} variant="Caption">
+                              {" "}
+                              Polish in {changeData.polish_time} Days
+                            </Typography>
+                            <Slider
+                              aria-label="Construction Days"
+                              defaultValue={0}
+                              size="small"
+                              valueLabelDisplay="auto"
+                              name="polish_time"
+                              value={changeData.polish_time}
+                              onChange={handleProductFelids}
+                              helperText="Please select your polish time"
+                            />
+
+                            <Typography component={'span'} variant="Caption">
+                              {" "}
+                              Manufactured in {
+                                changeData.manufacturing_time
+                              }{" "}
+                              Days
+                            </Typography>
+                            <Slider
+                              aria-label="Construction Days"
+                              defaultValue={0}
+                              size="small"
+                              valueLabelDisplay="auto"
+                              name="manufacturing_time"
+                              value={changeData.manufacturing_time}
+                              onChange={handleProductFelids}
+                              helperText="Please select your manufacturing time"
+                            />
+
+                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <Select sx={{ mb: 2 }}
+                              multiple
+                              fullWidth
+                              value={changeData.warehouse}
+                              name="warehouse"
+                              onChange={handleProductFelids}
+                              renderValue={(selected) => selected.join(', ')}
+                            >
+                              {warehouse.map((option) => (
+                                <MenuItem key={option.label} value={option.value}>
+                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                  <ListItemText primary={option.value} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+
+                            {
+
+                              changeData.warehouse.map((row) => {
+                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
+                                return <>
+
+                                  <TextField sx={{ mb: 2 }}
+                                    size="small"
+                                    fullWidth
+                                    name={stock}
+                                    label={row + ' Stock'}
+                                    type='number'
+                                    value={changeData[stock] || ""}
+                                    onChange={handleProductFelids}
+                                  />
+                                </>
+                              })
+                            }
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Length"
+                              type="number"
+                              value={changeData.package_length}
+                              onChange={handleProductFelids}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_length"
+                              helperText="From left to right"
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Breadth"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_breadth"
+                              value={changeData.package_breadth}
+                              onChange={handleProductFelids}
+                              helperText="From front to back"
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Package Height"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Inch
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_height"
+                              value={changeData.package_height}
+                              onChange={handleProductFelids}
+                              helperText="From bottom to top"
+                            />
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 2}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Inventory & Shipping End */}
+
+              
+
+                    </Stepper>
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Hardware
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* update Hardware Ends */}
 
           </Box>
         </Backdrop>

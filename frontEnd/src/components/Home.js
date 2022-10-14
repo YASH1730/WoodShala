@@ -653,15 +653,12 @@ const Home = (props) => {
         open={Boolean(anchor)}
         onClose={handleMenuClose}
       >
-        <MenuItem sx={{ padding: 0 }} >
+        <MenuItem sx={{ padding: 0.5 }} onClick={handleLogout} >
 
-
-          {/* // profile */}
-          {type === 'profile' && <div onClick={handleLogout}>
             <ListItemIcon>
               <LogoutIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemIcon>Logout</ListItemIcon></div>}
+            <ListItemIcon>Logout</ListItemIcon>
 
 
 

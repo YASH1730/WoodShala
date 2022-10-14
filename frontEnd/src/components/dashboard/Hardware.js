@@ -64,6 +64,9 @@ export default function Hardware() {
             package_height: row.package_height,
             package_breadth: row.package_breadth,
             unit: row.unit,
+            selling_price : row.selling_price,
+            showroom_price : row.showroom_price,
+            polish_time : row.polish_time,
             action: row._id
           })
         }))
@@ -125,7 +128,7 @@ export default function Hardware() {
             dispatch({
               type: OpenBox, payload: {
                 state: true,
-                formType: 'update_fabric',
+                formType: 'update_hardware',
                 payload: params,
                 row: Row,
                 setRow: setRows
@@ -136,6 +139,8 @@ export default function Hardware() {
           </IconButton>
           <IconButton onClick={() => {
             deleteHardware(params.formattedValue).then((res) => {
+              setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
+              }))
               dispatch({
                 type: Notify, payload: {
                   open: true,
@@ -210,7 +215,7 @@ export default function Hardware() {
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
-            items: [{ columnField: 'fabric_name', operatorValue: 'contains', value: `${search}` }],
+            items: [{ columnField: 'SKU', operatorValue: 'contains', value: `${search}` }],
           }}
           rows={Row}
           columns={columns}
