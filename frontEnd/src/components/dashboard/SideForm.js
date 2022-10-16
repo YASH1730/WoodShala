@@ -651,9 +651,10 @@ const Sideform = () => {
     switch (state.OpenBox.formType) {
       case "hardware":
         getHKU();
-        categoryList().then((data) => {
+         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
-
+          
+          setData({ ...changeData, category_name: data.data.filter((row) => { return row.category_name === 'Hardware' })[0]._id })
           return setCategory(data.data);
         });
 
@@ -663,7 +664,8 @@ const Sideform = () => {
           return setSubCategory(data.data);
         });
 
-        setData({ ...changeData, category_name: category.filter((row) => { return row.category_name === 'Hardware' })[0]._id })
+        // console.log(category,category.filter((row) => { return row.category_name === 'Hardware' }))
+
 
         break;
       case "update_hardware":
@@ -13271,3 +13273,4 @@ const Sideform = () => {
 };
 
 export default Sideform;
+
