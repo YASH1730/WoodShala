@@ -37,6 +37,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 // import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 // import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
+import AddIcon from '@mui/icons-material/Add';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -104,7 +105,8 @@ const Home = (props) => {
   const [anchor, setAnchor] = useState(null);
   const [type, setType] = useState({
     product: false,
-    admin: false
+    admin: false,
+    order : false
   });
 
   useEffect(() => {
@@ -336,7 +338,7 @@ const Home = (props) => {
         <Divider />
         <Grid container sx={{ p: 1 }}>
           <Grid item xs={12} sx={{ maxHeight: '1px' }}  >
-            <List sx={{
+            <List dense = {true} sx={{
               width: '100%',
               bgcolor: 'background.paper',
             }} component="nav" aria-label="mailbox folders">
@@ -375,7 +377,7 @@ const Home = (props) => {
               </ListItem>
               {/* // product nested menu */}
               <Collapse in={type.product} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
+                <List dense = {true} component="div" disablePadding>
 
                   <ListItem sx={{ pl: 4 }} button onClick={() => { history('/products'); handleClose(); }}>
                     <ListItemAvatar>
@@ -426,7 +428,7 @@ const Home = (props) => {
                 </List>
               </Collapse>
 
-              <ListItem button onClick={() => { history('/order'); handleClose(); }}>
+              <ListItem button onClick={(e) => { setType({ ...type, order: !type.order }) }}>
                 <ListItemAvatar>
                   <Avatar
                     sx={{
@@ -440,7 +442,45 @@ const Home = (props) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText primary="Order" />
+                {type.order ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+
+              {/* // order nested menu */}
+              <Collapse in={type.order} timeout="auto" unmountOnExit>
+                <List dense = {true} component="div" disablePadding>
+
+                  <ListItem sx={{ pl: 4 }} button  onClick={() => { history('/order'); handleClose(); }}>
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: '30px',
+                          height: '30px',
+                          svg: {
+                            fontSize: '1rem'
+                          }
+                        }}>
+                        <ShoppingBagOutlinedIcon color={window.location.pathname === '/order' ? 'primary' : ''} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Orders" />
+                  </ListItem>
+                  <ListItem button sx={{ pl: 4 }} onClick={() => { history('/create_order'); handleClose(); }}>
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: '30px',
+                          height: '30px',
+                          svg: {
+                            fontSize: '1rem'
+                          }
+                        }}>
+                        <AddIcon color={window.location.pathname === '/create_order' ? 'primary' : ''} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Create Order" />
+                  </ListItem >
+                </List>
+              </Collapse>
 
               <ListItem button onClick={() => { history('/customer'); handleClose(); }}>
                 <ListItemAvatar>
@@ -542,7 +582,7 @@ const Home = (props) => {
               </ListItem>
               {/* // admin nested menu */}
               <Collapse in={type.admin} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
+                <List dense = {true} component="div" disablePadding>
 
                   <ListItem sx={{ pl: 4 }} button onClick={() => { history('/user'); handleClose(); }}>
                     <ListItemAvatar>

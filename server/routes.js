@@ -168,6 +168,10 @@ route.post('/updateBulk', AuthJwt,upload, products.updateBulk);
 
 route.get('/getPresentSKUs',AuthJwt,upload, products.getPresentSKUs);
 
+// Get getProductDetails
+
+route.get('/getProductDetails',AuthJwt,upload, products.getProductDetails);
+
 
 // =============== Merge Product routes =======================
 
@@ -238,6 +242,12 @@ route.post('/addCustomProduct', AuthJwt,upload, order.addCustomProduct);
 
 // get last Custom product
 route.get('/getLastCp', AuthJwt,order.getLastCp);
+
+// get delete order
+route.delete('/deleteOrder', AuthJwt,order.deleteOrder);
+
+// get  Custom order
+route.get('/customOrderList', AuthJwt,order.customOrderList);
 
 
 // ================== sub categories Routes =============================

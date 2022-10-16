@@ -1,0 +1,113 @@
+.mainSec {
+    padding: 2% 5%;
+}
+
+.showImage {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.preview {
+    padding: 5% 0%;
+}
+
+.contentSec {
+    padding: 0% 2%;
+}
+
+.ratting {
+    display: flex;
+    padding: 2% 0%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wishlist {
+    display: flex;
+    align-items: center;
+}
+
+.priceSec {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 40%;
+}
+
+.coupon {
+    padding: 2% 0%;
+}
+
+.coupon span {
+    color: black;
+}
+
+.accordion {
+    padding: 2% 1%;
+}
+
+.offers {
+    padding: 2% 0%;
+}
+
+.sizeBox {
+    margin: 2%;
+    border: 1px solid rgba(0, 0, 0, 0.493);
+    background: #e9e3e3b2;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding: 1%;
+    justify-content: center;
+    align-items: center;
+}
+
+.sizeBox:hover {
+    border: 1px solid rgb(255, 72, 0);
+    background: #ecbbbb86;
+}
+
+.sizeOption {
+    display: flex;
+}
+
+.cartButtons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2%;
+}
+
+.pd {
+    padding-top: 2%;
+}
+
+.moreInfo {
+    padding: 5%;
+}
+
+.detailsCarsole .card {
+    display: flex !important;
+    margin: auto !important;
+    background: transparent !important;
+    flex-direction: column !important;
+}
+
+.detailsCarsole .card button {
+    display: block;
+}
+
+.detailsCarsole .card button img {
+    width: 100%;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.detailsCarsole .react-multiple-carousel__arrow {
+    background-color: #883c29a6;
+}
+
+.detailsCarsole .react-multi-carousel-list {
+    height: 400px !important;
+}

@@ -121,6 +121,16 @@ export const getPresentSKUs = async () => {
   });
 };
 
+// get product details for display  
+export const getProductDetails = async (data) => {
+  return await axios.get(`${API}/getProductDetails?SKU=${data}`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+}
+
+
 //  =========================== CURD For Bannner ========================
 
 // add banner
@@ -799,10 +809,19 @@ export const addOrder = async (data) => {
   });
 };
 
-// for  adding category to the list
+// for  get order list
 
 export const getOrder = async () => {
   return await axios.get(`${API}/listOrders`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+// for  get customOrderList list
+
+export const customOrderList = async () => {
+  return await axios.get(`${API}/customOrderList`,{
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -839,6 +858,14 @@ export const getLastCp = async () => {
 // add custom product 
 export const addCustomProduct = async (data) => {
   return await axios.post(`${API}/addCustomProduct`,data,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+// add delete product 
+export const deleteOrder = async (data) => {
+  return await axios.delete(`${API}/deleteOrder?_id=${data}`,{
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
