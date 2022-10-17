@@ -23,6 +23,7 @@ import {
 // import Pagination from '@mui/material/Pagination';
 import { Store } from '../../store/Context'
 import { OpenBox, Notify } from '../../store/Types'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 
 // function CustomPagination() {
@@ -40,7 +41,7 @@ import { OpenBox, Notify } from '../../store/Types'
 //   );
 // }
 
-export default function Products() {
+export default function Products(props) {
 
   // store
   const {dispatch } = Store();
@@ -202,7 +203,7 @@ export default function Products() {
       field: "featured_image",
       headerName: "Featured Image",
       width: 160,
-      align: 'center',
+      align : 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
@@ -210,21 +211,29 @@ export default function Products() {
       field: "specification_image",
       headerName: "Specification Image",
       width: 160,
-      align: 'center',
+      align : 'center',
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+
+    },
+    {
+      field: "mannequin_image",
+      headerName: "Mannequin Image",
+      width: 160,
+      align : 'center',
       renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
 
     },
     {
       field: "product_title",
-      headerName: "Product Title",
+      headerName: "Title",
       width: 150,
-
+       
     },
     {
       field: "category_name",
       headerName: "Category Name",
       width: 150,
-
+       
     },
     {
       field: "sub_category_name",
@@ -232,353 +241,64 @@ export default function Products() {
       type: "number",
       width: 110,
     },
-    {
-      field: "product_description",
-      headerName: "Product Description",
-      width: 160,
-    },
-    {
-      field: "seo_title",
-      headerName: "SEO Title",
-      width: 160,
-    },
-    {
-      field: "seo_description",
-      headerName: "SEO Description",
-      width: 160,
-    },
-    {
-      field: "seo_keyword",
-      headerName: "SEO Keyword",
-      width: 160,
-    },
-
-    {
-      field: "primary_material",
-      headerName: "Primary Material",
-      width: 160,
-    },
-    {
-      field: "length",
-      headerName: "Length",
-      width: 160,
-    },
-    {
-      field: "breadth",
-      headerName: "Breadth",
-      width: 160,
-    },
-    {
-      field: "height",
-      headerName: "Height",
-      width: 160,
-    },
-    {
-      field: "weight",
-      headerName: "Weight",
-      width: 160,
-    },
-    {
-      field: "polish",
-      headerName: "Polish",
-      width: 160,
-    },
-    {
-      field: "hinge",
-      headerName: "Hinge",
-      width: 160,
-    },
-    {
-      field: "knob",
-      headerName: "Knob",
-      width: 160,
-    },
-    {
-      field: "door",
-      headerName: "Door",
-      width: 160,
-    },
-    {
-      field: "fitting",
-      headerName: "Fitting",
-      width: 160,
-    },
-    {
-      field: "selling_points",
-      headerName: "Selling Points",
-      width: 160,
-    },
-    {
-      field: "showroom_price",
-      headerName: "Showroom Price",
-      width: 160,
-    },
-    {
-      field: "top_size",
-      headerName: "Top Size",
-      width: 160,
-    },
-    {
-      field: "dial_size",
-      headerName: "Dial Size",
-      width: 160,
-    },
-    {
-      field: "seating_size_width",
-      headerName: "Seating Size Width",
-      width: 160,
-    },
-    {
-      field: "seating_size_depth",
-      headerName: "Seating Size Depth",
-      width: 160,
-    },
-    {
-      field: "seating_size_height",
-      headerName: "seating_size_height",
-      width: 160,
-    },
-    {
-      field: "weight_capacity",
-      headerName: "Weight Capacity",
-      width: 160,
-    },
-    {
-      field: "wall_hanging",
-      headerName: "Wall Hanging",
-      width: 160,
-    },
-    {
-      field: "assembly_required",
-      headerName: "Assembly Required",
-      width: 160,
-    },
-    {
-      field: "assembly_part",
-      headerName: "Assembly Part",
-      width: 160,
-    },
-    {
-      field: "legs",
-      headerName: "Legs",
-      width: 160,
-    },
-    {
-      field: "mirror",
-      headerName: "Mirror",
-      width: 160,
-    },
-    {
-      field: "mirror_width",
-      headerName: "Mirror Width",
-      width: 160,
-    },
-    {
-      field: "mirror_length",
-      headerName: "Mirror Height",
-      width: 160,
-    },
-    {
-      field: "silver",
-      headerName: "Silver",
-      width: 160,
-    },
-    {
-      field: "silver_weight",
-      headerName: "Silver weight",
-      width: 160,
-    },
-
-    {
-      field: "joints",
-      headerName: "Joints",
-      width: 160,
-    },
-
-
-    {
-      field: "upholstery",
-      headerName: "Upholstery",
-      width: 160,
-    },
-
-    {
-      field: "fabric",
-      headerName: "Fabric",
-      width: 160,
-    },
-
-    {
-      field: "wheel",
-      headerName: "Wheel",
-      width: 160,
-    },
-
-    {
-      field: "trolley",
-      headerName: "Trolley",
-      width: 160,
-    },
-
-    {
-      field: "trolley_material",
-      headerName: "Trolley Material",
-      width: 160,
-    },
-
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
-
-    {
-      field: "eatable_oil_polish",
-      headerName: "Eatable Oil Polish",
-      width: 160,
-    },
-
-    {
-      field: "no_chemical",
-      headerName: "No Chemical",
-      width: 160,
-    },
-
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
-
-    {
-      field: "straight_back",
-      headerName: "Straight Back",
-      width: 160,
-    },
-    {
-      field: "lean_back",
-      headerName: "Lean Back",
-      width: 160,
-    },
-
-    {
-      field: "weaving",
-      headerName: "Weaving",
-      width: 160,
-    },
-
-    {
-      field: "not_suitable_for_Micro_Dish",
-      headerName: "Suitable For Micro or Dish",
-      width: 160,
-    },
-
-    {
-      field: "tilt_top",
-      headerName: "Tilt Top",
-      width: 160,
-    },
-
-    {
-      field: "inside_compartments",
-      headerName: "Inside Compartments",
-      width: 160,
-    },
-
-    {
-      field: "stackable",
-      headerName: "Stackable",
-      width: 160,
-    },
-
-    {
-      field: "Knife",
-      headerName: "knife",
-      width: 160,
-    },
-
-    {
-      field: "Wall Hanging",
-      headerName: "wall_hanging",
-      width: 160,
-    },
-
-    {
-      field: "MRP",
-      headerName: "MRP",
-      width: 160,
-    },
-
-    {
-      field: "tax_rate",
-      headerName: "Tax Rate",
-      width: 160,
-    },
-
-    {
-      field: "selling_price",
-      headerName: "Selling Price",
-      width: 160,
-    },
-
-    {
-      field: "discount_limit",
-      headerName: "Discount Limit",
-      width: 160,
-    },
-
-    {
-      field: "polish_time",
-      headerName: "Polish Time",
-      width: 160,
-    },
+    
     {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) =>
-        <div>
+      renderCell: (params) => 
+      <div>
+        
+        <IconButton onClick={() => {
+          
+          //console.log(params)
+              
+          dispatch({type : OpenBox, payload :{
+                state : true,
+                formType : 'update_product',
+                payload : params,
+                row : Row,
+                setRow : setRows
+              }}) 
 
-          <IconButton onClick={() => {
+            }} aria-label="update"  >
+              <CreateIcon />
+        </IconButton>
+        <IconButton onClick={() => {
+          
+          console.log(params)
+          props.history(`/productDetails?SKU=${params.row.SKU}`)
+              
+          // dispatch({type : OpenBox, payload :{
+          //       state : true,
+          //       formType : 'update_product',
+          //       payload : params,
+          //       row : Row,
+          //       setRow : setRows
+          //     }}) 
 
-            //console.log(params)
-
-            dispatch({
-              type: OpenBox, payload: {
-                state: true,
-                formType: 'update_product',
-                payload: params,
-                row: Row,
-                setRow: setRows
-              }
-            })
-
-          }} aria-label="update"  >
-            <CreateIcon />
-          </IconButton>
-
-          <IconButton onClick={() => {
-            deleteProduct(params.formattedValue._id).then((res) => {
-              setRows(Row.filter((set) => {
-                return set.action._id !== params.formattedValue._id;
-              }))
-              dispatch({
-                type: Notify, payload: {
-                  open: true,
-                  variant: 'success',
-                  message: "Product deleted successfully !!!"
-                }
-              })
+            }} aria-label="update"  >
+              <RemoveRedEyeIcon />
+        </IconButton>
+        
+        {/* <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
+                 setRows(Row.filter((set)=>{
+                  return  set.action._id !== params.formattedValue._id  ;
+                }))
+              dispatch({type: Notify,payload:{
+                open : true,
+                variant : 'success',
+                message : "Product deleted successfully !!!"
+              }})
             }
-
-            )
-          }} >
-            <DeleteIcon />
-          </IconButton>
-
-        </div>,
+            
+            )}} >
+              <DeleteIcon />
+        </IconButton> */}
+        
+      </div>,
     }
-
+    
   ];
   const mergeColumns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -1013,4 +733,3 @@ export default function Products() {
     </Box>
   );
 }
-

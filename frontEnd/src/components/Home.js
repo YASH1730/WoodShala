@@ -657,6 +657,7 @@ const Home = (props) => {
               <ListItem onClick={handleLogout}>
                 <Button
                   color="primary"
+                  size = 'small'
                   sx={{ margin: "auto", mt : 2 }}
                   startIcon={<LogoutIcon />}
                   variant="contained"

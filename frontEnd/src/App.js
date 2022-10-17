@@ -59,7 +59,7 @@ function MyRoutes(){
     <Route exact path="/blogs" element={<BlogModule history = {history} />} />
     <Route exact path="/blog" element={<Blog />} />
     <Route exact path="/blogContent" element={<BlogContent />} />
-    <Route exact path="/merge" element={<Merge />} />
+    <Route exact path="/merge"  element={<Merge history = {history} />} />
     <Route exact path="/" element={<EntryPoints history = {history} />} />
   </Routes>
   </>

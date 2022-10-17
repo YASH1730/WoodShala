@@ -76,7 +76,6 @@ import {
   getFabric,
   addHardware,
   editHardware,
-  getHardware,
   addTextile,
   getLastHardware,
   editTextile,
@@ -572,6 +571,7 @@ const Sideform = () => {
   // ref
   const editorRef = useRef();
 
+  
   // pres data
   const [changeData, setData] = useState({
     primary_material: [],
@@ -581,7 +581,7 @@ const Sideform = () => {
     shipping: "",
     product_title: "",
     seo_title: "",
-    seo_des: "",
+    seo_description: "",
     seo_keyword: "",
     product_des: "",
     category: "",
@@ -594,7 +594,7 @@ const Sideform = () => {
     priMater_weight: "",
     secMater: "",
     secMater_weight: "",
-    selling_price: "",
+    selling_price: 0,
     mrp: "",
     discount_cap: "",
     polish_time: "",
@@ -644,7 +644,16 @@ const Sideform = () => {
     shipping_address: "",
     searchCustomer: "",
     show_on_mobile: false,
-    unit: 'Kg'
+    unit: 'Kg',
+    textile_type : '',
+    category_id : '',
+    back_style : '',
+    sub_category_id : '',
+    product_description : '',
+    seo_description : '',
+    fabric : '',
+    drawer : '',
+    weight_capacity : '',
   });
 
   useEffect(() => {
@@ -2320,7 +2329,7 @@ const Sideform = () => {
     FD.append("seo_title", changeData.seo_title);
     FD.append("seo_description", changeData.seo_description);
     FD.append("seo_keyword", changeData.seo_keyword);
-    FD.append("discount_limit", changeData.discount_limit);
+    FD.append("discount_limit", changeData.discount_limit || 0);
     FD.append("selling_price", changeData.selling_price);
     FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
@@ -2329,7 +2338,7 @@ const Sideform = () => {
     FD.append("drawer", changeData.drawer);
 
     FD.append("unit", changeData.unit);
-    FD.append("quantity", changeData.quantity);
+    FD.append("quantity", changeData.quantity ? changeData.quantity : 0);
 
     if (changeData.drawer !== undefined || changeData.drawer !== "none")
       FD.append(
@@ -2733,7 +2742,7 @@ const Sideform = () => {
     FD.append("seo_description", changeData.seo_description);
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("discount_limit", changeData.discount_limit);
-    FD.append("selling_price", changeData.selling_price);
+    FD.append("selling_price", changeData.selling_price ? changeData.selling_price : 0 );
     FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
     FD.append("fabric", changeData.fabric);
@@ -2886,9 +2895,9 @@ const Sideform = () => {
               set.seo_title = changeData.seo_title
               set.seo_description = changeData.seo_description
               set.seo_keyword = changeData.seo_keyword
-              set.featured_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.featured_image
-              set.specification_image = featured[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
-              set.mannequin_image = featured[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.mannequin_image
+              set.featured_image = featured[0] !== undefined ? `${imageLink}${featured[0].path}` : changeData.featured_image
+              set.specification_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
+              set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
               set.primary_material = changeData.primary_material
               set.warehouse = changeData.warehouse.join(',')
               set.primary_material_name = changeData.primary_material_name
@@ -13273,4 +13282,3 @@ const Sideform = () => {
 };
 
 export default Sideform;
-
