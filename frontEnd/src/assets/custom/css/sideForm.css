@@ -84,3 +84,9 @@
     row-gap: 2px;
     flex-direction: column;
 }
+
+.imageCross {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+}

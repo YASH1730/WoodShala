@@ -70,6 +70,15 @@ export const addProduct = async (data) => {
     },
   });
 };
+// for  adding variation to the product 
+
+export const variation = async (data) => {
+  return await axios.post(`${API}/variation`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
 
 // for listing the products
 

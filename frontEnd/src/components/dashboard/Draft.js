@@ -1332,7 +1332,7 @@ export default function Products() {
 
   function DataGridView(row,col) {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           rows={row}
           columns={col}

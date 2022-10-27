@@ -85,7 +85,7 @@ const {dispatch} = Store();
 
   const handlePreview = (e) => {
 
-    if (e.target.value.length < 8) return 0;
+    if (e.target.value.length < 7) return 0;
 
     preview(e.target.value)
       .then((data) => {
@@ -216,7 +216,7 @@ const {dispatch} = Store();
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'warehouse', operatorValue: 'contains', value: `${search.warehouse}` }],

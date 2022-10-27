@@ -128,7 +128,7 @@ const Dashboard = () => {
     {
       field: "age",
       headerName: "Age",
-      type: "number",
+      
       width: 110,
       editable: true,
     },
@@ -157,7 +157,7 @@ const Dashboard = () => {
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}

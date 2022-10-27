@@ -262,7 +262,7 @@ export default function Order() {
           final.map((row, index) => {
             return {
               id: index + 1,
-              OID: row.OID,
+              O: row.O,
               order_time: row.order_time,
               status: row.status,
               CID: row.CID,
@@ -434,7 +434,7 @@ export default function Order() {
       ),
     },
     {
-      field: "OID",
+      field: "O",
       headerName: "Order ID",
       width: 100,
     },

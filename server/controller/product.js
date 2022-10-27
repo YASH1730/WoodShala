@@ -108,8 +108,26 @@ exports.deleteProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     console.log(req.body);
-    console.log(req.files);
 
+    
+
+    // check for product images 
+    let image_urls = []
+
+    if (req.files['product_image'] !== undefined) {
+        req.files['product_image'].map((val) => {
+            image_urls.push(`${process.env.Official}/${val.path}`)
+        })
+    }
+
+    // check for previously saved image 
+    let previousImages = JSON.parse(req.body.savedImages) 
+
+    if(previousImages.length > 0) image_urls.push(...previousImages)
+
+    req.body.product_image = image_urls;
+
+    // check for Images 
     if (req.files['featured_image'] !== undefined)
         req.body.featured_image = `${process.env.Official}/${req.files['featured_image'][0].path}`;
     if (req.files['specification_image'] !== undefined)
@@ -117,24 +135,27 @@ exports.updateProduct = async (req, res) => {
     if (req.files['mannequin_image'] !== undefined)
         req.body.mannequin_image = `${process.env.Official}/${req.files['mannequin_image'][0].path}`;
 
-
-
+    // check for product ID 
     if (req.body._id === undefined) return res.status(204).send('Payload is absent.')
 
-    req.body.selling_points = JSON.parse(req.body.selling_points)
+    // selling points conversation in array
+    req.body.selling_points = JSON.parse(req.body.selling_points);
 
+    console.log(req.body);
+    
+    // res.send('ALl OKay')
 
     await product.findOneAndUpdate({ _id: req.body._id }, req.body)
         .then((data) => {
             //console.log(data)
             if (data)
-                return res.status(200).send({ message: 'Product is updated successfully.' })
+                return res.status(200).send({ message: 'Product is updated successfully.',image : image_urls })
             else
                 return res.status(203).send({ message: 'No entries found' })
         })
         .catch((error) => {
             console.log(error)
-            return res.status(203).send('Something Went Wrong')
+            return res.status(203).send('Something Went Wrong !!!')
         })
 }
 
@@ -161,8 +182,6 @@ exports.updateBulk = async (req, res) => {
         })
 
 }
-
-
 
 // get present SKUs
 exports.getPresentSKUs = async (req, res) => {
@@ -205,6 +224,56 @@ exports.getProductDetails = async (req,res)=>{
         return res.send(data)
     })
     .catch((err)=> {return res.send({message : 'Something went wrang !!!'})})
+
+}
+
+// add variation 
+
+exports.variation = async (req, res) => {
+    console.log(req.files);
+
+    req.body.parentArray = JSON.parse(req.body.parentArray)
+
+    let image_urls = []
+
+    if (req.files['product_image'] !== undefined) {
+        req.files['product_image'].map((val) => {
+            image_urls.push(`${process.env.Official}/${val.path}`)
+        })
+    }
+
+    req.body.product_image = image_urls.length > 0 ? image_urls : req.body.product_image.split(',');
+
+    req.body.featured_image = req.files['product_image'] ? `${process.env.Official}/${req.files['featured_image'][0].path}` : req.body.featured_image;
+
+    req.body.specification_image = req.files['specification_image'] ? `${process.env.Official}/${req.files['specification_image'][0].path}` : req.body.specification_image;
+
+    req.body.mannequin_image = req.files['mannequin_image'] ? `${process.env.Official}/${req.files['mannequin_image'][0].path}` : req.body.mannequin_image;
+
+    req.body.selling_points = JSON.parse(req.body.selling_points)
+
+
+    console.log(req.body);
+
+    const data = product(req.body);
+
+    await data.save()
+        .then((response) => {
+            product.findOneAndUpdate({SKU : req.body.parentProduct}, {variation_array : req.body.parentArray})
+            .then((result)=>{
+                console.log(result);
+                res.send({ message: 'Variation added successfully !!!',response })
+            })
+            .catch((err)=>{
+                console.log(err)
+                res.status(203).send({ message: 'Some error occurred !!!' })
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(203).send({ message: 'Some error occurred !!!' })
+        })
+
 
 }
 

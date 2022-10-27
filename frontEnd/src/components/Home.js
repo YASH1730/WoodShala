@@ -56,6 +56,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import MergeIcon from '@mui/icons-material/Merge';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 // import state 
 import { Store } from '../store/Context'
 import { DarkMode, SideTabs, Auth } from '../store/Types'
@@ -410,7 +411,7 @@ const Home = (props) => {
                     <ListItemText primary="Merge Product" />
                   </ListItem >
 
-                  <ListItem button sx={{ pl: 4 }} onClick={() => { history('/dashboard'); handleClose(); }}>
+                  <ListItem button sx={{ pl: 4 }} onClick={() => { history('/variation'); handleClose(); }}>
                     <ListItemAvatar>
                       <Avatar
                         sx={{
@@ -420,7 +421,7 @@ const Home = (props) => {
                             fontSize: '1rem'
                           }
                         }}>
-                        <GridViewIcon color={window.location.pathname === '/dashboard' ? 'primary' : ''} />
+                        <AccountTreeIcon color={window.location.pathname === '/variation' ? 'primary' : ''} />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary="Variation" />

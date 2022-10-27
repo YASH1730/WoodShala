@@ -74,6 +74,7 @@ export default function Products(props) {
             sub_category_name: row.sub_category_name,
             product_description: row.product_description,
             specification_image: row.specification_image,
+            mannequin_image: row.mannequin_image,
             seo_title: row.seo_title,
             seo_description: row.seo_description,
             seo_keyword: row.seo_keyword,
@@ -162,6 +163,7 @@ export default function Products(props) {
             product_image: row.product_image,
             featured_image: row.featured_image,
             specification_image: row.specification_image,
+            mannequin_image: row.mannequin_image,
             selling_points: row.selling_points,
             rotating_seats: row.rotating_seats,
             eatable_oil_polish: row.eatable_oil_polish,
@@ -238,7 +240,7 @@ export default function Products(props) {
     {
       field: "sub_category_name",
       headerName: "Sub Category Name",
-      type: "number",
+      
       width: 110,
     },
     
@@ -340,135 +342,10 @@ export default function Products(props) {
     {
       field: "sub_category_name",
       headerName: "Sub Category Name",
-      type: "number",
+      
       width: 110,
     },
-    {
-      field: "product_description",
-      headerName: "Product Description",
-      width: 160,
-    },
-    {
-      field: "seo_title",
-      headerName: "SEO Title",
-      width: 160,
-    },
-    {
-      field: "seo_description",
-      headerName: "SEO Description",
-      width: 160,
-    },
-    {
-      field: "seo_keyword",
-      headerName: "SEO Keyword",
-      width: 160,
-    },
-
-    {
-      field: "selling_points",
-      headerName: "Selling Points",
-      width: 160,
-    },
-    {
-      field: "showroom_price",
-      headerName: "Showroom Price",
-      width: 160,
-    },
-
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
-
-    {
-      field: "eatable_oil_polish",
-      headerName: "Eatable Oil Polish",
-      width: 160,
-    },
-
-    {
-      field: "no_chemical",
-      headerName: "No Chemical",
-      width: 160,
-    },
-
-    {
-      field: "rotating_seats",
-      headerName: "Rotating Seats",
-      width: 160,
-    },
-
-    {
-      field: "straight_back",
-      headerName: "Straight Back",
-      width: 160,
-    },
-    {
-      field: "lean_back",
-      headerName: "Lean Back",
-      width: 160,
-    },
-
-    {
-      field: "weaving",
-      headerName: "Weaving",
-      width: 160,
-    },
-
-    {
-      field: "not_suitable_for_Micro_Dish",
-      headerName: "Suitable For Micro or Dish",
-      width: 160,
-    },
-
-    {
-      field: "tilt_top",
-      headerName: "Tilt Top",
-      width: 160,
-    },
-
-    {
-      field: "inside_compartments",
-      headerName: "Inside Compartments",
-      width: 160,
-    },
-
-    {
-      field: "stackable",
-      headerName: "Stackable",
-      width: 160,
-    },
-
-    {
-      field: "MRP",
-      headerName: "MRP",
-      width: 160,
-    },
-
-    {
-      field: "tax_rate",
-      headerName: "Tax Rate",
-      width: 160,
-    },
-
-    {
-      field: "selling_price",
-      headerName: "Selling Price",
-      width: 160,
-    },
-
-    {
-      field: "discount_limit",
-      headerName: "Discount Limit",
-      width: 160,
-    },
-
-    {
-      field: "polish_time",
-      headerName: "Polish Time",
-      width: 160,
-    },
+ 
     {
       field: "action",
       headerName: "Actions",
@@ -519,7 +396,7 @@ export default function Products(props) {
 
   function DataGridView(Row, columns, searchSection, select = true) {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           checkboxSelection={select}
           rows={Row}
@@ -690,8 +567,6 @@ export default function Products(props) {
         <Grid item p={2} xs={12}  sx={{ boxShadow: 2, borderRadius: 5 }}>
 
           <Typography component={'span'} variant="h6"> Merge Product List </Typography>
-          <br></br>
-          <br></br>
           {DataGridView(MergeRow, mergeColumns, 'MS', false)}
         </Grid>
         <br/>
@@ -722,7 +597,6 @@ export default function Products(props) {
               type="search"
             />
           </Grid>
-          <br></br>
           {DataGridView(Row, columns, 'SKU')}
         </Grid>
       </Grid>

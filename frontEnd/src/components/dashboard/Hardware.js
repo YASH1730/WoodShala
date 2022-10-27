@@ -212,7 +212,7 @@ export default function Hardware() {
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'SKU', operatorValue: 'contains', value: `${search}` }],
@@ -290,7 +290,6 @@ export default function Hardware() {
           <div>
             <Typography component={'span'} variant="h6"> Hardware List </Typography>
           </div>
-          <br></br>
           {DataGridView()}
         </Grid>
       </Grid>

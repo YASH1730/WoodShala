@@ -5,8 +5,6 @@ import {
     TextField,
     TextareaAutosize,
     Grid,
-    InputAdornment,
-    IconButton,
     MenuItem,
     Button,
     Stepper,
@@ -25,11 +23,11 @@ import {
     FormLabel
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
-import CreateIcon from "@mui/icons-material/Create";
+// import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
+import {  Notify } from "../../store/Types";
 import { Store } from "../../store/Context";
-import { customOrderList, changeOrderStatus } from "../../services/service";
+// import { customOrderList} from "../../services/service";
 import "../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
 
@@ -167,7 +165,7 @@ export default function CreateOrder() {
     // states 
     const [search, setSearch] = useState({
         customer_email: undefined,
-        OID: undefined,
+        O: undefined,
         date: '',
         customer: '',
 
@@ -175,7 +173,6 @@ export default function CreateOrder() {
     // multiple images
     const [files, setFiles] = useState([]);
 
-    const [Row, setRows] = useState([]);
     const [productRow, setProductRows] = useState([]);
     // const [pageSize, setPageSize] = useState(50);
 
@@ -183,11 +180,55 @@ export default function CreateOrder() {
         customer: [],
         products: [],
         address: [],
+        channel : [
+            {
+            key : '3rd Party Vendor',
+            value : '3rd Party Vendor',
+            },
+            {
+            key : 'Amazon',
+            value : 'Amazon',
+            },
+            {
+            key : 'Bengaluru Showroom',
+            value : 'Bengaluru Showroom',
+            },
+            {
+            key : 'Etsy',
+            value : 'Etsy',
+            },
+            {
+            key : 'Flipkart',
+            value : 'Flipkart',
+            },
+            {
+            key : 'Jodhpur Showroom',
+            value : 'Jodhpur Showroom',
+            },
+            {
+            key : 'JioMart',
+            value : 'JioMart',
+            },
+            {
+            key : 'Meesho',
+            value : 'Meesho',
+            },
+            {
+            key : 'Online',
+            value : 'Online',
+            },
+            {
+            key : 'Others',
+            value : 'Others',
+            },
+    
+    ]
     })
+
 
     // state for data 
     const [data, setData] = useState({
-        OID: '',
+        O: '',
         CUS: '',
         CID: null,
         customer_email: '',
@@ -205,7 +246,8 @@ export default function CreateOrder() {
         state: '',
         paid: 0,
         note: '',
-        custom_order: true
+        custom_order: true,
+        sale_channel : 'Online'
     })
 
     //  State for stepper
@@ -237,11 +279,10 @@ export default function CreateOrder() {
 
     // catalog reload 
     useEffect(() => {
-
         customerCatalog()
-            .then(async (cus) => {
+        .then(async (cus) => {
                 //console.log(cus)
-
+                
                 getPresentSKUs().then((res) => {
                     //console.log(res)
                     setCatalogs({
@@ -249,59 +290,57 @@ export default function CreateOrder() {
                         customer: cus.data,
                         products: res.data
                     })
-                    getOID()
+                    getO();
 
                 });
             })
-
-
 
     }, [])
 
 
     // order filter
-    useEffect(() => {
-        customOrderList()
-            .then((data) => {
-                let final = [];
+    // useEffect(() => {
+    //     customOrderList()
+    //         .then((data) => {
+    //             let final = [];
 
-                data.data.map((row) => {
-                    if (search.OID !== undefined) {
-                        if (row.OID === `OID-${search.OID}`) final.push(row);
-                    } else if (search.customer_email !== undefined) {
-                        if (row.customer_email === search.customer_email) final.push(row);
-                    } else final.push(row);
-                });
+    //             data.data.map((row) => {
+    //                 if (search.O !== undefined) {
+    //                     if (row.O === `O-${search.O}`) final.push(row);
+    //                 } else if (search.customer_email !== undefined) {
+    //                     if (row.customer_email === search.customer_email) final.push(row);
+    //                 } else final.push(row);
+    //             });
 
-                setRows(
-                    final.map((row, index) => {
-                        return {
-                            id: index + 1,
-                            OID: row.OID,
-                            order_time: row.order_time,
-                            status: row.status,
-                            CID: row.CID,
-                            customer_name: row.customer_name,
-                            customer_email: row.customer_email,
-                            customer_mobile: row.customer_mobile,
-                            city: row.city,
-                            state: row.state,
-                            shipping: row.shipping,
-                            quantity: JSON.stringify(row.quantity),
-                            discount: row.discount,
-                            paid:
-                                parseInt((row.paid / row.total) * 100) + "%",
-                            total: row.total,
-                            note: row.note || '',
-                            action: row._id,
-                        };
-                    })
-                );
-            })
-            .catch((err) => {
-                //console.log(err);
-            });
-    }, [search]);
+    //             setRows(
+    //                 final.map((row, index) => {
+    //                     return {
+    //                         id: index + 1,
+    //                         O: row.O,
+    //                         order_time: row.order_time,
+    //                         status: row.status,
+    //                         CID: row.CID,
+    //                         customer_name: row.customer_name,
+    //                         customer_email: row.customer_email,
+    //                         customer_mobile: row.customer_mobile,
+    //                         city: row.city,
+    //                         state: row.state,
+    //                         shipping: row.shipping,
+    //                         quantity: JSON.stringify(row.quantity),
+    //                         discount: row.discount,
+    //                         paid:
+    //                             parseInt((row.paid / row.total) * 100) + "%",
+    //                         total: row.total,
+    //                         note: row.note || '',
+    //                         action: row._id,
+    //                     };
+    //                 })
+    //             );
+    //         })
+    //         .catch((err) => {
+    //             //console.log(err);
+    //         });
+    // }, [search]);
 
     // for product data row 
     useEffect(() => {
@@ -362,7 +401,7 @@ export default function CreateOrder() {
         ));
 
         useEffect(() => {
-            // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+            // Make sure to revoke the data uris to avO memory leaks, will run on unmount
             return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
         }, []);
 
@@ -386,179 +425,6 @@ export default function CreateOrder() {
         })
         return val
     }
-
-
-    const [status, setStatus] = useState({});
-
-    const statusCatalog = [
-        {
-            key: "processing",
-            value: "processing",
-            color: "blue",
-        },
-        {
-            key: "completed",
-            value: "completed",
-            color: "green",
-        },
-        {
-            key: "cancel",
-            value: "cancel",
-            color: "red",
-        },
-    ];
-
-    const columns = [
-        {
-            field: "id",
-            headerName: "ID",
-            width: 50,
-        },
-        {
-            field: "status",
-            editable: true,
-            headerName: "Status",
-            width: 150,
-            renderCell: (params) => (
-                <TextField
-                    fullWidth
-                    size="small"
-                    id="outlined-select"
-                    sx={{
-                        background:
-                            params.formattedValue === "completed"
-                                ? "#52ffc9"
-                                : params.formattedValue === "cancel"
-                                    ? "#fdabab"
-                                    : params.formattedValue === "processing"
-                                        ? "#b9abfd"
-                                        : "",
-                    }}
-                    value={status[params.row.action] || params.formattedValue}
-                    select
-                    name={params.row.action}
-                    multiple
-                    onChange={handleStatus}
-                >
-                    {statusCatalog.map((option) => (
-                        <MenuItem key={option.key} value={option.value}>
-                            {option.value}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            ),
-        },
-        {
-            field: "OID",
-            headerName: "Order ID",
-            width: 100,
-        },
-        {
-            field: "CID",
-            headerName: "Customer ID",
-            width: 100,
-        },
-        {
-            field: "customer_name",
-            headerName: "Customer Name",
-            width: 150,
-            align: "center",
-        },
-        {
-            field: "customer_email",
-            headerName: "Customer Email",
-            width: 250,
-            align: "center",
-        },
-        {
-            field: "city",
-            headerName: "City",
-            width: 100,
-        },
-        {
-            field: "state",
-            headerName: "State",
-            width: 100,
-        },
-        {
-            field: "shipping",
-            headerName: "Shipping Address",
-            width: 200,
-        },
-        {
-            field: "order_time",
-            headerName: "Order Time/Date",
-            width: 200,
-            align: "center",
-        },
-        {
-            field: "quantity",
-            headerName: "Product $ Quantity",
-            width: 200,
-        },
-
-        {
-            field: "discount",
-            headerName: "Discount",
-            width: 80,
-            align: "center",
-        },
-
-        {
-            field: "paid",
-            headerName: "Paid Amount",
-            width: 80,
-            align: "center",
-        },
-        {
-            field: "total",
-            headerName: "Total Amount",
-            width: 80,
-            align: "center",
-        },
-        {
-            field: "note",
-            headerName: "Note",
-            width: 80,
-            align: "center",
-        },
-
-        {
-            field: "action",
-            headerName: "Actions",
-            width: 200,
-            renderCell: (params) => (
-                <div className="categoryImage">
-                    <IconButton
-                        onClick={() => {
-                            dispatch({
-                                type: OpenBox, payload: {
-                                    state: true,
-                                    formType: "update_order",
-                                    payload: params,
-                                    row: Row,
-                                    setRow: setRows
-                                }
-                            });
-                        }}
-                        aria-label="delete"
-                    >
-                        <CreateIcon />
-                    </IconButton>
-                    {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
-          dispatch({type : Notify,payload : {
-            open : true,
-            variant : 'success',
-            message : 'Category Deleted !!!'
-          })
-        }) }} aria-label="delete"  >
-          <DeleteIcon />
-        </IconButton>
-         */}
-                </div>
-            ),
-        },
-    ];
 
     // create order  col
     const product_columns = [
@@ -624,52 +490,18 @@ export default function CreateOrder() {
 
     ];
 
-    // status update 
-    const handleStatus = (e) => {
-        setStatus({ ...status, [e.target.name]: e.target.value });
-
-        //console.log(e.target.name);
-
-        const FD = new FormData();
-
-        FD.append("_id", e.target.name);
-        FD.append("status", e.target.value);
-
-        const res = changeOrderStatus(FD);
-
-        res
-            .then((data) => {
-                console.log(data);
-                dispatch({
-                    type: Notify, payload: {
-                        open: true,
-                        variant: "success",
-                        message: " Order Status Updated Successfully !!!",
-                    }
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-                dispatch({
-                    type: Notify, payload: {
-                        open: true,
-                        variant: "error",
-                        message: "Something Went Wrong !!!",
-                    }
-                });
-            });
-    };
-
-    const getOID = () => {
-        getLastOrder()
+    const getO = async () => {
+        await getLastOrder()
             .then((res) => {
+                console.log(res)
                 if (res.data.length > 0) {
                     let index = parseInt(res.data[0].O.split("-")[1]) + 1;
+                    setData({ ...data, O: `O-0${index}` });
+                    // return `O-0${index}`
 
-                    setData({ ...data, OID: `O-0${index}` });
                 } else {
-                    setData({ ...data, OID: "O-01001" });
-
+                     setData({ ...data, O: "O-01001" });
+                    // return 'O-01001'
                 }
             })
             .catch((err) => {
@@ -677,16 +509,9 @@ export default function CreateOrder() {
             });
     };
 
-    const handelSearch = (e) => {
-        setSearch({
-            ...search,
-            [e.target.name]: e.target.value || undefined,
-        });
-    };
-
     const resetValue = () => {
         setData({
-            OID: '',
+            O: '',
             CUS: '',
             CID: null,
             customer_email: '',
@@ -702,7 +527,8 @@ export default function CreateOrder() {
             city: '',
             state: '',
             paid: 0,
-            note: ''
+            note: '',
+            sale_channel : 'Online'
         })
         setActiveStep(0)
         setValue(0)
@@ -784,7 +610,7 @@ export default function CreateOrder() {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
 
-    // custom product id 
+    // customer id 
     const getCUS = async () => {
         await getLastCp()
             .then((res) => {
@@ -844,8 +670,6 @@ export default function CreateOrder() {
 
         handleClose();
     }
-
-
 
     // custom product model
     function CustomProduct() {
@@ -969,7 +793,7 @@ export default function CreateOrder() {
         );
     }
 
-    function handleSubmit() {
+    function handleSubmit(e) {
 
         /// for adding the note 
 
@@ -983,7 +807,7 @@ export default function CreateOrder() {
             .then((data) => {
                 if (data.status !== 200) {
                     setData({
-                        OID: '',
+                        O: '',
                         CUS: '',
                         CID: null,
                         customer_email: '',
@@ -999,7 +823,8 @@ export default function CreateOrder() {
                         city: '',
                         state: '',
                         paid: 0,
-                        note: ''
+                        note: '',
+                        sale_channel : 'Online'
                     })
                     dispatch({
                         type: Notify, payload: {
@@ -1010,25 +835,7 @@ export default function CreateOrder() {
                     });
 
                 } else {
-                    setRows([...Row, {
-                        id: Row.length + 1,
-                        OID: data.data.response.OID,
-                        order_time: data.data.response.order_time,
-                        status: data.data.response.status,
-                        CID: data.data.response.CID,
-                        customer_name: data.data.response.customer_name,
-                        customer_email: data.data.response.customer_email,
-                        customer_mobile: data.data.response.customer_mobile,
-                        city: data.data.response.city,
-                        state: data.data.response.state,
-                        shipping: data.data.response.shipping,
-                        quantity: data.data.response.quantity,
-                        discount: data.data.response.discount,
-                        paid: data.data.response.paid,
-                        total: data.data.response.total,
-                        note: data.data.response.note,
-                        action: data.data.response
-                    }])
+                   
                     dispatch({
                         type: Notify, payload: {
                             open: true,
@@ -1067,12 +874,12 @@ export default function CreateOrder() {
             }}>
 
                 {/* create order  */}
-                <Grid item p={1} xs={12} sx={{  mt: 3 }}>
+                <Grid item p={1} xs={12} sx={{ mt: 3 }}>
                     {/* <Typography component={'span'} variant="h6"> Create Order </Typography> */}
 
                     <Grid container className='orderSteps' sx={{ boxShadow: 1, borderRadius: 5, mt: 2, p: 2, }}>
                         <Grid item xs={12}  >
-                            <form method='post' on submit={handleSubmit} >
+                            <form method='post' onSubmit={handleSubmit} >
                                 <Stepper
                                     className="stepper"
                                     activeStep={activeStep}
@@ -1433,6 +1240,27 @@ export default function CreateOrder() {
                                 {activeStep === 2 && <Box sx={{
                                     p: 2.5,
                                 }}>
+                                    <TextField sx={{ mb: 2 }}
+                                        size="small"
+                                        fullWidth
+                                        id="outlined-select"
+                                        select
+                                        name="sale_channel"
+                                        label="Sale Channel"
+                                        multiple
+                                        value={data.sale_channel || "Online"}
+                                        onChange={handelData}
+                                        helperText="Please select your Back Style."
+                                    >
+                                        {catalogs.channel.map((option) => (
+                                            <MenuItem
+                                                key={option.key}
+                                                value={option.value}
+                                            >
+                                                {option.value}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
 
                                     <Grid container >
                                         <Grid item xs={12}>
@@ -1448,8 +1276,10 @@ export default function CreateOrder() {
                                             />
                                         </Grid>
 
+                                        <br></br>
+
                                         <Grid item xs={12}>
-                                            <TextField fullWidth sx={{ mb: 2 }} size='small' disabled label='OID' value={data.OID} ></TextField>
+                                            <TextField fullWidth sx={{ mb: 2 }} size='small' name = 'O' disabled label='O' value={data.O} ></TextField>
                                         </Grid>
 
                                         <Grid item xs={12}>
@@ -1502,7 +1332,7 @@ export default function CreateOrder() {
 
                 </Grid>
 
-            
+
 
             </Grid>
 

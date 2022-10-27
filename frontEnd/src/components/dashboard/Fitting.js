@@ -170,7 +170,7 @@ export default function Fitting() {
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'fitting_name', operatorValue: 'contains', value: `${search}` }],

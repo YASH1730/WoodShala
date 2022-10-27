@@ -30,6 +30,7 @@ import StockChannel from "./components/dashboard/StockChannel";
 import BlogModule from "./components/dashboard/Blog";
 import Merge from "./components/dashboard/Merge"
 import ProductDetails from "./components/Utility/ProductDetails"
+import Variation from "./components/dashboard/Variation"
 
 global.Buffer = Buffer;
 
@@ -39,28 +40,31 @@ function MyRoutes(){
 
   return(
     <>
+    {/* // main screen route */}
     <Home history = {history}/>
     <Routes>
-    <Route exact path="/dashboard" element={<Dashboard history = {history} />} />
-    <Route exact path="/products" element={<Products history = {history} />} />
-    <Route exact path="/customer" element={<Customers history = {history} />} />
-    <Route exact path="/order" element={<Orders history = {history} />} />
-    <Route exact path="/create_order" element={<CreateOrder history = {history} />} />
-    <Route exact path="/user" element={<OurStaff history = {history} />} />
-    <Route exact path="/reward" element={<Coupons history = {history} />} />
+    {/* All routes are in alphabetical order */}
+    <Route exact path="/" element={<EntryPoints history = {history} />} />
     <Route exact path="/admin" element={<Setting history = {history} />} />
-    <Route exact path="/banner" element={<Banner history = {history} />} />
-    <Route exact path="/draft" element={<Draft history = {history} />} />
-    <Route exact path="/inventory" element={<StockChannel history = {history} />} />
     <Route exact path="/accessories" element={<Accessories history = {history} />} />
-    <Route exact path="/hardware" element={<Hardware history = {history} />} />
-    <Route exact path="/productDetails" element={<ProductDetails history = {history} />} />
-    {/* <Route exact path="/gallery" element={<Gallery history = {history} />} /> */}
     <Route exact path="/blogs" element={<BlogModule history = {history} />} />
     <Route exact path="/blog" element={<Blog />} />
     <Route exact path="/blogContent" element={<BlogContent />} />
-    <Route exact path="/merge"  element={<Merge history = {history} />} />
-    <Route exact path="/" element={<EntryPoints history = {history} />} />
+    <Route exact path="/banner" element={<Banner history = {history} />} />
+    <Route exact path="/customer" element={<Customers history = {history} />} />
+    <Route exact path="/create_order" element={<CreateOrder history = {history} />} />
+    <Route exact path="/dashboard" element={<Dashboard history = {history} />} />
+    <Route exact path="/draft" element={<Draft history = {history} />} />
+    {/* <Route exact path="/gallery" element={<Gallery history = {history} />} /> */}
+    <Route exact path="/hardware" element={<Hardware history = {history} />} />
+    <Route exact path="/inventory" element={<StockChannel history = {history} />} />
+    <Route exact path="/merge"  element={<Merge history = {history} />} />    
+    <Route exact path="/order" element={<Orders history = {history} />} />
+    <Route exact path="/products" element={<Products history = {history} />} />
+    <Route exact path="/productDetails" element={<ProductDetails history = {history} />} />
+    <Route exact path="/reward" element={<Coupons history = {history} />} />
+    <Route exact path="/user" element={<OurStaff history = {history} />} />
+    <Route exact path="/variation"  element={<Variation history = {history} />} />
   </Routes>
   </>
   )

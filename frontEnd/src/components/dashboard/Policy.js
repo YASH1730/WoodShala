@@ -144,7 +144,7 @@ const {dispatch} = Store();
     {
       field: "sub_category_name",
       headerName: "Sub Category Name",
-      type: "number",
+      
       width: 110,
     },
     {
@@ -239,7 +239,7 @@ const {dispatch} = Store();
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           rows={Row}
           columns={columns}

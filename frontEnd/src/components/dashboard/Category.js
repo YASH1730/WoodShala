@@ -192,7 +192,7 @@ export default function Category() {
 
   function DataGridView() {
     return (
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'category_name', operatorValue: 'contains', value: `${search}` }],
@@ -266,7 +266,6 @@ export default function Category() {
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography component={'span'} variant="h6"> Category List </Typography>
-          <br></br>
           {DataGridView()}
         </Grid>
       </Grid>
