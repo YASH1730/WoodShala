@@ -895,8 +895,10 @@ const Sideform = () => {
             primary_material: JSON.parse(
               data.primary_material_name
             ) || [],
-            warehouse: data.warehouse ?
-              data.warehouse.split(',') : [],
+            warehouse: JSON.parse(
+              state.OpenBox.payload.row.action.warehouse_name
+            ) || [],
+            warehouse_name : state.OpenBox.payload.row.action.warehouse_name,
             bangalore_stock: data.bangalore_stock,
             jodhpur_stock: data.jodhpur_stock,
             primary_material_name:
