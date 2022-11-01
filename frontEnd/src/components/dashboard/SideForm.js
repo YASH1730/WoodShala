@@ -99,6 +99,10 @@ import { OpenBox, Notify } from "../../store/Types";
 
 import { Store } from '../../store/Context';
 
+// custom hook 
+// import Dimension from '../hook/Dimension';
+import size from 'react-image-size';
+
 
 const option = {
   labels: {
@@ -227,38 +231,88 @@ const Sideform = () => {
     );
   }
 
+
+  // function for the filter the image to the basis of ratio 1:1
+  function Dimension(images, setFiles) {
+    let result = images.map(async (image) => {
+      let { width, height } = await size(URL.createObjectURL(image));
+      // console.log(width,height)
+      Object.assign(image, {
+        preview: URL.createObjectURL(image),
+        validate: width === height ? true : false
+      })
+      return image
+    })
+    Promise.all(result).then(res => setFiles(res))
+  }
+
+
+
   function ProductsPreviews(props) {
+    const [acceptedFileItems, setAcceptedFileItems] = useState([])
+    const [fileRejectionItems, setFileRejectionItems] = useState([])
+
     const { getRootProps, getInputProps } = useDropzone({
       accept: "image/*",
       multiple: true,
       onDrop: (acceptedFiles) => {
-        setFiles(
-          acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      },
+        Dimension(acceptedFiles, setFiles)
+      }
     });
 
-    const thumbs = files.map((file) => (
-      <div style={thumb} key={file.name}>
-        <div style={thumbInner}>
-          <img
-            src={file.preview}
-            style={img}
-            alt="Images"
-            // Revoke data uri after image is loaded
-            onLoad={() => {
-              URL.revokeObjectURL(file.preview);
-            }}
-          />
-        </div>
-      </div>
-    ));
+
+    // for check the file state in done or
+    useEffect(() => {
+
+      if (files) {
+        // REJECTED FILES
+        setFileRejectionItems(files.map((file) => {
+          return !file.validate ? <div style={thumb} key={file.name}>
+            <div style={thumbInner}>
+              {/* {console.log(file.validate)} */}
+
+              <img
+                src={URL.createObjectURL(file)}
+                style={img}
+                alt="Images"
+                // Revoke data uri after image is loaded
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            </div>
+          </div> : null;
+        }
+        ));
+
+        // accepted
+        setAcceptedFileItems(files.map(
+          (file, index) => {
+            return file.validate ? <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div> : null;
+          }
+        ))
+      }
+    }
+
+      , [files]);
+
 
     useEffect(() => {
+
       // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, []);
@@ -269,7 +323,12 @@ const Sideform = () => {
           <input {...getInputProps()} />
           <p>{props.text}</p>
         </div>
-        <aside style={thumbsContainer}>{thumbs}</aside>
+        <aside >
+          <h4>Accepted files</h4>
+          <aside style={thumbsContainer}>{acceptedFileItems}</aside>
+          <h4>Rejected files</h4>
+          <aside style={thumbsContainer}>{fileRejectionItems}</aside>
+        </aside>
       </section>
     );
   }
@@ -583,7 +642,7 @@ const Sideform = () => {
   // ref
   const editorRef = useRef();
 
-  
+
   // pres data
   const [changeData, setData] = useState({
     primary_material: [],
@@ -622,7 +681,7 @@ const Sideform = () => {
     wall_hanging: "",
     assembly_required: "",
     assembly_leg: "",
-    assembly_parts: "",
+    assembly_parts: 0,
     fitting: "",
     rotating: "",
     eatable: "",
@@ -657,30 +716,30 @@ const Sideform = () => {
     customer_email: "",
     shipping_address: "",
     searchCustomer: "",
-    mobile_store : true,
-    online_store : true,
+    mobile_store: true,
+    online_store: true,
+    continue_selling: true,
     unit: 'Pcs',
-    quantity : 1,
-    textile_type : '',
-    category_id : '',
-    back_style : '',
-    sub_category_id : '',
-    product_description : '',
-    seo_description : '',
-    fabric : '',
-    drawer : '',
-    weight_capacity : '',
-    legs : 'None',
-    assembly_level : 'Easy Assembly',
+    quantity: 1,
+    textile_type: '',
+    category_id: '',
+    back_style: '',
+    sub_category_id: '',
+    product_description: '',
+    fabric: '',
+    drawer: '',
+    weight_capacity: '',
+    legs: 'None',
+    assembly_level: 'Easy Assembly',
   });
 
   useEffect(() => {
     switch (state.OpenBox.formType) {
       case "hardware":
         getHKU();
-         categoryList().then((data) => {
+        categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
-          
+
           setData({ ...changeData, category_name: data.data.filter((row) => { return row.category_name === 'Hardware' })[0]._id })
           return setCategory(data.data);
         });
@@ -809,182 +868,185 @@ const Sideform = () => {
       case "variation":
         getSKU();
 
-          categoryList().then((data) => {
-            if (data.data === null) return setCategory([]);
-  
-            return setCategory(data.data);
-          });
-  
-          getSubCatagories().then((data) => {
-            if (data.data === null) return setSubCategory([]);
-  
-            return setSubCategory(data.data);
-          });
-  
-          getPrimaryMaterial().then((data) => {
-            if (data.data === null) return setMaterialCatalog([]);
-  
-            return setMaterialCatalog(data.data);
-          });
-  
-          getPolish().then((data) => {
-            if (data.data === null) return setPolishCatalog([]);
-  
-            return setPolishCatalog(data.data);
-          });
-  
-          getTextile().then((data) => {
-            if (data.data === null) return setTextileCatalog([]);
-            return setTextileCatalog(data.data);
-          });
-  
-          getHinge().then((data) => {
-            if (data.data === null) return setHingeCatalog([]);
-  
-            return setHingeCatalog(data.data);
-          });
-  
-          getFitting().then((data) => {
-            if (data.data === null) return setFittingCatalog([]);
-  
-            return setFittingCatalog(data.data);
-          });
-  
-          getKnob().then((data) => {
-            if (data.data === null) return setKnobCatalog([]);
-  
-            return setKnobCatalog(data.data);
-          });
-  
-          getDoor().then((data) => {
-            if (data.data === null) return setDoorCatalog([]);
-  
-            return setDoorCatalog(data.data);
-          });
-  
-          getHandle().then((data) => {
-            if (data.data === null) return setHandleCatalog([]);
-  
-            return setHandleCatalog(data.data);
-          });
-  
-          getFabric().then((data) => {
-            if (data.data === null) return setFabricCatalog([]);
-  
-            return setFabricCatalog(data.data);
-          });
-          // console.log(state.OpenBox.payload)
-          const data = state.OpenBox.payload.row.action;
-          console.log(data)
-          setData({
-            SKU: data.SKU,
-            product_title: data.product_title,
-            category_name: data.category_id,
-            back_style: data.back_style,
-            category_id: data.category_id,
-            sub_category_name: data.sub_category_id,
-            sub_category_id: data.sub_category_id,
-            product_description: data.product_description,
-            seo_title: data.seo_title,
-            seo_description: data.seo_description,
-            seo_keyword: data.seo_keyword,
-            product_image: data.product_image,
-            featured_image: data.featured_image,
-            specification_image: data.specification_image,
-            mannequin_image: data.mannequin_image,
-            primary_material: JSON.parse(
-              data.primary_material_name
-            ) || [],
-            warehouse: JSON.parse(
-              state.OpenBox.payload.row.action.warehouse_name
-            ) || [],
-            warehouse_name : state.OpenBox.payload.row.action.warehouse_name,
-            bangalore_stock: data.bangalore_stock,
-            jodhpur_stock: data.jodhpur_stock,
-            primary_material_name:
-              data.primary_material_name,
-            package_length: data.package_length,
-            package_height: data.package_height,
-            package_breadth: data.package_breadth,
-            length_main: data.length_main,
-            breadth: data.breadth,
-            height: data.height,
-            weight: data.weight,
-            polish: data.polish,
-            polish_name: data.polish_name,
-            hinge: data.hinge,
-            hinge_name: data.hinge_name,
-            knob: data.knob,
-            textile: data.textile,
-            knob_name: data.knob_name,
-            textile_name: data.textile_name,
-            textile_type: data.textile_type,
-            handle: data.handle,
-            handle_name: data.handle_name,
-            door: data.door,
-            door_name: data.door_name,
-            fitting: data.fitting,
-            fitting_name: data.fitting_name,
-            selling_points: data.selling_points,
-            top_size: data.top_size,
-            dial_size: data.dial_size,
-            seating_size_width: data.seating_size_width,
-            seating_size_depth: data.seating_size_depth,
-            seating_size_height: data.seating_size_height,
-            weight_capacity: data.weight_capacity,
-            fabric: data.fabric,
-            fabric_name: data.fabric_name,
-            wall_hanging: data.wall_hanging,
-            assembly_required: data.assembly_required,
-            assembly_part: data.assembly_part,
-            legs: data.legs,
-            mirror: data.mirror,
-            mirror_length: data.mirror_length,
-            mirror_width: data.mirror_width,
-            silver: data.silver,
-            silver_weight: data.silver_weight,
-            joints: data.joints,
-            upholstery: data.upholstery,
-            wheel: data.wheel,
-            trolley: data.trolley,
-            trolley_material: data.trolley_material,
-            rotating_seats: data.rotating_seats,
-            eatable_oil_polish: data.eatable_oil_polish,
-            no_chemical: data.no_chemical,
-            straight_back: data.straight_back,
-            lean_back: data.lean_back,
-            weaving: data.weaving,
-            knife: data.knife,
-            not_suitable_for_Micro_Dish:
-              data.not_suitable_for_Micro_Dish,
-            tilt_top: data.tilt_top,
-            inside_compartments: data.inside_compartments,
-            stackable: data.stackable,
-            ceramic_drawers: data.ceramic_drawers,
-            ceramic_tiles: data.ceramic_tiles,
-            // MRP: data.MRP,
-            tax_rate: data.tax_rate,
-            selling_price: data.selling_price,
-            showroom_price: data.showroom_price,
-            discount_limit: data.discount_limit,
-            polish_time: data.polish_time,
-            manufacturing_time: data.manufacturing_time,
-            status: data.status,
-            returnDays: data.returnDays,
-            COD: data.COD,
-            returnable: data.returnable,
-            drawer: data.drawer,
-            drawer_count: data.drawer_count,
-            range: data.range,
-            show_on_mobile: data.show_on_mobile,
-            quantity: data.quantity,
-            unit: data.unit,
-            variation_array: data.variation_array,
-          });
-  
-          setCat(data.category_id);
-  
-          break;
+        categoryList().then((data) => {
+          if (data.data === null) return setCategory([]);
+
+          return setCategory(data.data);
+        });
+
+        getSubCatagories().then((data) => {
+          if (data.data === null) return setSubCategory([]);
+
+          return setSubCategory(data.data);
+        });
+
+        getPrimaryMaterial().then((data) => {
+          if (data.data === null) return setMaterialCatalog([]);
+
+          return setMaterialCatalog(data.data);
+        });
+
+        getPolish().then((data) => {
+          if (data.data === null) return setPolishCatalog([]);
+
+          return setPolishCatalog(data.data);
+        });
+
+        getTextile().then((data) => {
+          if (data.data === null) return setTextileCatalog([]);
+          return setTextileCatalog(data.data);
+        });
+
+        getHinge().then((data) => {
+          if (data.data === null) return setHingeCatalog([]);
+
+          return setHingeCatalog(data.data);
+        });
+
+        getFitting().then((data) => {
+          if (data.data === null) return setFittingCatalog([]);
+
+          return setFittingCatalog(data.data);
+        });
+
+        getKnob().then((data) => {
+          if (data.data === null) return setKnobCatalog([]);
+
+          return setKnobCatalog(data.data);
+        });
+
+        getDoor().then((data) => {
+          if (data.data === null) return setDoorCatalog([]);
+
+          return setDoorCatalog(data.data);
+        });
+
+        getHandle().then((data) => {
+          if (data.data === null) return setHandleCatalog([]);
+
+          return setHandleCatalog(data.data);
+        });
+
+        getFabric().then((data) => {
+          if (data.data === null) return setFabricCatalog([]);
+
+          return setFabricCatalog(data.data);
+        });
+        // console.log(state.OpenBox.payload)
+        const data = state.OpenBox.payload.row.action;
+        console.log(data)
+        setData({
+          SKU: data.SKU,
+          product_title: data.product_title,
+          category_name: data.category_id,
+          back_style: data.back_style,
+          category_id: data.category_id,
+          sub_category_name: data.sub_category_id,
+          sub_category_id: data.sub_category_id,
+          product_description: data.product_description,
+          seo_title: data.seo_title,
+          seo_description: data.seo_description,
+          seo_keyword: data.seo_keyword,
+          product_image: data.product_image,
+          savedImages: data.product_image,
+          featured_image: data.featured_image,
+          specification_image: data.specification_image,
+          mannequin_image: data.mannequin_image,
+          primary_material: JSON.parse(
+            data.primary_material_name
+          ) || [],
+          warehouse: JSON.parse(
+            state.OpenBox.payload.row.action.warehouse_name
+          ) || [],
+          warehouse_name: state.OpenBox.payload.row.action.warehouse_name,
+          bangalore_stock: data.bangalore_stock,
+          jodhpur_stock: data.jodhpur_stock,
+          primary_material_name:
+            data.primary_material_name,
+          package_length: data.package_length,
+          package_height: data.package_height,
+          package_breadth: data.package_breadth,
+          length_main: data.length_main,
+          breadth: data.breadth,
+          height: data.height,
+          weight: data.weight,
+          polish: data.polish,
+          polish_name: data.polish_name,
+          hinge: data.hinge,
+          hinge_name: data.hinge_name,
+          knob: data.knob,
+          textile: data.textile,
+          knob_name: data.knob_name,
+          textile_name: data.textile_name,
+          textile_type: data.textile_type,
+          handle: data.handle,
+          handle_name: data.handle_name,
+          door: data.door,
+          door_name: data.door_name,
+          fitting: data.fitting,
+          fitting_name: data.fitting_name,
+          selling_points: data.selling_points,
+          top_size: data.top_size,
+          dial_size: data.dial_size,
+          seating_size_width: data.seating_size_width,
+          seating_size_depth: data.seating_size_depth,
+          seating_size_height: data.seating_size_height,
+          weight_capacity: data.weight_capacity,
+          fabric: data.fabric,
+          fabric_name: data.fabric_name,
+          wall_hanging: data.wall_hanging,
+          assembly_required: data.assembly_required,
+          assembly_part: data.assembly_part,
+          legs: data.legs,
+          mirror: data.mirror,
+          mirror_length: data.mirror_length,
+          mirror_width: data.mirror_width,
+          silver: data.silver,
+          silver_weight: data.silver_weight,
+          joints: data.joints,
+          upholstery: data.upholstery,
+          wheel: data.wheel,
+          trolley: data.trolley,
+          trolley_material: data.trolley_material,
+          rotating_seats: data.rotating_seats,
+          eatable_oil_polish: data.eatable_oil_polish,
+          no_chemical: data.no_chemical,
+          straight_back: data.straight_back,
+          lean_back: data.lean_back,
+          weaving: data.weaving,
+          knife: data.knife,
+          not_suitable_for_Micro_Dish:
+            data.not_suitable_for_Micro_Dish,
+          tilt_top: data.tilt_top,
+          inside_compartments: data.inside_compartments,
+          stackable: data.stackable,
+          ceramic_drawers: data.ceramic_drawers,
+          ceramic_tiles: data.ceramic_tiles,
+          // MRP: data.MRP,
+          tax_rate: data.tax_rate,
+          selling_price: data.selling_price,
+          showroom_price: data.showroom_price,
+          discount_limit: data.discount_limit,
+          polish_time: data.polish_time,
+          manufacturing_time: data.manufacturing_time,
+          status: data.status,
+          returnDays: data.returnDays,
+          COD: data.COD,
+          returnable: data.returnable,
+          drawer: data.drawer,
+          drawer_count: data.drawer_count,
+          range: data.range,
+          mobile_store: state.OpenBox.payload.row.action.mobile_store,
+          online_store: state.OpenBox.payload.row.action.online_store,
+          continue_selling: state.OpenBox.payload.row.action.continue_selling,
+          quantity: data.quantity,
+          unit: data.unit,
+          variation_array: data.variation_array,
+        });
+
+        setCat(data.category_id);
+
+        break;
       case "add_order":
         getOID();
         getPresentSKUs().then((data) => {
@@ -1179,7 +1241,7 @@ const Sideform = () => {
         });
         console.log(state.OpenBox.payload)
         setData({
-          _id  : state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id ,
+          _id: state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id,
           assembly_level: state.OpenBox.payload.row.action.assembly_level,
           SKU: state.OpenBox.payload.row.action.SKU,
           product_title: state.OpenBox.payload.row.action.product_title,
@@ -1203,10 +1265,10 @@ const Sideform = () => {
           warehouse: JSON.parse(
             state.OpenBox.payload.row.action.warehouse_name
           ) || [],
-          warehouse_name : state.OpenBox.payload.row.action.warehouse_name,
+          warehouse_name: state.OpenBox.payload.row.action.warehouse_name,
           bangalore_stock: state.OpenBox.payload.row.action.bangalore_stock,
           jodhpur_stock: state.OpenBox.payload.row.action.jodhpur_stock,
-          primary_material_name:state.OpenBox.payload.row.action.primary_material_name,
+          primary_material_name: state.OpenBox.payload.row.action.primary_material_name,
           package_length: state.OpenBox.payload.row.action.package_length,
           package_height: state.OpenBox.payload.row.action.package_height,
           package_breadth: state.OpenBox.payload.row.action.package_breadth,
@@ -1260,7 +1322,7 @@ const Sideform = () => {
           weaving: state.OpenBox.payload.row.action.weaving,
           knife: state.OpenBox.payload.row.action.knife,
           not_suitable_for_Micro_Dish:
-          state.OpenBox.payload.row.action.not_suitable_for_Micro_Dish,
+            state.OpenBox.payload.row.action.not_suitable_for_Micro_Dish,
           tilt_top: state.OpenBox.payload.row.action.tilt_top,
           inside_compartments: state.OpenBox.payload.row.action.inside_compartments,
           stackable: state.OpenBox.payload.row.action.stackable,
@@ -1282,6 +1344,7 @@ const Sideform = () => {
           range: state.OpenBox.payload.row.action.range,
           mobile_store: state.OpenBox.payload.row.action.mobile_store,
           online_store: state.OpenBox.payload.row.action.online_store,
+          continue_selling: state.OpenBox.payload.row.action.continue_selling,
           quantity: state.OpenBox.payload.row.action.quantity,
           unit: state.OpenBox.payload.row.action.unit,
         });
@@ -1667,6 +1730,7 @@ const Sideform = () => {
     "returnable",
     "mobile_store",
     "online_store",
+    "continue_selling",
     "ceramic_drawers",
     "ceramic_tiles",
     "status"
@@ -2275,8 +2339,8 @@ const Sideform = () => {
     setActiveStep(0);
     setShowFabric("No");
     setData({
-      savedImages : [],
-      warehouse_name : '',
+      savedImages: [],
+      warehouse_name: '',
       searchCustomer: "",
       primary_material: [],
       product_array: [],
@@ -2340,12 +2404,13 @@ const Sideform = () => {
       dial_size: 0,
       COD: false,
       textile: "",
-      quantity : 1,
-      unit : 'Pcs',
-      legs : 'None',
-      assembly_level : 'Easy Assembly',
-      mobile_store : true,
-      online_store : true
+      quantity: 1,
+      unit: 'Pcs',
+      legs: 'None',
+      assembly_level: 'Easy Assembly',
+      mobile_store: true,
+      online_store: true,
+      continue_selling: true
     });
     document.getElementById("myForm").reset();
   };
@@ -2423,22 +2488,26 @@ const Sideform = () => {
     const FD = new FormData();
 
     files.map((element) => {
-      return FD.append("product_image", element);
+      if (element.validate) return FD.append("product_image", element);
     });
 
     FD.append("status", false);
 
-    Image.map((element) => {
-      return FD.append("specification_image", element);
-    });
+    // Image.map((element) => {
+    //   return FD.append("specification_image", element);
+    // });
 
-    featured.map((element) => {
-      return FD.append("featured_image", element);
-    });
+    // featured.map((element) => {
+    //   return FD.append("featured_image", element);
+    // });
 
-    Mannequin.map((element) => {
-      return FD.append("mannequin_image", element);
-    });
+    // Mannequin.map((element) => {
+    //   return FD.append("mannequin_image", element);
+    // });
+
+    FD.append("specification_image", changeData.specification_image || '');
+    FD.append("featured_image", changeData.featured_image || '');
+    FD.append("mannequin_image", changeData.mannequin_image || '');
 
     FD.append(
       "primary_material_name",
@@ -2574,7 +2643,7 @@ const Sideform = () => {
       "length_main",
       changeData.length_main ? changeData.length_main : 0
     );
-    FD.append("assembly_level", changeData.assembly_level );
+    FD.append("assembly_level", changeData.assembly_level);
 
     FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
     FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
@@ -2667,6 +2736,10 @@ const Sideform = () => {
     FD.append(
       "online_store",
       changeData.online_store ? changeData.online_store : true
+    );
+    FD.append(
+      "continue_selling",
+      changeData.continue_selling ? changeData.continue_selling : true
     );
 
     FD.append(
@@ -2827,25 +2900,31 @@ const Sideform = () => {
     //   changeData.featured_image,
     //   changeData.mannequin_image)
 
-    files.length > 0 ?  files.map((element) => {
+    files.length > 0 ? files.map((element) => {
       return FD.append("product_image", element);
-    }): FD.append("product_image", changeData.product_image);
+    }) : FD.append("product_image", changeData.product_image);
 
-    Image.length > 0 ?  Image.map((element) => {
-      return FD.append("specification_image", element);
-    }): FD.append("specification_image", changeData.specification_image);
+    FD.append('savedImages', JSON.stringify(changeData.savedImages));
 
-    featured.length > 0 ?  featured.map((element) => {
-      return FD.append("featured_image", element);
-    }): FD.append("featured_image", changeData.featured_image);
+    // Image.length > 0 ? Image.map((element) => {
+    //   return FD.append("specification_image", element);
+    // }) : FD.append("specification_image", changeData.specification_image);
 
-    Mannequin.length > 0 ?  Mannequin.map((element) => {
-      return FD.append("mannequin_image", element);
-    }): FD.append("mannequin_image", changeData.mannequin_image);
+    // featured.length > 0 ? featured.map((element) => {
+    //   return FD.append("featured_image", element);
+    // }) : FD.append("featured_image", changeData.featured_image);
+
+    // Mannequin.length > 0 ? Mannequin.map((element) => {
+    //   return FD.append("mannequin_image", element);
+    // }) : FD.append("mannequin_image", changeData.mannequin_image);
+
+     FD.append("specification_image", changeData.specification_image || '');
+     FD.append("featured_image", changeData.featured_image || '');
+     FD.append("mannequin_image", changeData.mannequin_image || '');
 
 
-   
-   
+
+
     FD.append(
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
@@ -2987,7 +3066,7 @@ const Sideform = () => {
       "length_main",
       changeData.length_main ? changeData.length_main : 0
     );
-    FD.append("assembly_level", changeData.assembly_level );
+    FD.append("assembly_level", changeData.assembly_level);
 
 
     FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
@@ -3082,6 +3161,10 @@ const Sideform = () => {
       "online_store",
       changeData.online_store ? changeData.online_store : true
     );
+    FD.append(
+      "continue_selling",
+      changeData.continue_selling ? changeData.continue_selling : true
+    );
 
     FD.append(
       "wall_hanging",
@@ -3108,7 +3191,7 @@ const Sideform = () => {
 
     res
       .then((data) => {
-        
+
 
         if (data.status === 203) {
           dispatch({
@@ -3239,21 +3322,26 @@ const Sideform = () => {
     files.map((element) => {
       return FD.append("product_image", element);
     });
-    FD.append('savedImages',JSON.stringify(changeData.savedImages));
+    FD.append('savedImages', JSON.stringify(changeData.savedImages));
 
-    FD.append("_id", changeData._id );
+    FD.append("_id", changeData._id);
 
-    Image.map((element) => {
-      return FD.append("specification_image", element);
-    });
+    // Image.map((element) => {
+    //   return FD.append("specification_image", element);
+    // });
 
-    featured.map((element) => {
-      return FD.append("featured_image", element);
-    });
+    // featured.map((element) => {
+    //   return FD.append("featured_image", element);
+    // });
 
-    Mannequin.map((element) => {
-      return FD.append("mannequin_image", element);
-    });
+    // Mannequin.map((element) => {
+    //   return FD.append("mannequin_image", element);
+    // });
+
+    FD.append("specification_image", changeData.specification_image);
+    FD.append("featured_image", changeData.featured_image);
+    FD.append("mannequin_image", changeData.mannequin_image);
+
 
     FD.append(
       "primary_material_name",
@@ -3350,7 +3438,7 @@ const Sideform = () => {
     }
 
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
-    FD.append("assembly_level", changeData.assembly_level );
+    FD.append("assembly_level", changeData.assembly_level);
     FD.append("returnable", changeData.returnable);
     FD.append("COD", changeData.COD);
     FD.append("polish", changeData.polish);
@@ -3384,7 +3472,7 @@ const Sideform = () => {
     FD.append("seo_description", changeData.seo_description);
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("discount_limit", changeData.discount_limit);
-    FD.append("selling_price", changeData.selling_price ? changeData.selling_price : 0 );
+    FD.append("selling_price", changeData.selling_price ? changeData.selling_price : 0);
     FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
     FD.append("fabric", changeData.fabric);
@@ -3496,6 +3584,10 @@ const Sideform = () => {
     FD.append(
       "online_store",
       changeData.online_store ? changeData.online_store : true
+    );
+    FD.append(
+      "continue_selling",
+      changeData.continue_selling ? changeData.continue_selling : true
     );
     FD.append(
       "wall_hanging",
@@ -3613,6 +3705,7 @@ const Sideform = () => {
               set.drawer_count = changeData.drawer_count
               set.mobile_store = changeData.mobile_store
               set.online_store = changeData.online_store
+              set.continue_selling = changeData.continue_selling
               set.range = changeData.range
               set.action = changeData
               set.action.warehouse_name = JSON.stringify(changeData.warehouse)
@@ -5874,7 +5967,7 @@ const Sideform = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part}
+                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
                                   onChange={handleProductFelids}
                                 />
                               </>
@@ -5882,7 +5975,7 @@ const Sideform = () => {
                             {changeData.assembly_required === "yes" && (
                               <>
 
-                                <TextField sx={{ mb: 2 }}
+                                <TextField sx={{ mt: 1, mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -5906,11 +5999,9 @@ const Sideform = () => {
                                   <MenuItem key={"none"} value="None">
                                     {"None"}
                                   </MenuItem>
-                                </TextField> 
-                              </>
-                            )}
+                                </TextField>
 
-                            <TextField sx={{mt : 2 , mb: 2 }}
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -5935,10 +6026,14 @@ const Sideform = () => {
                                     {"None"}
                                   </MenuItem>
                                 </TextField>
+                              </>
+                            )}
 
-                         <FormLabel id="demo-radio-buttons-group-label">
-                                Availability
-                              </FormLabel>
+
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Availability
+                            </FormLabel>
 
                             <FormControlLabel
                               control={
@@ -5957,10 +6052,21 @@ const Sideform = () => {
                                   checked={changeData.online_store}
                                   onChange={handleProductFelids}
                                   name="mobile_store"
-                                  helperText="Check it if want it on mobile."
+                                  helperText="Check it if want it on online store."
                                 />
                               }
                               label="Online Store"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.continue_selling}
+                                  onChange={handleProductFelids}
+                                  name="continue_selling"
+                                  helperText="Check it if want it to sell when out of Inventory."
+                                />
+                              }
+                              label="Continue Selling"
                             />
 
 
@@ -6043,26 +6149,146 @@ const Sideform = () => {
                               Product Images
                             </FormLabel>
                             <ProductsPreviews
-                              text={"Please Drag and Drop the product images"}
+                              text={"Make Sure the picture ratio should be in 1:1."}
                             ></ProductsPreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Featured Images
-                            </FormLabel>
-                            <FeaturesPreviews
-                              text={"Please Drag and Drop featured images"}
-                            ></FeaturesPreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Specification Images
-                            </FormLabel>
-                            <ImagePreviews
-                              text={"Please Drag and Drop specification images"}
-                            ></ImagePreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Mannequin Images
-                            </FormLabel>
-                            <MannequinPreviews
-                              text={"Please Drag and Drop mannequin images"}
-                            ></MannequinPreviews>
+
+                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                              {
+                                files.map((img, index) => {
+                                  return <>
+                                    <Grid item xs={2} sx={{ position: 'relative' }} >
+                                      <CancelIcon onClick={() => {
+                                        // this function is for removing the image from savedImage array 
+                                        let temp = files;
+                                        console.log(">>>>>>", temp, files);
+                                        temp.splice(index, 1);
+                                        setFiles([...temp])
+                                      }} className='imageCross' color='primary' />
+                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                                    </Grid>
+                                  </>
+                                })
+                              }
+                            </Grid>
+                            }
+
+                            {/* // featured images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="featured_image"
+                              label="Feature Image"
+                              value={changeData.featured_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Featured Image"
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // specification images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="specification_image"
+                              label="Specification Image"
+                              value={changeData.specificaiton_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your specification image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // Mannequin images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="mannequin_image"
+                              label="Mannequin Image"
+                              value={changeData.mannequin_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Mannequin Image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+
+                            {/* 
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Featured Images
+                          </FormLabel>
+                          <FeaturesPreviews
+                            text={"Please Drag and Drop featured images"}
+                          ></FeaturesPreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Specification Images
+                          </FormLabel>
+                          <ImagePreviews
+                            text={"Please Drag and Drop specification images"}
+                          ></ImagePreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Mannequin Images
+                          </FormLabel>
+                          <MannequinPreviews
+                            text={"Please Drag and Drop mannequin images"}
+                          ></MannequinPreviews> */}
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -7986,7 +8212,7 @@ const Sideform = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part}
+                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
                                   onChange={handleProductFelids}
                                 />
                               </>
@@ -7994,7 +8220,7 @@ const Sideform = () => {
                             {changeData.assembly_required === "yes" && (
                               <>
 
-                                <TextField sx={{ mb: 2 }}
+                                <TextField sx={{ mt: 1, mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -8019,10 +8245,8 @@ const Sideform = () => {
                                     {"None"}
                                   </MenuItem>
                                 </TextField>
-                              </>
-                            )}
 
-<TextField sx={{mt : 2 , mb: 2 }}
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -8047,11 +8271,15 @@ const Sideform = () => {
                                     {"None"}
                                   </MenuItem>
                                 </TextField>
+                              </>
+                            )}
 
 
-                             <FormLabel id="demo-radio-buttons-group-label">
-                                Availability
-                              </FormLabel>
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Availability
+                            </FormLabel>
+
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -8068,12 +8296,24 @@ const Sideform = () => {
                                 <Checkbox
                                   checked={changeData.online_store}
                                   onChange={handleProductFelids}
-                                  name="online_store"
-                                  helperText="Check it if want it on mobile."
+                                  name="mobile_store"
+                                  helperText="Check it if want it on online store."
                                 />
                               }
                               label="Online Store"
                             />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.continue_selling}
+                                  onChange={handleProductFelids}
+                                  name="continue_selling"
+                                  helperText="Check it if want it to sell when out of Inventory."
+                                />
+                              }
+                              label="Continue Selling"
+                            />
+
 
                             {/*                            
                              <TextField sx = {{mb : 2}}
@@ -8157,43 +8397,168 @@ const Sideform = () => {
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
 
-                            {changeData.savedImages.length > 0 && <Grid sx = {{p : 2}} spacing = {2} container>
+                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
                               {
-                                changeData.savedImages.map((img,index)=>{
+                                files.map((img, index) => {
                                   return <>
-                                  <Grid item xs = {2} sx = {{position : 'relative'}} >
-                                  <CancelIcon onClick = {()=>{
-                                    // this function is for removing the image from savedImage array 
-                                    let temp = changeData.savedImages;
-                                    temp.splice(index,1);
-                                    setData({...changeData,savedImages : temp})
-                                  }} className = 'imageCross' color = 'primary' />
-                                    <img style = {{width : '100%'}} src = {img} alt = 'productImage'/>
-                                  </Grid>
+                                    <Grid item xs={2} sx={{ position: 'relative' }} >
+                                      <CancelIcon onClick={() => {
+                                        // this function is for removing the image from savedImage array 
+                                        let temp = files;
+                                        console.log(">>>>>>", temp, files);
+                                        temp.splice(index, 1);
+                                        setFiles([...temp])
+                                      }} className='imageCross' color='primary' />
+                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                                    </Grid>
                                   </>
                                 })
                               }
-                                </Grid>
-                              }
+                            </Grid>
+                            }
 
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Featured Images
-                            </FormLabel>
-                            <FeaturesPreviews
-                              text={"Please Drag and Drop featured images"}
-                            ></FeaturesPreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Specification Images
-                            </FormLabel>
-                            <ImagePreviews
-                              text={"Please Drag and Drop specification images"}
-                            ></ImagePreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Mannequin Images
-                            </FormLabel>
-                            <MannequinPreviews
-                              text={"Please Drag and Drop mannequin images"}
-                            ></MannequinPreviews>
+
+                            {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                              <FormLabel id="demo-radio-buttons-group-label">
+                                Saved Images
+                              </FormLabel>
+                              {
+                                changeData.savedImages.map((img, index) => {
+                                  return <>
+                                    <Grid item xs={2} sx={{ position: 'relative' }} >
+                                      <CancelIcon onClick={() => {
+                                        // this function is for removing the image from savedImage array 
+                                        let temp = changeData.savedImages;
+                                        temp.splice(index, 1);
+                                        setData({ ...changeData, savedImages: temp })
+                                      }} className='imageCross' color='primary' />
+                                      <img style={{ width: '100%' }} src={img} alt='productImage' />
+                                    </Grid>
+                                  </>
+                                })
+                              }
+                            </Grid>
+                            }
+
+
+                            {/* // featured images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="featured_image"
+                              label="Feature Image"
+                              value={changeData.featured_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Featured Image"
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            {/* // specification images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="specification_image"
+                              label="Specification Image"
+                              value={changeData.specificaiton_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your specification image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // Mannequin images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="mannequin_image"
+                              label="Mannequin Image"
+                              value={changeData.mannequin_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Mannequin Image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+
+
+                            {/* <FormLabel id="demo-radio-buttons-group-label">
+                            Featured Images
+                          </FormLabel>
+                          <FeaturesPreviews
+                            text={"Please Drag and Drop featured images"}
+                          ></FeaturesPreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Specification Images
+                          </FormLabel>
+                          <ImagePreviews
+                            text={"Please Drag and Drop specification images"}
+                          ></ImagePreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Mannequin Images
+                          </FormLabel>
+                          <MannequinPreviews
+                            text={"Please Drag and Drop mannequin images"}
+                          ></MannequinPreviews> */}
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -8763,7 +9128,7 @@ const Sideform = () => {
                               helperText="From bottom to top"
                             />
 
-<FormLabel id="demo-radio-buttons-group-label">
+                            <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
 
@@ -10117,7 +10482,7 @@ const Sideform = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part}
+                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
                                   onChange={handleProductFelids}
                                 />
                               </>
@@ -10125,7 +10490,7 @@ const Sideform = () => {
                             {changeData.assembly_required === "yes" && (
                               <>
 
-                                <TextField sx={{ mb: 2 }}
+                                <TextField sx={{ mt: 1, mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -10133,7 +10498,7 @@ const Sideform = () => {
                                   select
                                   name="legs"
                                   label="Table Legs"
-                                  value={changeData.legs || "none"}
+                                  value={changeData.legs || ""}
                                   onChange={handleProductFelids}
                                   multiple
                                   helperText="Please select your leg "
@@ -10150,10 +10515,8 @@ const Sideform = () => {
                                     {"None"}
                                   </MenuItem>
                                 </TextField>
-                              </>
-                            )}
 
-<TextField sx={{mt : 2 , mb: 2 }}
+                                <TextField sx={{ mb: 2 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -10178,11 +10541,15 @@ const Sideform = () => {
                                     {"None"}
                                   </MenuItem>
                                 </TextField>
+                              </>
+                            )}
 
 
-                             <FormLabel id="demo-radio-buttons-group-label">
-                                Availability
-                              </FormLabel>
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Availability
+                            </FormLabel>
+
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -10199,11 +10566,22 @@ const Sideform = () => {
                                 <Checkbox
                                   checked={changeData.online_store}
                                   onChange={handleProductFelids}
-                                  name="online_store"
-                                  helperText="Check it if want it on mobile."
+                                  name="mobile_store"
+                                  helperText="Check it if want it on online store."
                                 />
                               }
                               label="Online Store"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.continue_selling}
+                                  onChange={handleProductFelids}
+                                  name="continue_selling"
+                                  helperText="Check it if want it to sell when out of Inventory."
+                                />
+                              }
+                              label="Continue Selling"
                             />
 
                             {/*                            
@@ -10255,8 +10633,8 @@ const Sideform = () => {
                       </Step>
                       {/* // Specification Ends*/}
 
-                      {/* Images */}
-                      <Step>
+                    {/* Images */}
+                    <Step>
                         <StepLabel>Images</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
@@ -10279,32 +10657,179 @@ const Sideform = () => {
                                 Continue
                               </Button>
                             </Box > <br />
-
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
-                            {/* <FormLabel id="demo-radio-buttons-group-label">
+                            <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
+
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
-                            ></ProductsPreviews> */}
+                            ></ProductsPreviews>
+
+                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
                             <FormLabel id="demo-radio-buttons-group-label">
-                              Featured Images
-                            </FormLabel>
-                            <FeaturesPreviews
-                              text={"Please Drag and Drop featured images"}
-                            ></FeaturesPreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Specification Images
-                            </FormLabel>
-                            <ImagePreviews
-                              text={"Please Drag and Drop specification images"}
-                            ></ImagePreviews>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Mannequin Images
-                            </FormLabel>
-                            <MannequinPreviews
-                              text={"Please Drag and Drop mannequin images"}
-                            ></MannequinPreviews>
+                                Total Images
+                              </FormLabel>{
+                                files.map((img, index) => {
+                                  return <>
+                                    <Grid item xs={2} sx={{ position: 'relative' }} >
+                                      <CancelIcon onClick={() => {
+                                        // this function is for removing the image from savedImage array 
+                                        let temp = files;
+                                        console.log(">>>>>>", temp, files);
+                                        temp.splice(index, 1);
+                                        setFiles([...temp])
+                                      }} className='imageCross' color='primary' />
+                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                                    </Grid>
+                                  </>
+                                })
+                              }
+                            </Grid>
+                            }
+
+
+                            {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                              <FormLabel id="demo-radio-buttons-group-label">
+                                Saved Images
+                              </FormLabel>
+                              {
+                                changeData.savedImages.map((img, index) => {
+                                  return <>
+                                    <Grid item xs={2} sx={{ position: 'relative' }} >
+                                      <CancelIcon onClick={() => {
+                                        // this function is for removing the image from savedImage array 
+                                        let temp = changeData.savedImages;
+                                        temp.splice(index, 1);
+                                        setData({ ...changeData, savedImages: temp })
+                                      }} className='imageCross' color='primary' />
+                                      <img style={{ width: '100%' }} src={img} alt='productImage' />
+                                    </Grid>
+                                  </>
+                                })
+                              }
+                            </Grid>
+                            }
+
+
+                            {/* // featured images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="featured_image"
+                              label="Feature Image"
+                              value={changeData.featured_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Featured Image"
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+                            {/* // specification images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="specification_image"
+                              label="Specification Image"
+                              value={changeData.specificaiton_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your specification image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // Mannequin images */}
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="mannequin_image"
+                              label="Mannequin Image"
+                              value={changeData.mannequin_image}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Mannequin Image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem
+                                      key={option}
+                                      value={option}
+                                    >
+                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+
+
+                            {/* <FormLabel id="demo-radio-buttons-group-label">
+                            Featured Images
+                          </FormLabel>
+                          <FeaturesPreviews
+                            text={"Please Drag and Drop featured images"}
+                          ></FeaturesPreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Specification Images
+                          </FormLabel>
+                          <ImagePreviews
+                            text={"Please Drag and Drop specification images"}
+                          ></ImagePreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Mannequin Images
+                          </FormLabel>
+                          <MannequinPreviews
+                            text={"Please Drag and Drop mannequin images"}
+                          ></MannequinPreviews> */}
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -10327,7 +10852,6 @@ const Sideform = () => {
                         </StepContent>
                       </Step>
                       {/* Images End */}
-
 
                       {/* Features */}
                       <Step>
@@ -10874,7 +11398,7 @@ const Sideform = () => {
                               helperText="From bottom to top"
                             />
 
-<FormLabel id="demo-radio-buttons-group-label">
+                            <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
 
@@ -15209,7 +15733,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                           
+
                             <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
@@ -15559,38 +16083,38 @@ const Sideform = () => {
                               helperText="From bottom to top"
                             />
 
-<Box sx={{ display: 'flex', mb: 2 }}>
+                            <Box sx={{ display: 'flex', mb: 2 }}>
 
-<TextField
-  size="small"
-  sx={{ width: '85%' }}
-  id="fullWidth"
-  label="Quantity"
-  type="Number"
-  variant="outlined"
-  name="quantity"
-  value={changeData.quantity}
-  onChange={handleProductFelids}
-/>
+                              <TextField
+                                size="small"
+                                sx={{ width: '85%' }}
+                                id="fullWidth"
+                                label="Quantity"
+                                type="Number"
+                                variant="outlined"
+                                name="quantity"
+                                value={changeData.quantity}
+                                onChange={handleProductFelids}
+                              />
 
 
-<TextField
-  id="outlined-select-currency"
-  select
-  sx={{ ml: 1 }}
-  size='small'
-  label="Unit"
-  name='unit'
-  value={changeData.unit || ''}
-  onChange={handleProductFelids}
->
-  {unitCatalog.map((option) => (
-    <MenuItem key={option.value} value={option.value}>
-      {option.label}
-    </MenuItem>
-  ))}
-</TextField>
-</Box>
+                              <TextField
+                                id="outlined-select-currency"
+                                select
+                                sx={{ ml: 1 }}
+                                size='small'
+                                label="Unit"
+                                name='unit'
+                                value={changeData.unit || ''}
+                                onChange={handleProductFelids}
+                              >
+                                {unitCatalog.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            </Box>
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -15774,7 +16298,7 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                           
+
 
                             <TextField sx={{ mb: 2 }}
                               size="small"
@@ -16072,36 +16596,36 @@ const Sideform = () => {
 
                           <Box sx={{ display: 'flex', mb: 2 }}>
 
-<TextField
-  size="small"
-  sx={{ width: '85%' }}
-  id="fullWidth"
-  label="Quantity"
-  type="Number"
-  variant="outlined"
-  name="quantity"
-  value={changeData.quantity}
-  onChange={handleProductFelids}
-/>
+                            <TextField
+                              size="small"
+                              sx={{ width: '85%' }}
+                              id="fullWidth"
+                              label="Quantity"
+                              type="Number"
+                              variant="outlined"
+                              name="quantity"
+                              value={changeData.quantity}
+                              onChange={handleProductFelids}
+                            />
 
 
-<TextField
-  id="outlined-select-currency"
-  select
-  sx={{ ml: 1 }}
-  size='small'
-  label="Unit"
-  name='unit'
-  value={changeData.unit || ''}
-  onChange={handleProductFelids}
->
-  {unitCatalog.map((option) => (
-    <MenuItem key={option.value} value={option.value}>
-      {option.label}
-    </MenuItem>
-  ))}
-</TextField>
-</Box>
+                            <TextField
+                              id="outlined-select-currency"
+                              select
+                              sx={{ ml: 1 }}
+                              size='small'
+                              label="Unit"
+                              name='unit'
+                              value={changeData.unit || ''}
+                              onChange={handleProductFelids}
+                            >
+                              {unitCatalog.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </TextField>
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
