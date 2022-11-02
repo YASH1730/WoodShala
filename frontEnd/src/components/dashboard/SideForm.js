@@ -2900,10 +2900,10 @@ const Sideform = () => {
     //   changeData.featured_image,
     //   changeData.mannequin_image)
 
-    files.length > 0 ? files.map((element) => {
-      return FD.append("product_image", element);
-    }) : FD.append("product_image", changeData.product_image);
-
+  
+    files.map((element) => {
+      if (element.validate) return FD.append("product_image", element);
+    });
     FD.append('savedImages', JSON.stringify(changeData.savedImages));
 
     // Image.length > 0 ? Image.map((element) => {
@@ -3320,7 +3320,7 @@ const Sideform = () => {
     let multiOBJ = {};
 
     files.map((element) => {
-      return FD.append("product_image", element);
+      if (element.validate) return FD.append("product_image", element);
     });
     FD.append('savedImages', JSON.stringify(changeData.savedImages));
 
