@@ -91,7 +91,8 @@ import {
   customerCatalog,
   addStock,
   updateStock,
-  variation
+  variation,
+  getHardwareDropdown
 } from "../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -639,6 +640,17 @@ const Sideform = () => {
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
 
+  const [catalog,setCatalog] = useState({
+    hinge : [],
+    knob : [],
+    door : [],
+    handle : [],
+    fitting : [],
+    polish : [],
+    fabric : [],
+    textile : []
+})
+
   // ref
   const editorRef = useRef();
 
@@ -799,6 +811,11 @@ const Sideform = () => {
         break;
       case "product":
         getSKU();
+
+        getHardwareDropdown().then((data)=>{
+          if(data.data !== null) return setCatalog(data.data)
+        })
+
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -828,35 +845,35 @@ const Sideform = () => {
           return setTextileCatalog(data.data);
         });
 
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+        // getHinge().then((data) => {
+        //   if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
+        //   return setHingeCatalog(data.data);
+        // });
 
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+        // getFitting().then((data) => {
+        //   if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
+        //   return setFittingCatalog(data.data);
+        // });
 
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
+        // getKnob().then((data) => {
+        //   if (data.data === null) return setKnobCatalog([]);
 
-          return setKnobCatalog(data.data);
-        });
+        //   return setKnobCatalog(data.data);
+        // });
 
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+        // getDoor().then((data) => {
+        //   if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
+        //   return setDoorCatalog(data.data);
+        // });
 
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
         getFabric().then((data) => {
           if (data.data === null) return setFabricCatalog([]);
@@ -868,6 +885,10 @@ const Sideform = () => {
       case "variation":
         getSKU();
 
+        getHardwareDropdown().then((data)=>{
+          if(data.data !== null) return setCatalog(data.data)
+        })
+
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -897,35 +918,35 @@ const Sideform = () => {
           return setTextileCatalog(data.data);
         });
 
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+        // getHinge().then((data) => {
+        //   if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
+        //   return setHingeCatalog(data.data);
+        // });
 
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+        // getFitting().then((data) => {
+        //   if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
+        //   return setFittingCatalog(data.data);
+        // });
 
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
+        // getKnob().then((data) => {
+        //   if (data.data === null) return setKnobCatalog([]);
 
-          return setKnobCatalog(data.data);
-        });
+        //   return setKnobCatalog(data.data);
+        // });
 
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+        // getDoor().then((data) => {
+        //   if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
+        //   return setDoorCatalog(data.data);
+        // });
 
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
         getFabric().then((data) => {
           if (data.data === null) return setFabricCatalog([]);
@@ -1175,6 +1196,11 @@ const Sideform = () => {
         });
         break;
       case "update_product":
+
+        getHardwareDropdown().then((data)=>{
+          if(data.data !== null) return setCatalog(data.data)
+        })
+
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -1204,35 +1230,35 @@ const Sideform = () => {
           return setTextileCatalog(data.data);
         });
 
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+        // getHinge().then((data) => {
+        //   if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
+        //   return setHingeCatalog(data.data);
+        // });
 
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+        // getFitting().then((data) => {
+        //   if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
+        //   return setFittingCatalog(data.data);
+        // });
 
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
+        // getKnob().then((data) => {
+        //   if (data.data === null) return setKnobCatalog([]);
 
-          return setKnobCatalog(data.data);
-        });
+        //   return setKnobCatalog(data.data);
+        // });
 
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+        // getDoor().then((data) => {
+        //   if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
+        //   return setDoorCatalog(data.data);
+        // });
 
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
         getFabric().then((data) => {
           if (data.data === null) return setFabricCatalog([]);
@@ -2547,32 +2573,32 @@ const Sideform = () => {
         FD.append("textile_name", item.textile_name)
       );
     });
-    hingeCatalog.map((item) => {
+    catalog.hinge.map((item) => {
       return (
-        item._id === changeData.hinge &&
-        FD.append("hinge_name", item.hinge_name)
+        item.SKU === changeData.hinge &&
+        FD.append("hinge_name", item.title)
       );
     });
-    fittingCatalog.map((item) => {
+    catalog.fitting.map((item) => {
       return (
-        item._id === changeData.fitting &&
-        FD.append("fitting_name", item.fitting_name)
+        item.SKU === changeData.fitting &&
+        FD.append("fitting_name", item.title)
       );
     });
-    knobCatalog.map((item) => {
+    catalog.knob.map((item) => {
       return (
-        item._id === changeData.knob && FD.append("knob_name", item.knob_name)
+        item.SKU === changeData.knob && FD.append("knob_name", item.title)
       );
     });
-    doorCatalog.map((item) => {
+    catalog.door.map((item) => {
       return (
-        item._id === changeData.door && FD.append("door_name", item.door_name)
+        item.SKU === changeData.door && FD.append("door_name", item.title)
       );
     });
-    handleCatalog.map((item) => {
+    catalog.handle.map((item) => {
       return (
         item._id === changeData.handle &&
-        FD.append("handle_name", item.handle_name)
+        FD.append("handle_name", item.title)
       );
     });
 
@@ -2905,6 +2931,7 @@ const Sideform = () => {
       if (element.validate) return FD.append("product_image", element);
     });
     FD.append('savedImages', JSON.stringify(changeData.savedImages));
+    
 
     // Image.length > 0 ? Image.map((element) => {
     //   return FD.append("specification_image", element);
@@ -2963,32 +2990,44 @@ const Sideform = () => {
         FD.append("textile_name", item.textile_name)
       );
     });
-    hingeCatalog.map((item) => {
+    catalog.hinge.map((item) => {
+      // if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title}
+
       return (
-        item._id === changeData.hinge &&
-        FD.append("hinge_name", item.hinge_name)
+        item.SKU === changeData.hinge &&
+        FD.append("hinge_name", item.title)
       );
     });
-    fittingCatalog.map((item) => {
+    catalog.fitting.map((item) => {
+      // if (item.SKU === changeData.fitting) multiOBJ = { ...multiOBJ, fitting_name: item.title }
+
       return (
-        item._id === changeData.fitting &&
-        FD.append("fitting_name", item.fitting_name)
+        item.SKU === changeData.fitting &&
+        FD.append("fitting_name", item.title)
       );
     });
-    knobCatalog.map((item) => {
+
+    
+    catalog.knob.map((item) => {
+      // if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
+
       return (
-        item._id === changeData.knob && FD.append("knob_name", item.knob_name)
+        item.SKU === changeData.knob && FD.append("knob_name", item.title)
       );
     });
-    doorCatalog.map((item) => {
+    catalog.door.map((item) => {
+      // if (item.SKU === changeData.door) multiOBJ = { ...multiOBJ, door_name: item.title }
+
       return (
-        item._id === changeData.door && FD.append("door_name", item.door_name)
+        item.SKU === changeData.door && FD.append("door_name", item.title)
       );
     });
-    handleCatalog.map((item) => {
+    catalog.handle.map((item) => {
+      // if (item.SKU === changeData.handle) multiOBJ = { ...multiOBJ, handle_name: item.title }
+
       return (
-        item._id === changeData.handle &&
-        FD.append("handle_name", item.handle_name)
+        item.SKU === changeData.handle &&
+        FD.append("handle_name", item.title)
       );
     });
 
@@ -3387,42 +3426,44 @@ const Sideform = () => {
         FD.append("textile_name", item.textile_name)
       );
     });
-    hingeCatalog.map((item) => {
-      if (item._id === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.hinge_name }
+    catalog.hinge.map((item) => {
+      if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title}
 
       return (
-        item._id === changeData.hinge &&
-        FD.append("hinge_name", item.hinge_name)
+        item.SKU === changeData.hinge &&
+        FD.append("hinge_name", item.title)
       );
     });
-    fittingCatalog.map((item) => {
-      if (item._id === changeData.fitting) multiOBJ = { ...multiOBJ, fitting_name: item.fitting_name }
+    catalog.fitting.map((item) => {
+      if (item.SKU === changeData.fitting) multiOBJ = { ...multiOBJ, fitting_name: item.title }
 
       return (
-        item._id === changeData.fitting &&
-        FD.append("fitting_name", item.fitting_name)
+        item.SKU === changeData.fitting &&
+        FD.append("fitting_name", item.title)
       );
     });
-    knobCatalog.map((item) => {
-      if (item._id === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.knob_name }
+
+    
+    catalog.knob.map((item) => {
+      if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
 
       return (
-        item._id === changeData.knob && FD.append("knob_name", item.knob_name)
+        item.SKU === changeData.knob && FD.append("knob_name", item.title)
       );
     });
-    doorCatalog.map((item) => {
-      if (item._id === changeData.door) multiOBJ = { ...multiOBJ, door_name: item.door_name }
+    catalog.door.map((item) => {
+      if (item.SKU === changeData.door) multiOBJ = { ...multiOBJ, door_name: item.title }
 
       return (
-        item._id === changeData.door && FD.append("door_name", item.door_name)
+        item.SKU === changeData.door && FD.append("door_name", item.title)
       );
     });
-    handleCatalog.map((item) => {
-      if (item._id === changeData.handle) multiOBJ = { ...multiOBJ, handle_name: item.handle_name }
+    catalog.handle.map((item) => {
+      if (item.SKU === changeData.handle) multiOBJ = { ...multiOBJ, handle_name: item.title }
 
       return (
-        item._id === changeData.handle &&
-        FD.append("handle_name", item.handle_name)
+        item.SKU === changeData.handle &&
+        FD.append("handle_name", item.title)
       );
     });
 
@@ -7236,16 +7277,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your hinge."
                           >
-                            {hingeCatalog.map(
-                              (option) =>
-                                option.hinge_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                            {catalog.hinge.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.hinge_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7264,16 +7302,14 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
-                            {knobCatalog.map(
-                              (option) =>
-                                option.knob_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                            {console.log(catalog)}
+                            {catalog.knob.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.knob_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7292,16 +7328,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                            {doorCatalog.map(
-                              (option) =>
-                                option.door_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.door.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.door_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7320,16 +7353,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
-                            {handleCatalog.map(
-                              (option) =>
-                                option.handle_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                            {catalog.handle.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.handle_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7348,16 +7378,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                            {fittingCatalog.map(
-                              (option) =>
-                                option.fitting_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.fitting.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.fitting_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9507,16 +9534,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your hinge."
                           >
-                            {hingeCatalog.map(
-                              (option) =>
-                                option.hinge_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                            {catalog.hinge.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.hinge_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9535,16 +9559,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
-                            {knobCatalog.map(
-                              (option) =>
-                                option.knob_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.knob.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.knob_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9563,16 +9584,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                            {doorCatalog.map(
-                              (option) =>
-                                option.door_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                          {catalog.door.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.door_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9591,16 +9609,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
-                            {handleCatalog.map(
-                              (option) =>
-                                option.handle_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.handle.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.handle_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9619,16 +9634,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                            {fittingCatalog.map(
-                              (option) =>
-                                option.fitting_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                          {catalog.fitting.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.fitting_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11765,7 +11777,8 @@ const Sideform = () => {
                           )}
 
 
-                          <TextField sx={{ mb: 2 }}
+                    
+<TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -11777,16 +11790,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your hinge."
                           >
-                            {hingeCatalog.map(
-                              (option) =>
-                                option.hinge_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                            {catalog.hinge.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.hinge_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11805,16 +11815,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
-                            {knobCatalog.map(
-                              (option) =>
-                                option.knob_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.knob.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.knob_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11833,16 +11840,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                            {doorCatalog.map(
-                              (option) =>
-                                option.door_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                          {catalog.door.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.door_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11861,16 +11865,13 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
-                            {handleCatalog.map(
-                              (option) =>
-                                option.handle_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                           {catalog.handle.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.handle_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11889,21 +11890,19 @@ const Sideform = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                            {fittingCatalog.map(
-                              (option) =>
-                                option.fitting_status && (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option._id}
+                          {catalog.fitting.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
                                   >
-                                    {option.fitting_name}
+                                    {option.title}
                                   </MenuItem>
-                                )
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
                             </MenuItem>
                           </TextField>
+
 
 
                           <FormControl>

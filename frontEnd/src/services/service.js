@@ -120,6 +120,16 @@ export const getLastProduct = async () => {
   });
 };
 
+// for getHardwareDropdown
+
+export const getHardwareDropdown = async () => {
+  return await axios.get(`${API}/getHardwareDropdown`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
 // for getting the last product
 
 export const getPresentSKUs = async () => {

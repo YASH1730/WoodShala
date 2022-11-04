@@ -129,13 +129,13 @@ function BasicTabs() {
                   label="Polish"
                   {...a11yProps(3)}
                 />
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<ConstructionIcon />}
                   label="Fitting"
                   {...a11yProps(4)}
-                />
-                <Tab
+                /> */}
+                {/* <Tab
                   wrapped
                   icon={<InsertLinkIcon />}
                   label="Hinge"
@@ -158,7 +158,7 @@ function BasicTabs() {
                   icon={<DragHandleIcon />}
                   label="Handle Material"
                   {...a11yProps(8)}
-                />
+                /> */}
                 <Tab
                   wrapped
                   icon={<WavesIcon />}
