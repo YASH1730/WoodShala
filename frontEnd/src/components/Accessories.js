@@ -123,12 +123,12 @@ function BasicTabs() {
                   label="Material"
                   {...a11yProps(2)}
                 />
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<AutoAwesomeIcon />}
                   label="Polish"
                   {...a11yProps(3)}
-                />
+                /> */}
                 {/* <Tab
                   wrapped
                   icon={<ConstructionIcon />}
@@ -159,7 +159,7 @@ function BasicTabs() {
                   label="Handle Material"
                   {...a11yProps(8)}
                 /> */}
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<WavesIcon />}
                   label="Fabric"
@@ -170,7 +170,7 @@ function BasicTabs() {
                   icon={<WavesIcon />}
                   label="Textile"
                   {...a11yProps(10)}
-                />
+                /> */}
                 {/* <Tab
                   wrapped
                   icon={<PolicyIcon />}

@@ -631,11 +631,11 @@ const Sideform = () => {
   const [materialCatalog, setMaterialCatalog] = useState([]);
   const [polishCatalog, setPolishCatalog] = useState([]);
   const [textileCatalog, setTextileCatalog] = useState([]);
-  const [hingeCatalog, setHingeCatalog] = useState([]);
-  const [fittingCatalog, setFittingCatalog] = useState([]);
-  const [knobCatalog, setKnobCatalog] = useState([]);
-  const [doorCatalog, setDoorCatalog] = useState([]);
-  const [handleCatalog, setHandleCatalog] = useState([]);
+  // const [hingeCatalog, setHingeCatalog] = useState([]);
+  // const [fittingCatalog, setFittingCatalog] = useState([]);
+  // const [knobCatalog, setKnobCatalog] = useState([]);
+  // const [doorCatalog, setDoorCatalog] = useState([]);
+  // const [handleCatalog, setHandleCatalog] = useState([]);
   const [fabricCatalog, setFabricCatalog] = useState([]);
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
@@ -684,7 +684,7 @@ const Sideform = () => {
     discount_cap: "",
     polish_time: "",
     manufacturing_time: "",
-    polish: "",
+    polish: [],
     hinge: "",
     knob: "",
     handle: "",
@@ -834,16 +834,16 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
 
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
+        // getPolish().then((data) => {
+        //   if (data.data === null) return setPolishCatalog([]);
 
-          return setPolishCatalog(data.data);
-        });
+        //   return setPolishCatalog(data.data);
+        // });
 
-        getTextile().then((data) => {
-          if (data.data === null) return setTextileCatalog([]);
-          return setTextileCatalog(data.data);
-        });
+        // getTextile().then((data) => {
+        //   if (data.data === null) return setTextileCatalog([]);
+        //   return setTextileCatalog(data.data);
+        // });
 
         // getHinge().then((data) => {
         //   if (data.data === null) return setHingeCatalog([]);
@@ -875,11 +875,11 @@ const Sideform = () => {
         //   return setHandleCatalog(data.data);
         // });
 
-        getFabric().then((data) => {
-          if (data.data === null) return setFabricCatalog([]);
+        // getFabric().then((data) => {
+        //   if (data.data === null) return setFabricCatalog([]);
 
-          return setFabricCatalog(data.data);
-        });
+        //   return setFabricCatalog(data.data);
+        // });
 
         break;
       case "variation":
@@ -907,16 +907,16 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
 
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
+        // getPolish().then((data) => {
+        //   if (data.data === null) return setPolishCatalog([]);
 
-          return setPolishCatalog(data.data);
-        });
+        //   return setPolishCatalog(data.data);
+        // });
 
-        getTextile().then((data) => {
-          if (data.data === null) return setTextileCatalog([]);
-          return setTextileCatalog(data.data);
-        });
+        // getTextile().then((data) => {
+        //   if (data.data === null) return setTextileCatalog([]);
+        //   return setTextileCatalog(data.data);
+        // });
 
         // getHinge().then((data) => {
         //   if (data.data === null) return setHingeCatalog([]);
@@ -948,11 +948,11 @@ const Sideform = () => {
         //   return setHandleCatalog(data.data);
         // });
 
-        getFabric().then((data) => {
-          if (data.data === null) return setFabricCatalog([]);
+        // getFabric().then((data) => {
+        //   if (data.data === null) return setFabricCatalog([]);
 
-          return setFabricCatalog(data.data);
-        });
+        //   return setFabricCatalog(data.data);
+        // });
         // console.log(state.OpenBox.payload)
         const data = state.OpenBox.payload.row.action;
         console.log(data)
@@ -976,10 +976,14 @@ const Sideform = () => {
           primary_material: JSON.parse(
             data.primary_material_name
           ) || [],
-          warehouse: JSON.parse(
-            state.OpenBox.payload.row.action.warehouse_name
+          polish: JSON.parse(
+            data.polish_name
           ) || [],
-          warehouse_name: state.OpenBox.payload.row.action.warehouse_name,
+          warehouse: JSON.parse(
+            data.warehouse_name
+          ) || [],
+          warehouse_name: data.warehouse_name,
+          polish_name: data.polish_name,
           bangalore_stock: data.bangalore_stock,
           jodhpur_stock: data.jodhpur_stock,
           primary_material_name:
@@ -991,8 +995,6 @@ const Sideform = () => {
           breadth: data.breadth,
           height: data.height,
           weight: data.weight,
-          polish: data.polish,
-          polish_name: data.polish_name,
           hinge: data.hinge,
           hinge_name: data.hinge_name,
           knob: data.knob,
@@ -1117,56 +1119,56 @@ const Sideform = () => {
           polish: state.OpenBox.payload.row.polish_name,
         });
         break;
-      case "update_knob":
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
-          return setKnobCatalog(data.data);
-        });
-        setData({
-          knob: state.OpenBox.payload.row.knob_name,
-        });
-        break;
-      case "update_fitting":
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+      // case "update_knob":
+      //   getKnob().then((data) => {
+      //     if (data.data === null) return setKnobCatalog([]);
+      //     return setKnobCatalog(data.data);
+      //   });
+      //   setData({
+      //     knob: state.OpenBox.payload.row.knob_name,
+      //   });
+      //   break;
+      // case "update_fitting":
+      //   getFitting().then((data) => {
+      //     if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
-        setData({
-          fitting: state.OpenBox.payload.row.fitting_name,
-        });
-        break;
-      case "update_hinge":
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+      //     return setFittingCatalog(data.data);
+      //   });
+      //   setData({
+      //     fitting: state.OpenBox.payload.row.fitting_name,
+      //   });
+      //   break;
+      // case "update_hinge":
+      //   getHinge().then((data) => {
+      //     if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
-        setData({
-          hinge: state.OpenBox.payload.row.hinge_name,
-        });
-        break;
-      case "update_door":
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+      //     return setHingeCatalog(data.data);
+      //   });
+      //   setData({
+      //     hinge: state.OpenBox.payload.row.hinge_name,
+      //   });
+      //   break;
+      // case "update_door":
+      //   getDoor().then((data) => {
+      //     if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
-        setData({
-          door: state.OpenBox.payload.row.door_name,
-        });
-        break;
-      case "update_handle":
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+      //     return setDoorCatalog(data.data);
+      //   });
+      //   setData({
+      //     door: state.OpenBox.payload.row.door_name,
+      //   });
+      //   break;
+      // case "update_handle":
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
-        setData({
-          handle: state.OpenBox.payload.row.handle_name,
-        });
-        break;
+        // setData({
+        //   handle: state.OpenBox.payload.row.handle_name,
+        // });
+        // break;
       case "subcategory":
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1219,16 +1221,16 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
 
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
+        // getPolish().then((data) => {
+        //   if (data.data === null) return setPolishCatalog([]);
 
-          return setPolishCatalog(data.data);
-        });
+        //   return setPolishCatalog(data.data);
+        // });
 
-        getTextile().then((data) => {
-          if (data.data === null) return setTextileCatalog([]);
-          return setTextileCatalog(data.data);
-        });
+        // getTextile().then((data) => {
+        //   if (data.data === null) return setTextileCatalog([]);
+        //   return setTextileCatalog(data.data);
+        // });
 
         // getHinge().then((data) => {
         //   if (data.data === null) return setHingeCatalog([]);
@@ -1260,12 +1262,12 @@ const Sideform = () => {
         //   return setHandleCatalog(data.data);
         // });
 
-        getFabric().then((data) => {
-          if (data.data === null) return setFabricCatalog([]);
+        // getFabric().then((data) => {
+        //   if (data.data === null) return setFabricCatalog([]);
 
-          return setFabricCatalog(data.data);
-        });
-        console.log(state.OpenBox.payload)
+        //   return setFabricCatalog(data.data);
+        // });
+        // console.log(state.OpenBox.payload)
         setData({
           _id: state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id,
           assembly_level: state.OpenBox.payload.row.action.assembly_level,
@@ -1288,10 +1290,14 @@ const Sideform = () => {
           primary_material: JSON.parse(
             state.OpenBox.payload.row.action.primary_material_name
           ) || [],
+          polish: JSON.parse(
+            state.OpenBox.payload.row.action.polish_name
+          ) || [],
           warehouse: JSON.parse(
             state.OpenBox.payload.row.action.warehouse_name
           ) || [],
           warehouse_name: state.OpenBox.payload.row.action.warehouse_name,
+          polish_name: state.OpenBox.payload.row.action.polish_name,
           bangalore_stock: state.OpenBox.payload.row.action.bangalore_stock,
           jodhpur_stock: state.OpenBox.payload.row.action.jodhpur_stock,
           primary_material_name: state.OpenBox.payload.row.action.primary_material_name,
@@ -1302,8 +1308,6 @@ const Sideform = () => {
           breadth: state.OpenBox.payload.row.action.breadth,
           height: state.OpenBox.payload.row.action.height,
           weight: state.OpenBox.payload.row.action.weight,
-          polish: state.OpenBox.payload.row.action.polish,
-          polish_name: state.OpenBox.payload.row.action.polish_name,
           hinge: state.OpenBox.payload.row.action.hinge,
           hinge_name: state.OpenBox.payload.row.action.hinge_name,
           knob: state.OpenBox.payload.row.action.knob,
@@ -1378,17 +1382,17 @@ const Sideform = () => {
         setCat(state.OpenBox.payload.row.action.category_id);
 
         break;
-      case "update_fabric":
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+      // case "update_fabric":
+      //   getFitting().then((data) => {
+      //     if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
-        setData({
-          ...changeData,
-          fabric_name: state.OpenBox.payload.row.fabric_name,
-        });
-        break;
+      //     return setFittingCatalog(data.data);
+      //   });
+      //   setData({
+      //     ...changeData,
+      //     fabric_name: state.OpenBox.payload.row.fabric_name,
+      //   });
+      //   break;
       case "update_textile":
         getTextile().then((data) => {
           if (data.data === null) return setTextileCatalog([]);
@@ -1450,35 +1454,35 @@ const Sideform = () => {
           return setTextileCatalog(data.data);
         });
 
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+        // getHinge().then((data) => {
+        //   if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
+        //   return setHingeCatalog(data.data);
+        // });
 
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+        // getFitting().then((data) => {
+        //   if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
+        //   return setFittingCatalog(data.data);
+        // });
 
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
+        // getKnob().then((data) => {
+        //   if (data.data === null) return setKnobCatalog([]);
 
-          return setKnobCatalog(data.data);
-        });
+        //   return setKnobCatalog(data.data);
+        // });
 
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+        // getDoor().then((data) => {
+        //   if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
+        //   return setDoorCatalog(data.data);
+        // });
 
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
         getFabric().then((data) => {
           if (data.data === null) return setFabricCatalog([]);
@@ -1534,35 +1538,35 @@ const Sideform = () => {
           return setTextileCatalog(data.data);
         });
 
-        getHinge().then((data) => {
-          if (data.data === null) return setHingeCatalog([]);
+        // getHinge().then((data) => {
+        //   if (data.data === null) return setHingeCatalog([]);
 
-          return setHingeCatalog(data.data);
-        });
+        //   return setHingeCatalog(data.data);
+        // });
 
-        getFitting().then((data) => {
-          if (data.data === null) return setFittingCatalog([]);
+        // getFitting().then((data) => {
+        //   if (data.data === null) return setFittingCatalog([]);
 
-          return setFittingCatalog(data.data);
-        });
+        //   return setFittingCatalog(data.data);
+        // });
 
-        getKnob().then((data) => {
-          if (data.data === null) return setKnobCatalog([]);
+        // getKnob().then((data) => {
+        //   if (data.data === null) return setKnobCatalog([]);
 
-          return setKnobCatalog(data.data);
-        });
+        //   return setKnobCatalog(data.data);
+        // });
 
-        getDoor().then((data) => {
-          if (data.data === null) return setDoorCatalog([]);
+        // getDoor().then((data) => {
+        //   if (data.data === null) return setDoorCatalog([]);
 
-          return setDoorCatalog(data.data);
-        });
+        //   return setDoorCatalog(data.data);
+        // });
 
-        getHandle().then((data) => {
-          if (data.data === null) return setHandleCatalog([]);
+        // getHandle().then((data) => {
+        //   if (data.data === null) return setHandleCatalog([]);
 
-          return setHandleCatalog(data.data);
-        });
+        //   return setHandleCatalog(data.data);
+        // });
 
         getFabric().then((data) => {
           if (data.data === null) return setFabricCatalog([]);
@@ -2392,7 +2396,7 @@ const Sideform = () => {
       discount_cap: "",
       polish_time: "",
       manufacturing_time: "",
-      polish: "",
+      polish: [],
       hinge: "",
       knob: "",
       handle: "",
@@ -2544,6 +2548,10 @@ const Sideform = () => {
       "warehouse_name",
       JSON.stringify(changeData.warehouse)
     );
+    FD.append(
+      "polish_name",
+      JSON.stringify(changeData.polish)
+    );
 
 
     category.map((item) => {
@@ -2560,17 +2568,17 @@ const Sideform = () => {
       );
     });
 
-    polishCatalog.map((item) => {
-      return (
-        item._id === changeData.polish &&
-        FD.append("polish_name", item.polish_name)
-      );
-    });
+    // polishCatalog.map((item) => {
+    //   return (
+    //     item._id === changeData.polish &&
+    //     FD.append("polish_name", item.polish_name)
+    //   );
+    // });
 
-    textileCatalog.map((item) => {
+    catalog.textile.map((item) => {
       return (
-        item._id === changeData.textile_type &&
-        FD.append("textile_name", item.textile_name)
+        item.SKU === changeData.textile_type &&
+        FD.append("textile_name", item.title)
       );
     });
     catalog.hinge.map((item) => {
@@ -2603,10 +2611,10 @@ const Sideform = () => {
     });
 
     if (showFabric === "Yes") {
-      fabricCatalog.map((item) => {
+      catalog.fabric.map((item) => {
         return (
-          item._id === changeData.fabric &&
-          FD.append("fabric_name", item.fabric_name)
+          item.fabric === changeData.fabric &&
+          FD.append("fabric_name", item.title)
         );
       });
     }
@@ -2646,6 +2654,7 @@ const Sideform = () => {
     FD.append("selling_price", changeData.selling_price);
     FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
+    // FD.append("polish", changeData.polish);
     FD.append("fabric", changeData.fabric);
 
     FD.append("drawer", changeData.drawer);
@@ -2961,6 +2970,10 @@ const Sideform = () => {
       "warehouse_name",
       JSON.stringify(changeData.warehouse)
     );
+    FD.append(
+      "polish_name",
+      JSON.stringify(changeData.polish)
+    );
 
 
     category.map((item) => {
@@ -2977,17 +2990,17 @@ const Sideform = () => {
       );
     });
 
-    polishCatalog.map((item) => {
-      return (
-        item._id === changeData.polish &&
-        FD.append("polish_name", item.polish_name)
-      );
-    });
+    // polishCatalog.map((item) => {
+    //   return (
+    //     item._id === changeData.polish &&
+    //     FD.append("polish_name", item.polish_name)
+    //   );
+    // });
 
-    textileCatalog.map((item) => {
+    catalog.textile.map((item) => {
       return (
-        item._id === changeData.textile_type &&
-        FD.append("textile_name", item.textile_name)
+        item.SKU === changeData.textile_type &&
+        FD.append("textile_name", item.title)
       );
     });
     catalog.hinge.map((item) => {
@@ -3032,10 +3045,10 @@ const Sideform = () => {
     });
 
     if (showFabric === "Yes") {
-      fabricCatalog.map((item) => {
+      catalog.fabric.map((item) => {
         return (
           item._id === changeData.fabric &&
-          FD.append("fabric_name", item.fabric_name)
+          FD.append("fabric_name", item.title)
         );
       });
     }
@@ -3390,6 +3403,10 @@ const Sideform = () => {
       "warehouse_name",
       JSON.stringify(changeData.warehouse)
     );
+    FD.append(
+      "polish_name",
+      JSON.stringify(changeData.polish)
+    );
 
     category.map((item) => {
       if (item._id === changeData.category_name) multiOBJ = { ...multiOBJ, category_name: item.category_name }
@@ -3409,21 +3426,21 @@ const Sideform = () => {
       );
     });
 
-    polishCatalog.map((item) => {
-      if (item._id === changeData.polish) multiOBJ = { ...multiOBJ, polish_name: item.polish_name }
+    // polishCatalog.map((item) => {
+    //   if (item._id === changeData.polish) multiOBJ = { ...multiOBJ, polish_name: item.polish_name }
+
+    //   return (
+    //     item._id === changeData.polish &&
+    //     FD.append("polish_name", item.polish_name)
+    //   );
+    // });
+
+    catalog.textile.map((item) => {
+      if (item.SKU === changeData.textile_type) multiOBJ = { ...multiOBJ, textile_name: item.title }
 
       return (
-        item._id === changeData.polish &&
-        FD.append("polish_name", item.polish_name)
-      );
-    });
-
-    textileCatalog.map((item) => {
-      if (item._id === changeData.textile_type) multiOBJ = { ...multiOBJ, textile_name: item.textile_name }
-
-      return (
-        item._id === changeData.textile_type &&
-        FD.append("textile_name", item.textile_name)
+        item.SKU === changeData.textile_type &&
+        FD.append("textile_name", item.title)
       );
     });
     catalog.hinge.map((item) => {
@@ -3468,12 +3485,12 @@ const Sideform = () => {
     });
 
     if (showFabric === "Yes") {
-      fabricCatalog.map((item) => {
-        if (item._id === changeData.fabric) multiOBJ = { ...multiOBJ, fabric_name: item.fabric_name }
+      catalog.fabric.map((item) => {
+        if (item.SKU === changeData.fabric) multiOBJ = { ...multiOBJ, fabric_name: item.title }
 
         return (
-          item._id === changeData.fabric &&
-          FD.append("fabric_name", item.fabric_name)
+          item.SKU === changeData.fabric &&
+          FD.append("fabric_name", item.title)
         );
       });
     }
@@ -3680,7 +3697,7 @@ const Sideform = () => {
               set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
               set.primary_material = changeData.primary_material
               set.warehouse = changeData.warehouse
-              set.warehouse_name = changeData.warehouse_name
+              // set.warehouse_name = changeData.warehouse_name
               set.primary_material_name = changeData.primary_material_name
               set.length_main = changeData.length_main
               set.breadth = changeData.breadth
@@ -3688,7 +3705,6 @@ const Sideform = () => {
               set.bangalore_stock = changeData.bangalore_stock
               set.jodhpur_stock = changeData.jodhpur_stock
               set.weight = changeData.weight
-              set.polish = multiOBJ.polish_name || changeData.polish_name
               set.hinge = multiOBJ.hinge_name || changeData.hinge_name
               set.knob = multiOBJ.knob_name || changeData.knob_name
               set.textile = multiOBJ.textile_name || changeData.textile_name
@@ -3749,6 +3765,8 @@ const Sideform = () => {
               set.continue_selling = changeData.continue_selling
               set.range = changeData.range
               set.action = changeData
+              set.polish = changeData.polish
+              set.action.polish_name = JSON.stringify(changeData.polish)
               set.action.warehouse_name = JSON.stringify(changeData.warehouse)
               set.action.primary_material_name = JSON.stringify(changeData.primary_material)
               return set
@@ -5932,6 +5950,37 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Polish
+                            </InputLabel>
+                            <Select sx={{ mb: 2 }}
+                              multiple
+                              fullWidth
+                              value={changeData.polish}
+                              name="polish"
+                              onChange={handleProductFelids}
+                              renderValue={(selected) => selected.join(", ")}
+                            // MenuProps={MenuProps}
+                            >
+                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                                <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.polish.indexOf(
+                                        option.SKU
+                                      ) > -1
+                                    }
+                                  />
+                                  <ListItemText
+                                    primary={option.title}
+                                  />
+                                </MenuItem>
+                              ))}
+                            </Select>
+{/* 
                             <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
@@ -5958,7 +6007,7 @@ const Sideform = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
 
 
                             <FormControl>
@@ -7686,17 +7735,14 @@ const Sideform = () => {
                               multiple
                               helperText="Please select your textile."
                             >
-                              {textileCatalog.map(
-                                (option) =>
-                                  option.textile_status && (
-                                    <MenuItem
-                                      key={option.value}
-                                      value={option._id}
-                                    >
-                                      {option.textile_name}
-                                    </MenuItem>
-                                  )
-                              )}
+                              {catalog.textile.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                            )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -7749,17 +7795,14 @@ const Sideform = () => {
                                 onChange={handleProductFelids}
                                 helperText="Please select your fabric."
                               >
-                                {fabricCatalog.map(
-                                  (option) =>
-                                    option.fabric_status && (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option._id}
-                                      >
-                                        {option.fabric_name}
-                                      </MenuItem>
-                                    )
-                                )}
+                              {catalog.fabric.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                            )}
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
@@ -8163,7 +8206,38 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                            <TextField sx={{ mb: 2 }}
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Polish
+                            </InputLabel>
+                            <Select sx={{ mb: 2 }}
+                              multiple
+                              fullWidth
+                              value={changeData.polish || []}
+                              name="polish"
+                              onChange={handleProductFelids}
+                              renderValue={(selected) => selected.join(", ")}
+                            // MenuProps={MenuProps}
+                            >
+                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                                <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.polish.indexOf(
+                                        option.SKU
+                                      ) > -1
+                                    }
+                                  />
+                                  <ListItemText
+                                    primary={option.title}
+                                  />
+                                </MenuItem>
+                              ))}
+                            </Select>
+
+                            {/* <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -8189,7 +8263,7 @@ const Sideform = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
 
 
                             <FormControl>
@@ -8496,6 +8570,19 @@ const Sideform = () => {
                                     </MenuItem>
                                   )
                               )}
+                              {/* {console.log(changeData.savedImages)} */}
+                              {changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -8529,6 +8616,19 @@ const Sideform = () => {
                                     </MenuItem>
                                   )
                               )}
+
+{changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -8560,6 +8660,18 @@ const Sideform = () => {
                                       </Box>
                                     </MenuItem>
                                   )
+                              )}
+                              {changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
@@ -9942,17 +10054,14 @@ const Sideform = () => {
                               multiple
                               helperText="Please select your textile."
                             >
-                              {textileCatalog.map(
-                                (option) =>
-                                  option.textile_status && (
-                                    <MenuItem
-                                      key={option.value}
-                                      value={option._id}
-                                    >
-                                      {option.textile_name}
-                                    </MenuItem>
-                                  )
-                              )}
+                             {catalog.textile.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                            )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -10005,17 +10114,14 @@ const Sideform = () => {
                                 onChange={handleProductFelids}
                                 helperText="Please select your fabric."
                               >
-                                {fabricCatalog.map(
-                                  (option) =>
-                                    option.fabric_status && (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option._id}
-                                      >
-                                        {option.fabric_name}
-                                      </MenuItem>
-                                    )
-                                )}
+                               {catalog.fabric.map(
+                              (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                            )}
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
@@ -10418,7 +10524,37 @@ const Sideform = () => {
                               </MenuItem>
                             </TextField>
 
-                            <TextField sx={{ mb: 2 }}
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Polish
+                            </InputLabel>
+                            <Select sx={{ mb: 2 }}
+                              multiple
+                              fullWidth
+                              value={changeData.polish || []}
+                              name="polish"
+                              onChange={handleProductFelids}
+                              renderValue={(selected) => selected.join(", ")}
+                            // MenuProps={MenuProps}
+                            >
+                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                                <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.polish.indexOf(
+                                        option.SKU
+                                      ) > -1
+                                    }
+                                  />
+                                  <ListItemText
+                                    primary={option.title}
+                                  />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {/* <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -10444,7 +10580,7 @@ const Sideform = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
 
 
                             <FormControl>
@@ -10752,6 +10888,20 @@ const Sideform = () => {
                                     </MenuItem>
                                   )
                               )}
+
+                               {/* {console.log(changeData.savedImages)} */}
+                               {changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -10785,6 +10935,20 @@ const Sideform = () => {
                                     </MenuItem>
                                   )
                               )}
+
+                               {/* {console.log(changeData.savedImages)} */}
+                               {changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -10816,6 +10980,19 @@ const Sideform = () => {
                                       </Box>
                                     </MenuItem>
                                   )
+                              )}
+                               {/* {console.log(changeData.savedImages)} */}
+                               {changeData.savedImages.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
+                                      {/* <h6>{option.name}</h6> */}
+                                    </Box>
+                                  </MenuItem>
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
