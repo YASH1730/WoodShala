@@ -50,7 +50,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 // import CollectionsIcon from "@mui/icons-material/Collections";
-// import DraftsIcon from '@mui/icons-material/Drafts';
+import DraftsIcon from '@mui/icons-material/Drafts';
 import GridViewIcon from '@mui/icons-material/GridView';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -64,40 +64,6 @@ import { DarkMode, SideTabs, Auth } from '../store/Types'
 const Home = (props) => {
 
   const { state, dispatch } = Store()
-
-  // const ModuleName = {
-  //   0: '/dashboard',
-  //   1: '/products',
-  //   2: '/merge',
-  //   3: '/gallery',
-  //   4: '/banner',
-  //   5: '/customer',
-  //   6: '/order',
-  //   7: '/coupons',
-  //   8: '/blogModule',
-  //   9: '/hardware',
-  //   10: '/draft',
-  //   11: '/stock',
-  //   12: '/profile'
-  // }
-  // const ModuleNumber = {
-  //   '/dashboard': 0,
-  //   '/products': 1,
-  //   '/merge': 2,
-  //   '/gallery': 3,
-  //   '/banner': 4,
-  //   '/customer': 5,
-  //   '/order': 6,
-  //   '/coupons': 7,
-  //   '/blogModule': 8,
-  //   '/hardware': 9,
-  //   '/draft': 10,
-  //   '/stock': 11,
-  //   '/profile': 12,
-  // }
-
-
-  // const [value, setValue] = useState(ModuleNumber[window.location.pathname]);
 
   const history = props.history;
 
@@ -136,7 +102,6 @@ const Home = (props) => {
 
 
 
-  // function a11yProps(index) {
   //   return {
   //     id: `vertical-tab-${index}`,
   //     "aria-controls": `vertical-tabpanel-${index}`,
@@ -428,6 +393,23 @@ const Home = (props) => {
                   </ListItem >
                 </List>
               </Collapse>
+
+              <ListItem button onClick={() => { history('/action'); handleClose(); }}>
+                <ListItemAvatar >
+                  <Avatar
+                    sx={{
+                      width: '30px',
+                      height: '30px',
+                      svg: {
+                        fontSize: '1.1rem'
+                      }
+                    }}>
+                    <DraftsIcon color={window.location.pathname === '/action' ? 'primary' : ''} />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary="Action Center" />
+              </ListItem>
+
 
               <ListItem button onClick={(e) => { setType({ ...type, order: !type.order }) }}>
                 <ListItemAvatar>

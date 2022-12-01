@@ -22,7 +22,7 @@ import Coupons from "./components/dashboard/Coupons";
 import OurStaff from "./components/dashboard/OurStaff";
 import Setting from "./components/dashboard/Setting";
 import Banner from "./components/dashboard/Banner";
-import Draft from "./components/dashboard/Draft";
+import Action from "./components/dashboard/Action";
 import Accessories from "./components/Accessories";
 // import Gallery from "./components/dashboard/Gallery";
 import Hardware from "./components/dashboard/Hardware";
@@ -54,7 +54,7 @@ function MyRoutes(){
     <Route exact path="/customer" element={<Customers history = {history} />} />
     <Route exact path="/create_order" element={<CreateOrder history = {history} />} />
     <Route exact path="/dashboard" element={<Dashboard history = {history} />} />
-    <Route exact path="/draft" element={<Draft history = {history} />} />
+    <Route exact path="/action" element={<Action history = {history} />} />
     {/* <Route exact path="/gallery" element={<Gallery history = {history} />} /> */}
     <Route exact path="/hardware" element={<Hardware history = {history} />} />
     <Route exact path="/inventory" element={<StockChannel history = {history} />} />

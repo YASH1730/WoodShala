@@ -53,19 +53,14 @@ import {
   getPolish,
   addHinge,
   editHinge,
-  getHinge,
   addFitting,
   editFitting,
-  getFitting,
   addKnob,
-  getKnob,
   editKnob,
   addDoor,
-  getDoor,
   updateImage,
   editDoor,
   addHandle,
-  getHandle,
   editHandle,
   addImage,
   uploadImage,
@@ -92,7 +87,9 @@ import {
   addStock,
   updateStock,
   variation,
-  getHardwareDropdown
+  getHardwareDropdown,
+  getDraftID,
+  addDraft
 } from "../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -154,7 +151,7 @@ const style = {
   p: 3,
 };
 
-const Sideform = () => {
+const SideForm = () => {
   // multiple images
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
@@ -631,11 +628,6 @@ const Sideform = () => {
   const [materialCatalog, setMaterialCatalog] = useState([]);
   const [polishCatalog, setPolishCatalog] = useState([]);
   const [textileCatalog, setTextileCatalog] = useState([]);
-  // const [hingeCatalog, setHingeCatalog] = useState([]);
-  // const [fittingCatalog, setFittingCatalog] = useState([]);
-  // const [knobCatalog, setKnobCatalog] = useState([]);
-  // const [doorCatalog, setDoorCatalog] = useState([]);
-  // const [handleCatalog, setHandleCatalog] = useState([]);
   const [fabricCatalog, setFabricCatalog] = useState([]);
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
@@ -810,7 +802,8 @@ const Sideform = () => {
         })
         break;
       case "product":
-        getSKU();
+        // getSKU();
+        getDID();
 
         getHardwareDropdown().then((data)=>{
           if(data.data !== null) return setCatalog(data.data)
@@ -1199,6 +1192,9 @@ const Sideform = () => {
         break;
       case "update_product":
 
+        getDID();
+
+
         getHardwareDropdown().then((data)=>{
           if(data.data !== null) return setCatalog(data.data)
         })
@@ -1221,53 +1217,7 @@ const Sideform = () => {
           return setMaterialCatalog(data.data);
         });
 
-        // getPolish().then((data) => {
-        //   if (data.data === null) return setPolishCatalog([]);
-
-        //   return setPolishCatalog(data.data);
-        // });
-
-        // getTextile().then((data) => {
-        //   if (data.data === null) return setTextileCatalog([]);
-        //   return setTextileCatalog(data.data);
-        // });
-
-        // getHinge().then((data) => {
-        //   if (data.data === null) return setHingeCatalog([]);
-
-        //   return setHingeCatalog(data.data);
-        // });
-
-        // getFitting().then((data) => {
-        //   if (data.data === null) return setFittingCatalog([]);
-
-        //   return setFittingCatalog(data.data);
-        // });
-
-        // getKnob().then((data) => {
-        //   if (data.data === null) return setKnobCatalog([]);
-
-        //   return setKnobCatalog(data.data);
-        // });
-
-        // getDoor().then((data) => {
-        //   if (data.data === null) return setDoorCatalog([]);
-
-        //   return setDoorCatalog(data.data);
-        // });
-
-        // getHandle().then((data) => {
-        //   if (data.data === null) return setHandleCatalog([]);
-
-        //   return setHandleCatalog(data.data);
-        // });
-
-        // getFabric().then((data) => {
-        //   if (data.data === null) return setFabricCatalog([]);
-
-        //   return setFabricCatalog(data.data);
-        // });
-        // console.log(state.OpenBox.payload)
+       
         setData({
           _id: state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id,
           assembly_level: state.OpenBox.payload.row.action.assembly_level,
@@ -1858,6 +1808,23 @@ const Sideform = () => {
           setSKU(`OID-0${index}`);
         } else {
           setSKU("OID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product DID ID
+
+  const getDID = () => {
+    getDraftID()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
+
+          setSKU(`DID-0${index}`);
+        } else {
+          setSKU("DID-01001");
         }
       })
       .catch((err) => {
@@ -2517,6 +2484,14 @@ const Sideform = () => {
 
     const FD = new FormData();
 
+
+    FD.append("DID",SKU);
+    FD.append("AID", 'Not Assigned '+SKU);
+    FD.append("type", 'Product');
+    FD.append("operation", 'insertProduct');
+
+    FD.append("SKU", 'Not Assigned '+SKU);
+
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
     });
@@ -2641,7 +2616,6 @@ const Sideform = () => {
     FD.append("product_title", changeData.product_title);
     FD.append("product_description", changeData.product_description);
     FD.append("selling_points", JSON.stringify(changeData.selling_points));
-    FD.append("SKU", SKU);
     FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
     FD.append(
       "showroom_price",
@@ -2797,7 +2771,7 @@ const Sideform = () => {
     FD.append("stackable", changeData.stackable ? changeData.stackable : false);
     FD.append("tax_rate", changeData.tax_rate);
 
-    const res = addProduct(FD);
+    const res = addDraft(FD);
 
 
     res
@@ -2813,96 +2787,96 @@ const Sideform = () => {
             }
           });
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            SKU: data.data.response.SKU,
-            product_title: data.data.response.product_title,
-            category_name: data.data.response.category_name,
-            category_id: data.data.response.category_id,
-            sub_category_name: data.data.response.sub_category_name,
-            sub_category_id: data.data.response.sub_category_id,
-            product_description: data.data.response.product_description,
-            seo_title: data.data.response.seo_title,
-            seo_description: data.data.response.seo_description,
-            seo_keyword: data.data.response.seo_keyword,
-            product_image: data.data.response.product_image,
-            featured_image: data.data.response.featured_image,
-            specification_image: data.data.response.specification_image,
-            mannequin_image: data.data.response.mannequin_image,
-            primary_material: data.data.response.primary_material,
-            warehouse: data.data.response.warehouse,
-            primary_material_name: data.data.response.primary_material_name,
-            length_main: data.data.response.length_main,
-            breadth: data.data.response.breadth,
-            height: data.data.response.height,
-            bangalore_stock: data.data.response.bangalore_stock,
-            jodhpur_stock: data.data.response.jodhpur_stock,
-            weight: data.data.response.weight,
-            polish: data.data.response.polish,
-            polish_name: data.data.response.polish_name,
-            hinge: data.data.response.hinge,
-            hinge_name: data.data.response.hinge_name,
-            knob: data.data.response.knob,
-            textile: data.data.response.textile,
-            knob_name: data.data.response.knob_name,
-            textile_name: data.data.response.textile_name,
-            textile_type: data.data.response.textile_type,
-            handle: data.data.response.handle,
-            handle_name: data.data.response.handle_name,
-            door: data.data.response.door,
-            door_name: data.data.response.door_name,
-            fitting: data.data.response.fitting,
-            fitting_name: data.data.response.fitting_name,
-            selling_points: data.data.response.selling_points,
-            top_size: data.data.response.top_size,
-            dial_size: data.data.response.dial_size,
-            seating_size_width: data.data.response.seating_size_width,
-            seating_size_depth: data.data.response.seating_size_depth,
-            seating_size_height: data.data.response.seating_size_height,
-            weight_capacity: data.data.response.weight_capacity,
-            fabric: data.data.response.fabric,
-            fabric_name: data.data.response.fabric_name,
-            wall_hanging: data.data.response.wall_hanging,
-            assembly_required: data.data.response.assembly_required,
-            assembly_part: data.data.response.assembly_part,
-            legs: data.data.response.legs,
-            mirror: data.data.response.mirror,
-            mirror_length: data.data.response.mirror_length,
-            mirror_width: data.data.response.mirror_width,
-            silver: data.data.response.silver,
-            silver_weight: data.data.response.silver_weight,
-            joints: data.data.response.joints,
-            upholstery: data.data.response.upholstery,
-            wheel: data.data.response.wheel,
-            trolley: data.data.response.trolley,
-            trolley_material: data.data.response.trolley_material,
-            rotating_seats: data.data.response.rotating_seats,
-            eatable_oil_polish: data.data.response.eatable_oil_polish,
-            no_chemical: data.data.response.no_chemical,
-            straight_back: data.data.response.straight_back,
-            lean_back: data.data.response.lean_back,
-            weaving: data.data.response.weaving,
-            knife: data.data.response.knife,
-            not_suitable_for_Micro_Dish: data.data.response.not_suitable_for_Micro_Dish,
-            tilt_top: data.data.response.tilt_top,
-            inside_compartments: data.data.response.inside_compartments,
-            stackable: data.data.response.stackable,
-            MRP: data.data.response.MRP,
-            tax_rate: data.data.response.tax_rate,
-            selling_price: data.data.response.selling_price,
-            showroom_price: data.data.response.showroom_price,
-            discount_limit: data.data.response.discount_limit,
-            polish_time: data.data.response.polish_time,
-            manufacturing_time: data.data.response.manufacturing_time,
-            status: data.data.response.status,
-            returnDays: data.data.response.returnDays,
-            COD: data.data.response.COD,
-            returnable: data.data.response.returnable,
-            drawer: data.data.response.drawer,
-            drawer_count: data.data.response.drawer_count,
-            range: data.data.response.range,
-            action: data.data.response
-          }])
+          // state.OpenBox.setRow([...state.OpenBox.row, {
+          //   id: state.OpenBox.row.length + 1,
+          //   SKU: data.data.response.SKU,
+          //   product_title: data.data.response.product_title,
+          //   category_name: data.data.response.category_name,
+          //   category_id: data.data.response.category_id,
+          //   sub_category_name: data.data.response.sub_category_name,
+          //   sub_category_id: data.data.response.sub_category_id,
+          //   product_description: data.data.response.product_description,
+          //   seo_title: data.data.response.seo_title,
+          //   seo_description: data.data.response.seo_description,
+          //   seo_keyword: data.data.response.seo_keyword,
+          //   product_image: data.data.response.product_image,
+          //   featured_image: data.data.response.featured_image,
+          //   specification_image: data.data.response.specification_image,
+          //   mannequin_image: data.data.response.mannequin_image,
+          //   primary_material: data.data.response.primary_material,
+          //   warehouse: data.data.response.warehouse,
+          //   primary_material_name: data.data.response.primary_material_name,
+          //   length_main: data.data.response.length_main,
+          //   breadth: data.data.response.breadth,
+          //   height: data.data.response.height,
+          //   bangalore_stock: data.data.response.bangalore_stock,
+          //   jodhpur_stock: data.data.response.jodhpur_stock,
+          //   weight: data.data.response.weight,
+          //   polish: data.data.response.polish,
+          //   polish_name: data.data.response.polish_name,
+          //   hinge: data.data.response.hinge,
+          //   hinge_name: data.data.response.hinge_name,
+          //   knob: data.data.response.knob,
+          //   textile: data.data.response.textile,
+          //   knob_name: data.data.response.knob_name,
+          //   textile_name: data.data.response.textile_name,
+          //   textile_type: data.data.response.textile_type,
+          //   handle: data.data.response.handle,
+          //   handle_name: data.data.response.handle_name,
+          //   door: data.data.response.door,
+          //   door_name: data.data.response.door_name,
+          //   fitting: data.data.response.fitting,
+          //   fitting_name: data.data.response.fitting_name,
+          //   selling_points: data.data.response.selling_points,
+          //   top_size: data.data.response.top_size,
+          //   dial_size: data.data.response.dial_size,
+          //   seating_size_width: data.data.response.seating_size_width,
+          //   seating_size_depth: data.data.response.seating_size_depth,
+          //   seating_size_height: data.data.response.seating_size_height,
+          //   weight_capacity: data.data.response.weight_capacity,
+          //   fabric: data.data.response.fabric,
+          //   fabric_name: data.data.response.fabric_name,
+          //   wall_hanging: data.data.response.wall_hanging,
+          //   assembly_required: data.data.response.assembly_required,
+          //   assembly_part: data.data.response.assembly_part,
+          //   legs: data.data.response.legs,
+          //   mirror: data.data.response.mirror,
+          //   mirror_length: data.data.response.mirror_length,
+          //   mirror_width: data.data.response.mirror_width,
+          //   silver: data.data.response.silver,
+          //   silver_weight: data.data.response.silver_weight,
+          //   joints: data.data.response.joints,
+          //   upholstery: data.data.response.upholstery,
+          //   wheel: data.data.response.wheel,
+          //   trolley: data.data.response.trolley,
+          //   trolley_material: data.data.response.trolley_material,
+          //   rotating_seats: data.data.response.rotating_seats,
+          //   eatable_oil_polish: data.data.response.eatable_oil_polish,
+          //   no_chemical: data.data.response.no_chemical,
+          //   straight_back: data.data.response.straight_back,
+          //   lean_back: data.data.response.lean_back,
+          //   weaving: data.data.response.weaving,
+          //   knife: data.data.response.knife,
+          //   not_suitable_for_Micro_Dish: data.data.response.not_suitable_for_Micro_Dish,
+          //   tilt_top: data.data.response.tilt_top,
+          //   inside_compartments: data.data.response.inside_compartments,
+          //   stackable: data.data.response.stackable,
+          //   MRP: data.data.response.MRP,
+          //   tax_rate: data.data.response.tax_rate,
+          //   selling_price: data.data.response.selling_price,
+          //   showroom_price: data.data.response.showroom_price,
+          //   discount_limit: data.data.response.discount_limit,
+          //   polish_time: data.data.response.polish_time,
+          //   manufacturing_time: data.data.response.manufacturing_time,
+          //   status: data.data.response.status,
+          //   returnDays: data.data.response.returnDays,
+          //   COD: data.data.response.COD,
+          //   returnable: data.data.response.returnable,
+          //   drawer: data.data.response.drawer,
+          //   drawer_count: data.data.response.drawer_count,
+          //   range: data.data.response.range,
+          //   action: data.data.response
+          // }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -3367,9 +3341,16 @@ const Sideform = () => {
   };
   const handleUpdateProduct = (e) => {
     e.preventDefault();
-
+    
     const FD = new FormData();
     let multiOBJ = {};
+
+
+    FD.append("DID",SKU);
+    FD.append("AID", changeData.SKU);
+    FD.append("type", 'Product');
+    FD.append("operation", 'updateProduct');
+
 
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
@@ -3667,7 +3648,7 @@ const Sideform = () => {
     FD.append("stackable", changeData.stackable ? changeData.stackable : false);
     FD.append("tax_rate", changeData.tax_rate);
 
-    const res = updateProduct(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -3681,98 +3662,99 @@ const Sideform = () => {
             }
           });
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
-              set.SKU = changeData.SKU
-              set.product_title = changeData.product_title
-              set.category_name = multiOBJ.category_name || changeData.category_name
-              set.sub_category_name = multiOBJ.sub_category_name || changeData.sub_category_name
-              set.product_description = changeData.product_description
-              set.product_image = data.data.image
-              set.seo_title = changeData.seo_title
-              set.seo_description = changeData.seo_description
-              set.seo_keyword = changeData.seo_keyword
-              set.featured_image = featured[0] !== undefined ? `${imageLink}${featured[0].path}` : changeData.featured_image
-              set.specification_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
-              set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
-              set.primary_material = changeData.primary_material
-              set.warehouse = changeData.warehouse
-              // set.warehouse_name = changeData.warehouse_name
-              set.primary_material_name = changeData.primary_material_name
-              set.length_main = changeData.length_main
-              set.breadth = changeData.breadth
-              set.height = changeData.height
-              set.bangalore_stock = changeData.bangalore_stock
-              set.jodhpur_stock = changeData.jodhpur_stock
-              set.weight = changeData.weight
-              set.hinge = multiOBJ.hinge_name || changeData.hinge_name
-              set.knob = multiOBJ.knob_name || changeData.knob_name
-              set.textile = multiOBJ.textile_name || changeData.textile_name
-              set.textile_type = multiOBJ.textile_type || changeData.textile_type
-              set.handle = multiOBJ.handle_name || changeData.handle_name
-              set.door = multiOBJ.door_name || changeData.door_name
-              set.fitting = multiOBJ.fitting_name || changeData.fitting_name
-              set.selling_points = changeData.selling_points
-              set.top_size = changeData.top_size
-              set.dial_size = changeData.dial_size
-              set.seating_size_width = changeData.seating_size_width
-              set.seating_size_depth = changeData.seating_size_depth
-              set.seating_size_height = changeData.seating_size_height
-              set.weight_capacity = changeData.weight_capacity
-              set.fabric = changeData.fabric
-              set.fabric_name = changeData.fabric_name
-              set.wall_hanging = changeData.wall_hanging
-              set.assembly_required = changeData.assembly_required
-              set.assembly_part = changeData.assembly_part
-              set.assembly_level = changeData.assembly_level
-              set.legs = changeData.legs
-              set.mirror = changeData.mirror
-              set.mirror_length = changeData.mirror_length
-              set.mirror_width = changeData.mirror_width
-              set.silver = changeData.silver
-              set.silver_weight = changeData.silver_weight
-              set.joints = changeData.joints
-              set.upholstery = changeData.upholstery
-              set.wheel = changeData.wheel
-              set.trolley = changeData.trolley
-              set.trolley_material = changeData.trolley_material
-              set.rotating_seats = changeData.rotating_seats
-              set.eatable_oil_polish = changeData.eatable_oil_polish
-              set.no_chemical = changeData.no_chemical
-              set.straight_back = changeData.straight_back
-              set.lean_back = changeData.lean_back
-              set.weaving = changeData.weaving
-              set.knife = changeData.knife
-              set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
-              set.tilt_top = changeData.tilt_top
-              set.inside_compartments = changeData.inside_compartments
-              set.stackable = changeData.stackable
-              set.MRP = changeData.MRP
-              set.tax_rate = changeData.tax_rate
-              set.selling_price = changeData.selling_price
-              set.showroom_price = changeData.showroom_price
-              set.discount_limit = changeData.discount_limit
-              set.polish_time = changeData.polish_time
-              set.manufacturing_time = changeData.manufacturing_time
-              set.status = changeData.status
-              set.returnDays = changeData.returnDays
-              set.COD = changeData.COD
-              set.returnable = changeData.returnable
-              set.drawer = changeData.drawer
-              set.drawer_count = changeData.drawer_count
-              set.mobile_store = changeData.mobile_store
-              set.online_store = changeData.online_store
-              set.continue_selling = changeData.continue_selling
-              set.range = changeData.range
-              set.action = changeData
-              set.polish = changeData.polish
-              set.action.polish_name = JSON.stringify(changeData.polish)
-              set.action.warehouse_name = JSON.stringify(changeData.warehouse)
-              set.action.primary_material_name = JSON.stringify(changeData.primary_material)
-              return set
-            }
-            else return set;
-          }))
+          // console.log(state.OpenBox.row)
+          // state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+          //   if (set.action === state.OpenBox.payload.row.action) {
+          //     set.SKU = changeData.SKU
+          //     set.product_title = changeData.product_title
+          //     set.category_name = multiOBJ.category_name || changeData.category_name
+          //     set.sub_category_name = multiOBJ.sub_category_name || changeData.sub_category_name
+          //     set.product_description = changeData.product_description
+          //     set.product_image = data.data.image
+          //     set.seo_title = changeData.seo_title
+          //     set.seo_description = changeData.seo_description
+          //     set.seo_keyword = changeData.seo_keyword
+          //     set.featured_image = featured[0] !== undefined ? `${imageLink}${featured[0].path}` : changeData.featured_image
+          //     set.specification_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
+          //     set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
+          //     set.primary_material = changeData.primary_material
+          //     set.warehouse = changeData.warehouse
+          //     // set.warehouse_name = changeData.warehouse_name
+          //     set.primary_material_name = changeData.primary_material_name
+          //     set.length_main = changeData.length_main
+          //     set.breadth = changeData.breadth
+          //     set.height = changeData.height
+          //     set.bangalore_stock = changeData.bangalore_stock
+          //     set.jodhpur_stock = changeData.jodhpur_stock
+          //     set.weight = changeData.weight
+          //     set.hinge = multiOBJ.hinge_name || changeData.hinge_name
+          //     set.knob = multiOBJ.knob_name || changeData.knob_name
+          //     set.textile = multiOBJ.textile_name || changeData.textile_name
+          //     set.textile_type = multiOBJ.textile_type || changeData.textile_type
+          //     set.handle = multiOBJ.handle_name || changeData.handle_name
+          //     set.door = multiOBJ.door_name || changeData.door_name
+          //     set.fitting = multiOBJ.fitting_name || changeData.fitting_name
+          //     set.selling_points = changeData.selling_points
+          //     set.top_size = changeData.top_size
+          //     set.dial_size = changeData.dial_size
+          //     set.seating_size_width = changeData.seating_size_width
+          //     set.seating_size_depth = changeData.seating_size_depth
+          //     set.seating_size_height = changeData.seating_size_height
+          //     set.weight_capacity = changeData.weight_capacity
+          //     set.fabric = changeData.fabric
+          //     set.fabric_name = changeData.fabric_name
+          //     set.wall_hanging = changeData.wall_hanging
+          //     set.assembly_required = changeData.assembly_required
+          //     set.assembly_part = changeData.assembly_part
+          //     set.assembly_level = changeData.assembly_level
+          //     set.legs = changeData.legs
+          //     set.mirror = changeData.mirror
+          //     set.mirror_length = changeData.mirror_length
+          //     set.mirror_width = changeData.mirror_width
+          //     set.silver = changeData.silver
+          //     set.silver_weight = changeData.silver_weight
+          //     set.joints = changeData.joints
+          //     set.upholstery = changeData.upholstery
+          //     set.wheel = changeData.wheel
+          //     set.trolley = changeData.trolley
+          //     set.trolley_material = changeData.trolley_material
+          //     set.rotating_seats = changeData.rotating_seats
+          //     set.eatable_oil_polish = changeData.eatable_oil_polish
+          //     set.no_chemical = changeData.no_chemical
+          //     set.straight_back = changeData.straight_back
+          //     set.lean_back = changeData.lean_back
+          //     set.weaving = changeData.weaving
+          //     set.knife = changeData.knife
+          //     set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
+          //     set.tilt_top = changeData.tilt_top
+          //     set.inside_compartments = changeData.inside_compartments
+          //     set.stackable = changeData.stackable
+          //     set.MRP = changeData.MRP
+          //     set.tax_rate = changeData.tax_rate
+          //     set.selling_price = changeData.selling_price
+          //     set.showroom_price = changeData.showroom_price
+          //     set.discount_limit = changeData.discount_limit
+          //     set.polish_time = changeData.polish_time
+          //     set.manufacturing_time = changeData.manufacturing_time
+          //     set.status = changeData.status
+          //     set.returnDays = changeData.returnDays
+          //     set.COD = changeData.COD
+          //     set.returnable = changeData.returnable
+          //     set.drawer = changeData.drawer
+          //     set.drawer_count = changeData.drawer_count
+          //     set.mobile_store = changeData.mobile_store
+          //     set.online_store = changeData.online_store
+          //     set.continue_selling = changeData.continue_selling
+          //     set.range = changeData.range
+          //     set.action = changeData
+          //     set.polish = changeData.polish
+          //     set.action.polish_name = JSON.stringify(changeData.polish)
+          //     set.action.warehouse_name = JSON.stringify(changeData.warehouse)
+          //     set.action.primary_material_name = JSON.stringify(changeData.primary_material)
+          //     return set
+          //   }
+          //   else return set;
+          // }))
 
           handleClose();
           dispatch({
@@ -16850,4 +16832,4 @@ const Sideform = () => {
   );
 };
 
-export default Sideform;
+export default SideForm;
