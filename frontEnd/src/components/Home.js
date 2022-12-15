@@ -583,8 +583,7 @@ const Home = (props) => {
                     <ListItemText primary="User" />
                   </ListItem>
 
-
-                  <ListItem button sx={{ pl: 4 }} onClick={() => { history('/admin'); handleClose(); }}>
+                  <ListItem sx={{ pl: 4 }} button onClick={() => { history('/suppliers'); handleClose(); }}>
                     <ListItemAvatar>
                       <Avatar
                         sx={{
@@ -594,7 +593,24 @@ const Home = (props) => {
                             fontSize: '1rem'
                           }
                         }}>
-                        <SettingsOutlinedIcon color={window.location.pathname === '/admin' ? 'primary' : ''} />
+                        <AssignmentIndIcon color={window.location.pathname === '/suppliers' ? 'primary' : ''} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Suppliers" />
+                  </ListItem>
+
+
+                  <ListItem button sx={{ pl: 4 }} onClick={() => { history('/settings'); handleClose(); }}>
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: '30px',
+                          height: '30px',
+                          svg: {
+                            fontSize: '1rem'
+                          }
+                        }}>
+                        <SettingsOutlinedIcon color={window.location.pathname === '/settings' ? 'primary' : ''} />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary="Settings" />

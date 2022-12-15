@@ -26,6 +26,7 @@ import {
   TextareaAutosize,
   ListItemText,
   InputLabel,
+  Autocomplete
 } from "@mui/material";
 import { Editor } from "@tinymce/tinymce-react";
 import Slide from "@mui/material/Slide";
@@ -38,9 +39,7 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   addCategory,
   editCategory,
-  addProduct,
   getLastProduct,
-  updateProduct,
   categoryList,
   addSubCategories,
   getSubCatagories,
@@ -48,27 +47,10 @@ import {
   addPrimaryMaterial,
   editPrimaryMaterial,
   getPrimaryMaterial,
-  addPolish,
-  editPolish,
-  getPolish,
-  addHinge,
-  editHinge,
-  addFitting,
-  editFitting,
-  addKnob,
-  editKnob,
-  addDoor,
-  updateImage,
-  editDoor,
-  addHandle,
-  editHandle,
-  addImage,
-  uploadImage,
+  addSupplier,
+  editSupplier,
   createBlog,
   updateBlog,
-  addFabric,
-  editFabric,
-  getFabric,
   addHardware,
   editHardware,
   addTextile,
@@ -84,12 +66,17 @@ import {
   addOrder,
   getLastOrder,
   customerCatalog,
-  addStock,
-  updateStock,
   variation,
   getHardwareDropdown,
   getDraftID,
-  addDraft
+  addDraft,
+  getArticlesId,
+  getLastSupplier,
+  getSupplierDropdown,
+  addInward,
+  addOutward,
+  uploadImage,
+  addTransfer
 } from "../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -608,6 +595,10 @@ const SideForm = () => {
     },
   ];
 
+  const purpose = [
+    'Manufacturing', 'Repairing', 'Polish', 'Packing', 'Shipping' ,'Others'
+  ]
+
 
 
   // global context 
@@ -626,22 +617,22 @@ const SideForm = () => {
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [materialCatalog, setMaterialCatalog] = useState([]);
-  const [polishCatalog, setPolishCatalog] = useState([]);
   const [textileCatalog, setTextileCatalog] = useState([]);
   const [fabricCatalog, setFabricCatalog] = useState([]);
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
+  const [productSKU, setProductSKU] = useState({P_SKU : [], H_SKU : [], supplier : []});
 
-  const [catalog,setCatalog] = useState({
-    hinge : [],
-    knob : [],
-    door : [],
-    handle : [],
-    fitting : [],
-    polish : [],
-    fabric : [],
-    textile : []
-})
+  const [catalog, setCatalog] = useState({
+    hinge: [],
+    knob: [],
+    door: [],
+    handle: [],
+    fitting: [],
+    polish: [],
+    fabric: [],
+    textile: []
+  })
 
   // ref
   const editorRef = useRef();
@@ -650,6 +641,9 @@ const SideForm = () => {
   // pres data
   const [changeData, setData] = useState({
     primary_material: [],
+    product_articles : [],
+    hardware_articles : [],
+    supplier : '',
     range: "",
     product_array: [],
     variation_array: [],
@@ -805,8 +799,8 @@ const SideForm = () => {
         // getSKU();
         getDID();
 
-        getHardwareDropdown().then((data)=>{
-          if(data.data !== null) return setCatalog(data.data)
+        getHardwareDropdown().then((data) => {
+          if (data.data !== null) return setCatalog(data.data)
         })
 
         categoryList().then((data) => {
@@ -826,60 +820,13 @@ const SideForm = () => {
 
           return setMaterialCatalog(data.data);
         });
-
-        // getPolish().then((data) => {
-        //   if (data.data === null) return setPolishCatalog([]);
-
-        //   return setPolishCatalog(data.data);
-        // });
-
-        // getTextile().then((data) => {
-        //   if (data.data === null) return setTextileCatalog([]);
-        //   return setTextileCatalog(data.data);
-        // });
-
-        // getHinge().then((data) => {
-        //   if (data.data === null) return setHingeCatalog([]);
-
-        //   return setHingeCatalog(data.data);
-        // });
-
-        // getFitting().then((data) => {
-        //   if (data.data === null) return setFittingCatalog([]);
-
-        //   return setFittingCatalog(data.data);
-        // });
-
-        // getKnob().then((data) => {
-        //   if (data.data === null) return setKnobCatalog([]);
-
-        //   return setKnobCatalog(data.data);
-        // });
-
-        // getDoor().then((data) => {
-        //   if (data.data === null) return setDoorCatalog([]);
-
-        //   return setDoorCatalog(data.data);
-        // });
-
-        // getHandle().then((data) => {
-        //   if (data.data === null) return setHandleCatalog([]);
-
-        //   return setHandleCatalog(data.data);
-        // });
-
-        // getFabric().then((data) => {
-        //   if (data.data === null) return setFabricCatalog([]);
-
-        //   return setFabricCatalog(data.data);
-        // });
 
         break;
       case "variation":
         getSKU();
 
-        getHardwareDropdown().then((data)=>{
-          if(data.data !== null) return setCatalog(data.data)
+        getHardwareDropdown().then((data) => {
+          if (data.data !== null) return setCatalog(data.data)
         })
 
         categoryList().then((data) => {
@@ -900,53 +847,7 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-        // getPolish().then((data) => {
-        //   if (data.data === null) return setPolishCatalog([]);
-
-        //   return setPolishCatalog(data.data);
-        // });
-
-        // getTextile().then((data) => {
-        //   if (data.data === null) return setTextileCatalog([]);
-        //   return setTextileCatalog(data.data);
-        // });
-
-        // getHinge().then((data) => {
-        //   if (data.data === null) return setHingeCatalog([]);
-
-        //   return setHingeCatalog(data.data);
-        // });
-
-        // getFitting().then((data) => {
-        //   if (data.data === null) return setFittingCatalog([]);
-
-        //   return setFittingCatalog(data.data);
-        // });
-
-        // getKnob().then((data) => {
-        //   if (data.data === null) return setKnobCatalog([]);
-
-        //   return setKnobCatalog(data.data);
-        // });
-
-        // getDoor().then((data) => {
-        //   if (data.data === null) return setDoorCatalog([]);
-
-        //   return setDoorCatalog(data.data);
-        // });
-
-        // getHandle().then((data) => {
-        //   if (data.data === null) return setHandleCatalog([]);
-
-        //   return setHandleCatalog(data.data);
-        // });
-
-        // getFabric().then((data) => {
-        //   if (data.data === null) return setFabricCatalog([]);
-
-        //   return setFabricCatalog(data.data);
-        // });
-        // console.log(state.OpenBox.payload)
+        
         const data = state.OpenBox.payload.row.action;
         console.log(data)
         setData({
@@ -1101,67 +1002,6 @@ const SideForm = () => {
             state.OpenBox.payload.row.primaryMaterial_description,
         });
         break;
-      case "update_polish":
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
-
-          return setPolishCatalog(data.data);
-        });
-
-        setData({
-          polish: state.OpenBox.payload.row.polish_name,
-        });
-        break;
-      // case "update_knob":
-      //   getKnob().then((data) => {
-      //     if (data.data === null) return setKnobCatalog([]);
-      //     return setKnobCatalog(data.data);
-      //   });
-      //   setData({
-      //     knob: state.OpenBox.payload.row.knob_name,
-      //   });
-      //   break;
-      // case "update_fitting":
-      //   getFitting().then((data) => {
-      //     if (data.data === null) return setFittingCatalog([]);
-
-      //     return setFittingCatalog(data.data);
-      //   });
-      //   setData({
-      //     fitting: state.OpenBox.payload.row.fitting_name,
-      //   });
-      //   break;
-      // case "update_hinge":
-      //   getHinge().then((data) => {
-      //     if (data.data === null) return setHingeCatalog([]);
-
-      //     return setHingeCatalog(data.data);
-      //   });
-      //   setData({
-      //     hinge: state.OpenBox.payload.row.hinge_name,
-      //   });
-      //   break;
-      // case "update_door":
-      //   getDoor().then((data) => {
-      //     if (data.data === null) return setDoorCatalog([]);
-
-      //     return setDoorCatalog(data.data);
-      //   });
-      //   setData({
-      //     door: state.OpenBox.payload.row.door_name,
-      //   });
-      //   break;
-      // case "update_handle":
-        // getHandle().then((data) => {
-        //   if (data.data === null) return setHandleCatalog([]);
-
-        //   return setHandleCatalog(data.data);
-        // });
-
-        // setData({
-        //   handle: state.OpenBox.payload.row.handle_name,
-        // });
-        // break;
       case "subcategory":
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1195,8 +1035,8 @@ const SideForm = () => {
         getDID();
 
 
-        getHardwareDropdown().then((data)=>{
-          if(data.data !== null) return setCatalog(data.data)
+        getHardwareDropdown().then((data) => {
+          if (data.data !== null) return setCatalog(data.data)
         })
 
         categoryList().then((data) => {
@@ -1217,7 +1057,7 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-       
+
         setData({
           _id: state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id,
           assembly_level: state.OpenBox.payload.row.action.assembly_level,
@@ -1332,17 +1172,6 @@ const SideForm = () => {
         setCat(state.OpenBox.payload.row.action.category_id);
 
         break;
-      // case "update_fabric":
-      //   getFitting().then((data) => {
-      //     if (data.data === null) return setFittingCatalog([]);
-
-      //     return setFittingCatalog(data.data);
-      //   });
-      //   setData({
-      //     ...changeData,
-      //     fabric_name: state.OpenBox.payload.row.fabric_name,
-      //   });
-      //   break;
       case "update_textile":
         getTextile().then((data) => {
           if (data.data === null) return setTextileCatalog([]);
@@ -1393,52 +1222,14 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
-
-          return setPolishCatalog(data.data);
-        });
-
+      
         getTextile().then((data) => {
           if (data.data === null) return setTextileCatalog([]);
           return setTextileCatalog(data.data);
         });
 
-        // getHinge().then((data) => {
-        //   if (data.data === null) return setHingeCatalog([]);
-
-        //   return setHingeCatalog(data.data);
-        // });
-
-        // getFitting().then((data) => {
-        //   if (data.data === null) return setFittingCatalog([]);
-
-        //   return setFittingCatalog(data.data);
-        // });
-
-        // getKnob().then((data) => {
-        //   if (data.data === null) return setKnobCatalog([]);
-
-        //   return setKnobCatalog(data.data);
-        // });
-
-        // getDoor().then((data) => {
-        //   if (data.data === null) return setDoorCatalog([]);
-
-        //   return setDoorCatalog(data.data);
-        // });
-
-        // getHandle().then((data) => {
-        //   if (data.data === null) return setHandleCatalog([]);
-
-        //   return setHandleCatalog(data.data);
-        // });
-
-        getFabric().then((data) => {
-          if (data.data === null) return setFabricCatalog([]);
-
-          return setFabricCatalog(data.data);
-        });
+   
+     
 
         let productArray = [];
 
@@ -1477,11 +1268,11 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-        getPolish().then((data) => {
-          if (data.data === null) return setPolishCatalog([]);
+        // getPolish().then((data) => {
+        //   if (data.data === null) return setPolishCatalog([]);
 
-          return setPolishCatalog(data.data);
-        });
+        //   return setPolishCatalog(data.data);
+        // });
 
         getTextile().then((data) => {
           if (data.data === null) return setTextileCatalog([]);
@@ -1518,11 +1309,7 @@ const SideForm = () => {
         //   return setHandleCatalog(data.data);
         // });
 
-        getFabric().then((data) => {
-          if (data.data === null) return setFabricCatalog([]);
-
-          return setFabricCatalog(data.data);
-        });
+       
 
         setData({
           SKU: state.OpenBox.payload.value.SKU,
@@ -1581,7 +1368,23 @@ const SideForm = () => {
           warehouse: state.OpenBox.payload.row.warehouse,
         });
         break
-      default:
+      case 'update_supplier':
+        setData({
+          ...changeData,
+          _id: state.OpenBox.payload.row._id,
+          supplier_name : state.OpenBox.payload.row.supplier_name, 
+          mobile : state.OpenBox.payload.row.mobile, 
+          gst_no : state.OpenBox.payload.row.gst_no, 
+          alt_mobile : state.OpenBox.payload.row.alt_mobile, 
+          specialization : state.OpenBox.payload.row.specialization, 
+          SID : state.OpenBox.payload.row.SID, 
+          address : state.OpenBox.payload.row.address, 
+        });
+        break
+      case 'add_supplier':
+      getSID();  
+      break;
+        default:
       // //console.log("");
     }
   }, [state.OpenBox.formType, state.OpenBox.state]);
@@ -1645,10 +1448,10 @@ const SideForm = () => {
           hinge: e.target.value,
         });
         break;
-      case "update_door":
+      case "update_supplier":
         setData({
           ...changeData,
-          door: e.target.value,
+          [e.target.name]: e.target.value,
         });
         break;
       case "update_handle":
@@ -1682,6 +1485,13 @@ const SideForm = () => {
         });
         break;
       case "update_textile":
+        setData({
+          ...changeData,
+          [e.target.name]: e.target.value,
+        });
+        break;
+      case "inward":
+        console.log(e.target)
         setData({
           ...changeData,
           [e.target.name]: e.target.value,
@@ -1816,6 +1626,23 @@ const SideForm = () => {
   };
   // function for generating product DID ID
 
+  const getSID = () => {
+    getLastSupplier()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].SID.split("-")[1]) + 1;
+
+          setSKU(`SID-0${index}`);
+        } else {
+          setSKU("SID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product DID ID
+
   const getDID = () => {
     getDraftID()
       .then((res) => {
@@ -1831,6 +1658,7 @@ const SideForm = () => {
         // //console.log(err);
       });
   };
+
 
   // function for handling category
   const handleTextile = (e) => {
@@ -1890,62 +1718,7 @@ const SideForm = () => {
         });
       });
   };
-  const handleFabric = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("fabric_image", Image[0]);
-    FD.append("fabric_name", e.target.fabric_name.value);
-    FD.append("fabric_status", e.target.fabric_status.checked);
-
-    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
-
-    const res = addFabric(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            fabric_name: data.data.response.fabric_name,
-            fabric_status: data.data.response.fabric_status,
-            fabric_image: data.data.response.fabric_image,
-            action: data.data.response
-          }])
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
+ 
 
   // function for handling category
   const handleCategory = (e) => {
@@ -2206,66 +1979,7 @@ const SideForm = () => {
         });
       });
   };
-  // function for handling update category
-  const handleUpdateFabric = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    Image[0] !== undefined && FD.append("fabric_image", Image[0]);
-
-    e.target.fabric_name.value !== ""
-      ? FD.append("fabric_name", e.target.fabric_name.value)
-      : console.log();
-
-    const res = editFabric(FD);
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          setImages([]);
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
-              set.fabric_name = e.target.fabric_name.value;
-              set.fabric_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
-
-            }
-            return set;
-          }))
-          setImages([]);
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
+ 
   // function for handling update category
   const handleUpdateCategory = (e) => {
     e.preventDefault();
@@ -2412,72 +2126,7 @@ const SideForm = () => {
     document.getElementById("myForm").reset();
   };
 
-  const handleAddImage = (e) => {
-    e.preventDefault();
-    const FD = new FormData();
-
-    files.map((element) => {
-      return FD.append("product_image", element);
-    });
-
-    FD.append("SKU", e.target.SKU.value);
-
-    const res = addImage(FD);
-
-    res
-      .then((data) => {
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }
-        });
-      })
-      .catch((data) => {
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }
-        });
-      });
-  };
-
-  const handleUpdateGallery = (e) => {
-    const FD = new FormData();
-
-    e.preventDefault();
-
-    FD.append("category_image", Image[0]);
-    FD.append("SKU", state.OpenBox.payload.SKU);
-    FD.append("ImageIndex", state.OpenBox.payload.imageIndex);
-
-    const res = updateImage(FD);
-
-    // //console.log(state.OpenBox.payload);
-
-    res
-      .then((data) => {
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }
-        });
-      })
-      .catch((data) => {
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }
-        });
-      });
-  };
+  
 
   const handleProduct = (e) => {
     e.preventDefault();
@@ -2485,12 +2134,12 @@ const SideForm = () => {
     const FD = new FormData();
 
 
-    FD.append("DID",SKU);
-    FD.append("AID", 'Not Assigned '+SKU);
+    FD.append("DID", SKU);
+    FD.append("AID", 'Not Assigned ' + SKU);
     FD.append("type", 'Product');
     FD.append("operation", 'insertProduct');
 
-    FD.append("SKU", 'Not Assigned '+SKU);
+    FD.append("SKU", 'Not Assigned ' + SKU);
 
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
@@ -2909,12 +2558,12 @@ const SideForm = () => {
     //   changeData.featured_image,
     //   changeData.mannequin_image)
 
-  
+
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
     });
     FD.append('savedImages', JSON.stringify(changeData.savedImages));
-    
+
 
     // Image.length > 0 ? Image.map((element) => {
     //   return FD.append("specification_image", element);
@@ -2928,9 +2577,9 @@ const SideForm = () => {
     //   return FD.append("mannequin_image", element);
     // }) : FD.append("mannequin_image", changeData.mannequin_image);
 
-     FD.append("specification_image", changeData.specification_image || '');
-     FD.append("featured_image", changeData.featured_image || '');
-     FD.append("mannequin_image", changeData.mannequin_image || '');
+    FD.append("specification_image", changeData.specification_image || '');
+    FD.append("featured_image", changeData.featured_image || '');
+    FD.append("mannequin_image", changeData.mannequin_image || '');
 
 
 
@@ -2994,7 +2643,7 @@ const SideForm = () => {
       );
     });
 
-    
+
     catalog.knob.map((item) => {
       // if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
 
@@ -3341,12 +2990,12 @@ const SideForm = () => {
   };
   const handleUpdateProduct = (e) => {
     e.preventDefault();
-    
+
     const FD = new FormData();
     let multiOBJ = {};
 
 
-    FD.append("DID",SKU);
+    FD.append("DID", SKU);
     FD.append("AID", changeData.SKU);
     FD.append("type", 'Product');
     FD.append("operation", 'updateProduct');
@@ -3425,7 +3074,7 @@ const SideForm = () => {
       );
     });
     catalog.hinge.map((item) => {
-      if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title}
+      if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title }
 
       return (
         item.SKU === changeData.hinge &&
@@ -3441,7 +3090,7 @@ const SideForm = () => {
       );
     });
 
-    
+
     catalog.knob.map((item) => {
       if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
 
@@ -4174,222 +3823,28 @@ const SideForm = () => {
       });
   };
 
-  const handleHandle = (e) => {
+
+
+//   function checksum(g){
+//     console.log(g)
+//     let val = g.target.value
+//     let regTest = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/.test(val)
+//     if(regTest) return regTest
+// }
+  const handleSupplier = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-    FD.append("handle_name", e.target.handle_name.value);
-    FD.append("handle_status", e.target.handle_status.checked);
+    FD.append("supplier_name", e.target.supplier_name.value);
+    FD.append("mobile", e.target.mobile.value);
+    FD.append("gst_no", e.target.gst_no.value);
+    FD.append("alt_mobile", e.target.alt_mobile.value);
+    FD.append("specialization", e.target.specialization.value);
+    FD.append("SID", e.target.SID.value);
+    FD.append("address", e.target.address.value);
 
-    const res = addHandle(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            handle_name: data.data.response.handle_name,
-            handle_status: data.data.response.handle_status,
-            action: data.data.response
-          }])
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-
-  const handleUpdateHandle = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    e.target.handle_name.value !== "" &&
-      FD.append("handle_name", e.target.handle_name.value);
-
-    const res = editHandle(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          setImages([]);
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action)
-              set.handle_name = e.target.handle_name.value;
-            return set;
-          }))
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-
-  const handleHinge = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("hinge_name", e.target.hinge_name.value);
-    FD.append("hinge_status", e.target.hinge_status.checked);
-
-    const res = addHinge(FD);
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            hinge_name: data.data.response.hinge_name,
-            hinge_status: data.data.response.hinge_status,
-            action: data.data.response
-          }])
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-
-  const handleUpdateHinge = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    e.target.hinge_name.value !== "" &&
-      FD.append("hinge_name", e.target.hinge_name.value);
-
-    const res = editHinge(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          setImages([]);
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action)
-              set.hinge_name = e.target.hinge_name.value;
-            return set;
-          }))
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-  const handleDoor = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("door_name", e.target.door_name.value);
-    FD.append("door_status", e.target.door_status.checked);
-
-    const res = addDoor(FD);
+    const res = addSupplier(FD);
 
     res
       .then((data) => {
@@ -4398,9 +3853,14 @@ const SideForm = () => {
         if (data.status === 200) {
           state.OpenBox.setRow([...state.OpenBox.row, {
             id: state.OpenBox.row.length + 1,
-            door_name: data.data.response.door_name,
-            door_status: data.data.response.door_status,
-            action: data.data.response
+            supplier_name : data.data.response.supplier_name,
+            mobile : data.data.response.mobile,
+            gst_no : data.data.response.gst_no,
+            alt_mobile : data.data.response.alt_mobile,
+            specialization : data.data.response.specialization,
+            SID : data.data.response.SID,
+            address : data.data.response.address,
+            action: data.data.response._id
           }])
           handleClose();
           dispatch({
@@ -4432,16 +3892,23 @@ const SideForm = () => {
       });
   };
 
-  const handleUpdateDoor = (e) => {
+  const handleUpdateSupplier = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
     FD.append("_id", state.OpenBox.payload.row.action);
 
-    e.target.door_name.value !== "" &&
-      FD.append("door_name", e.target.door_name.value);
 
-    const res = editDoor(FD);
+    FD.append("supplier_name", e.target.supplier_name.value);
+    FD.append("mobile", e.target.mobile.value);
+    FD.append("gst_no", e.target.gst_no.value);
+    FD.append("alt_mobile", e.target.alt_mobile.value);
+    FD.append("specialization", e.target.specialization.value);
+    FD.append("SID", e.target.SID.value);
+    FD.append("address", e.target.address.value);
+
+
+    const res = editSupplier(FD);
 
     res
       .then((data) => {
@@ -4459,7 +3926,13 @@ const SideForm = () => {
         } else {
           state.OpenBox.setRow(state.OpenBox.row.map((set) => {
             if (set.action === state.OpenBox.payload.row.action)
-              set.door_name = e.target.door_name.value;
+           { set.supplier_name = e.target.supplier_name.value
+            set.mobile = e.target.mobile.value
+            set.gst_no = e.target.gst_no.value
+            set.alt_mobile = e.target.alt_mobile.value
+            set.specialization = e.target.specialization.value
+            set.SID = e.target.SID.value
+            set.address = e.target.address.value  }
             return set;
           }))
           handleClose();
@@ -4485,21 +3958,24 @@ const SideForm = () => {
       });
   };
 
+ 
 
-  const handleKnob = (e) => {
-
+  const handleInward = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-    FD.append("knob_name", e.target.knob_name.value);
-    FD.append("knob_status", e.target.knob_status.checked);
+    FD.append('product_articles', changeData.product_articles)
+    FD.append('hardware_articles', changeData.hardware_articles)
+    FD.append('supplier', changeData.supplier)
+    FD.append('vehicle_no', e.target.vehicle_no.value)
+    FD.append('driver_name', e.target.driver_name.value)
+    FD.append('quantity', e.target.quantity.value)
 
-    const res = addKnob(FD);
+    const res = addInward(FD);
 
     res
       .then((data) => {
-        // //console.log(data.status);
 
         if (data.status === 203) {
           setImages([]);
@@ -4511,7 +3987,12 @@ const SideForm = () => {
             }
           });
         } else {
-          setImages([]);
+          // state.OpenBox.setRow([...state.OpenBox.row, {
+          //   id: state.OpenBox.row.length + 1,
+          //   polish_name: data.data.response.polish_name,
+          //   polish_status: data.data.response.polish_status,
+          //   action: data.data.response
+          // }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -4534,64 +4015,23 @@ const SideForm = () => {
         });
       });
   };
-  const handleUpdateKnob = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    e.target.knob_name.value !== "" &&
-      FD.append("knob_name", e.target.knob_name.value);
-
-    const res = editKnob(FD);
-
-    res
-      .then((data) => {
-        if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action)
-              set.knob_name = e.target.knob_name.value;
-            return set;
-          }))
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-
-  const handleFitting = (e) => {
+  const handleOutward = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-    FD.append("fitting_name", e.target.fitting_name.value);
-    FD.append("fitting_status", e.target.fitting_status.checked);
+    FD.append('product_articles', changeData.product_articles)
+    FD.append('hardware_articles', changeData.hardware_articles)
+    FD.append('supplier', changeData.supplier)
+    FD.append('purpose', changeData.purpose)
+    if (changeData.purpose === 'Others') FD.append('reason', e.target.reason.value)
+    FD.append('vehicle_no', e.target.vehicle_no.value)
+    FD.append('driver_name', e.target.driver_name.value)
+    FD.append('driver_no', e.target.driver_no.value)
+    FD.append('quantity', e.target.quantity.value)
 
-    const res = addFitting(FD);
+    
+    const res = addOutward(FD);
 
     res
       .then((data) => {
@@ -4607,13 +4047,12 @@ const SideForm = () => {
             }
           });
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            fitting_name: data.data.response.fitting_name,
-            fitting_status: data.data.response.fitting_status,
-            action: data.data.response
-          }])
-          setImages([]);
+          // state.OpenBox.setRow([...state.OpenBox.row, {
+          //   id: state.OpenBox.row.length + 1,
+          //   polish_name: data.data.response.polish_name,
+          //   polish_status: data.data.response.polish_status,
+          //   action: data.data.response
+          // }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -4626,7 +4065,6 @@ const SideForm = () => {
       })
       .catch((err) => {
         // //console.log(err);
-        setImages([]);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -4636,69 +4074,20 @@ const SideForm = () => {
         });
       });
   };
-
-  const handleUpdateFitting = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    e.target.fitting_name.value !== "" &&
-      FD.append("fitting_name", e.target.fitting_name.value);
-
-    const res = editFitting(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action)
-              set.fitting_name = e.target.fitting_name.value;
-            return set;
-          }))
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-
-  const handlePolish = (e) => {
+  const handleTransfer = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-    FD.append("polish_name", e.target.polish_name.value);
-    FD.append("polish_status", e.target.polish_status.checked);
+    FD.append('product_articles', changeData.product_articles || '')
+    FD.append('hardware_articles', changeData.hardware_articles || '')
+    FD.append('purpose', changeData.purpose)
+    if (changeData.purpose === 'Others')  FD.append('reason', e.target.reason.value)
+    FD.append('quantity', e.target.quantity.value)
+    FD.append('warehouse', e.target.warehouse.value)
 
-    const res = addPolish(FD);
+    
+    const res = addTransfer(FD);
 
     res
       .then((data) => {
@@ -4714,13 +4103,12 @@ const SideForm = () => {
             }
           });
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            polish_name: data.data.response.polish_name,
-            polish_status: data.data.response.polish_status,
-            action: data.data.response
-          }])
-          setImages([]);
+          // state.OpenBox.setRow([...state.OpenBox.row, {
+          //   id: state.OpenBox.row.length + 1,
+          //   polish_name: data.data.response.polish_name,
+          //   polish_status: data.data.response.polish_status,
+          //   action: data.data.response
+          // }])
           handleClose();
           dispatch({
             type: Notify, payload: {
@@ -4733,7 +4121,6 @@ const SideForm = () => {
       })
       .catch((err) => {
         // //console.log(err);
-        setImages([]);
         dispatch({
           type: Notify, payload: {
             open: true,
@@ -4743,59 +4130,7 @@ const SideForm = () => {
         });
       });
   };
-  const handleUpdatePolish = (e) => {
-    e.preventDefault();
 
-    const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
-
-    e.target.polish_name.value !== "" &&
-      FD.append("polish_name", e.target.polish_name.value);
-
-    const res = editPolish(FD);
-
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-
-            if (set.action === state.OpenBox.payload.row.action)
-              set.polish_name = e.target.polish_name.value;
-            return set;
-          }))
-          handleClose();
-
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
 
   const handleSubCategories = (e) => {
     e.preventDefault();
@@ -5175,113 +4510,113 @@ const SideForm = () => {
       });
   };
 
-  const handleAddStock = (e) => {
-    e.preventDefault();
+  // const handleAddStock = (e) => {
+  //   e.preventDefault();
 
-    const FD = new FormData();
+  //   const FD = new FormData();
 
-    FD.append("product_id", changeData.product_id);
-    FD.append("stock", changeData.stock);
-    FD.append("warehouse", changeData.warehouse);
-
-
-    const res = addStock(FD);
-
-    res
-      .then((data) => {
-        if (data.status !== 200) {
-          setImages([]);
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message || "Something Went Wrong !!!",
-            }
-          });
-        } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
-            product_id: changeData.product_id,
-            stock: changeData.stock,
-            warehouse: changeData.warehouse,
-            action: data.data.response
-          }])
-          setImages([]);
-          setUrl(data.data.url);
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
-  const handleUpdateStock = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("product_id", changeData.product_id);
-    FD.append("stock", changeData.stock);
-    FD.append("warehouse", changeData.warehouse);
+  //   FD.append("product_id", changeData.product_id);
+  //   FD.append("stock", changeData.stock);
+  //   FD.append("warehouse", changeData.warehouse);
 
 
-    const res = updateStock(FD);
+  //   const res = addInward(FD);
 
-    res
-      .then((data) => {
-        if (data.status !== 200) {
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "error",
-              message: data.data.message || "Something Went Wrong !!!",
-            }
-          });
-        } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+  //   res
+  //     .then((data) => {
+  //       if (data.status !== 200) {
+  //         setImages([]);
+  //         dispatch({
+  //           type: Notify, payload: {
+  //             open: true,
+  //             variant: "error",
+  //             message: data.data.message || "Something Went Wrong !!!",
+  //           }
+  //         });
+  //       } else {
+  //         state.OpenBox.setRow([...state.OpenBox.row, {
+  //           id: state.OpenBox.row.length + 1,
+  //           product_id: changeData.product_id,
+  //           stock: changeData.stock,
+  //           warehouse: changeData.warehouse,
+  //           action: data.data.response
+  //         }])
+  //         setImages([]);
+  //         setUrl(data.data.url);
+  //         handleClose();
+  //         dispatch({
+  //           type: Notify, payload: {
+  //             open: true,
+  //             variant: "success",
+  //             message: data.data.message,
+  //           }
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // //console.log(err);
+  //       setImages([]);
+  //       dispatch({
+  //         type: Notify, payload: {
+  //           open: true,
+  //           variant: "error",
+  //           message: "Something Went Wrong !!!",
+  //         }
+  //       });
+  //     });
+  // };
+  // const handleUpdateStock = (e) => {
+  //   e.preventDefault();
 
-            if (set.action === state.OpenBox.payload.row.action) {
-              set.stock = changeData.stock;
-            }
-            return set;
-          }))
-          setUrl(data.data.url);
-          handleClose();
-          dispatch({
-            type: Notify, payload: {
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          }
-        });
-      });
-  };
+  //   const FD = new FormData();
+
+  //   FD.append("product_id", changeData.product_id);
+  //   FD.append("stock", changeData.stock);
+  //   FD.append("warehouse", changeData.warehouse);
+
+
+  //   const res = updateStock(FD);
+
+  //   res
+  //     .then((data) => {
+  //       if (data.status !== 200) {
+  //         dispatch({
+  //           type: Notify, payload: {
+  //             open: true,
+  //             variant: "error",
+  //             message: data.data.message || "Something Went Wrong !!!",
+  //           }
+  //         });
+  //       } else {
+  //         state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+
+  //           if (set.action === state.OpenBox.payload.row.action) {
+  //             set.stock = changeData.stock;
+  //           }
+  //           return set;
+  //         }))
+  //         setUrl(data.data.url);
+  //         handleClose();
+  //         dispatch({
+  //           type: Notify, payload: {
+  //             open: true,
+  //             variant: "success",
+  //             message: data.data.message,
+  //           }
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       dispatch({
+  //         type: Notify, payload: {
+  //           open: true,
+  //           variant: "error",
+  //           message: "Something Went Wrong !!!",
+  //         }
+  //       });
+  //     });
+  // };
 
   const handleAddress = (e) => {
     e.preventDefault();
@@ -5545,6 +4880,46 @@ const SideForm = () => {
         });
       });
   };
+
+    // load new searchList
+const handleSupplierList = async (e) => {
+  const delayDebounceFn = setTimeout(() => {
+    getSupplierDropdown(e.target.value)
+    .then((res)=>{
+      setProductSKU(old => ({...old,
+        supplier : res.data.Suppliers
+      }));
+    })
+    .catch((err)=>{
+      setProductSKU(old => ({...old,
+        supplier : []
+      }));
+    })
+  }, 1000)
+  return () => clearTimeout(delayDebounceFn)
+  
+}
+const handleSearch = async (e) => {
+  const delayDebounceFn = setTimeout(() => {
+    getArticlesId(e.target.value)
+    .then((res)=>{
+      setProductSKU(old=>({...old,
+        P_SKU : res.data.P_SKU,
+        H_SKU : res.data.H_SKU
+      }));
+    })
+    .catch((err)=>{
+      setProductSKU(old=>({...old,
+        P_SKU : [],
+        H_SKU : []
+      }));
+    })
+  }, 1000)
+  return () => clearTimeout(delayDebounceFn)
+  
+}
+
+
 
   return (
     <>
@@ -5944,7 +5319,7 @@ const SideForm = () => {
                               renderValue={(selected) => selected.join(", ")}
                             // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
                                   key={option.SKU}
                                   value={option.SKU}
@@ -5962,7 +5337,7 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-{/* 
+                            {/* 
                             <TextField sx={{ mb: 2 }}
                               size="small"
                               fullWidth
@@ -7310,11 +6685,11 @@ const SideForm = () => {
                           >
                             {catalog.hinge.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7336,11 +6711,11 @@ const SideForm = () => {
                             {console.log(catalog)}
                             {catalog.knob.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7359,13 +6734,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                           {catalog.door.map(
+                            {catalog.door.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7386,11 +6761,11 @@ const SideForm = () => {
                           >
                             {catalog.handle.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7409,13 +6784,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                           {catalog.fitting.map(
+                            {catalog.fitting.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -7718,13 +7093,13 @@ const SideForm = () => {
                               helperText="Please select your textile."
                             >
                               {catalog.textile.map(
-                              (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
-                            )}
+                                (option) => option.status && <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  {option.title}
+                                </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -7777,14 +7152,14 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                                 helperText="Please select your fabric."
                               >
-                              {catalog.fabric.map(
-                              (option) => option.status && <MenuItem
+                                {catalog.fabric.map(
+                                  (option) => option.status && <MenuItem
                                     key={option.SKU}
                                     value={option.SKU}
                                   >
                                     {option.title}
                                   </MenuItem>
-                            )}
+                                )}
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
@@ -8200,7 +7575,7 @@ const SideForm = () => {
                               renderValue={(selected) => selected.join(", ")}
                             // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
                                   key={option.SKU}
                                   value={option.SKU}
@@ -8599,7 +7974,7 @@ const SideForm = () => {
                                   )
                               )}
 
-{changeData.savedImages.map(
+                              {changeData.savedImages.map(
                                 (option) =>
                                   <MenuItem
                                     key={option}
@@ -9630,11 +9005,11 @@ const SideForm = () => {
                           >
                             {catalog.hinge.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9653,13 +9028,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
-                           {catalog.knob.map(
+                            {catalog.knob.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9678,13 +9053,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                          {catalog.door.map(
+                            {catalog.door.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9703,13 +9078,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
-                           {catalog.handle.map(
+                            {catalog.handle.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -9728,13 +9103,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                          {catalog.fitting.map(
+                            {catalog.fitting.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -10036,14 +9411,14 @@ const SideForm = () => {
                               multiple
                               helperText="Please select your textile."
                             >
-                             {catalog.textile.map(
-                              (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
-                            )}
+                              {catalog.textile.map(
+                                (option) => option.status && <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  {option.title}
+                                </MenuItem>
+                              )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -10096,14 +9471,14 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                                 helperText="Please select your fabric."
                               >
-                               {catalog.fabric.map(
-                              (option) => option.status && <MenuItem
+                                {catalog.fabric.map(
+                                  (option) => option.status && <MenuItem
                                     key={option.SKU}
                                     value={option.SKU}
                                   >
                                     {option.title}
                                   </MenuItem>
-                            )}
+                                )}
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
@@ -10518,7 +9893,7 @@ const SideForm = () => {
                               renderValue={(selected) => selected.join(", ")}
                             // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option,index) => (
+                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
                                   key={option.SKU}
                                   value={option.SKU}
@@ -10763,8 +10138,8 @@ const SideForm = () => {
                       </Step>
                       {/* // Specification Ends*/}
 
-                    {/* Images */}
-                    <Step>
+                      {/* Images */}
+                      <Step>
                         <StepLabel>Images</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
@@ -10797,7 +10172,7 @@ const SideForm = () => {
                             ></ProductsPreviews>
 
                             {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                            <FormLabel id="demo-radio-buttons-group-label">
+                              <FormLabel id="demo-radio-buttons-group-label">
                                 Total Images
                               </FormLabel>{
                                 files.map((img, index) => {
@@ -10871,8 +10246,8 @@ const SideForm = () => {
                                   )
                               )}
 
-                               {/* {console.log(changeData.savedImages)} */}
-                               {changeData.savedImages.map(
+                              {/* {console.log(changeData.savedImages)} */}
+                              {changeData.savedImages.map(
                                 (option) =>
                                   <MenuItem
                                     key={option}
@@ -10918,8 +10293,8 @@ const SideForm = () => {
                                   )
                               )}
 
-                               {/* {console.log(changeData.savedImages)} */}
-                               {changeData.savedImages.map(
+                              {/* {console.log(changeData.savedImages)} */}
+                              {changeData.savedImages.map(
                                 (option) =>
                                   <MenuItem
                                     key={option}
@@ -10963,8 +10338,8 @@ const SideForm = () => {
                                     </MenuItem>
                                   )
                               )}
-                               {/* {console.log(changeData.savedImages)} */}
-                               {changeData.savedImages.map(
+                              {/* {console.log(changeData.savedImages)} */}
+                              {changeData.savedImages.map(
                                 (option) =>
                                   <MenuItem
                                     key={option}
@@ -11936,8 +11311,8 @@ const SideForm = () => {
                           )}
 
 
-                    
-<TextField sx={{ mb: 2 }}
+
+                          <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
                             id="outlined-select"
@@ -11951,11 +11326,11 @@ const SideForm = () => {
                           >
                             {catalog.hinge.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11974,13 +11349,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
-                           {catalog.knob.map(
+                            {catalog.knob.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -11999,13 +11374,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
-                          {catalog.door.map(
+                            {catalog.door.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -12024,13 +11399,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
-                           {catalog.handle.map(
+                            {catalog.handle.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -12049,13 +11424,13 @@ const SideForm = () => {
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
-                          {catalog.fitting.map(
+                            {catalog.fitting.map(
                               (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
-                                  >
-                                    {option.title}
-                                  </MenuItem>
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
                             )}
                             <MenuItem key={"none"} value="None">
                               {"None"}
@@ -13324,125 +12699,7 @@ const SideForm = () => {
 
             {/* update Textile Ends */}
 
-            {/*  add fabric */}
-
-            {state.OpenBox.formType === "fabric" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Fabric
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add Fabric and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleFabric) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <ImagePreviews
-                      text={"Please Drag and Drop the fabric image"}
-                    >
-                      {" "}
-                    </ImagePreviews>
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="fabric_name"
-                      label="Fabric"
-                      type="text"
-                      helperText="Please enter your fabric"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="fabric_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Fabric
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add fabric Ends */}
-
-            {/*  update fabric */}
-
-            {state.OpenBox.formType === "update_fabric" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Fabric
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update your fabric and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateFabric) }} enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <ImagePreviews
-                      text={"Please Drag and Drop the Fabric image"}
-                    >
-                      {" "}
-                    </ImagePreviews>
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      onChange={handleChangeData}
-                      value={changeData.fabric_name}
-                      name="fabric_name"
-                      label="Fabric"
-                      helperText="Please enter the update"
-                    />
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Fabric
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-
-            {/* update fabric Ends */}
+         
 
             {/*  add Category */}
 
@@ -13708,188 +12965,21 @@ const SideForm = () => {
             )}
             {/* update primaryMaterial Ends */}
 
-            {/*  add knob */}
+       
+  
 
-            {state.OpenBox.formType === "addKnob" && (
+            {/*  add Supplier */}
+
+            {state.OpenBox.formType === "add_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
-                    Add Knob
+                    Add Supplier
                     <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Add your knob and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleKnob) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="knob_name"
-                      label="Knob Name"
-                      type="text"
-                      helperText="Please enter your knob material"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="knob_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Knob
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add knob  Ends */}
-
-            {/*  update knob  */}
-
-            {state.OpenBox.formType === "update_knob" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Knob
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Knob and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdateKnob) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      onChange={handleChangeData}
-                      name="knob_name"
-                      label="Knob Name"
-                      type="text"
-                      value={changeData.knob}
-                      helperText="Please enter your knob "
-                    />
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Knob
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* update knob   Ends */}
-
-            {/*  add Handle */}
-
-            {state.OpenBox.formType === "addHandle" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Handle Material
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your handle and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleHandle) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="handle_name"
-                      label="Handle Material Name"
-                      type="text"
-                      helperText="Please enter your knob material"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="handle_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Handle Material
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add Handle  Ends */}
-
-            {/*  update Handle  */}
-
-            {state.OpenBox.formType === "update_handle" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Handle Material
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Door and necessary information from here
+                      Add Supplier and necessary information from here
                     </Typography>
                   </Typography>
                 </Grid>
@@ -13897,25 +12987,90 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateHandle) }}
+                    onSubmit={(e) => { confirmBox(e, handleSupplier) }}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    <TextField sx={{ mb: 2 }}
+                 <TextField sx={{ mb: 1 }}
                       size="small"
-                      onChange={handleChangeData}
+                      fullWidth
+                      id="outlined-select"
+                      name="SID"
+                      disabled
+                      value  = {SKU || ''}
+                      onChange = {handleChangeData}
+                      label="Supplier ID"
+                      type="text"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.supplier_name}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="supplier_name"
+                      label="Supplier Name"
+                      type="text"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      value  = {changeData.mobile}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="mobile"
+                      label="Mobile"
+                      type="number"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.alt_mobile}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="alt_mobile"
+                      label="Alternate Number"
+                      type="number"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
                       fullWidth
                       // required
                       id="outlined-select"
-                      name="handle_name"
-                      value={changeData.handle}
-                      label="Handle Material Name"
+                      value  = {changeData.specialization}
+                      onChange = {handleChangeData}
+                      name="specialization"
+                      label="Specialization"
                       type="text"
-                      helperText="Please enter your Door "
+                    />
+                        <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.gst_no}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="gst_no"
+                      label="GST Number"
+                      type="text"
                     />
 
-
+                    <TextareaAutosize sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      placeholder = "Address"
+                      minRows={5}
+                      maxRows= {5}
+                      value  = {changeData.address}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="address"
+                      label="Address"
+                      type="text"
+                    />
 
                     <Button
                       color="primary"
@@ -13923,26 +13078,26 @@ const SideForm = () => {
                       fullWidth
                       variant="contained"
                     >
-                      Update Handle Material
+                      Add Supplier
                     </Button>
                   </form>
                 </Grid>
               </Grid>
             )}
-            {/* update Handle   Ends */}
+            {/* add Suppliers  Ends */}
 
-            {/*  add Door */}
+            {/*  update Suppliers  */}
 
-            {state.OpenBox.formType === "addDoor" && (
+            {state.OpenBox.formType === "update_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
-                    Add Door
+                    Update Supplier
                     <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Add your door and necessary information from here
+                      Update supplier and necessary information from here
                     </Typography>
                   </Typography>
                 </Grid>
@@ -13950,32 +13105,90 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={(e) => { confirmBox(e, handleDoor) }}
+                    onSubmit={(e) => { confirmBox(e, handleUpdateSupplier) }}
                     id="myForm"
                     enctype="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                    <TextField sx={{ mb: 2 }}
+                      <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      disabled 
+                      id="outlined-select"
+                      name="SID"
+                      value  = {changeData.SID || ''}
+                      onChange = {handleChangeData}
+                      label="Supplier ID"
+                      type="text"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.supplier_name || ''}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="supplier_name"
+                      label="Supplier Name"
+                      type="text"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      value  = {changeData.mobile || ''}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="mobile"
+                      label="Mobile"
+                      type="number"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.alt_mobile || ''}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="alt_mobile"
+                      label="Alternate Number"
+                      type="number"
+                    />
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
                       id="outlined-select"
-                      name="door_name"
-                      label="Door Name"
+                      value  = {changeData.specialization || ''}
+                      onChange = {handleChangeData}
+                      name="specialization"
+                      label="Specialization"
                       type="text"
-                      helperText="Please enter your door material"
+                    />
+                        <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      value  = {changeData.gst_no || ''}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="gst_no"
+                      label="GST Number"
+                      type="text"
                     />
 
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="door_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
+                    <TextareaAutosize sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      placeholder = "Address"
+                      minRows={5}
+                      maxRows= {5}
+                      value  = {changeData.address || ''}
+                      onChange = {handleChangeData}
+                      id="outlined-select"
+                      name="address"
+                      label="Address"
+                      type="text"
+                    />
 
                     <Button
                       color="primary"
@@ -13983,409 +13196,15 @@ const SideForm = () => {
                       fullWidth
                       variant="contained"
                     >
-                      Add Door
+                      Update Supplier
                     </Button>
                   </form>
                 </Grid>
               </Grid>
             )}
-            {/* add Door  Ends */}
+            {/* update suppliers Ends */}
 
-            {/*  update Door  */}
-
-            {state.OpenBox.formType === "update_door" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Door
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Door and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateDoor) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      onChange={handleChangeData}
-                      // required
-                      id="outlined-select"
-                      name="door_name"
-                      label="Door Name"
-                      value={changeData.door}
-                      type="text"
-                      helperText="Please enter your Door "
-                    />
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Door
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* update door   Ends */}
-
-            {/*  add Fitting */}
-
-            {state.OpenBox.formType === "addFitting" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Fitting
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your fitting and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleFitting) }} id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="fitting_name"
-                      label="Fitting Name"
-                      type="text"
-                      helperText="Please enter your primary material"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="fitting_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Fitting
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add Fitting  Ends */}
-
-            {/*  update fitting  */}
-
-            {state.OpenBox.formType === "update_fitting" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Fitting
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Fitting and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateFitting) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="fitting_name"
-                      label="Fitting Name"
-                      value={changeData.fitting}
-                      onChange={handleChangeData}
-                      type="text"
-                      helperText="Please enter your fitting "
-                    />
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Fitting
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add fitting   Ends */}
-
-            {/*  add Hinge */}
-
-            {state.OpenBox.formType === "addHinge" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Hinge
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your Hinge and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleHinge) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="hinge_name"
-                      label="Hinge Name"
-                      type="text"
-                      helperText="Please enter your primary material"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="hinge_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Hinge
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add addHinge  Ends */}
-
-            {/*  update hinge  */}
-
-            {state.OpenBox.formType === "update_hinge" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Hinge
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Hinge and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdateHinge) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      onChange={handleChangeData}
-                      // required
-                      id="outlined-select"
-                      name="hinge_name"
-                      label="Hinge Name"
-                      value={changeData.hinge}
-                      type="text"
-                      helperText="Please enter your hinge "
-                    />
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Hinge
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add hinge   Ends */}
-
-            {/*  add Polish Material */}
-
-            {state.OpenBox.formType === "addPolish" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Polish
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your Polish and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handlePolish) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="polish_name"
-                      label="Polish Name"
-                      type="text"
-                      helperText="Please enter your primary material"
-                    />
-
-
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="polish_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Polish
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add addPolish  Ends */}
-
-            {/*  update Polish  */}
-
-            {state.OpenBox.formType === "update_polish" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Polish
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Polish and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdatePolish) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      onChange={handleChangeData}
-                      // required
-                      id="outlined-select"
-                      name="polish_name"
-                      label="Polish Name"
-                      type="text"
-                      value={changeData.polish}
-                      helperText="Please enter your polish"
-                    />
-
-                    {/*
-                    <FormGroup>
-                      <FormControlLabel control={<Checkbox name='polish_status' />} label="Status (On/Off)" />
-                    </FormGroup> */}
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Polish
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add update polish  Ends */}
-
+       
             {/*  update blog  */}
 
             {state.OpenBox.formType === "update_blog" && (
@@ -14721,114 +13540,7 @@ const SideForm = () => {
 
             {/* Add Blog Ends */}
 
-            {/*   Add Gallery */}
-
-            {state.OpenBox.formType === "addGallery" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Images
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your product images and necessary information from
-                      here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleAddImage) }}
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <FormLabel id="demo-radio-buttons-group-label">
-                      Product Image
-                    </FormLabel>
-
-                    <ProductsPreviews
-                      text={"Please Drag and Drop the Product Image "}
-                    >
-                      {" "}
-                    </ProductsPreviews>
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="SKU"
-                      label="Product SKU"
-                      helperText="Please enter the product SKU where you want to add the image"
-                    />
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Images
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-
-            {/* Add Gallery Ends */}
-
-            {/*  update Gallery  */}
-
-            {state.OpenBox.formType === "update_gallery" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Gallery
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update Gallery and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdateGallery) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <FormLabel id="demo-radio-buttons-group-label">
-                      Product Image
-                    </FormLabel>
-
-                    <ImagePreviews
-                      text={"Please Drag and Drop the Product Image "}
-                    >
-                      {" "}
-                    </ImagePreviews>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Gallery
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add update Gallery  Ends */}
-
+          
             {/*  add subCategory */}
 
             {state.OpenBox.formType === "subcategory" && (
@@ -15571,7 +14283,7 @@ const SideForm = () => {
 
             {/*  add stock */}
 
-            {state.OpenBox.formType === "addStock" && (
+            {/* {state.OpenBox.formType === "addStock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15655,12 +14367,12 @@ const SideForm = () => {
                   </form>
                 </Grid>
               </Grid>
-            )}
+            )} */}
             {/* add Stock Ends */}
 
             {/*  update stock */}
 
-            {state.OpenBox.formType === "update_Stock" && (
+            {/* {state.OpenBox.formType === "update_Stock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15746,7 +14458,7 @@ const SideForm = () => {
                   </form>
                 </Grid>
               </Grid>
-            )}
+            )} */}
             {/* update Stock Ends */}
 
 
@@ -16824,6 +15536,449 @@ const SideForm = () => {
             )}
 
             {/* update Hardware Ends */}
+
+
+            {/* add inward */}
+
+            {state.OpenBox.formType === "inward" && (
+              <Grid container p={5} className="productPadding">
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Inward
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add your inward stock and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => { confirmBox(e, handleInward) }}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+
+                <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.product_articles || ''} 
+                  {...params} 
+                  label="Product SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
+                />
+                <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.hardware_articles || ''}
+                  {...params} 
+                  label="Hardware SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
+                />
+                            
+                            
+
+                  <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  required
+                  autoHighlight
+                  clearOnEscape
+                  id="combo-box-demo"
+                  options={productSKU.supplier.map((row)=>{return row.SID})}
+                  onChange={(e, newMember) => setData(old=>({...old,supplier : newMember}))}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList} 
+                  value = {changeData.supplier || ''} 
+                  name = 'supplier'
+                  {...params} 
+                  label="Supplier" />}
+                />
+
+                  
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Vehicle No."
+                      type="text"
+                      variant="outlined"
+                      name="vehicle_no"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+
+                      id="fullWidth"
+                      label="Driver Name"
+                      type="text"
+                      variant="outlined"
+                      name="driver_name"
+                    />
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Quantity"
+                      type="number"
+                      variant="outlined"
+                      name="quantity"
+                    />
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Save
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* add Inward Ends */}
+
+            {/* add Outward */}
+
+            {state.OpenBox.formType === "outward" && (
+              <Grid container p={5} className="productPadding">
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Outward
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add your outward stock and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => { confirmBox(e, handleOutward) }}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+
+<Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.product_articles || ''} 
+                  {...params} 
+                  label="Product SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
+                />
+                <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.hardware_articles || ''} 
+                  
+                  {...params} 
+                  label="Hardware SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
+                />
+                            
+                            
+
+                  <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  required
+                  autoHighlight
+                  clearOnEscape
+                  id="combo-box-demo"
+                  options={productSKU.supplier.map((row)=>{return row.SID})}
+                  onChange={(e, newMember) => setData(old=>({...old,supplier : newMember}))}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList} 
+                  value = {changeData.supplier || ''} 
+                  name = 'supplier'
+                  {...params} 
+                  label="Supplier" />}
+                />
+
+                <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      name = 'driver_name'
+                      id="fullWidth"
+                      label="Driver Name"
+                      type="text"
+                      variant="outlined"
+                    />
+                <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Driver Number"
+                      type="number"
+                      variant="outlined"
+                      name="driver_no"
+                    />
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Vehicle No."
+                      type="text"
+                      variant="outlined"
+                      name="vehicle_no"
+                    />
+                    
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Quantity"
+                      type="number"
+                      variant="outlined"
+                      name="quantity"
+                    />
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="purpose"
+                      label="Purpose"
+                      value={changeData.purpose || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your purpose"
+                      required
+                    >
+                      {purpose.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                    </TextField>
+
+                    {changeData.purpose === 'Others' && 
+                    <TextareaAutosize 
+                      size="small"
+                      fullWidth
+                      minRows = {3}
+                      maxRows = {3}
+                      required
+                      resize = {'none'}
+                      id="fullWidth"
+                      placeholder="Please eloburate the reson here..."
+                      type="text"
+                      variant="outlined"
+                      name="reason"
+                    />
+                          }
+
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Save
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* add outward Ends */}
+
+            {/* add Transfer */}
+
+            {state.OpenBox.formType === "transfer" && (
+              <Grid container p={5} className="productPadding">
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                  Transfer
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Transfer stock and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => { confirmBox(e, handleTransfer) }}
+                    enctype="multipart/form-data"
+                    method="post"
+                  >
+
+<Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.product_articles || ''} 
+                  {...params} 
+                  label="Product SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
+                />
+                <Autocomplete
+                  disablePortal
+                  size = 'small'
+                  fullWidth
+                  multiple
+                  autoHighlight
+                  id="combo-box-demo"
+                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
+                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
+                  value = {changeData.hardware_articles || ''} 
+                  {...params} 
+                  label="Hardware SKU" />}
+                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
+                />
+                            
+
+               
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Quantity"
+                      type="number"
+                      variant="outlined"
+                      name="quantity"
+                    />
+
+<TextField sx={{ mb: 1 }}
+                      fullWidth
+                      id="outlined-select"
+                      select
+                      name="warehouse"
+                      label="Select Warehouse..."
+                      value={changeData.warehouse || ''}
+                      onChange={handleProductFelids}
+                      multiple
+                    >
+                      {warehouse.map(
+                        (option) =>
+                          <MenuItem
+                            key={option.value}
+                            value={option.value}
+                          >
+                            {option.value}
+                          </MenuItem>
+                      )}
+                      <MenuItem key={"none"} value="None">
+                        {"None"}
+                      </MenuItem>
+                    </TextField>
+
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="purpose"
+                      label="Purpose"
+                      value={changeData.purpose || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your purpose"
+                      required
+                    >
+                      {purpose.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                    </TextField>
+
+                    {changeData.purpose === 'Others' && 
+                    <TextareaAutosize 
+                      size="small"
+                      fullWidth
+                      minRows = {3}
+                      maxRows = {3}
+                      required
+                      resize = {'none'}
+                      id="fullWidth"
+                      placeholder="Please eloburate the reson here..."
+                      type="text"
+                      variant="outlined"
+                      name="reason"
+                    />
+                          }
+               
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Save
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* add Transfer Ends */}
 
           </Box>
         </Backdrop>

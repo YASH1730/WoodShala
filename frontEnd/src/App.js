@@ -1,36 +1,43 @@
 import "./App.css";
-import EntryPoints from "./components/EntryPoints";
+import {lazy,Suspense} from 'react'
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Home from "./components/Home";
-import Blog from "./components/Blog";
-import BlogContent from "./components/BlogContent";
-import SideForm from "./components/dashboard/SideForm";
-import SnackBar from "./components/SnackBar";
+
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Buffer } from 'buffer';
 import {Store} from './store/Context';
-import PersistData from './components/Utility/PersistData'
 import { ConfirmProvider } from "material-ui-confirm";
+
+// component 
+const EntryPoints = lazy(()=> import("./components/EntryPoints"))
+const Home = lazy(()=> import("./components/Home"))
+const Blog = lazy(()=> import("./components/Blog"))
+const BlogContent = lazy(()=> import("./components/BlogContent"))
+const SideForm = lazy(()=> import("./components/dashboard/SideForm"))
+const SnackBar = lazy(()=> import("./components/SnackBar"))
+const NotFound = lazy(()=> import("./components/Utility/NotFound"))
+const PersistData = lazy(()=> import("./components/Utility/PersistData"))
 // inner components
-import Dashboard from "./components/dashboard/Dashboard";
-import Products from "./components/dashboard/Products";
-import Customers from "./components/dashboard/Customers";
-import Orders from "./components/dashboard/Orders";
-import CreateOrder from "./components/dashboard/CreateOrder";
-import Coupons from "./components/dashboard/Coupons";
-import OurStaff from "./components/dashboard/OurStaff";
-import Setting from "./components/dashboard/Setting";
-import Banner from "./components/dashboard/Banner";
-import Action from "./components/dashboard/Action";
-import Accessories from "./components/Accessories";
-// import Gallery from "./components/dashboard/Gallery";
-import Hardware from "./components/dashboard/Hardware";
-import StockChannel from "./components/dashboard/StockChannel";
-import BlogModule from "./components/dashboard/Blog";
-import Merge from "./components/dashboard/Merge"
-import ProductDetails from "./components/Utility/ProductDetails"
-import Variation from "./components/dashboard/Variation"
+
+const Inventory = lazy(() => import('./components/dashboard/Inventory'));
+
+const Dashboard = lazy(()=>import('./components/dashboard/Dashboard'))
+const Products = lazy(()=>import('./components/dashboard/Products'))
+const Customers = lazy(()=>import('./components/dashboard/Customers'))
+const Orders = lazy(()=>import('./components/dashboard/Orders'))
+const CreateOrder = lazy(()=>import('./components/dashboard/CreateOrder'))
+const Coupons = lazy(()=>import('./components/dashboard/Coupons'))
+const OurStaff = lazy(()=>import('./components/dashboard/OurStaff'))
+const Setting = lazy(()=>import('./components/dashboard/Setting'))
+const Banner = lazy(()=>import('./components/dashboard/Banner'))
+const Action = lazy(()=>import('./components/dashboard/Action'))
+const Accessories = lazy(()=>import('./components/Accessories'))
+const Hardware = lazy(()=>import('./components/dashboard/Hardware'))
+const BlogModule = lazy(()=>import('./components/dashboard/Blog'))
+const Merge = lazy(()=>import('./components/dashboard/Merge'))
+const ProductDetails = lazy(()=>import('./components/Utility/ProductDetails'))
+const Variation = lazy(()=>import('./components/dashboard/Variation'))
+const Suppliers = lazy(()=>import('./components/dashboard/Suppliers'))
 
 global.Buffer = Buffer;
 
@@ -42,10 +49,11 @@ function MyRoutes(){
     <>
     {/* // main screen route */}
     <Home history = {history}/>
+
     <Routes>
     {/* All routes are in alphabetical order */}
     <Route exact path="/" element={<EntryPoints history = {history} />} />
-    <Route exact path="/admin" element={<Setting history = {history} />} />
+    <Route exact path="/settings" element={<Setting history = {history} />} />
     <Route exact path="/accessories" element={<Accessories history = {history} />} />
     <Route exact path="/blogs" element={<BlogModule history = {history} />} />
     <Route exact path="/blog" element={<Blog />} />
@@ -55,9 +63,9 @@ function MyRoutes(){
     <Route exact path="/create_order" element={<CreateOrder history = {history} />} />
     <Route exact path="/dashboard" element={<Dashboard history = {history} />} />
     <Route exact path="/action" element={<Action history = {history} />} />
-    {/* <Route exact path="/gallery" element={<Gallery history = {history} />} /> */}
+    <Route exact path="/suppliers" element={<Suppliers history = {history} />} />
     <Route exact path="/hardware" element={<Hardware history = {history} />} />
-    <Route exact path="/inventory" element={<StockChannel history = {history} />} />
+    <Route exact path="/inventory" element={<Inventory history = {history} />} />
     <Route exact path="/merge"  element={<Merge history = {history} />} />    
     <Route exact path="/order" element={<Orders history = {history} />} />
     <Route exact path="/products" element={<Products history = {history} />} />
@@ -65,6 +73,7 @@ function MyRoutes(){
     <Route exact path="/reward" element={<Coupons history = {history} />} />
     <Route exact path="/user" element={<OurStaff history = {history} />} />
     <Route exact path="/variation"  element={<Variation history = {history} />} />
+    <Route  path="*"  element={<NotFound/>} />
   </Routes>
   </>
   )
@@ -106,6 +115,7 @@ function App() {
     <>
       <ThemeProvider theme={state.DarkMode.mode === true ? dark : light}>
         <CssBaseline enableColorScheme />
+        <Suspense fallback={<div>Loading...</div>}>
         <BrowserRouter>
         <ConfirmProvider  >
                 <PersistData/>
@@ -114,6 +124,7 @@ function App() {
                   <SnackBar />
                 </ConfirmProvider>
         </BrowserRouter>
+          </Suspense>
       </ThemeProvider>
     </>
   );

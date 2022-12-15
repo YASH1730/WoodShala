@@ -2,6 +2,7 @@
     padding: 1%;
     justify-content: center;
     column-gap: 20px;
+    row-gap: 20px;
 }
 
 .card {

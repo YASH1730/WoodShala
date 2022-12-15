@@ -10,17 +10,17 @@ import Box from '@mui/material/Box';
 import '../assets/custom/css/admin.css'
 // icons 
 import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
-import PolicyIcon from '@mui/icons-material/Policy';
+// import PolicyIcon from '@mui/icons-material/Policy';
 import ForestIcon from "@mui/icons-material/Forest";
 // import FilterListIcon from "@mui/icons-material/FilterList";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import InsertLinkIcon from "@mui/icons-material/InsertLink";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import AdjustIcon from "@mui/icons-material/Adjust";
+// import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+// import InsertLinkIcon from "@mui/icons-material/InsertLink";
+// import ConstructionIcon from "@mui/icons-material/Construction";
+// import AdjustIcon from "@mui/icons-material/Adjust";
 import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
-import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
-import DragHandleIcon from "@mui/icons-material/DragHandle";
-import WavesIcon from '@mui/icons-material/Waves';
+// import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
+// import DragHandleIcon from "@mui/icons-material/DragHandle";
+// import WavesIcon from '@mui/icons-material/Waves';
 // conponents
 import Category from "./dashboard/Category";
 import SubCategory from "./dashboard/SubCategory";
@@ -30,7 +30,7 @@ import Polish from "./dashboard/Polish";
 import Hinge from "./dashboard/Hinge";
 import Fitting from "./dashboard/Fitting";
 import Knob from "./dashboard/Knob";
-import Door from "./dashboard/Door";
+import Door from "./dashboard/Suppliers";
 import Handle from "./dashboard/Handle";
 import Fabric from "./dashboard/Fabric";
 import Textile from "./dashboard/Textile";
