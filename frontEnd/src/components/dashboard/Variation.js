@@ -11,7 +11,7 @@ Box,
 // import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import CreateIcon from '@mui/icons-material/Create';
-import AddIcon from "@mui/icons-material/Add";
+// import AddIcon from "@mui/icons-material/Add";
 import {getListProduct,
   //  deleteProduct,
   //   getListMergeProduct,
@@ -22,23 +22,23 @@ import {
   DataGrid,
 
 } from '@mui/x-data-grid';
-import {Store} from '../../store/Context'
-import {OpenBox,Notify} from '../../store/Types'
+import {setForm} from '../../store/action/action'
+import { useDispatch } from "react-redux";
 
 
 
 export default function Products(props) {
   
   // store
-  const {dispatch} = Store();
+  const dispatch = useDispatch();
   const [pageSize, setPageSize] = useState(50);
 
 
   // states
   const [selectedSKU, setSelection] = useState([]);
   const [search,setSearch] = useState('')
-  const [Row, setRows] = useState()
-  const [MergeRow, setMergeRows] = useState()
+  const [Row, setRows] = useState([])
+  const [MergeRow, setMergeRows] = useState([])
   
 
   useEffect(()=>{
@@ -188,13 +188,13 @@ export default function Products(props) {
           
           //console.log(params)
               
-          dispatch({type : OpenBox, payload :{
+          dispatch(setForm({
                 state : true,
                 formType : 'variation',
                 payload : params,
                 row : Row,
                 setRow : setRows
-              }}) 
+              })) 
 
             }} aria-label="update"  >
               <CreateIcon />
@@ -338,13 +338,13 @@ export default function Products(props) {
 
           <Typography component={'span'} variant="h6"> Product List </Typography>
           {selectedSKU.length > 1 &&  <Button startIcon = {<MergeIcon/>} variant = 'outlined' onClick = {()=>{
-             dispatch({type : OpenBox, payload :{
+             dispatch(setForm({
               state : true,
               formType : 'merge_product',
               payload : selectedSKU,
               row : MergeRow,
               setRow : setMergeRows
-            }}) 
+            })) 
             
           }}>Merge</Button>}
           </div>

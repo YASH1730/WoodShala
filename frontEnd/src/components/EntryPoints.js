@@ -16,9 +16,9 @@ import FacebookLogin from "react-facebook-login";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { Link } from "react-router-dom";
 import {login} from '../services/service'
-// import {Notify,Auth} from '../App'
-import {Notify,Auth} from '../store/Types'
-import {Store} from '../store/Context';
+
+import {useDispatch,useSelector} from 'react-redux'
+import {setAlert,setAuth} from '../store/action/action'
 
 
 export default function EntryPoints(props) {
@@ -26,13 +26,16 @@ export default function EntryPoints(props) {
   // history var for location and jumping throw path 
   const history = props.history;
 
+  const dispatch = useDispatch() 
+  // const state = useSelector(state=>state) 
+
   // store import 
-  const {state,dispatch} = Store();
+  const {auth} = useSelector(state=>state);
   
   useEffect(()=>{
-    if(state.Auth.isLogin === true)
+    if(auth.isLogin === true)
       history('/dashboard')
-  },[state.Auth.isLogin])
+  },[auth.isLogin])
 
   // context 
 
@@ -78,33 +81,30 @@ export default function EntryPoints(props) {
       if(data.status === 200)
       {
 
-        dispatch({type : Auth, payload : {
-          isLogin : true,
-          WDToken : data.data.token,
+        dispatch(setAuth({
+          isAuth : true,
+          token : data.data.token,
           role : data.data.role
-        }})
+        }))
 
-        dispatch({type : Notify, payload : {
+        dispatch(setAlert({
           open : true,
           variant : 'success',
           message : data.data.message
-        }})
+        }))
 
-        localStorage.setItem('isLogin',true);
         localStorage.setItem('WDToken',data.data.token);
-        localStorage.setItem('role',data.data.role);
-        // redirecting to main board
+
         history('/dashboard')
 
       }
       else {
-        dispatch({type : Notify, payload : {
+        dispatch(setAlert({
           open : true,
           variant : 'error',
           message : data.data.message
-        }})
+        }))
       }
-      
     })
 
 

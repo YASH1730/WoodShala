@@ -45,11 +45,11 @@ import {
 export default function Fabric() {
 
   const [search, setSearch] = useState("");
-  const [check,setCheck] = useState()
+  const [check,setCheck] = useState([])
   const {dispatch} = Store();
   const [pageSize, setPageSize] = useState(50);
   
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get  list
 
   useEffect(() => {

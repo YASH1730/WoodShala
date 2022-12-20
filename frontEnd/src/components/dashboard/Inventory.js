@@ -12,17 +12,19 @@ import {
 import RepeatIcon from '@mui/icons-material/Repeat';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from '@mui/icons-material/Remove';
-import { OpenBox, Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
+import { setForm } from "../../store/action/action";
 import { listEntires, totalEntries } from '../../services/service'
 import '../../assets/custom/css/stock.css'
 import '../../assets/custom/css/action.css'
 
 import { DataGrid } from '@mui/x-data-grid';
+import { useDispatch } from "react-redux";
 
 
 
 export default function Inventory() {
+
+  const dispatch = useDispatch()
 
   const [search, setSearch] = useState({ warehouse: '' });
   const [columns, setColumns] = useState([])
@@ -40,9 +42,8 @@ export default function Inventory() {
     entires: 'Inward'
   })
 
-  const { dispatch } = Store();
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
 
   useEffect(() => {
     setPageState(old=>({...old,isLoading : true}))
@@ -308,12 +309,10 @@ export default function Inventory() {
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch({
-                type: OpenBox, payload: {
+              dispatch(setForm({
                   state: true, formType: "inward", row: Row,
-                  setRow: setRows
-                }
-              });
+                  setRow: setRows}
+              ));
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -327,12 +326,10 @@ export default function Inventory() {
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch({
-                type: OpenBox, payload: {
+              dispatch(setForm({
                   state: true, formType: "outward", row: Row,
                   setRow: setRows
-                }
-              });
+              }));
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -346,12 +343,10 @@ export default function Inventory() {
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch({
-                type: OpenBox, payload: {
+              dispatch(setForm({
                   state: true, formType: "transfer", row: Row,
                   setRow: setRows
-                }
-              });
+              }));
             }}
             sx={{ width: "100%" }}
             color="primary"

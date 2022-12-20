@@ -14,20 +14,16 @@ import { listCustomer, deleteCustomer  } from "../../services/service";
 import "../../assets/custom/css/category.css";
 
 import {
-  DataGrid,
-// gridPageCountSelector,
-  // gridPageSelector,
-  // useGridApiContext,
-  // useGridSelector,
+  DataGrid
 } from "@mui/x-data-grid";
 
-import { OpenBox, Notify } from "../../store/Types";
-import {Store} from "../../store/Context";
+import {useDispatch} from "react-redux";
+import {setAlert,setForm} from "../../store/action/action";
 
 
 
 
-import Pagination from "@mui/material/Pagination";
+// import Pagination from "@mui/material/Pagination";
 
 
 // function CustomPagination() {
@@ -53,7 +49,7 @@ export default function Customer() {
     
   });
 
-const {dispatch} = Store(); 
+const dispatch = useDispatch(); 
 
   const [Row, setRows] = useState([]);
   const [pageSize, setPageSize] = useState(50);
@@ -167,11 +163,11 @@ const {dispatch} = Store();
 
           setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
           }))
-         dispatch({type : Notify,payload : {
+         dispatch(setAlert({
             open : true,
             variant : 'success',
             message : 'Customer Deleted !!!'
-          }})
+          }))
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton>
@@ -330,7 +326,7 @@ const {dispatch} = Store();
           <Typography component={'span'} variant="h6"> Customer List </Typography>
           <Button
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "add_customer", row : Row,setRow : setRows }});
+              dispatch(setForm({ state: true, formType: "add_customer", row : Row,setRow : setRows }));
             }}
             color="primary"
             variant="contained"

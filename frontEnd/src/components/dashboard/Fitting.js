@@ -43,10 +43,10 @@ export default function Fitting() {
 
   const [search, setSearch] = useState("");
   const {dispatch} = Store()
-  const [check,setCheck] = useState()
+  const [check,setCheck] = useState([])
   const [pageSize, setPageSize] = useState(50);
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get cetegory list
 
   useEffect(() => {

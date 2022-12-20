@@ -25,11 +25,11 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
-import {  Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
 // import { customOrderList} from "../../services/service";
 import "../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
+import {useDispatch} from 'react-redux'
+import {setAlert} from '../../store/action/action'
 
 import {
     DataGrid,
@@ -76,24 +76,7 @@ const img = {
     height: "100%",
 };
 
-// style for drop box in custom ends
 
-
-
-// function CustomPagination() {
-//   const apiRef = useGridApiContext();
-//   const page = useGridSelector(apiRef, gridPageSelector);
-//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-//   return (
-//     <Pagination
-//       color="primary"
-//       count={pageCount}
-//       page={page + 1}
-//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
-//     />
-//   );
-// }
 
 // modal css
 const style = {
@@ -259,7 +242,7 @@ export default function CreateOrder() {
     };
 
     // context
-    const { dispatch } = Store();
+    const dispatch  = useDispatch();
     const [pageSize, setPageSize] = useState(50);
 
 
@@ -826,35 +809,32 @@ export default function CreateOrder() {
                         note: '',
                         sale_channel : 'Online'
                     })
-                    dispatch({
-                        type: Notify, payload: {
+                    dispatch(setAlert({
                             open: true,
                             variant: "error",
                             message: data.data.message || "Something Went Wrong !!!",
                         }
-                    });
+                    ));
 
                 } else {
                    
-                    dispatch({
-                        type: Notify, payload: {
+                    dispatch(setAlert( {
                             open: true,
                             variant: "success",
                             message: data.data.message,
-                        }
-                    });
+                        
+                    }));
                     resetValue();
 
                 }
             })
             .catch((err) => {
-                dispatch({
-                    type: Notify, payload: {
+                dispatch(setAlert({
                         open: true,
                         variant: "error",
                         message: "Something Went Wrong !!!",
                     }
-                });
+                ));
             });
     }
 

@@ -10,27 +10,24 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
 import { getHardware, changeHardwareStatus, deleteHardware } from '../../services/service'
 import '../../assets/custom/css/category.css'
 
 import {
   DataGrid,
 } from '@mui/x-data-grid';
-
-
-
-
+// import { Store } from "../../store/Context";
+import { setAlert,setForm } from "../../store/action/action";
+import { useDispatch } from "react-redux";
 
 export default function Hardware() {
 
   const [search, setSearch] = useState("");
-  const [check, setCheck] = useState()
-  const { dispatch } = Store();
+  const [check, setCheck] = useState([])
+  const dispatch = useDispatch();
   const [pageSize, setPageSize] = useState(50);
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get  list
 
   useEffect(() => {
@@ -125,15 +122,13 @@ export default function Hardware() {
       renderCell: (params) =>
         <div className="fabricImage" >
           <IconButton onClick={() => {
-            dispatch({
-              type: OpenBox, payload: {
+            dispatch(setForm({
                 state: true,
                 formType: 'update_hardware',
                 payload: params,
                 row: Row,
                 setRow: setRows
-              }
-            })
+            }))
           }} aria-label="delete"  >
             <CreateIcon />
           </IconButton>
@@ -141,13 +136,11 @@ export default function Hardware() {
             deleteHardware(params.formattedValue).then((res) => {
               setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
               }))
-              dispatch({
-                type: Notify, payload: {
+              dispatch(setAlert({
                   open: true,
                   variant: 'success',
                   message: 'Hardware Deleted !!!'
-                }
-              })
+              }))
             })
           }} aria-label="delete"  >
             <DeleteIcon />
@@ -178,25 +171,21 @@ export default function Hardware() {
         else
           return row
       }))
-      dispatch({
-        type: Notify, payload: {
+      dispatch(setAlert({
           open: true,
           variant: 'success',
           message: "Hardware Status Updated Successfully !!!"
 
-        }
-      })
+      }))
     })
       .catch((err) => {
         //console.log(err)
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: 'error',
             message: "Something went wrong !!!"
 
-          }
-        })
+        }))
       })
 
 
@@ -219,8 +208,6 @@ export default function Hardware() {
           }}
           rows={Row}
           columns={columns}
-
-
           disableSelectionOnClick
           pagination
           pageSize={pageSize}
@@ -269,7 +256,7 @@ export default function Hardware() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({ type: OpenBox, payload: { state: true, formType: "hardware", row: Row, setRow: setRows } });
+              dispatch(setForm({ state: true, formType: "hardware", row: Row, setRow: setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"

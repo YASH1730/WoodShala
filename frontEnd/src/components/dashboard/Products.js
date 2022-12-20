@@ -26,8 +26,8 @@ import {
   // useGridSelector,
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
-import { Store } from '../../store/Context'
-import { OpenBox, Notify } from '../../store/Types'
+import { useDispatch } from "react-redux";
+import { setForm } from "../../store/action/action";
 
 // this is commented because needs a custom per page size 
 // function CustomPagination() {
@@ -49,7 +49,7 @@ import { OpenBox, Notify } from '../../store/Types'
 export default function Products(props) {
 
   // store
-  const { dispatch } = Store();
+  const dispatch  = useDispatch();
   // const [pageSize, setPageSize] = useState(50);
 
 
@@ -57,7 +57,7 @@ export default function Products(props) {
   const [selectedSKU, setSelection] = useState([]);
   const [search, setSearch] = useState('')
   // const [Row, //setRows] = useState()
-  const [MergeRow, setMergeRows] = useState()
+  const [MergeRow, setMergeRows] = useState([])
 
   // page state to controlling the pagination on server side
   const [pageState, setPageState] = useState({
@@ -165,13 +165,11 @@ const columns = [
 
           //console.log(params)
 
-          dispatch({
-            type: OpenBox, payload: {
+          dispatch(setForm({
               state: true,
               formType: 'update_product',
               payload: params
-            }
-          })
+          }))
 
         }} aria-label="update"  >
           <CreateIcon />
@@ -492,7 +490,7 @@ return (
           color="primary"
           startIcon={<AddIcon />}
           variant="contained"
-          onClick={() => { dispatch({ type: OpenBox, payload: { state: true, formType: 'product'} }) }}
+          onClick={() => { dispatch(setForm({ state: true, formType: 'product'} )) }}
         >
           Add Product
         </Button>
@@ -514,15 +512,14 @@ return (
 
           <Typography component={'span'} variant="h6"> Product List </Typography>
           {selectedSKU.length > 1 && <Button startIcon={<MergeIcon />} variant='outlined' onClick={() => {
-            dispatch({
-              type: OpenBox, payload: {
+            dispatch(setForm({
                 state: true,
                 formType: 'merge_product',
                 payload: selectedSKU,
                 row: MergeRow,
                 setRow: setMergeRows
               }
-            })
+            ))
 
           }}>Merge</Button>}
         </div>

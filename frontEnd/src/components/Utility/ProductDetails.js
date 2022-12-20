@@ -26,14 +26,10 @@ import {
 // APis function 
 import { getProductDetails } from '../../services/service'
 
-// global state 
-import {Store} from '../../store/Context'
 
 
 export default function ProductDetails() {
 
-  // store 
-  const {state,dispatch} = Store();
 
   // state
   const [imageIndex, setIndex] = useState(0); // use for updating the images

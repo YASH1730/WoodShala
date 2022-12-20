@@ -11,51 +11,28 @@ import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import { categoryList , statusCategory } from '../../services/service'
 import '../../assets/custom/css/category.css'
-import { OpenBox, Notify } from "../../store/Types";
-import {Store } from "../../store/Context";
-
+import {useDispatch} from 'react-redux'
+import {setAlert,setForm} from '../../store/action/action'
 
 import {
-  DataGrid,
-// gridPageCountSelector,
-  // gridPageSelector,
-  // useGridApiContext,
-  // useGridSelector,
+  DataGrid
 } from '@mui/x-data-grid';
-// import Pagination from '@mui/material/Pagination';
-
-
-// function CustomPagination() {
-//   const apiRef = useGridApiContext();
-//   const page = useGridSelector(apiRef, gridPageSelector);
-//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-//   return (
-//     <Pagination
-//       color="primary"
-//       count={pageCount}
-//       page={page + 1}
-//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
-//     />
-//   );
-// }
-
-
 
 
 export default function Category() {
 
 
-  const {dispatch} = Store();
+  const dispatch = useDispatch();
+
   const [pageSize, setPageSize] = useState(50);
 
 
-  const [check,setCheck] = useState()
+  const [check,setCheck] = useState([])
 
   const [search, setSearch] = useState("");
 
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
 
   useEffect(() => {
     categoryList()
@@ -114,13 +91,13 @@ export default function Category() {
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          dispatch({type : OpenBox,payload : {
+          dispatch(setForm( {
             state : true,
             formType : 'update_category',
             payload : params,
             row : Row,
             setRow : setRows,
-          }}) 
+          })) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
@@ -162,21 +139,21 @@ export default function Category() {
         return row
       }))
       
-      dispatch({type : Notify,payload : {
+      dispatch(setAlert( {
         open : true,
         variant : 'success',
         message : "Category Status Updated Successfully !!!"
   
-      }})
+      }))
     })
     .catch((err)=>{
       //console.log(err)
-      dispatch({type : Notify,payload : {
+      dispatch(setAlert({
         open : true,
         variant : 'error',
         message : "May be duplicate found !!!"
   
-      }})
+      }))
     })
 
     
@@ -247,7 +224,7 @@ export default function Category() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "category",row : Row,setRow : setRows }});
+              dispatch(setForm( { state: true, formType: "category",row : Row,setRow : setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"

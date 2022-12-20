@@ -26,29 +26,29 @@ import Category from "./dashboard/Category";
 import SubCategory from "./dashboard/SubCategory";
 import PrimaryMaterial from "./dashboard/PrimaryMaterial";
 // import SecondaryMaterial from "./dashboard/SecondaryMaterial";
-import Polish from "./dashboard/Polish";
-import Hinge from "./dashboard/Hinge";
-import Fitting from "./dashboard/Fitting";
-import Knob from "./dashboard/Knob";
-import Door from "./dashboard/Suppliers";
-import Handle from "./dashboard/Handle";
-import Fabric from "./dashboard/Fabric";
-import Textile from "./dashboard/Textile";
-import Policy from "./dashboard/Policy";
+// import Polish from "./dashboard/Polish";
+// import Hinge from "./dashboard/Hinge";
+// import Fitting from "./dashboard/Fitting";
+// import Knob from "./dashboard/Knob";
+// import Door from "./dashboard/Suppliers";
+// import Handle from "./dashboard/Handle";
+// import Fabric from "./dashboard/Fabric";
+// import Textile from "./dashboard/Textile";
+// import Policy from "./dashboard/Policy";
 
 const components = [
 Category,
 SubCategory,
 PrimaryMaterial,
-Polish,
-Fitting,
-Hinge,
-Knob,
-Door,
-Handle,
-Fabric,
-Textile,
-Policy
+// Polish,
+// Fitting,
+// Hinge,
+// Knob,
+// Door,
+// Handle,
+// Fabric,
+// Textile,
+// Policy
 ]
 
 function TabPanel(props) {

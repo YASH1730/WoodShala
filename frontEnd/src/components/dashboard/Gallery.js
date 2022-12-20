@@ -28,7 +28,7 @@ export default function Knob() {
   const {dispatch} = Store();
 
 
-  const [SKU, setSKU] = useState();
+  const [SKU, setSKU] = useState('');
 
   useEffect(() => {
     const res = getGallery(`WS-${localStorage.getItem("SKU")}`);

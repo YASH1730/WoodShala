@@ -4,7 +4,7 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,Switch,
+  IconButton,
   Box
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,18 +22,17 @@ import {
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
 
-import { OpenBox, Notify } from "../../store/Types";
-import { Store} from "../../store/Context";
+import { setForm } from "../../store/action/action";
+import {useDispatch} from "react-redux";
 
 export default function Suppliers() {
 
   const [search, setSearch] = useState("");
 
-const {dispatch} = Store();
-  const [check,setCheck] = useState()
+const dispatch = useDispatch();
 
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get cetegory list
 
   useEffect(() => {
@@ -106,13 +105,13 @@ const {dispatch} = Store();
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          dispatch({type : OpenBox,payload : {
+          dispatch(setForm({
             state : true,
             formType : 'update_supplier',
             payload : params,
             row : Row,
             setRow : setRows,
-          }}) 
+          })) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
@@ -198,7 +197,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({type : OpenBox,payload : { state: true, formType: "add_supplier", row : Row,setRow : setRows }});
+              dispatch(setForm({ state: true, formType: "add_supplier", row : Row,setRow : setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"

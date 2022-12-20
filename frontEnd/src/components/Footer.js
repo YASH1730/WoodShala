@@ -1,11 +1,11 @@
 import React from "react";
-import { Grid, Typography, Link, Stack, IconButton } from "@mui/material";
+import { Grid, Typography, IconButton } from "@mui/material";
 
 import "../assets/custom/css/footer.css";
 
 // social icons
 import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";
-import WhatsappRoundedIcon from "@mui/icons-material/WhatsappRounded";
+// import WhatsappRoundedIcon from "@mui/icons-material/WhatsappRounded";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 export default function Footer() {
@@ -61,7 +61,7 @@ export default function Footer() {
                 </IconButton>
 
                 <IconButton aria-label="delete">
-                  <WhatsappRoundedIcon />
+                  {/* <WhatsappRoundedIcon /> */}
                 </IconButton>
 
                 <IconButton aria-label="delete">

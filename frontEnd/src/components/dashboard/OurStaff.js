@@ -5,14 +5,14 @@ import { DataGrid } from '@mui/x-data-grid';
 
 
 // importing the context 
-import { OpenBox } from '../../store/Types';
-import { Store } from '../../store/Context';
+// import { OpenBox } from '../../store/Types';
+// import { Store } from '../../store/Context';
 
 export default function OurStaff() {
 
   const [order, setOrder] = useState('');
   const [status, setStatus] = useState('');
-  const { dispatch } = Store();
+  // const { dispatch } = Store();
   const [pageSize, setPageSize] = useState(50);
 
 
@@ -125,7 +125,7 @@ export default function OurStaff() {
 
 
         <Grid item xs={12} md={2} >
-          <Button onClick={() => { dispatch({ type: OpenBox, payload: { state: true, formType: 'staff' } }) }} sx={{ width: '100%' }} color='primary' startIcon={<AddIcon />} variant='contained' >Add Staff</Button>
+          <Button sx={{ width: '100%' }} color='primary' startIcon={<AddIcon />} variant='contained' >Add Staff</Button>
         </Grid>
       </Grid>
 

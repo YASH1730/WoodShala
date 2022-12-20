@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
-import {Store } from "../../store/Context";
+import { setForm, setAlert } from "../../store/action/action";
+import {useDispatch} from 'react-redux'
 import { getSubCatagories, changeSubSatatus } from '../../services/service'
 
 
@@ -42,13 +42,13 @@ import {
 export default function SubCategory() {
 
   const [search, setSearch] = useState("");
-  const [check,setCheck] = useState()
+  const [check,setCheck] = useState([])
 
-const {dispatch} = Store(); 
+const dispatch = useDispatch(); 
 const [pageSize, setPageSize] = useState(50);
 
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get cetegory list
 
   useEffect(() => {
@@ -109,13 +109,13 @@ const [pageSize, setPageSize] = useState(50);
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-         dispatch({type : OpenBox,payload : {
+         dispatch(setForm({
             state : true,
             formType : 'update_Subcategory',
             payload : params,
             row : Row,
             setRow : setRows,
-          }}) 
+          })) 
         }} aria-label="delete"  >
           <CreateIcon />
         </IconButton>
@@ -153,20 +153,20 @@ const [pageSize, setPageSize] = useState(50);
         else 
         return row
       }))
-      dispatch({type : Notify,payload : {
+      dispatch(setAlert({
         open : true,
         variant : 'success',
         message : " Sub Category Status Updated Successfully !!!"
-      }})
+      }))
     })
     .catch((err)=>{
       console.log(err)
-      dispatch({type : Notify,payload : {
+      dispatch(setAlert({
         open : true,
         variant : 'error',
         message : "May be duplicate found !!!"
   
-      }   })
+      }))
     })
 
     
@@ -239,7 +239,7 @@ const [pageSize, setPageSize] = useState(50);
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "subcategory",row : Row,setRow : setRows }});
+             dispatch(setForm({ state: true, formType: "subcategory",row : Row,setRow : setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"

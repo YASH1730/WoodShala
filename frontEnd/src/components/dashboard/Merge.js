@@ -21,10 +21,9 @@ import {
   // useGridSelector,
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
-import { Store } from '../../store/Context'
-import { OpenBox, Notify } from '../../store/Types'
+import { setAlert,setForm } from '../../store/action/action'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-
+import {useDispatch} from 'react-redux' 
 
 // function CustomPagination() {
 //   const apiRef = useGridApiContext();
@@ -44,7 +43,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 export default function Products(props) {
 
   // store
-  const {dispatch } = Store();
+  const dispatch = useDispatch();
 
   // states
   const [modalState, setModal] = useState(false);
@@ -56,8 +55,8 @@ export default function Products(props) {
     P: '',
     MS: ''
   })
-  const [Row, setRows] = useState()
-  const [MergeRow, setMergeRows] = useState()
+  const [Row, setRows] = useState([])
+  const [MergeRow, setMergeRows] = useState([])
 
   useEffect(() => {
     getListProduct()
@@ -255,13 +254,13 @@ export default function Products(props) {
           
           //console.log(params)
               
-          dispatch({type : OpenBox, payload :{
+          dispatch(setForm({
                 state : true,
                 formType : 'update_product',
                 payload : params,
                 row : Row,
                 setRow : setRows
-              }}) 
+              })) 
 
             }} aria-label="update"  >
               <CreateIcon />
@@ -355,15 +354,13 @@ export default function Products(props) {
 
           <IconButton onClick={() => {
 
-            dispatch({
-              type: OpenBox, payload: {
+            dispatch(setForm({
                 state: true,
                 formType: 'update_merge',
                 payload: params,
                 row: MergeRow,
                 setRow: setMergeRows
-              }
-            })
+            }))
 
           }} aria-label="update"  >
             <CreateIcon />
@@ -375,13 +372,12 @@ export default function Products(props) {
                 return set.action._id !== params.formattedValue._id;
               }))
 
-              dispatch({
-                type: Notify, payload: {
+              dispatch(setAlert({
                   open: true,
                   variant: 'success',
                   message: "Merged Product deleted successfully !!!"
-                }
-              })
+                
+              }))
             })
           }} aria-label="delete"  >
             <DeleteIcon />
@@ -497,14 +493,14 @@ export default function Products(props) {
               })
 
               console.log(unit)
-               dispatch({type : OpenBox, payload :{
+               dispatch(setForm({
                 state : true,
                 formType : 'merge_product',
                 payload : selectedSKU,
                 unit : JSON.stringify(unit),
                 row : MergeRow,
                 setRow : setMergeRows
-              }}) 
+              })) 
               setSelection([])
               setUnit([])
             }} variant = 'contained' size = 'small'>Merge</Button>

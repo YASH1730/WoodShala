@@ -5,11 +5,11 @@ import { DataGrid } from "@mui/x-data-grid";
 
 // importing the context
 
-import { OpenBox } from "../../store/Types";
-import { Store } from "../../store/Context";
+// import { OpenBox } from "../../store/Types";
+// import { Store } from "../../store/Context";
 
 export default function Coupons() {
-const {dispatch} = Store();
+// const {dispatch} = Store();
 
   const columns = [
     { field: "id", headerName: "ID", width: 90 },
@@ -103,7 +103,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "coupone" }});
+            //  dispatch({type : OpenBox,payload : { state: true, formType: "coupone" }});
             }}
             sx={{ width: "100%" }}
             color="primary"

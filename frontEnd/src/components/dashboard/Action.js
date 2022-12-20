@@ -4,26 +4,18 @@ import {
   TextField,
   Grid,
   Button,
-  CardMedia,
-  Card,
-  CardActions,
   MenuItem,
   Divider,
   IconButton,
-  Switch,
   Modal,
   Backdrop,
   Fade,
-  Box,
-  Stack,
-  styled,
-  Paper,
+  Box
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
-// import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
+import {useDispatch} from 'react-redux'
+import {setAlert} from '../../store/action/action'
 import {
   getDraft,
   getLastProduct,
@@ -52,13 +44,13 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
 export default function Action() {
   // useContext
 
-  const { dispatch } = Store();
+  const dispatch  = useDispatch();
 
   const [display, setDisplay] = useState({});
   const [search, setSearch] = useState("");
-  const [Row, setRows] = useState();
+  const [Row, setRows] = useState([]);
   const [pageSize, setPageSize] = useState(50);
-  const [SKU, setSKU] = useState();
+  const [SKU, setSKU] = useState('');
   const [meta, setMeta] = useState(
     {
       total : 0,
@@ -179,13 +171,12 @@ export default function Action() {
                 setRows(Row.filter((set) => {
                   return set.action._id !== params.formattedValue._id;
                 }))
-                dispatch({
-                  type: Notify, payload: {
+                dispatch(setAlert({
                     open: true,
                     variant: "success",
                     message: "Notification deleted successfully !!!",
-                  }
-                });
+                  
+                }));
               });
             }}
             aria-label="delete"
@@ -247,24 +238,22 @@ export default function Action() {
           response = await dropDraft(display.data)
           if(response.status === 200)
           {
-            dispatch({
-              type: Notify, payload: {
+            dispatch(setAlert({
                 open: true,
                 variant: "success",
                 message: response.data.message,
-              }
-            });
+              
+            }));
            setDisplay({status : false})
 
           }
           else{
-            dispatch({
-              type: Notify, payload: {
+            dispatch(setAlert({
                 open: true,
                 variant: "error",
                 message: 'Something Went Wrong !!!',
-              }
-            });
+              
+            }));
            setDisplay({status : false})
           }
           break;
@@ -274,24 +263,22 @@ export default function Action() {
             response  = await dropDraft(display.data)
             if(response.status === 200)
           {
-            dispatch({
-              type: Notify, payload: {
+            dispatch(setAlert({
                 open: true,
                 variant: "success",
                 message: response.data.message,
-              }
-            });
+              
+            }));
            setDisplay({status : false})
 
           }
           else{
-            dispatch({
-              type: Notify, payload: {
+            dispatch(setAlert({
                 open: true,
                 variant: "error",
                 message: 'Something Went Wrong !!!',
-              }
-            });
+              
+            }));
            setDisplay({status : false})
           }
            break;

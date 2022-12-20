@@ -80,12 +80,10 @@ import {
 } from "../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
-import { OpenBox, Notify } from "../../store/Types";
 
-import { Store } from '../../store/Context';
+import {setAlert, setForm} from '../../store/action/action'
+import { useSelector, useDispatch } from "react-redux";
 
-// custom hook 
-// import Dimension from '../hook/Dimension';
 import size from 'react-image-size';
 
 
@@ -600,12 +598,12 @@ const SideForm = () => {
   ]
 
 
-
-  // global context 
-  const { state, dispatch } = Store();
+  // redux 
+  const {form,mode} = useSelector(state=>state); 
+  const dispatch= useDispatch(); 
 
   // states
-  const [cat, setCat] = useState();
+  const [cat, setCat] = useState('');
   const [discount, setDiscount] = useState({ discount_limit: 0, MRP: 0 });
   const [showFabric, setShowFabric] = useState("No");
 
@@ -732,7 +730,7 @@ const SideForm = () => {
   });
 
   useEffect(() => {
-    switch (state.OpenBox.formType) {
+    switch (form.formType) {
       case "hardware":
         getHKU();
         categoryList().then((data) => {
@@ -766,7 +764,7 @@ const SideForm = () => {
           return setSubCategory(data.data);
         });
 
-        const row = state.OpenBox.payload.row;
+        const row = form.payload.row;
 
         setData({
           SKU: row.SKU,
@@ -848,7 +846,7 @@ const SideForm = () => {
         });
 
         
-        const data = state.OpenBox.payload.row.action;
+        const data = form.payload.row.action;
         console.log(data)
         setData({
           SKU: data.SKU,
@@ -953,9 +951,9 @@ const SideForm = () => {
           drawer: data.drawer,
           drawer_count: data.drawer_count,
           range: data.range,
-          mobile_store: state.OpenBox.payload.row.action.mobile_store,
-          online_store: state.OpenBox.payload.row.action.online_store,
-          continue_selling: state.OpenBox.payload.row.action.continue_selling,
+          mobile_store: form.payload.row.action.mobile_store,
+          online_store: form.payload.row.action.online_store,
+          continue_selling: form.payload.row.action.continue_selling,
           quantity: data.quantity,
           unit: data.unit,
           variation_array: data.variation_array,
@@ -987,7 +985,7 @@ const SideForm = () => {
           return setCategory(data.data);
         });
         setData({
-          category: state.OpenBox.payload.row.category_name,
+          category: form.payload.row.category_name,
         });
         break;
       case "update_PrimaryMaterial":
@@ -997,9 +995,9 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
         setData({
-          primaryMaterial_name: state.OpenBox.payload.row.primaryMaterial_name,
+          primaryMaterial_name: form.payload.row.primaryMaterial_name,
           primaryMaterial_description:
-            state.OpenBox.payload.row.primaryMaterial_description,
+            form.payload.row.primaryMaterial_description,
         });
         break;
       case "subcategory":
@@ -1008,26 +1006,26 @@ const SideForm = () => {
 
           return setCategory(data.data);
         });
-        // setCat(state.OpenBox.payload.row.category_id);
+        // setCat(form.payload.row.category_id);
         break;
       case "update_Subcategory":
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
           return setCategory(data.data);
         });
-        setCat(state.OpenBox.payload.row.category_id);
+        setCat(form.payload.row.category_id);
         setData({
-          sub_category_name: state.OpenBox.payload.row.sub_category_name,
+          sub_category_name: form.payload.row.sub_category_name,
         });
         break;
       case "update_blog":
         setData({
-          title: state.OpenBox.payload.value.title,
-          card_image: state.OpenBox.payload.value.card_image,
-          seo_title: state.OpenBox.payload.value.seo_title,
-          seo_description: state.OpenBox.payload.value.seo_description,
-          card_description: state.OpenBox.payload.value.card_description,
-          description: state.OpenBox.payload.value.description,
+          title: form.payload.value.title,
+          card_image: form.payload.value.card_image,
+          seo_title: form.payload.value.seo_title,
+          seo_description: form.payload.value.seo_description,
+          card_description: form.payload.value.card_description,
+          description: form.payload.value.description,
         });
         break;
       case "update_product":
@@ -1059,117 +1057,117 @@ const SideForm = () => {
 
 
         setData({
-          _id: state.OpenBox.payload.value._id || state.OpenBox.payload.row.action._id,
-          assembly_level: state.OpenBox.payload.row.action.assembly_level,
-          SKU: state.OpenBox.payload.row.action.SKU,
-          product_title: state.OpenBox.payload.row.action.product_title,
-          category_name: state.OpenBox.payload.row.action.category_id,
-          back_style: state.OpenBox.payload.row.action.back_style,
-          category_id: state.OpenBox.payload.row.action.category_id,
-          sub_category_name: state.OpenBox.payload.row.action.sub_category_id,
-          sub_category_id: state.OpenBox.payload.row.action.sub_category_id,
-          product_description: state.OpenBox.payload.row.action.product_description,
-          seo_title: state.OpenBox.payload.row.action.seo_title,
-          seo_description: state.OpenBox.payload.row.action.seo_description,
-          seo_keyword: state.OpenBox.payload.row.action.seo_keyword,
-          product_image: state.OpenBox.payload.row.action.product_image,
-          savedImages: state.OpenBox.payload.row.action.product_image,
-          featured_image: state.OpenBox.payload.row.action.featured_image,
-          specification_image: state.OpenBox.payload.row.action.specification_image,
-          mannequin_image: state.OpenBox.payload.row.action.mannequin_image,
+          _id: form.payload.value._id || form.payload.row.action._id,
+          assembly_level: form.payload.row.action.assembly_level,
+          SKU: form.payload.row.action.SKU,
+          product_title: form.payload.row.action.product_title,
+          category_name: form.payload.row.action.category_id,
+          back_style: form.payload.row.action.back_style,
+          category_id: form.payload.row.action.category_id,
+          sub_category_name: form.payload.row.action.sub_category_id,
+          sub_category_id: form.payload.row.action.sub_category_id,
+          product_description: form.payload.row.action.product_description,
+          seo_title: form.payload.row.action.seo_title,
+          seo_description: form.payload.row.action.seo_description,
+          seo_keyword: form.payload.row.action.seo_keyword,
+          product_image: form.payload.row.action.product_image,
+          savedImages: form.payload.row.action.product_image,
+          featured_image: form.payload.row.action.featured_image,
+          specification_image: form.payload.row.action.specification_image,
+          mannequin_image: form.payload.row.action.mannequin_image,
           primary_material: JSON.parse(
-            state.OpenBox.payload.row.action.primary_material_name
+            form.payload.row.action.primary_material_name
           ) || [],
           polish: JSON.parse(
-            state.OpenBox.payload.row.action.polish_name
+            form.payload.row.action.polish_name
           ) || [],
           warehouse: JSON.parse(
-            state.OpenBox.payload.row.action.warehouse_name
+            form.payload.row.action.warehouse_name
           ) || [],
-          warehouse_name: state.OpenBox.payload.row.action.warehouse_name,
-          polish_name: state.OpenBox.payload.row.action.polish_name,
-          bangalore_stock: state.OpenBox.payload.row.action.bangalore_stock,
-          jodhpur_stock: state.OpenBox.payload.row.action.jodhpur_stock,
-          primary_material_name: state.OpenBox.payload.row.action.primary_material_name,
-          package_length: state.OpenBox.payload.row.action.package_length,
-          package_height: state.OpenBox.payload.row.action.package_height,
-          package_breadth: state.OpenBox.payload.row.action.package_breadth,
-          length_main: state.OpenBox.payload.row.action.length_main,
-          breadth: state.OpenBox.payload.row.action.breadth,
-          height: state.OpenBox.payload.row.action.height,
-          weight: state.OpenBox.payload.row.action.weight,
-          hinge: state.OpenBox.payload.row.action.hinge,
-          hinge_name: state.OpenBox.payload.row.action.hinge_name,
-          knob: state.OpenBox.payload.row.action.knob,
-          textile: state.OpenBox.payload.row.action.textile,
-          knob_name: state.OpenBox.payload.row.action.knob_name,
-          textile_name: state.OpenBox.payload.row.action.textile_name,
-          textile_type: state.OpenBox.payload.row.action.textile_type,
-          handle: state.OpenBox.payload.row.action.handle,
-          handle_name: state.OpenBox.payload.row.action.handle_name,
-          door: state.OpenBox.payload.row.action.door,
-          door_name: state.OpenBox.payload.row.action.door_name,
-          fitting: state.OpenBox.payload.row.action.fitting,
-          fitting_name: state.OpenBox.payload.row.action.fitting_name,
-          selling_points: state.OpenBox.payload.row.action.selling_points,
-          top_size: state.OpenBox.payload.row.action.top_size,
-          dial_size: state.OpenBox.payload.row.action.dial_size,
-          seating_size_width: state.OpenBox.payload.row.action.seating_size_width,
-          seating_size_depth: state.OpenBox.payload.row.action.seating_size_depth,
-          seating_size_height: state.OpenBox.payload.row.action.seating_size_height,
-          weight_capacity: state.OpenBox.payload.row.action.weight_capacity,
-          fabric: state.OpenBox.payload.row.action.fabric,
-          fabric_name: state.OpenBox.payload.row.action.fabric_name,
-          wall_hanging: state.OpenBox.payload.row.action.wall_hanging,
-          assembly_required: state.OpenBox.payload.row.action.assembly_required,
-          assembly_part: state.OpenBox.payload.row.action.assembly_part,
-          legs: state.OpenBox.payload.row.action.legs,
-          mirror: state.OpenBox.payload.row.action.mirror,
-          mirror_length: state.OpenBox.payload.row.action.mirror_length,
-          mirror_width: state.OpenBox.payload.row.action.mirror_width,
-          silver: state.OpenBox.payload.row.action.silver,
-          silver_weight: state.OpenBox.payload.row.action.silver_weight,
-          joints: state.OpenBox.payload.row.action.joints,
-          upholstery: state.OpenBox.payload.row.action.upholstery,
-          wheel: state.OpenBox.payload.row.action.wheel,
-          trolley: state.OpenBox.payload.row.action.trolley,
-          trolley_material: state.OpenBox.payload.row.action.trolley_material,
-          rotating_seats: state.OpenBox.payload.row.action.rotating_seats,
-          eatable_oil_polish: state.OpenBox.payload.row.action.eatable_oil_polish,
-          no_chemical: state.OpenBox.payload.row.action.no_chemical,
-          straight_back: state.OpenBox.payload.row.action.straight_back,
-          lean_back: state.OpenBox.payload.row.action.lean_back,
-          weaving: state.OpenBox.payload.row.action.weaving,
-          knife: state.OpenBox.payload.row.action.knife,
+          warehouse_name: form.payload.row.action.warehouse_name,
+          polish_name: form.payload.row.action.polish_name,
+          bangalore_stock: form.payload.row.action.bangalore_stock,
+          jodhpur_stock: form.payload.row.action.jodhpur_stock,
+          primary_material_name: form.payload.row.action.primary_material_name,
+          package_length: form.payload.row.action.package_length,
+          package_height: form.payload.row.action.package_height,
+          package_breadth: form.payload.row.action.package_breadth,
+          length_main: form.payload.row.action.length_main,
+          breadth: form.payload.row.action.breadth,
+          height: form.payload.row.action.height,
+          weight: form.payload.row.action.weight,
+          hinge: form.payload.row.action.hinge,
+          hinge_name: form.payload.row.action.hinge_name,
+          knob: form.payload.row.action.knob,
+          textile: form.payload.row.action.textile,
+          knob_name: form.payload.row.action.knob_name,
+          textile_name: form.payload.row.action.textile_name,
+          textile_type: form.payload.row.action.textile_type,
+          handle: form.payload.row.action.handle,
+          handle_name: form.payload.row.action.handle_name,
+          door: form.payload.row.action.door,
+          door_name: form.payload.row.action.door_name,
+          fitting: form.payload.row.action.fitting,
+          fitting_name: form.payload.row.action.fitting_name,
+          selling_points: form.payload.row.action.selling_points,
+          top_size: form.payload.row.action.top_size,
+          dial_size: form.payload.row.action.dial_size,
+          seating_size_width: form.payload.row.action.seating_size_width,
+          seating_size_depth: form.payload.row.action.seating_size_depth,
+          seating_size_height: form.payload.row.action.seating_size_height,
+          weight_capacity: form.payload.row.action.weight_capacity,
+          fabric: form.payload.row.action.fabric,
+          fabric_name: form.payload.row.action.fabric_name,
+          wall_hanging: form.payload.row.action.wall_hanging,
+          assembly_required: form.payload.row.action.assembly_required,
+          assembly_part: form.payload.row.action.assembly_part,
+          legs: form.payload.row.action.legs,
+          mirror: form.payload.row.action.mirror,
+          mirror_length: form.payload.row.action.mirror_length,
+          mirror_width: form.payload.row.action.mirror_width,
+          silver: form.payload.row.action.silver,
+          silver_weight: form.payload.row.action.silver_weight,
+          joints: form.payload.row.action.joints,
+          upholstery: form.payload.row.action.upholstery,
+          wheel: form.payload.row.action.wheel,
+          trolley: form.payload.row.action.trolley,
+          trolley_material: form.payload.row.action.trolley_material,
+          rotating_seats: form.payload.row.action.rotating_seats,
+          eatable_oil_polish: form.payload.row.action.eatable_oil_polish,
+          no_chemical: form.payload.row.action.no_chemical,
+          straight_back: form.payload.row.action.straight_back,
+          lean_back: form.payload.row.action.lean_back,
+          weaving: form.payload.row.action.weaving,
+          knife: form.payload.row.action.knife,
           not_suitable_for_Micro_Dish:
-            state.OpenBox.payload.row.action.not_suitable_for_Micro_Dish,
-          tilt_top: state.OpenBox.payload.row.action.tilt_top,
-          inside_compartments: state.OpenBox.payload.row.action.inside_compartments,
-          stackable: state.OpenBox.payload.row.action.stackable,
-          ceramic_drawers: state.OpenBox.payload.row.action.ceramic_drawers,
-          ceramic_tiles: state.OpenBox.payload.row.action.ceramic_tiles,
+            form.payload.row.action.not_suitable_for_Micro_Dish,
+          tilt_top: form.payload.row.action.tilt_top,
+          inside_compartments: form.payload.row.action.inside_compartments,
+          stackable: form.payload.row.action.stackable,
+          ceramic_drawers: form.payload.row.action.ceramic_drawers,
+          ceramic_tiles: form.payload.row.action.ceramic_tiles,
           // row data.MRP,
-          tax_rate: state.OpenBox.payload.row.action.tax_rate,
-          selling_price: state.OpenBox.payload.row.action.selling_price,
-          showroom_price: state.OpenBox.payload.row.action.showroom_price,
-          discount_limit: state.OpenBox.payload.row.action.discount_limit,
-          polish_time: state.OpenBox.payload.row.action.polish_time,
-          manufacturing_time: state.OpenBox.payload.row.action.manufacturing_time,
-          status: state.OpenBox.payload.row.action.status,
-          returnDays: state.OpenBox.payload.row.action.returnDays,
-          COD: state.OpenBox.payload.row.action.COD,
-          returnable: state.OpenBox.payload.row.action.returnable,
-          drawer: state.OpenBox.payload.row.action.drawer,
-          drawer_count: state.OpenBox.payload.row.action.drawer_count,
-          range: state.OpenBox.payload.row.action.range,
-          mobile_store: state.OpenBox.payload.row.action.mobile_store,
-          online_store: state.OpenBox.payload.row.action.online_store,
-          continue_selling: state.OpenBox.payload.row.action.continue_selling,
-          quantity: state.OpenBox.payload.row.action.quantity,
-          unit: state.OpenBox.payload.row.action.unit,
+          tax_rate: form.payload.row.action.tax_rate,
+          selling_price: form.payload.row.action.selling_price,
+          showroom_price: form.payload.row.action.showroom_price,
+          discount_limit: form.payload.row.action.discount_limit,
+          polish_time: form.payload.row.action.polish_time,
+          manufacturing_time: form.payload.row.action.manufacturing_time,
+          status: form.payload.row.action.status,
+          returnDays: form.payload.row.action.returnDays,
+          COD: form.payload.row.action.COD,
+          returnable: form.payload.row.action.returnable,
+          drawer: form.payload.row.action.drawer,
+          drawer_count: form.payload.row.action.drawer_count,
+          range: form.payload.row.action.range,
+          mobile_store: form.payload.row.action.mobile_store,
+          online_store: form.payload.row.action.online_store,
+          continue_selling: form.payload.row.action.continue_selling,
+          quantity: form.payload.row.action.quantity,
+          unit: form.payload.row.action.unit,
         });
 
-        setCat(state.OpenBox.payload.row.action.category_id);
+        setCat(form.payload.row.action.category_id);
 
         break;
       case "update_textile":
@@ -1179,21 +1177,21 @@ const SideForm = () => {
         });
         setData({
           ...changeData,
-          textile_name: state.OpenBox.payload.row.textile_name,
+          textile_name: form.payload.row.textile_name,
         });
         break;
       case "update_customer":
-        //console.log(state.OpenBox.payload);
+        //console.log(form.payload);
         setData({
-          CID: state.OpenBox.payload.row.CID,
-          register_time: state.OpenBox.payload.row.register_time,
-          username: state.OpenBox.payload.row.username,
-          mobile: state.OpenBox.payload.row.mobile,
-          email: state.OpenBox.payload.row.email,
-          password: state.OpenBox.payload.row.password,
-          city: state.OpenBox.payload.row.city,
-          state: state.OpenBox.payload.row.state,
-          shipping: state.OpenBox.payload.row.shipping,
+          CID: form.payload.row.CID,
+          register_time: form.payload.row.register_time,
+          username: form.payload.row.username,
+          mobile: form.payload.row.mobile,
+          email: form.payload.row.email,
+          password: form.payload.row.password,
+          city: form.payload.row.city,
+          state: form.payload.row.state,
+          shipping: form.payload.row.shipping,
         });
         break;
       case "merge_product":
@@ -1233,7 +1231,7 @@ const SideForm = () => {
 
         let productArray = [];
 
-        state.OpenBox.payload.map((obj, index) => {
+        form.payload.map((obj, index) => {
           return productArray.push(obj.SKU);
         });
 
@@ -1312,49 +1310,49 @@ const SideForm = () => {
        
 
         setData({
-          SKU: state.OpenBox.payload.value.SKU,
-          MS: state.OpenBox.payload.value.MS,
-          product_array: state.OpenBox.payload.value.product_array.split(","),
-          product_title: state.OpenBox.payload.value.product_title,
-          category_name: state.OpenBox.payload.value.category_id,
-          category_id: state.OpenBox.payload.value.category_id,
-          sub_category_name: state.OpenBox.payload.value.sub_category_id,
-          warehouse: state.OpenBox.payload.value.warehouse ?
-            state.OpenBox.payload.value.warehouse.split(',') : [],
-          sub_category_id: state.OpenBox.payload.value.sub_category_id,
-          product_description: state.OpenBox.payload.value.product_description,
-          seo_title: state.OpenBox.payload.value.seo_title,
-          seo_description: state.OpenBox.payload.value.seo_description,
-          seo_keyword: state.OpenBox.payload.value.seo_keyword,
-          product_image: state.OpenBox.payload.value.product_image,
-          featured_image: state.OpenBox.payload.value.featured_image,
-          specification_image: state.OpenBox.payload.value.specification_image,
-          selling_points: state.OpenBox.payload.value.selling_points,
-          rotating_seats: state.OpenBox.payload.value.rotating_seats,
-          eatable_oil_polish: state.OpenBox.payload.value.eatable_oil_polish,
-          no_chemical: state.OpenBox.payload.value.no_chemical,
-          straight_back: state.OpenBox.payload.value.straight_back,
-          lean_back: state.OpenBox.payload.value.lean_back,
-          weaving: state.OpenBox.payload.value.weaving,
-          knife: state.OpenBox.payload.value.knife,
+          SKU: form.payload.value.SKU,
+          MS: form.payload.value.MS,
+          product_array: form.payload.value.product_array.split(","),
+          product_title: form.payload.value.product_title,
+          category_name: form.payload.value.category_id,
+          category_id: form.payload.value.category_id,
+          sub_category_name: form.payload.value.sub_category_id,
+          warehouse: form.payload.value.warehouse ?
+            form.payload.value.warehouse.split(',') : [],
+          sub_category_id: form.payload.value.sub_category_id,
+          product_description: form.payload.value.product_description,
+          seo_title: form.payload.value.seo_title,
+          seo_description: form.payload.value.seo_description,
+          seo_keyword: form.payload.value.seo_keyword,
+          product_image: form.payload.value.product_image,
+          featured_image: form.payload.value.featured_image,
+          specification_image: form.payload.value.specification_image,
+          selling_points: form.payload.value.selling_points,
+          rotating_seats: form.payload.value.rotating_seats,
+          eatable_oil_polish: form.payload.value.eatable_oil_polish,
+          no_chemical: form.payload.value.no_chemical,
+          straight_back: form.payload.value.straight_back,
+          lean_back: form.payload.value.lean_back,
+          weaving: form.payload.value.weaving,
+          knife: form.payload.value.knife,
           not_suitable_for_Micro_Dish:
-            state.OpenBox.payload.value.not_suitable_for_Micro_Dish,
-          tilt_top: state.OpenBox.payload.value.tilt_top,
-          inside_compartments: state.OpenBox.payload.value.inside_compartments,
-          stackable: state.OpenBox.payload.value.stackable,
-          MRP: state.OpenBox.payload.value.MRP,
-          tax_rate: state.OpenBox.payload.value.tax_rate,
-          selling_price: state.OpenBox.payload.value.selling_price,
-          showroom_price: state.OpenBox.payload.value.showroom_price,
-          discount_limit: state.OpenBox.payload.value.discount_limit,
-          polish_time: state.OpenBox.payload.value.polish_time,
-          manufacturing_time: state.OpenBox.payload.value.manufacturing_time,
-          status: state.OpenBox.payload.value.status,
-          returnDays: state.OpenBox.payload.value.returnDays,
-          COD: state.OpenBox.payload.value.COD,
-          returnable: state.OpenBox.payload.value.returnable,
-          bangalore_stock: state.OpenBox.payload.value.bangalore_stock,
-          jodhpur_stock: state.OpenBox.payload.value.jodhpur_stock,
+            form.payload.value.not_suitable_for_Micro_Dish,
+          tilt_top: form.payload.value.tilt_top,
+          inside_compartments: form.payload.value.inside_compartments,
+          stackable: form.payload.value.stackable,
+          MRP: form.payload.value.MRP,
+          tax_rate: form.payload.value.tax_rate,
+          selling_price: form.payload.value.selling_price,
+          showroom_price: form.payload.value.showroom_price,
+          discount_limit: form.payload.value.discount_limit,
+          polish_time: form.payload.value.polish_time,
+          manufacturing_time: form.payload.value.manufacturing_time,
+          status: form.payload.value.status,
+          returnDays: form.payload.value.returnDays,
+          COD: form.payload.value.COD,
+          returnable: form.payload.value.returnable,
+          bangalore_stock: form.payload.value.bangalore_stock,
+          jodhpur_stock: form.payload.value.jodhpur_stock,
 
         });
 
@@ -1362,23 +1360,23 @@ const SideForm = () => {
       case 'update_Stock':
         setData({
           ...changeData,
-          _id: state.OpenBox.payload.row._id,
-          product_id: state.OpenBox.payload.row.product_id,
-          stock: state.OpenBox.payload.row.stock,
-          warehouse: state.OpenBox.payload.row.warehouse,
+          _id: form.payload.row._id,
+          product_id: form.payload.row.product_id,
+          stock: form.payload.row.stock,
+          warehouse: form.payload.row.warehouse,
         });
         break
       case 'update_supplier':
         setData({
           ...changeData,
-          _id: state.OpenBox.payload.row._id,
-          supplier_name : state.OpenBox.payload.row.supplier_name, 
-          mobile : state.OpenBox.payload.row.mobile, 
-          gst_no : state.OpenBox.payload.row.gst_no, 
-          alt_mobile : state.OpenBox.payload.row.alt_mobile, 
-          specialization : state.OpenBox.payload.row.specialization, 
-          SID : state.OpenBox.payload.row.SID, 
-          address : state.OpenBox.payload.row.address, 
+          _id: form.payload.row._id,
+          supplier_name : form.payload.row.supplier_name, 
+          mobile : form.payload.row.mobile, 
+          gst_no : form.payload.row.gst_no, 
+          alt_mobile : form.payload.row.alt_mobile, 
+          specialization : form.payload.row.specialization, 
+          SID : form.payload.row.SID, 
+          address : form.payload.row.address, 
         });
         break
       case 'add_supplier':
@@ -1387,7 +1385,7 @@ const SideForm = () => {
         default:
       // //console.log("");
     }
-  }, [state.OpenBox.formType, state.OpenBox.state]);
+  }, [form.formType, form.state]);
 
   // stepper button
   const handleNextStep = () => {
@@ -1411,7 +1409,7 @@ const SideForm = () => {
 
   // for update
   const handleChangeData = (e) => {
-    switch (state.OpenBox.formType) {
+    switch (form.formType) {
       case "update_category":
         setData({
           ...changeData,
@@ -1550,7 +1548,7 @@ const SideForm = () => {
 
   const handleClose = () => {
     resetAll();
-    dispatch({ type: OpenBox, payload: { state: false, formType: null, payload: null } });
+    dispatch(setForm({ state: false, formType: null, payload: null }));
   };
 
   // function for generating Merged product  ID
@@ -1680,16 +1678,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             textile_name: data.data.response.textile_name,
             textile_status: data.data.response.textile_status,
             textile_image: data.data.response.textile_image,
@@ -1697,25 +1693,21 @@ const SideForm = () => {
           }])
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
  
@@ -1740,16 +1732,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             category_name: data.data.response.category_name,
             category_status: data.data.response.category_status,
             category_image: data.data.response.category_image,
@@ -1757,25 +1747,21 @@ const SideForm = () => {
           }])
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   // function for handling Customer
@@ -1800,16 +1786,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             CID: data.data.response.CID,
             register_time: data.data.response.register_time,
             profile_image: data.data.response.profile_image,
@@ -1823,25 +1807,21 @@ const SideForm = () => {
           setAddress([]);
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   // function for handling Customer
@@ -1871,16 +1851,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.CID = changeData.CID
               set.register_time = changeData.register_time
               set.profile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
@@ -1897,25 +1875,21 @@ const SideForm = () => {
           }))
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -1925,7 +1899,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
     Image[0] !== undefined && FD.append("fabric_image", Image[0]);
 
@@ -1940,16 +1914,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.textile_name = e.target.textile_name.value;
               set.textile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
 
@@ -1958,25 +1930,21 @@ const SideForm = () => {
           }))
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
  
@@ -1986,7 +1954,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
     Image[0] !== undefined && FD.append("category_image", Image[0]);
     console.log(Image[0])
@@ -2001,16 +1969,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.category_name = e.target.category_name.value;
               Image[0] !== undefined ? set.category_image = `https://woodshala.in/upload/${Image[0].path}` : console.log();
             }
@@ -2018,25 +1984,21 @@ const SideForm = () => {
           }))
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -2428,16 +2390,14 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          // state.OpenBox.setRow([...state.OpenBox.row, {
-          //   id: state.OpenBox.row.length + 1,
+          // form.setRow([...form.row, {
+          //   id: form.row.length + 1,
           //   SKU: data.data.response.SKU,
           //   product_title: data.data.response.product_title,
           //   category_name: data.data.response.category_name,
@@ -2527,24 +2487,20 @@ const SideForm = () => {
           //   action: data.data.response
           // }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleVariation = (e) => {
@@ -2869,16 +2825,14 @@ const SideForm = () => {
 
 
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             SKU: data.data.response.SKU,
             product_title: data.data.response.product_title,
             category_name: data.data.response.category_name,
@@ -2968,24 +2922,20 @@ const SideForm = () => {
             action: data.data.response
           }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleUpdateProduct = (e) => {
@@ -3303,17 +3253,15 @@ const SideForm = () => {
       .then((data) => {
 
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          // console.log(state.OpenBox.row)
-          // state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-          //   if (set.action === state.OpenBox.payload.row.action) {
+          // console.log(form.row)
+          // form.setRow(form.row.map((set) => {
+          //   if (set.action === form.payload.row.action) {
           //     set.SKU = changeData.SKU
           //     set.product_title = changeData.product_title
           //     set.category_name = multiOBJ.category_name || changeData.category_name
@@ -3406,24 +3354,20 @@ const SideForm = () => {
           // }))
 
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3469,7 +3413,7 @@ const SideForm = () => {
     FD.append("sub_category_id", changeData.sub_category_name);
     FD.append("product_title", changeData.product_title);
     FD.append("product_description", changeData.product_description);
-    FD.append("product_quantity", state.OpenBox.unit);
+    FD.append("product_quantity", form.unit);
     FD.append("MS", SKU);
 
     FD.append("SKU", SKU);
@@ -3487,16 +3431,14 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             MS: data.data.response.MS,
             product_array: data.data.response.product_array,
             product_title: data.data.response.product_title,
@@ -3537,24 +3479,20 @@ const SideForm = () => {
             action: data.data.response
           }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleUpdateMergeProduct = (e) => {
@@ -3562,7 +3500,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", state.OpenBox.payload.value._id);
+    FD.append("_id", form.payload.value._id);
 
     Image.map((element) => {
       return FD.append("specification_image", element);
@@ -3612,16 +3550,14 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.MS = changeData.SKU
               set.product_array = changeData.product_array
               set.product_title = changeData.product_title
@@ -3666,24 +3602,20 @@ const SideForm = () => {
             else return set;
           }))
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3716,16 +3648,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             primaryMaterial_name: data.data.response.primaryMaterial_name,
             primaryMaterial_description: data.data.response.primaryMaterial_description,
             primaryMaterial_image: data.data.response.primaryMaterial_image,
@@ -3734,25 +3664,21 @@ const SideForm = () => {
           }])
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3761,7 +3687,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
     Image.map((element) => {
       return FD.append("primaryMaterial_image", element);
@@ -3782,16 +3708,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.primaryMaterial_description = e.target.primaryMaterial_description.value;
               set.primaryMaterial_name = e.target.primaryMaterial_name.value;
               set.primaryMaterial_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
@@ -3801,25 +3725,21 @@ const SideForm = () => {
           }))
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3851,8 +3771,8 @@ const SideForm = () => {
         //console.log(data.status);
 
         if (data.status === 200) {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             supplier_name : data.data.response.supplier_name,
             mobile : data.data.response.mobile,
             gst_no : data.data.response.gst_no,
@@ -3863,32 +3783,26 @@ const SideForm = () => {
             action: data.data.response._id
           }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3896,7 +3810,7 @@ const SideForm = () => {
     e.preventDefault();
 
     const FD = new FormData();
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
 
     FD.append("supplier_name", e.target.supplier_name.value);
@@ -3916,16 +3830,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action)
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action)
            { set.supplier_name = e.target.supplier_name.value
             set.mobile = e.target.mobile.value
             set.gst_no = e.target.gst_no.value
@@ -3936,25 +3848,21 @@ const SideForm = () => {
             return set;
           }))
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -3979,40 +3887,34 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          // state.OpenBox.setRow([...state.OpenBox.row, {
-          //   id: state.OpenBox.row.length + 1,
+          // form.setRow([...form.row, {
+          //   id: form.row.length + 1,
           //   polish_name: data.data.response.polish_name,
           //   polish_status: data.data.response.polish_status,
           //   action: data.data.response
           // }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleOutward = (e) => {
@@ -4039,39 +3941,33 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          // state.OpenBox.setRow([...state.OpenBox.row, {
-          //   id: state.OpenBox.row.length + 1,
+          // form.setRow([...form.row, {
+          //   id: form.row.length + 1,
           //   polish_name: data.data.response.polish_name,
           //   polish_status: data.data.response.polish_status,
           //   action: data.data.response
           // }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleTransfer = (e) => {
@@ -4095,39 +3991,33 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          // state.OpenBox.setRow([...state.OpenBox.row, {
-          //   id: state.OpenBox.row.length + 1,
+          // form.setRow([...form.row, {
+          //   id: form.row.length + 1,
           //   polish_name: data.data.response.polish_name,
           //   polish_status: data.data.response.polish_status,
           //   action: data.data.response
           // }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4156,16 +4046,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             category_id: data.data.response.category_id,
             category_name: data.data.response.category_name,
             sub_category_name: data.data.response.sub_category_name,
@@ -4174,25 +4062,21 @@ const SideForm = () => {
           }])
           setImages([]);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
   const handleUpdateSubCategories = (e) => {
@@ -4201,9 +4085,9 @@ const SideForm = () => {
     const FD = new FormData();
     let catName = ''
 
-    // //console.log(state.OpenBox.payload);
+    // //console.log(form.payload);
 
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
     category.map((item) => {
       if (item._id === e.target.category_id.value) catName = item.category_name
@@ -4226,45 +4110,39 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.sub_category_name = e.target.sub_category_name.value;
               set.category_name = catName;
             }
             return set;
           }))
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
-  const [url, setUrl] = useState();
+  const [url, setUrl] = useState('');
 
   const handleUpload = (e) => {
     e.preventDefault();
@@ -4283,35 +4161,29 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
           setImages([]);
           setUrl(data.data.url);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4337,16 +4209,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             uuid: data.data.response.uuid,
             seo_title: data.data.response.seo_title,
             seo_description: data.data.response.seo_description,
@@ -4359,25 +4229,21 @@ const SideForm = () => {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4390,7 +4256,7 @@ const SideForm = () => {
       return FD.append("banner_image", element);
     });
 
-    FD.append("_id", state.OpenBox.payload.value._id);
+    FD.append("_id", form.payload.value._id);
 
     FD.append("description", editorRef.current.getContent());
     FD.append("title", e.target.title.value);
@@ -4406,16 +4272,14 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
-            if (set.action === state.OpenBox.payload.row.action) {
+          form.setRow(form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
               set.seo_title = e.target.seo_title.value
               set.seo_description = e.target.seo_description.value
               set.title = e.target.title.value
@@ -4428,25 +4292,21 @@ const SideForm = () => {
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4476,37 +4336,31 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status !== 200) {
-          setImages([]);
-          dispatch({
-            type: Notify, payload: {
+          // setImages([]);
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message || "Something Went Wrong !!!",
-            }
-          });
+          }));
         } else {
-          setImages([]);
-          setUrl(data.data.url);
+          // setImages([]);
+          // setUrl(data.data.url);
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4534,8 +4388,8 @@ const SideForm = () => {
   //           }
   //         });
   //       } else {
-  //         state.OpenBox.setRow([...state.OpenBox.row, {
-  //           id: state.OpenBox.row.length + 1,
+  //         form.setRow([...form.row, {
+  //           id: form.row.length + 1,
   //           product_id: changeData.product_id,
   //           stock: changeData.stock,
   //           warehouse: changeData.warehouse,
@@ -4588,9 +4442,9 @@ const SideForm = () => {
   //           }
   //         });
   //       } else {
-  //         state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+  //         form.setRow(form.row.map((set) => {
 
-  //           if (set.action === state.OpenBox.payload.row.action) {
+  //           if (set.action === form.payload.row.action) {
   //             set.stock = changeData.stock;
   //           }
   //           return set;
@@ -4699,16 +4553,14 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow([...state.OpenBox.row, {
-            id: state.OpenBox.row.length + 1,
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
             SKU: data.data.response.SKU,
             title: data.data.response.title,
             category_name: data.data.response.category_name,
@@ -4733,24 +4585,20 @@ const SideForm = () => {
             action: data.data.response
           }])
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4759,7 +4607,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append("_id", state.OpenBox.payload.row.action);
+    FD.append("_id", form.payload.row.action);
 
     FD.append("status", changeData.status === 'on' ? true : false);
 
@@ -4825,17 +4673,15 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "error",
               message: data.data.message,
-            }
-          });
+  }));
         } else {
-          state.OpenBox.setRow(state.OpenBox.row.map((set) => {
+          form.setRow(form.row.map((set) => {
 
-            if (set.action === state.OpenBox.payload.row.action) {
+            if (set.action === form.payload.row.action) {
               set.title = changeData.title;
               set.category_name = multiOBJ.category_name;
               set.category_id = changeData.category_id;
@@ -4860,24 +4706,20 @@ const SideForm = () => {
             return set;
           }))
           handleClose();
-          dispatch({
-            type: Notify, payload: {
+          dispatch(setAlert({
               open: true,
               variant: "success",
               message: data.data.message,
-            }
-          });
+  }));
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 
@@ -4925,21 +4767,21 @@ const handleSearch = async (e) => {
     <>
       <Slide
         direction="left"
-        in={state.OpenBox.state}
+        in={form.state}
         mountOnEnter
         unmountOnExit
       >
         <Backdrop
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={state.OpenBox.state}
+          open={form.state}
         >
           <Box
             className={
-              state.DarkMode.mode === true ? "mainDarkContainer" : "mainContainer"
+              mode.type === true ? "mainDarkContainer" : "mainContainer"
             }
             sx={
-              state.OpenBox.formType === "product" ||
-                state.OpenBox.formType === "update_product"
+              form.formType === "product" ||
+                form.formType === "update_product"
                 ? { width: "100vw !important", padding: "0 5% !important" }
                 : {}
             }
@@ -4954,7 +4796,7 @@ const handleSearch = async (e) => {
 
             {/* add Products */}
 
-            {state.OpenBox.formType === "product" && (
+            {form.formType === "product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -7210,7 +7052,7 @@ const handleSearch = async (e) => {
             {/* add Products Ends */}
             {/* Update Products */}
 
-            {state.OpenBox.formType === "update_product" && (
+            {form.formType === "update_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -9528,7 +9370,7 @@ const handleSearch = async (e) => {
             {/* update Products Ends */}
             {/* Variation Products */}
 
-            {state.OpenBox.formType === "variation" && (
+            {form.formType === "variation" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -11857,7 +11699,7 @@ const handleSearch = async (e) => {
 
             {/* merge Products */}
 
-            {state.OpenBox.formType === "merge_product" && (
+            {form.formType === "merge_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12214,7 +12056,7 @@ const handleSearch = async (e) => {
 
             {/* update merge Products */}
 
-            {state.OpenBox.formType === "update_merge" && (
+            {form.formType === "update_merge" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12581,7 +12423,7 @@ const handleSearch = async (e) => {
 
             {/*  add textile */}
 
-            {state.OpenBox.formType === "textile" && (
+            {form.formType === "textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12646,7 +12488,7 @@ const handleSearch = async (e) => {
 
             {/*  update textile */}
 
-            {state.OpenBox.formType === "update_textile" && (
+            {form.formType === "update_textile" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12703,7 +12545,7 @@ const handleSearch = async (e) => {
 
             {/*  add Category */}
 
-            {state.OpenBox.formType === "category" && (
+            {form.formType === "category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12768,7 +12610,7 @@ const handleSearch = async (e) => {
 
             {/*  update Category */}
 
-            {state.OpenBox.formType === "update_category" && (
+            {form.formType === "update_category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12824,7 +12666,7 @@ const handleSearch = async (e) => {
 
             {/*  add primaryMateriel */}
 
-            {state.OpenBox.formType === "primaryMaterial" && (
+            {form.formType === "primaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12900,7 +12742,7 @@ const handleSearch = async (e) => {
 
             {/*  update primaryMaterial */}
 
-            {state.OpenBox.formType === "update_PrimaryMaterial" && (
+            {form.formType === "update_PrimaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -12970,7 +12812,7 @@ const handleSearch = async (e) => {
 
             {/*  add Supplier */}
 
-            {state.OpenBox.formType === "add_supplier" && (
+            {form.formType === "add_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13088,7 +12930,7 @@ const handleSearch = async (e) => {
 
             {/*  update Suppliers  */}
 
-            {state.OpenBox.formType === "update_supplier" && (
+            {form.formType === "update_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13207,7 +13049,7 @@ const handleSearch = async (e) => {
        
             {/*  update blog  */}
 
-            {state.OpenBox.formType === "update_blog" && (
+            {form.formType === "update_blog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13377,7 +13219,7 @@ const handleSearch = async (e) => {
 
             {/*   Add BLog */}
 
-            {state.OpenBox.formType === "addBlog" && (
+            {form.formType === "addBlog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13543,7 +13385,7 @@ const handleSearch = async (e) => {
           
             {/*  add subCategory */}
 
-            {state.OpenBox.formType === "subcategory" && (
+            {form.formType === "subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13626,7 +13468,7 @@ const handleSearch = async (e) => {
 
             {/*update subCategory */}
 
-            {state.OpenBox.formType === "update_Subcategory" && (
+            {form.formType === "update_Subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13706,7 +13548,7 @@ const handleSearch = async (e) => {
 
             {/*  add Customer */}
 
-            {state.OpenBox.formType === "add_customer" && (
+            {form.formType === "add_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -13936,7 +13778,7 @@ const handleSearch = async (e) => {
             {/* add Customer Ends */}
             {/*  update Customer */}
 
-            {state.OpenBox.formType === "update_customer" && (
+            {form.formType === "update_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -14068,7 +13910,7 @@ const handleSearch = async (e) => {
 
             {/* add order */}
 
-            {state.OpenBox.formType === "add_order" && (
+            {form.formType === "add_order" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -14283,7 +14125,7 @@ const handleSearch = async (e) => {
 
             {/*  add stock */}
 
-            {/* {state.OpenBox.formType === "addStock" && (
+            {/* {form.formType === "addStock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -14372,7 +14214,7 @@ const handleSearch = async (e) => {
 
             {/*  update stock */}
 
-            {/* {state.OpenBox.formType === "update_Stock" && (
+            {/* {form.formType === "update_Stock" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -14464,7 +14306,7 @@ const handleSearch = async (e) => {
 
             {/* add Hardware */}
 
-            {state.OpenBox.formType === "hardware" && (
+            {form.formType === "hardware" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15028,7 +14870,7 @@ const handleSearch = async (e) => {
             {/* add Hardware Ends */}
             {/* update Hardware */}
 
-            {state.OpenBox.formType === "update_hardware" && (
+            {form.formType === "update_hardware" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15540,7 +15382,7 @@ const handleSearch = async (e) => {
 
             {/* add inward */}
 
-            {state.OpenBox.formType === "inward" && (
+            {form.formType === "inward" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15659,7 +15501,7 @@ const handleSearch = async (e) => {
 
             {/* add Outward */}
 
-            {state.OpenBox.formType === "outward" && (
+            {form.formType === "outward" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
@@ -15832,7 +15674,7 @@ const handleSearch = async (e) => {
 
             {/* add Transfer */}
 
-            {state.OpenBox.formType === "transfer" && (
+            {form.formType === "transfer" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">

@@ -32,7 +32,7 @@ import parameterize from 'parameterize';
 
 export default function BlogContent() {
 
-  const [data,setData] = useState()
+  const [data,setData] = useState([])
 
   useEffect(()=>{
     getBlog(localStorage.getItem('uuid'))

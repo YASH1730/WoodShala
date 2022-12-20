@@ -45,13 +45,13 @@ import {
 export default function Knob() {
 
   const [search, setSearch] = useState("");
-  const [check,setCheck] = useState()
+  const [check,setCheck] = useState([])
 
   const {dispatch} = Store()
 
   const [pageSize, setPageSize] = useState(50);
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
   // function for get cetegory list
 
   useEffect(() => {

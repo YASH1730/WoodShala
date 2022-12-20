@@ -18,8 +18,8 @@ import {
   // useGridSelector,
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
-import { Store } from '../../store/Context'
-import { Notify } from '../../store/Types'
+// import { Store } from '../../store/Context'
+// import { Notify } from '../../store/Types'
 
 // function CustomPagination() {
 //   const apiRef = useGridApiContext();
@@ -39,7 +39,7 @@ import { Notify } from '../../store/Types'
 
 export default function Banner() {
 
-  const { dispatch } = Store();
+  // const { dispatch } = Store();
   const [pageSize, setPageSize] = useState(50);
 
 
@@ -71,34 +71,34 @@ export default function Banner() {
 
     const res = addBanner(FD)
 
-    res.then((data) => {
-      //console.log(data)
-      dispatch({
-        type: Notify, payload: {
-          open: true,
-          variant: 'success',
-          message: "Banner Added successfully !!!"
+    // res.then((data) => {
+    //   //console.log(data)
+    //   dispatch({
+    //     type: Notify, payload: {
+    //       open: true,
+    //       variant: 'success',
+    //       message: "Banner Added successfully !!!"
 
-        }
-      })
-    })
-      .catch((err) => {
-        //console.log(err)
+    //     }
+    //   })
+    // })
+    //   .catch((err) => {
+    //     //console.log(err)
 
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: 'error',
-            message: "May be duplicate found !!!"
+    //     dispatch({
+    //       type: Notify, payload: {
+    //         open: true,
+    //         variant: 'error',
+    //         message: "May be duplicate found !!!"
 
-          }
-        })
-      })
+    //       }
+    //     })
+    //   })
 
 
   }
 
-  const [Row, setRows] = useState()
+  const [Row, setRows] = useState([])
 
   const [search, setSearch] = useState([]);
 
@@ -166,25 +166,25 @@ export default function Banner() {
 
     res.then((data) => {
       //console.log(data)
-      dispatch({
-        type: Notify, payload: {
-          open: true,
-          variant: 'success',
-          message: "Banner Status Updated Successfully !!!"
+      // dispatch({
+      //   type: Notify, payload: {
+      //     open: true,
+      //     variant: 'success',
+      //     message: "Banner Status Updated Successfully !!!"
 
-        }
-      })
+      //   }
+      // })
     })
       .catch((err) => {
         //console.log(err)
-        dispatch({
-          type: Notify, payload: {
-            open: true,
-            variant: 'error',
-            message: "May be duplicate found !!!"
+        // dispatch({
+        //   type: Notify, payload: {
+        //     open: true,
+        //     variant: 'error',
+        //     message: "May be duplicate found !!!"
 
-          }
-        })
+        //   }
+        // })
       })
 
 

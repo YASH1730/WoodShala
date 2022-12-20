@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 // import PropTypes from 'prop-types';
 import {
   Typography,
@@ -6,15 +6,14 @@ import {
   InputAdornment,
   IconButton,
   MenuItem,
-  Button,
   Grid,
   Box
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
+import {useDispatch} from 'react-redux'
+import { setAlert, setForm } from "../../store/action/action";
 import { getOrder, changeOrderStatus, deleteOrder } from "../../services/service";
 import "../../assets/custom/css/category.css";
 // import { useDropzone } from "react-dropzone";
@@ -28,41 +27,41 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from "@mui/material/Pagination";
 
-import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../services/service'
+// import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../services/service'
 import { useConfirm } from "material-ui-confirm";
 // import { Editor } from "@tinymce/tinymce-react";
 
 // style for drop box in custom
-const thumbsContainer = {
-  display: "flex",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  marginTop: 16,
-};
+// const thumbsContainer = {
+//   display: "flex",
+//   flexDirection: "row",
+//   flexWrap: "wrap",
+//   marginTop: 16,
+// };
 
-const thumb = {
-  display: "inline-flex",
-  borderRadius: 2,
-  border: "1px solid #eaeaea",
-  marginBottom: 8,
-  marginRight: 8,
-  width: 100,
-  height: 100,
-  padding: 4,
-  boxSizing: "border-box",
-};
+// const thumb = {
+//   display: "inline-flex",
+//   borderRadius: 2,
+//   border: "1px solid #eaeaea",
+//   marginBottom: 8,
+//   marginRight: 8,
+//   width: 100,
+//   height: 100,
+//   padding: 4,
+//   boxSizing: "border-box",
+// };
 
-const thumbInner = {
-  display: "flex",
-  minWidth: 0,
-  overflow: "hidden",
-};
+// const thumbInner = {
+//   display: "flex",
+//   minWidth: 0,
+//   overflow: "hidden",
+// };
 
-const img = {
-  display: "block",
-  width: "auto",
-  height: "100%",
-};
+// const img = {
+//   display: "block",
+//   width: "auto",
+//   height: "100%",
+// };
 
 // style for drop box in custom ends
 
@@ -84,18 +83,18 @@ const img = {
 // }
 
 // modal css
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  maxHeight: 500,
-  overflow: 'scroll',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 2,
-};
+// const style = {
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   width: 400,
+//   maxHeight: 500,
+//   overflow: 'scroll',
+//   bgcolor: 'background.paper',
+//   boxShadow: 24,
+//   p: 2,
+// };
 
 // function TabPanel(props) {
 //   const { children, value, index, ...other } = props;
@@ -132,13 +131,13 @@ const style = {
 
 export default function Order() {
 
-  const editorRef = useRef();
-  const [value, setValue] = useState(0);
+  // const editorRef = useRef();
+  // const [value, setValue] = useState(0);
 
 
   // confirm box 
 
-  const confirm = useConfirm();
+  // const confirm = useConfirm();
 
   // confirmBox 
   // const confirmBox = (e) => {
@@ -202,7 +201,7 @@ export default function Order() {
   // };
 
   // context
-  const { dispatch } = Store();
+  const dispatch = useDispatch();
   const [pageSize, setPageSize] = useState(50);
 
 
@@ -516,15 +515,13 @@ export default function Order() {
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-              dispatch({
-                type: OpenBox, payload: {
+              dispatch(setForm({
                   state: true,
                   formType: "update_order",
                   payload: params,
                   row: Row,
                   setRow: setRows
-                }
-              });
+              }));
             }}
             aria-label="delete"
           >
@@ -534,11 +531,11 @@ export default function Order() {
            setRows(Row.filter((set)=>{
             return  set.action !== params.formattedValue  ;
           }))
-          dispatch({type : Notify,payload : {
+          dispatch(setForm( {
             open : true,
             variant : 'success',
             message : 'Order Deleted !!!'
-          }})
+          }))
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton>
@@ -628,23 +625,20 @@ export default function Order() {
     res
       .then((data) => {
         console.log(data);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "success",
             message: " Order Status Updated Successfully !!!",
           }
-        });
+        ));
       })
       .catch((err) => {
         console.log(err);
-        dispatch({
-          type: Notify, payload: {
+        dispatch(setAlert({
             open: true,
             variant: "error",
             message: "Something Went Wrong !!!",
-          }
-        });
+        }));
       });
   };
 

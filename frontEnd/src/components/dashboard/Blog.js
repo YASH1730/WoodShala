@@ -11,8 +11,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { getBlogHome, deleteBLog } from "../../services/service";
 import "../../assets/custom/css/category.css";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { OpenBox, Notify } from "../../store/Types";
-import { Store } from "../../store/Context";
+import {useDispatch} from 'react-redux';
+import {setForm,setAlert} from '../../store/action/action';
 
 
 import {
@@ -45,12 +45,12 @@ export default function Knob() {
   const [search, setSearch] = useState("");
 
 
-  const { dispatch } = Store();
+  const dispatch  = useDispatch();
   const [pageSize, setPageSize] = useState(50);
 
 
 
-  const [Row, setRows] = useState();
+  const [Row, setRows] = useState([]);
   // function for get  list
 
   useEffect(() => {
@@ -113,13 +113,13 @@ export default function Knob() {
         <div className="categoryImage">
           <IconButton
             onClick={() => {
-              dispatch({type : OpenBox , payload :{
+              dispatch(setForm({
                 state: true,
                 formType: "update_blog",
                 payload: params,
                 row : Row,
                 setRow : setRows 
-              }});
+              }));
             }}
           >
             <CreateIcon />
@@ -131,18 +131,18 @@ export default function Knob() {
               setRows(Row.filter((set)=>{
                 return  set.action._id !== params.formattedValue._id  ;
               }))
-              dispatch({type : Notify, payload :{
+              dispatch(setAlert({
                 open : true,
                 variant : 'success',
                 message : res.data.message
-              }})
+              }))
             }
             else {
-              dispatch({type : Notify, payload :{
+              dispatch(setAlert({
                 open : true,
                 variant : 'error',
                 message : res.data.message
-              }})
+              }))
 
             }
 
@@ -226,9 +226,9 @@ export default function Knob() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch({type: OpenBox, payload : { state: true, formType: "addBlog",
+              dispatch(setForm({ state: true, formType: "addBlog",
               row : Row,
-              setRow : setRows  }});
+              setRow : setRows  }));
             }}
             sx={{ width: "100%" }}
             color="primary"
