@@ -3,7 +3,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
 import {useDispatch,useSelector} from  'react-redux'
-import {setAlert} from  '../store/action/action'
+import {setAlert} from  '../../store/action/action'
 
 export default function SnackBar() {
 

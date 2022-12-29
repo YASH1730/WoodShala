@@ -22,9 +22,9 @@ import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 // import DragHandleIcon from "@mui/icons-material/DragHandle";
 // import WavesIcon from '@mui/icons-material/Waves';
 // conponents
-import Category from "./dashboard/Category";
-import SubCategory from "./dashboard/SubCategory";
-import PrimaryMaterial from "./dashboard/PrimaryMaterial";
+import Category from "./dashboard/accessories/Category";
+import SubCategory from "./dashboard/accessories/SubCategory";
+import PrimaryMaterial from "./dashboard/accessories/PrimaryMaterial";
 // import SecondaryMaterial from "./dashboard/SecondaryMaterial";
 // import Polish from "./dashboard/Polish";
 // import Hinge from "./dashboard/Hinge";

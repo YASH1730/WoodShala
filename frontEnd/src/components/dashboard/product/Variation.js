@@ -16,13 +16,13 @@ import {getListProduct,
   //  deleteProduct,
   //   getListMergeProduct,
   //    deleteMergeProduct
-    } from '../../services/service'
+    } from '../../../services/service'
 import MergeIcon from '@mui/icons-material/Merge';
 import {
   DataGrid,
 
 } from '@mui/x-data-grid';
-import {setForm} from '../../store/action/action'
+import {setForm} from '../../../store/action/action'
 import { useDispatch } from "react-redux";
 
 

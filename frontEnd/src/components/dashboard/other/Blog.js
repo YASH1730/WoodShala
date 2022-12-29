@@ -8,11 +8,11 @@ import {
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { getBlogHome, deleteBLog } from "../../services/service";
-import "../../assets/custom/css/category.css";
+import { getBlogHome, deleteBLog } from "../../../services/service";
+import "../../../assets/custom/css/category.css";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useDispatch} from 'react-redux';
-import {setForm,setAlert} from '../../store/action/action';
+import {setForm,setAlert} from '../../../store/action/action';
 
 
 import {

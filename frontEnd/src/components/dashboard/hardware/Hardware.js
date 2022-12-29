@@ -10,14 +10,14 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { getHardware, changeHardwareStatus, deleteHardware } from '../../services/service'
-import '../../assets/custom/css/category.css'
+import { getHardware, changeHardwareStatus, deleteHardware } from '../../../services/service'
+import '../../../assets/custom/css/category.css'
 
 import {
   DataGrid,
 } from '@mui/x-data-grid';
 // import { Store } from "../../store/Context";
-import { setAlert,setForm } from "../../store/action/action";
+import { setAlert, setForm } from "../../../store/action/action";
 import { useDispatch } from "react-redux";
 
 export default function Hardware() {
@@ -38,7 +38,7 @@ export default function Hardware() {
         }))
 
         setRows(data.data.map((row, index) => {
-// console.log(row.status)
+          // console.log(row.status)
           return ({
             id: index + 1,
             SKU: row.SKU,
@@ -61,9 +61,17 @@ export default function Hardware() {
             package_height: row.package_height,
             package_breadth: row.package_breadth,
             unit: row.unit,
-            selling_price : row.selling_price,
-            showroom_price : row.showroom_price,
-            polish_time : row.polish_time,
+            selling_price: row.selling_price,
+            showroom_price: row.showroom_price,
+            polish_time: row.polish_time,
+            restocking_time: row.restocking_time,
+            selling_points: row.selling_points,
+            seo_title: row.seo_title,
+            seo_description: row.seo_description,
+            seo_keyword: row.seo_keyword,
+            hardware_polish: row.hardware_polish,
+            min_quantity: row.min_quantity,
+            continue_selling: row.continue_selling,
             action: row._id
           })
         }))
@@ -123,23 +131,24 @@ export default function Hardware() {
         <div className="fabricImage" >
           <IconButton onClick={() => {
             dispatch(setForm({
-                state: true,
-                formType: 'update_hardware',
-                payload: params,
-                row: Row,
-                setRow: setRows
+              state: true,
+              formType: 'update_hardware',
+              payload: params,
+              row: Row,
+              setRow: setRows
             }))
           }} aria-label="delete"  >
             <CreateIcon />
           </IconButton>
           <IconButton onClick={() => {
             deleteHardware(params.formattedValue).then((res) => {
-              setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
+              setRows(Row.filter((set) => {
+                return set.action._id !== params.formattedValue._id
               }))
               dispatch(setAlert({
-                  open: true,
-                  variant: 'success',
-                  message: 'Hardware Deleted !!!'
+                open: true,
+                variant: 'success',
+                message: 'Hardware Deleted !!!'
               }))
             })
           }} aria-label="delete"  >
@@ -172,18 +181,18 @@ export default function Hardware() {
           return row
       }))
       dispatch(setAlert({
-          open: true,
-          variant: 'success',
-          message: "Hardware Status Updated Successfully !!!"
+        open: true,
+        variant: 'success',
+        message: "Hardware Status Updated Successfully !!!"
 
       }))
     })
       .catch((err) => {
         //console.log(err)
         dispatch(setAlert({
-            open: true,
-            variant: 'error',
-            message: "Something went wrong !!!"
+          open: true,
+          variant: 'error',
+          message: "Something went wrong !!!"
 
         }))
       })
@@ -201,7 +210,7 @@ export default function Hardware() {
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'SKU', operatorValue: 'contains', value: `${search}` }],

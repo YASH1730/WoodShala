@@ -1,7 +1,7 @@
 import React, { useEffect, useState,  } from "react";
 // import {Notify} from '../../App'
 import { useDropzone } from "react-dropzone";
-import { listBanner, addBanner, changeStatus } from '../../services/service'
+import { listBanner, addBanner, changeStatus } from '../../../services/service'
 import {
   Box,
   Typography,

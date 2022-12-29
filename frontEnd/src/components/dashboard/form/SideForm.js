@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
   Button,
   IconButton,
@@ -31,7 +31,7 @@ import {
 import { Editor } from "@tinymce/tinymce-react";
 import Slide from "@mui/material/Slide";
 import Backdrop from "@mui/material/Backdrop";
-import "../../assets/custom/css/sideForm.css";
+import "../../../assets/custom/css/sideForm.css";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from '@mui/icons-material/Add';
@@ -77,14 +77,15 @@ import {
   addOutward,
   uploadImage,
   addTransfer
-} from "../../services/service.js";
+} from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
 
-import {setAlert, setForm} from '../../store/action/action'
+import { setAlert, setForm } from '../../../store/action/action'
 import { useSelector, useDispatch } from "react-redux";
 
 import size from 'react-image-size';
+import { fromUnixTime } from "date-fns/esm";
 
 
 const option = {
@@ -199,7 +200,6 @@ const SideForm = () => {
     ));
 
     useEffect(() => {
-      // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, []);
 
@@ -245,7 +245,7 @@ const SideForm = () => {
 
 
     // for check the file state in done or
-    useEffect(() => {
+    useMemo(() => {
 
       if (files) {
         // REJECTED FILES
@@ -594,13 +594,16 @@ const SideForm = () => {
   ];
 
   const purpose = [
-    'Manufacturing', 'Repairing', 'Polish', 'Packing', 'Shipping' ,'Others'
+    'Manufacturing', 'Repairing', 'Polish', 'Packing', 'Shipping', 'Others'
+  ]
+  const hardware_polish = [
+    'Matt', 'Glossy', 'Semi Glossy'
   ]
 
 
   // redux 
-  const {form,mode} = useSelector(state=>state); 
-  const dispatch= useDispatch(); 
+  const { form, mode } = useSelector(state => state);
+  const dispatch = useDispatch();
 
   // states
   const [cat, setCat] = useState('');
@@ -619,7 +622,7 @@ const SideForm = () => {
   const [fabricCatalog, setFabricCatalog] = useState([]);
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
-  const [productSKU, setProductSKU] = useState({P_SKU : [], H_SKU : [], supplier : []});
+  const [productSKU, setProductSKU] = useState({ P_SKU: [], H_SKU: [], supplier: [] });
 
   const [catalog, setCatalog] = useState({
     hinge: [],
@@ -629,7 +632,9 @@ const SideForm = () => {
     fitting: [],
     polish: [],
     fabric: [],
-    textile: []
+    wheel: [],
+    ceramic_drawer: [],
+    ceramic_tiles: [],
   })
 
   // ref
@@ -638,11 +643,12 @@ const SideForm = () => {
 
   // pres data
   const [changeData, setData] = useState({
+    CVW: 0,
     primary_material: [],
-    product_articles : [],
-    hardware_articles : [],
-    supplier : '',
-    range: "",
+    product_articles: [],
+    hardware_articles: [],
+    supplier: '',
+    range: "None",
     product_array: [],
     variation_array: [],
     warehouse: [],
@@ -655,54 +661,44 @@ const SideForm = () => {
     product_des: "",
     category: "",
     sub_category: "",
-    length: "",
-    breadth: "",
+    length: 0,
+    breadth: 0,
     selling_points: [],
-    height: "",
+    height: 0,
     priMater: "",
     priMater_weight: "",
     secMater: "",
     secMater_weight: "",
     selling_price: 0,
-    mrp: "",
-    discount_cap: "",
-    polish_time: "",
-    manufacturing_time: "",
+    mrp: 0,
+    discount_cap: 0,
+    polish_time: 0,
+    manufacturing_time: 0,
     polish: [],
-    hinge: "",
-    knob: "",
-    handle: "",
-    door: "",
     wight_cap: "",
     wall_hanging: "",
     assembly_required: "",
     assembly_leg: "",
     assembly_parts: 0,
-    fitting: "",
-    rotating: "",
-    eatable: "",
-    no_chemical: "",
-    straight_back: "",
-    lean_back: "",
-    weaving: "",
-    not_micro_dish: "",
-    tilt_top: "",
-    inside_comp: "",
-    stackable: "",
+    fitting: "None",
     silver: "",
     selling_point: "",
     mirror: "",
     joints: "",
     tax_rate: 18,
-    seat_width: "",
-    seat_depth: "",
-    seat_height: "",
-    wheel: "",
+    seat_width: 0,
+    ceramic_drawer: "None",
+    ceramic_tiles: "None",
+    seat_depth: 0,
+    seat_height: 0,
+    wheel: "None",
+    wheel_included: "no",
     trolly: "",
     returnable: false,
     returnDays: 0,
     trolly_mater: "",
-    top_size: 0,
+    top_size_length: 0,
+    top_size_breadth: 0,
     dial_size: 0,
     COD: false,
     textile: "",
@@ -715,21 +711,166 @@ const SideForm = () => {
     mobile_store: true,
     online_store: true,
     continue_selling: true,
+    ceramic_drawer_included: false,
+    ceramic_tiles_included: false,
     unit: 'Pcs',
     quantity: 1,
     textile_type: '',
     category_id: '',
-    back_style: '',
     sub_category_id: '',
     product_description: '',
-    fabric: '',
-    drawer: '',
-    weight_capacity: '',
     legs: 'None',
+    fabric: "None",
     assembly_level: 'Easy Assembly',
+    mattress: "no",
+    mattress_length: 0,
+    mattress_breadth: 0,
+    hinge: "None",
+    hinge_qty: 0,
+    knob: "None",
+    knob_qty: 0,
+    handle: "None",
+    handle_qty: 0,
+    door: "None",
+    door_qty: 0,
+    plywood: 'no',
+    wheel_qty: 0,
+    cradle_bed: 'no',
+    cradle_bed_depth: 0,
+    cradle_bed_height: 0,
+    cradle_bed_width: 0,
+    showroom_price: 0,
+    discount_limit: 0,
+    length_main: 0,
+    weight: 0,
+    ceramic_drawer_qty: 0,
+    ceramic_tiles_qty: 0,
+    back_style: "None",
+    weight_capacity: "None",
+    drawer: 'None',
+    package_breadth: 0,
+    package_height: 0,
+    package_length: 0,
+    silver_weight: 0,
+    mirror_length: 0,
+    mirror_width: 0,
+    drawer_count: 0,
+    seating_size_width: 0,
+    seating_size_depth: 0,
+    seating_size_height: 0,
+    restocking_time: 0,
+    min_quantity: 1,
+    hardware_polish: "None",
   });
 
-  useEffect(() => {
+  // function for generating Merged product  ID
+
+  const getMKU = () => {
+    getLastMergeProduct()
+      .then((res) => {
+        if (res.data.length > 0) {
+
+          let index = parseInt(res.data[0].MS.split("-")[1]) + 1;
+
+          setSKU(`MS-0${index}`);
+        } else {
+          setSKU("MS-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product SKU ID
+
+  const getSKU = () => {
+    getLastProduct()
+      .then((res) => {
+        if (res.data.length > 0) {
+          // // //console.log(res.data[0].SKU)
+
+          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
+
+          setSKU(`P-0${index}`);
+        } else {
+          setSKU("P-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating hardware  ID
+
+  const getHKU = () => {
+    getLastHardware()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
+
+          setSKU(`H-0${index}`);
+        } else {
+          setSKU("H-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product OID ID
+
+  const getOID = () => {
+    getLastOrder()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].OID.split("-")[1]) + 1;
+
+          setSKU(`OID-0${index}`);
+        } else {
+          setSKU("OID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product DID ID
+
+  const getSID = () => {
+    getLastSupplier()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].SID.split("-")[1]) + 1;
+
+          setSKU(`SID-0${index}`);
+        } else {
+          setSKU("SID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+  // function for generating product DID ID
+
+  const getDID = () => {
+    getDraftID()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
+
+          setSKU(`DID-0${index}`);
+        } else {
+          setSKU("DID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+
+
+  useMemo(() => {
     switch (form.formType) {
       case "hardware":
         getHKU();
@@ -774,8 +915,7 @@ const SideForm = () => {
           sub_category_name: row.sub_category_id,
           sub_category_id: row.sub_category_id,
           hardware_image: row.hardware_image,
-          warehouse: row.warehouse ?
-            row.warehouse.split(',') : [],
+          warehouse: row.warehouse,
           bangalore_stock: row.bangalore_stock,
           jodhpur_stock: row.jodhpur_stock,
           manufacturing_time: row.manufacturing_time,
@@ -790,7 +930,15 @@ const SideForm = () => {
           unit: row.unit,
           selling_price: row.selling_price,
           showroom_price: row.showroom_price,
-          polish_time: row.polish_time
+          polish_time: row.polish_time,
+          restocking_time: row.restocking_time,
+          selling_points: row.selling_points,
+          seo_title: row.seo_title,
+          seo_description: row.seo_description,
+          seo_keyword: row.seo_keyword,
+          hardware_polish: row.hardware_polish,
+          min_quantity: row.min_quantity,
+          continue_selling: row.continue_selling,
         })
         break;
       case "product":
@@ -798,7 +946,7 @@ const SideForm = () => {
         getDID();
 
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(data.data)
+          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
         })
 
         categoryList().then((data) => {
@@ -824,7 +972,7 @@ const SideForm = () => {
         getSKU();
 
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(data.data)
+          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
         })
 
         categoryList().then((data) => {
@@ -845,7 +993,7 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-        
+
         const data = form.payload.row.action;
         console.log(data)
         setData({
@@ -1034,7 +1182,7 @@ const SideForm = () => {
 
 
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(data.data)
+          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
         })
 
         categoryList().then((data) => {
@@ -1058,11 +1206,10 @@ const SideForm = () => {
 
         setData({
           _id: form.payload.value._id || form.payload.row.action._id,
-          assembly_level: form.payload.row.action.assembly_level,
           SKU: form.payload.row.action.SKU,
+          CVW: form.payload.row.action.CVW,
           product_title: form.payload.row.action.product_title,
           category_name: form.payload.row.action.category_id,
-          back_style: form.payload.row.action.back_style,
           category_id: form.payload.row.action.category_id,
           sub_category_name: form.payload.row.action.sub_category_id,
           sub_category_id: form.payload.row.action.sub_category_id,
@@ -1073,50 +1220,42 @@ const SideForm = () => {
           product_image: form.payload.row.action.product_image,
           savedImages: form.payload.row.action.product_image,
           featured_image: form.payload.row.action.featured_image,
-          specification_image: form.payload.row.action.specification_image,
           mannequin_image: form.payload.row.action.mannequin_image,
-          primary_material: JSON.parse(
-            form.payload.row.action.primary_material_name
-          ) || [],
-          polish: JSON.parse(
-            form.payload.row.action.polish_name
-          ) || [],
-          warehouse: JSON.parse(
-            form.payload.row.action.warehouse_name
-          ) || [],
-          warehouse_name: form.payload.row.action.warehouse_name,
-          polish_name: form.payload.row.action.polish_name,
-          bangalore_stock: form.payload.row.action.bangalore_stock,
-          jodhpur_stock: form.payload.row.action.jodhpur_stock,
+          specification_image: form.payload.row.action.specification_image,
+          primary_material: form.payload.row.action.primary_material,
           primary_material_name: form.payload.row.action.primary_material_name,
-          package_length: form.payload.row.action.package_length,
-          package_height: form.payload.row.action.package_height,
-          package_breadth: form.payload.row.action.package_breadth,
+          warehouse: form.payload.row.action.warehouse,
+          warehouse_name: form.payload.row.action.warehouse_name,
           length_main: form.payload.row.action.length_main,
           breadth: form.payload.row.action.breadth,
           height: form.payload.row.action.height,
+          bangalore_stock: form.payload.row.action.bangalore_stock,
+          jodhpur_stock: form.payload.row.action.jodhpur_stock,
           weight: form.payload.row.action.weight,
+          polish: form.payload.row.action.polish,
+          polish_name: form.payload.row.action.polish_name,
           hinge: form.payload.row.action.hinge,
+          hinge_qty: form.payload.row.action.hinge_qty,
           hinge_name: form.payload.row.action.hinge_name,
           knob: form.payload.row.action.knob,
-          textile: form.payload.row.action.textile,
+          knob_qty: form.payload.row.action.knob_qty,
           knob_name: form.payload.row.action.knob_name,
-          textile_name: form.payload.row.action.textile_name,
-          textile_type: form.payload.row.action.textile_type,
           handle: form.payload.row.action.handle,
+          handle_qty: form.payload.row.action.handle_qty,
           handle_name: form.payload.row.action.handle_name,
           door: form.payload.row.action.door,
+          door_qty: form.payload.row.action.door_qty,
           door_name: form.payload.row.action.door_name,
           fitting: form.payload.row.action.fitting,
           fitting_name: form.payload.row.action.fitting_name,
           selling_points: form.payload.row.action.selling_points,
-          top_size: form.payload.row.action.top_size,
           dial_size: form.payload.row.action.dial_size,
           seating_size_width: form.payload.row.action.seating_size_width,
           seating_size_depth: form.payload.row.action.seating_size_depth,
           seating_size_height: form.payload.row.action.seating_size_height,
           weight_capacity: form.payload.row.action.weight_capacity,
           fabric: form.payload.row.action.fabric,
+          fabric_qty: form.payload.row.action.fabric_qty,
           fabric_name: form.payload.row.action.fabric_name,
           wall_hanging: form.payload.row.action.wall_hanging,
           assembly_required: form.payload.row.action.assembly_required,
@@ -1129,7 +1268,6 @@ const SideForm = () => {
           silver_weight: form.payload.row.action.silver_weight,
           joints: form.payload.row.action.joints,
           upholstery: form.payload.row.action.upholstery,
-          wheel: form.payload.row.action.wheel,
           trolley: form.payload.row.action.trolley,
           trolley_material: form.payload.row.action.trolley_material,
           rotating_seats: form.payload.row.action.rotating_seats,
@@ -1139,14 +1277,11 @@ const SideForm = () => {
           lean_back: form.payload.row.action.lean_back,
           weaving: form.payload.row.action.weaving,
           knife: form.payload.row.action.knife,
-          not_suitable_for_Micro_Dish:
-            form.payload.row.action.not_suitable_for_Micro_Dish,
+          not_suitable_for_Micro_Dish: form.payload.row.action.not_suitable_for_Micro_Dish,
           tilt_top: form.payload.row.action.tilt_top,
           inside_compartments: form.payload.row.action.inside_compartments,
           stackable: form.payload.row.action.stackable,
-          ceramic_drawers: form.payload.row.action.ceramic_drawers,
-          ceramic_tiles: form.payload.row.action.ceramic_tiles,
-          // row data.MRP,
+          MRP: form.payload.row.action.MRP,
           tax_rate: form.payload.row.action.tax_rate,
           selling_price: form.payload.row.action.selling_price,
           showroom_price: form.payload.row.action.showroom_price,
@@ -1159,12 +1294,36 @@ const SideForm = () => {
           returnable: form.payload.row.action.returnable,
           drawer: form.payload.row.action.drawer,
           drawer_count: form.payload.row.action.drawer_count,
-          range: form.payload.row.action.range,
           mobile_store: form.payload.row.action.mobile_store,
           online_store: form.payload.row.action.online_store,
-          continue_selling: form.payload.row.action.continue_selling,
+          range: form.payload.row.action.range,
+          back_style: form.payload.row.action.back_style,
+          package_length: form.payload.row.action.package_length,
+          package_height: form.payload.row.action.package_height,
+          package_breadth: form.payload.row.action.package_breadth,
           quantity: form.payload.row.action.quantity,
           unit: form.payload.row.action.unit,
+          variation_array: form.payload.row.action.variation_array,
+          assembly_level: form.payload.row.action.assembly_level,
+          continue_selling: form.payload.row.action.continue_selling,
+          wheel: form.payload.row.action.wheel,
+          wheel_included: form.payload.row.action.wheel_included,
+          wheel_qty: form.payload.row.action.wheel_qty,
+          wheel_name: form.payload.row.action.wheel_name,
+          ceramic_tiles: form.payload.row.action.ceramic_tiles,
+          ceramic_tiles_qty: form.payload.row.action.ceramic_tiles_qty,
+          ceramic_tiles_included: form.payload.row.action.ceramic_tiles_included,
+          ceramic_tiles_name: form.payload.row.action.ceramic_tiles_name,
+          ceramic_drawers_qty: form.payload.row.action.ceramic_drawers_qty,
+          ceramic_drawers: form.payload.row.action.ceramic_drawers,
+          ceramic_drawers_included: form.payload.row.action.ceramic_drawers_included,
+          ceramic_drawers_name: form.payload.row.action.ceramic_drawers_name,
+          mattress: form.payload.row.action.mattress,
+          mattress_length: form.payload.row.action.mattress_length,
+          mattress_breadth: form.payload.row.action.mattress_breadth,
+          plywood: form.payload.row.action.plywood,
+          top_size_breadth: form.payload.row.action.top_size_breadth,
+          top_size_length: form.payload.row.action.top_size_length,
         });
 
         setCat(form.payload.row.action.category_id);
@@ -1220,14 +1379,14 @@ const SideForm = () => {
           return setMaterialCatalog(data.data);
         });
 
-      
+
         getTextile().then((data) => {
           if (data.data === null) return setTextileCatalog([]);
           return setTextileCatalog(data.data);
         });
 
-   
-     
+
+
 
         let productArray = [];
 
@@ -1307,7 +1466,7 @@ const SideForm = () => {
         //   return setHandleCatalog(data.data);
         // });
 
-       
+
 
         setData({
           SKU: form.payload.value.SKU,
@@ -1370,19 +1529,19 @@ const SideForm = () => {
         setData({
           ...changeData,
           _id: form.payload.row._id,
-          supplier_name : form.payload.row.supplier_name, 
-          mobile : form.payload.row.mobile, 
-          gst_no : form.payload.row.gst_no, 
-          alt_mobile : form.payload.row.alt_mobile, 
-          specialization : form.payload.row.specialization, 
-          SID : form.payload.row.SID, 
-          address : form.payload.row.address, 
+          supplier_name: form.payload.row.supplier_name,
+          mobile: form.payload.row.mobile,
+          gst_no: form.payload.row.gst_no,
+          alt_mobile: form.payload.row.alt_mobile,
+          specialization: form.payload.row.specialization,
+          SID: form.payload.row.SID,
+          address: form.payload.row.address,
         });
         break
       case 'add_supplier':
-      getSID();  
-      break;
-        default:
+        getSID();
+        break;
+      default:
       // //console.log("");
     }
   }, [form.formType, form.state]);
@@ -1519,8 +1678,8 @@ const SideForm = () => {
     "mobile_store",
     "online_store",
     "continue_selling",
-    "ceramic_drawers",
-    "ceramic_tiles",
+    "ceramic_drawer_included",
+    "ceramic_tiles_included",
     "status"
   ];
 
@@ -1551,111 +1710,6 @@ const SideForm = () => {
     dispatch(setForm({ state: false, formType: null, payload: null }));
   };
 
-  // function for generating Merged product  ID
-
-  const getMKU = () => {
-    getLastMergeProduct()
-      .then((res) => {
-        if (res.data.length > 0) {
-
-          let index = parseInt(res.data[0].MS.split("-")[1]) + 1;
-
-          setSKU(`MS-0${index}`);
-        } else {
-          setSKU("MS-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-  // function for generating product SKU ID
-
-  const getSKU = () => {
-    getLastProduct()
-      .then((res) => {
-        if (res.data.length > 0) {
-          // // //console.log(res.data[0].SKU)
-
-          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
-
-          setSKU(`P-0${index}`);
-        } else {
-          setSKU("P-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-  // function for generating hardware  ID
-
-  const getHKU = () => {
-    getLastHardware()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
-
-          setSKU(`H-0${index}`);
-        } else {
-          setSKU("H-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-  // function for generating product OID ID
-
-  const getOID = () => {
-    getLastOrder()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].OID.split("-")[1]) + 1;
-
-          setSKU(`OID-0${index}`);
-        } else {
-          setSKU("OID-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-  // function for generating product DID ID
-
-  const getSID = () => {
-    getLastSupplier()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].SID.split("-")[1]) + 1;
-
-          setSKU(`SID-0${index}`);
-        } else {
-          setSKU("SID-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-  // function for generating product DID ID
-
-  const getDID = () => {
-    getDraftID()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
-
-          setSKU(`DID-0${index}`);
-        } else {
-          setSKU("DID-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
 
 
   // function for handling category
@@ -1679,10 +1733,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -1694,23 +1748,23 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
- 
+
 
   // function for handling category
   const handleCategory = (e) => {
@@ -1733,10 +1787,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -1748,19 +1802,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -1787,10 +1841,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -1808,19 +1862,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -1852,10 +1906,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -1876,19 +1930,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -1915,10 +1969,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -1931,23 +1985,23 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
- 
+
   // function for handling update category
   const handleUpdateCategory = (e) => {
     e.preventDefault();
@@ -1970,10 +2024,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -1985,19 +2039,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -2012,83 +2066,131 @@ const SideForm = () => {
     setActiveStep(0);
     setShowFabric("No");
     setData({
-      savedImages: [],
-      warehouse_name: '',
-      searchCustomer: "",
+      CVW: 0,
       primary_material: [],
+      product_articles: [],
+      hardware_articles: [],
+      supplier: '',
+      range: "None",
       product_array: [],
-      shipping: [],
+      variation_array: [],
       warehouse: [],
+      savedImages: [],
+      shipping: "",
       product_title: "",
       seo_title: "",
-      seo_des: "",
+      seo_description: "",
       seo_keyword: "",
       product_des: "",
       category: "",
       sub_category: "",
-      length: "",
-      breadth: "",
-      selling_points: "",
-      height: "",
+      length: 0,
+      breadth: 0,
+      selling_points: [],
+      height: 0,
       priMater: "",
       priMater_weight: "",
       secMater: "",
       secMater_weight: "",
-      selling_price: "",
-      mrp: "",
-      discount_cap: "",
-      polish_time: "",
-      manufacturing_time: "",
+      selling_price: 0,
+      mrp: 0,
+      discount_cap: 0,
+      polish_time: 0,
+      manufacturing_time: 0,
       polish: [],
-      hinge: "",
-      knob: "",
-      handle: "",
-      door: "",
       wight_cap: "",
       wall_hanging: "",
       assembly_required: "",
       assembly_leg: "",
-      assembly_parts: "",
-      fitting: "",
-      rotating: "",
-      eatable: "",
-      no_chemical: "",
-      straight_back: "",
-      lean_back: "",
-      weaving: "",
-      not_micro_dish: "",
-      tilt_top: "",
-      inside_comp: "",
-      stackable: "",
+      assembly_parts: 0,
+      fitting: "None",
       silver: "",
       selling_point: "",
       mirror: "",
       joints: "",
       tax_rate: 18,
-      seat_width: "",
-      seat_depth: "",
-      seat_height: "",
-      wheel: "",
+      seat_width: 0,
+      ceramic_drawer: "None",
+      ceramic_tiles: "None",
+      seat_depth: 0,
+      seat_height: 0,
+      wheel: "None",
+      wheel_included: "no",
       trolly: "",
       returnable: false,
       returnDays: 0,
       trolly_mater: "",
-      top_size: 0,
+      top_size_length: 0,
+      top_size_breadth: 0,
       dial_size: 0,
       COD: false,
       textile: "",
-      quantity: 1,
-      unit: 'Pcs',
-      legs: 'None',
-      assembly_level: 'Easy Assembly',
+      paid_amount: 0,
+      total_amount: 0,
+      customer_name: "",
+      customer_email: "",
+      shipping_address: "",
+      searchCustomer: "",
       mobile_store: true,
       online_store: true,
-      continue_selling: true
+      continue_selling: true,
+      ceramic_drawer_included: false,
+      ceramic_tiles_included: false,
+      unit: 'Pcs',
+      quantity: 1,
+      textile_type: '',
+      category_id: '',
+      sub_category_id: '',
+      product_description: '',
+      legs: 'None',
+      fabric: "None",
+      assembly_level: 'Easy Assembly',
+      mattress: "no",
+      mattress_length: 0,
+      mattress_breadth: 0,
+      hinge: "None",
+      hinge_qty: 0,
+      knob: "None",
+      knob_qty: 0,
+      handle: "None",
+      handle_qty: 0,
+      door: "None",
+      door_qty: 0,
+      plywood: 'no',
+      wheel_qty: 0,
+      cradle_bed: 'no',
+      cradle_bed_depth: 0,
+      cradle_bed_height: 0,
+      cradle_bed_width: 0,
+      showroom_price: 0,
+      discount_limit: 0,
+      length_main: 0,
+      weight: 0,
+      ceramic_drawer_qty: 0,
+      ceramic_tiles_qty: 0,
+      back_style: "None",
+      weight_capacity: "None",
+      drawer: 'None',
+      package_breadth: 0,
+      package_height: 0,
+      package_length: 0,
+      silver_weight: 0,
+      mirror_length: 0,
+      mirror_width: 0,
+      drawer_count: 0,
+      seating_size_width: 0,
+      seating_size_depth: 0,
+      seating_size_height: 0,
+      restocking_time: 0,
+      min_quantity: 1,
+      hardware_polish: "None",
+
+
     });
     document.getElementById("myForm").reset();
   };
 
-  
+
 
   const handleProduct = (e) => {
     e.preventDefault();
@@ -2109,6 +2211,7 @@ const SideForm = () => {
 
     FD.append("status", false);
 
+    FD.append("CVW", changeData.CVW);
     // Image.map((element) => {
     //   return FD.append("specification_image", element);
     // });
@@ -2124,6 +2227,8 @@ const SideForm = () => {
     FD.append("specification_image", changeData.specification_image || '');
     FD.append("featured_image", changeData.featured_image || '');
     FD.append("mannequin_image", changeData.mannequin_image || '');
+
+    console.log(changeData.primary_material)
 
     FD.append(
       "primary_material_name",
@@ -2154,19 +2259,7 @@ const SideForm = () => {
       );
     });
 
-    // polishCatalog.map((item) => {
-    //   return (
-    //     item._id === changeData.polish &&
-    //     FD.append("polish_name", item.polish_name)
-    //   );
-    // });
 
-    catalog.textile.map((item) => {
-      return (
-        item.SKU === changeData.textile_type &&
-        FD.append("textile_name", item.title)
-      );
-    });
     catalog.hinge.map((item) => {
       return (
         item.SKU === changeData.hinge &&
@@ -2189,21 +2282,43 @@ const SideForm = () => {
         item.SKU === changeData.door && FD.append("door_name", item.title)
       );
     });
+    catalog.wheel.map((item) => {
+      return (
+        item.SKU === changeData.wheel && FD.append("wheel_name", item.title)
+      );
+    });
     catalog.handle.map((item) => {
       return (
-        item._id === changeData.handle &&
+        item.SKU === changeData.handle &&
         FD.append("handle_name", item.title)
       );
     });
+    catalog.ceramic_tiles.map((item) => {
+      return (
+        item.SKU === changeData.ceramic_tiles &&
+        FD.append("ceramic_tiles_name", item.title)
+      );
+    });
+    catalog.ceramic_drawer.map((item) => {
+      return (
+        item.SKU === changeData.ceramic_drawer &&
+        FD.append("ceramic_drawer_name", item.title)
+      );
+    });
 
-    if (showFabric === "Yes") {
-      catalog.fabric.map((item) => {
-        return (
-          item.fabric === changeData.fabric &&
-          FD.append("fabric_name", item.title)
-        );
-      });
-    }
+    catalog.fabric.map((item) => {
+      return (
+        item.fabric === changeData.fabric &&
+        FD.append("fabric_name", item.title)
+      );
+    });
+
+    catalog.wheel.map((item) => {
+      return (
+        item.wheel === changeData.wheel &&
+        FD.append("wheel_name", item.title)
+      );
+    });
 
     FD.append("parentProduct", changeData.SKU);
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
@@ -2215,10 +2330,57 @@ const SideForm = () => {
     FD.append("handle", changeData.handle);
     FD.append("door", changeData.door);
     FD.append("fitting", changeData.fitting);
-    FD.append("textile", changeData.textile);
-    FD.append("textile_type", changeData.textile_type);
-    FD.append("range", changeData.range);
 
+    FD.append("cradle_bed", changeData.cradle_bed);
+    if (changeData.cradle_bed) {
+      FD.append("cradle_bed_depth", changeData.cradle_bed_depth);
+      FD.append("cradle_bed_height", changeData.cradle_bed_height);
+      FD.append("cradle_bed_width", changeData.cradle_bed_width);
+    }
+
+    FD.append("wheel_included", changeData.wheel_included);
+
+    if (changeData.wheel_included) {
+      FD.append("wheel_qty", changeData.wheel_qty);
+      FD.append("wheel", changeData.wheel);
+    }
+    if (changeData.handle !== 'None') {
+      FD.append("handle_qty", changeData.handle_qty);
+    }
+    if (changeData.hinge !== 'None') {
+      FD.append("hinge_qty", changeData.hinge_qty);
+    }
+    if (changeData.door !== 'None') {
+      FD.append("door_qty", changeData.door_qty);
+    }
+    if (changeData.knob !== 'None') {
+      FD.append("knob_qty", changeData.knob_qty);
+    }
+    if (changeData.fabric !== 'None') {
+      FD.append("fabric_qty", changeData.fabric_qty);
+    }
+
+    FD.append("ceramic_drawer_included", changeData.ceramic_drawer_included);
+
+    if (changeData.ceramic_drawer_included) {
+      FD.append("ceramic_drawer", changeData.ceramic_drawer);
+      FD.append("ceramic_drawer_qty", changeData.ceramic_drawer_qty);
+    }
+
+    FD.append("ceramic_tiles_included", changeData.ceramic_tiles_included);
+
+    if (changeData.ceramic_tiles_included) {
+      FD.append("ceramic_tiles", changeData.ceramic_tiles);
+      FD.append("ceramic_tiles_qty", changeData.ceramic_tiles_qty);
+    }
+
+    FD.append("mattress", changeData.mattress);
+    FD.append("mattress_length", changeData.mattress_length);
+    FD.append("mattress_breadth", changeData.mattress_breadth);
+    FD.append("plywood", changeData.plywood);
+
+
+    FD.append("range", changeData.range);
     FD.append("category_id", changeData.category_name);
     FD.append("back_style", changeData.back_style);
     FD.append("sub_category_id", changeData.sub_category_name);
@@ -2241,6 +2403,7 @@ const SideForm = () => {
     FD.append("warehouse", changeData.warehouse);
     // FD.append("polish", changeData.polish);
     FD.append("fabric", changeData.fabric);
+    FD.append("CVW", changeData.CVW);
 
     FD.append("drawer", changeData.drawer);
 
@@ -2273,7 +2436,8 @@ const SideForm = () => {
     FD.append("height", changeData.height ? changeData.height : 0);
     FD.append("weight", changeData.weight ? changeData.weight : 0);
 
-    FD.append("top_size", changeData.top_size);
+    FD.append("top_size_length", changeData.top_size_length);
+    FD.append("top_size_breadth", changeData.top_size_breadth);
     FD.append("dial_size", changeData.dial_size);
     FD.append(
       "seating_size_width",
@@ -2330,7 +2494,6 @@ const SideForm = () => {
       "upholstery",
       changeData.upholstery ? changeData.upholstery : "no"
     );
-    FD.append("wheel", changeData.wheel ? changeData.wheel : "no");
     FD.append("trolley", changeData.trolley ? changeData.trolley : "no");
     FD.append("silver", changeData.silver ? changeData.silver : "no");
     FD.append(
@@ -2345,8 +2508,6 @@ const SideForm = () => {
       "no_chemical",
       changeData.no_chemical ? changeData.no_chemical : false
     );
-    FD.append("ceramic_drawers", changeData.ceramic_drawers ? changeData.ceramic_drawers : false);
-    FD.append("ceramic_tiles", changeData.ceramic_tiles ? changeData.ceramic_tiles : false);
     FD.append("weaving", changeData.weaving ? changeData.weaving : false);
     FD.append("knife", changeData.knife ? changeData.knife : false);
     FD.append(
@@ -2391,115 +2552,26 @@ const SideForm = () => {
 
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
-          // form.setRow([...form.row, {
-          //   id: form.row.length + 1,
-          //   SKU: data.data.response.SKU,
-          //   product_title: data.data.response.product_title,
-          //   category_name: data.data.response.category_name,
-          //   category_id: data.data.response.category_id,
-          //   sub_category_name: data.data.response.sub_category_name,
-          //   sub_category_id: data.data.response.sub_category_id,
-          //   product_description: data.data.response.product_description,
-          //   seo_title: data.data.response.seo_title,
-          //   seo_description: data.data.response.seo_description,
-          //   seo_keyword: data.data.response.seo_keyword,
-          //   product_image: data.data.response.product_image,
-          //   featured_image: data.data.response.featured_image,
-          //   specification_image: data.data.response.specification_image,
-          //   mannequin_image: data.data.response.mannequin_image,
-          //   primary_material: data.data.response.primary_material,
-          //   warehouse: data.data.response.warehouse,
-          //   primary_material_name: data.data.response.primary_material_name,
-          //   length_main: data.data.response.length_main,
-          //   breadth: data.data.response.breadth,
-          //   height: data.data.response.height,
-          //   bangalore_stock: data.data.response.bangalore_stock,
-          //   jodhpur_stock: data.data.response.jodhpur_stock,
-          //   weight: data.data.response.weight,
-          //   polish: data.data.response.polish,
-          //   polish_name: data.data.response.polish_name,
-          //   hinge: data.data.response.hinge,
-          //   hinge_name: data.data.response.hinge_name,
-          //   knob: data.data.response.knob,
-          //   textile: data.data.response.textile,
-          //   knob_name: data.data.response.knob_name,
-          //   textile_name: data.data.response.textile_name,
-          //   textile_type: data.data.response.textile_type,
-          //   handle: data.data.response.handle,
-          //   handle_name: data.data.response.handle_name,
-          //   door: data.data.response.door,
-          //   door_name: data.data.response.door_name,
-          //   fitting: data.data.response.fitting,
-          //   fitting_name: data.data.response.fitting_name,
-          //   selling_points: data.data.response.selling_points,
-          //   top_size: data.data.response.top_size,
-          //   dial_size: data.data.response.dial_size,
-          //   seating_size_width: data.data.response.seating_size_width,
-          //   seating_size_depth: data.data.response.seating_size_depth,
-          //   seating_size_height: data.data.response.seating_size_height,
-          //   weight_capacity: data.data.response.weight_capacity,
-          //   fabric: data.data.response.fabric,
-          //   fabric_name: data.data.response.fabric_name,
-          //   wall_hanging: data.data.response.wall_hanging,
-          //   assembly_required: data.data.response.assembly_required,
-          //   assembly_part: data.data.response.assembly_part,
-          //   legs: data.data.response.legs,
-          //   mirror: data.data.response.mirror,
-          //   mirror_length: data.data.response.mirror_length,
-          //   mirror_width: data.data.response.mirror_width,
-          //   silver: data.data.response.silver,
-          //   silver_weight: data.data.response.silver_weight,
-          //   joints: data.data.response.joints,
-          //   upholstery: data.data.response.upholstery,
-          //   wheel: data.data.response.wheel,
-          //   trolley: data.data.response.trolley,
-          //   trolley_material: data.data.response.trolley_material,
-          //   rotating_seats: data.data.response.rotating_seats,
-          //   eatable_oil_polish: data.data.response.eatable_oil_polish,
-          //   no_chemical: data.data.response.no_chemical,
-          //   straight_back: data.data.response.straight_back,
-          //   lean_back: data.data.response.lean_back,
-          //   weaving: data.data.response.weaving,
-          //   knife: data.data.response.knife,
-          //   not_suitable_for_Micro_Dish: data.data.response.not_suitable_for_Micro_Dish,
-          //   tilt_top: data.data.response.tilt_top,
-          //   inside_compartments: data.data.response.inside_compartments,
-          //   stackable: data.data.response.stackable,
-          //   MRP: data.data.response.MRP,
-          //   tax_rate: data.data.response.tax_rate,
-          //   selling_price: data.data.response.selling_price,
-          //   showroom_price: data.data.response.showroom_price,
-          //   discount_limit: data.data.response.discount_limit,
-          //   polish_time: data.data.response.polish_time,
-          //   manufacturing_time: data.data.response.manufacturing_time,
-          //   status: data.data.response.status,
-          //   returnDays: data.data.response.returnDays,
-          //   COD: data.data.response.COD,
-          //   returnable: data.data.response.returnable,
-          //   drawer: data.data.response.drawer,
-          //   drawer_count: data.data.response.drawer_count,
-          //   range: data.data.response.range,
-          //   action: data.data.response
-          // }])
+
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -2514,6 +2586,7 @@ const SideForm = () => {
     //   changeData.featured_image,
     //   changeData.mannequin_image)
 
+    FD.append("CVW", changeData.CVW);
 
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
@@ -2708,7 +2781,8 @@ const SideForm = () => {
     FD.append("height", changeData.height ? changeData.height : 0);
     FD.append("weight", changeData.weight ? changeData.weight : 0);
 
-    FD.append("top_size", changeData.top_size);
+    FD.append("top_size_length", changeData.top_size_length);
+    FD.append("top_size_breadth", changeData.top_size_breadth);
     FD.append("dial_size", changeData.dial_size);
     FD.append(
       "seating_size_width",
@@ -2826,10 +2900,10 @@ const SideForm = () => {
 
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -2923,27 +2997,459 @@ const SideForm = () => {
           }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
+  // const handleOldUpdateProduct = (e) => {
+  //   e.preventDefault();
+
+  //   const FD = new FormData();
+  //   let multiOBJ = {};
+
+
+  //   FD.append("DID", SKU);
+  //   FD.append("AID", changeData.SKU);
+  //   FD.append("type", 'Product');
+  //   FD.append("operation", 'updateProduct');
+
+
+  //   files.map((element) => {
+  //     if (element.validate) return FD.append("product_image", element);
+  //   });
+  //   FD.append('savedImages', JSON.stringify(changeData.savedImages));
+
+  //   FD.append("_id", changeData._id);
+
+  //   // Image.map((element) => {
+  //   //   return FD.append("specification_image", element);
+  //   // });
+
+  //   // featured.map((element) => {
+  //   //   return FD.append("featured_image", element);
+  //   // });
+
+  //   // Mannequin.map((element) => {
+  //   //   return FD.append("mannequin_image", element);
+  //   // });
+
+  //   FD.append("specification_image", changeData.specification_image);
+  //   FD.append("featured_image", changeData.featured_image);
+  //   FD.append("mannequin_image", changeData.mannequin_image);
+
+
+  //   FD.append(
+  //     "primary_material_name",
+  //     JSON.stringify(changeData.primary_material)
+  //   );
+  //   FD.append(
+  //     "warehouse_name",
+  //     JSON.stringify(changeData.warehouse)
+  //   );
+  //   FD.append(
+  //     "polish_name",
+  //     JSON.stringify(changeData.polish)
+  //   );
+
+  //   category.map((item) => {
+  //     if (item._id === changeData.category_name) multiOBJ = { ...multiOBJ, category_name: item.category_name }
+
+  //     return (
+  //       item._id === changeData.category_name &&
+  //       FD.append("category_name", item.category_name)
+  //     );
+  //   });
+
+  //   subCategory.map((item) => {
+  //     if (item._id === changeData.sub_category_name) multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name }
+
+  //     return (
+  //       item._id === changeData.sub_category_name &&
+  //       FD.append("sub_category_name", item.sub_category_name)
+  //     );
+  //   });
+
+  //   // polishCatalog.map((item) => {
+  //   //   if (item._id === changeData.polish) multiOBJ = { ...multiOBJ, polish_name: item.polish_name }
+
+  //   //   return (
+  //   //     item._id === changeData.polish &&
+  //   //     FD.append("polish_name", item.polish_name)
+  //   //   );
+  //   // });
+
+  //   catalog.textile.map((item) => {
+  //     if (item.SKU === changeData.textile_type) multiOBJ = { ...multiOBJ, textile_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.textile_type &&
+  //       FD.append("textile_name", item.title)
+  //     );
+  //   });
+  //   catalog.hinge.map((item) => {
+  //     if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.hinge &&
+  //       FD.append("hinge_name", item.title)
+  //     );
+  //   });
+  //   catalog.fitting.map((item) => {
+  //     if (item.SKU === changeData.fitting) multiOBJ = { ...multiOBJ, fitting_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.fitting &&
+  //       FD.append("fitting_name", item.title)
+  //     );
+  //   });
+
+
+  //   catalog.knob.map((item) => {
+  //     if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.knob && FD.append("knob_name", item.title)
+  //     );
+  //   });
+  //   catalog.door.map((item) => {
+  //     if (item.SKU === changeData.door) multiOBJ = { ...multiOBJ, door_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.door && FD.append("door_name", item.title)
+  //     );
+  //   });
+  //   catalog.handle.map((item) => {
+  //     if (item.SKU === changeData.handle) multiOBJ = { ...multiOBJ, handle_name: item.title }
+
+  //     return (
+  //       item.SKU === changeData.handle &&
+  //       FD.append("handle_name", item.title)
+  //     );
+  //   });
+
+  //   if (showFabric === "Yes") {
+  //     catalog.fabric.map((item) => {
+  //       if (item.SKU === changeData.fabric) multiOBJ = { ...multiOBJ, fabric_name: item.title }
+
+  //       return (
+  //         item.SKU === changeData.fabric &&
+  //         FD.append("fabric_name", item.title)
+  //       );
+  //     });
+  //   }
+
+  //   FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
+  //   FD.append("assembly_level", changeData.assembly_level);
+  //   FD.append("returnable", changeData.returnable);
+  //   FD.append("COD", changeData.COD);
+  //   FD.append("polish", changeData.polish);
+  //   FD.append("hinge", changeData.hinge);
+  //   FD.append("knob", changeData.knob);
+  //   FD.append("handle", changeData.handle);
+  //   FD.append("door", changeData.door);
+  //   FD.append("fitting", changeData.fitting);
+  //   FD.append("textile", changeData.textile);
+  //   FD.append("textile_type", changeData.textile_type);
+  //   FD.append("range", changeData.range);
+  //   FD.append("unit", changeData.unit);
+  //   FD.append("quantity", changeData.quantity);
+  //   FD.append("category_id", changeData.category_name);
+  //   FD.append("back_style", changeData.back_style);
+  //   FD.append("sub_category_id", changeData.sub_category_name);
+  //   FD.append("polish_time", changeData.polish_time);
+  //   FD.append("manufacturing_time", changeData.manufacturing_time);
+  //   FD.append("product_title", changeData.product_title);
+
+  //   FD.append("product_description", changeData.product_description);
+  //   FD.append("selling_points", JSON.stringify(changeData.selling_points));
+
+  //   FD.append("SKU", changeData.SKU);
+  //   FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
+  //   FD.append(
+  //     "showroom_price",
+  //     changeData.showroom_price ? changeData.showroom_price : 0
+  //   );
+  //   FD.append("seo_title", changeData.seo_title);
+  //   FD.append("seo_description", changeData.seo_description);
+  //   FD.append("seo_keyword", changeData.seo_keyword);
+  //   FD.append("discount_limit", changeData.discount_limit);
+  //   FD.append("selling_price", changeData.selling_price ? changeData.selling_price : 0);
+  //   FD.append("primary_material", changeData.primary_material);
+  //   FD.append("warehouse", changeData.warehouse);
+  //   FD.append("fabric", changeData.fabric);
+
+  //   FD.append("drawer", changeData.drawer);
+
+  //   if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+  //     FD.append("jodhpur_stock", changeData.jodhpur_stock);
+
+  //   if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+  //     FD.append("bangalore_stock", changeData.bangalore_stock);
+
+  //   if (changeData.drawer !== undefined || changeData.drawer !== "none")
+  //     FD.append(
+  //       "drawer_count",
+  //       changeData.drawer_count ? changeData.drawer_count : 0
+  //     );
+
+  //   //  // //console.log(secMaterial)
+  //   // if (changeData.secondary_material_weight !== undefined)
+  //   //   FD.append(
+  //   //     "secondary_material_weight",
+  //   //     changeData.secondary_material_weight
+  //   //   );
+  //   FD.append(
+  //     "length_main",
+  //     changeData.length_main ? changeData.length_main : 0
+  //   );
+  //   FD.append("package_length", changeData.package_length);
+  //   FD.append("package_height", changeData.package_height);
+  //   FD.append("package_breadth", changeData.package_breadth);
+  //   FD.append("breadth", changeData.breadth ? changeData.breadth : 0);
+  //   FD.append("height", changeData.height ? changeData.height : 0);
+  //   FD.append("weight", changeData.weight ? changeData.weight : 0);
+
+  //   FD.append("top_size_length", changeData.top_size_length);
+  //   FD.append("top_size_breadth", changeData.top_size_breadth);
+  //   FD.append("dial_size", changeData.dial_size);
+  //   FD.append(
+  //     "seating_size_width",
+  //     changeData.seating_size_width ? changeData.seating_size_width : 0
+  //   );
+  //   FD.append(
+  //     "seating_size_depth",
+  //     changeData.seating_size_depth ? changeData.seating_size_depth : 0
+  //   );
+  //   FD.append(
+  //     "seating_size_height",
+  //     changeData.seating_size_height ? changeData.seating_size_height : 0
+  //   );
+  //   FD.append("weight_capacity", changeData.weight_capacity);
+  //   FD.append("assembly_required", changeData.assembly_required);
+
+  //   if (changeData.assembly_required === "shipping")
+  //     FD.append("assembly_part", changeData.assembly_part);
+  //   if (changeData.assembly_required === "yes")
+  //     FD.append("legs", changeData.legs);
+
+  //   if (changeData.silver === "yes")
+  //     FD.append(
+  //       "silver_weight",
+  //       changeData.silver_weight ? changeData.silver_weight : 0
+  //     );
+
+  //   if (changeData.trolley === "yes")
+  //     FD.append("trolley_material", changeData.trolley_material);
+
+  //   if (changeData.upholstery === "Yes") FD.append("fabric", changeData.fabric);
+
+  //   FD.append("mirror", changeData.mirror);
+
+  //   if (changeData.mirror === "yes") {
+  //     FD.append(
+  //       "mirror_length",
+  //       changeData.mirror_length ? changeData.mirror_length : 0
+  //     );
+  //     FD.append(
+  //       "mirror_width",
+  //       changeData.mirror_width ? changeData.mirror_width : 0
+  //     );
+  //   }
+  //   FD.append("joints", changeData.joints ? changeData.joints : "");
+  //   FD.append(
+  //     "upholstery",
+  //     changeData.upholstery ? changeData.upholstery : "no"
+  //   );
+  //   FD.append("wheel", changeData.wheel ? changeData.wheel : "no");
+  //   FD.append("trolley", changeData.trolley ? changeData.trolley : "no");
+  //   FD.append("silver", changeData.silver ? changeData.silver : "no");
+  //   FD.append(
+  //     "rotating_seats",
+  //     changeData.rotating_seats ? changeData.rotating_seats : false
+  //   );
+  //   FD.append(
+  //     "eatable_oil_polish",
+  //     changeData.eatable_oil_polish ? changeData.eatable_oil_polish : false
+  //   );
+  //   FD.append(
+  //     "no_chemical",
+  //     changeData.no_chemical ? changeData.no_chemical : false
+  //   );
+  //   FD.append("ceramic_drawers", changeData.ceramic_drawers ? changeData.ceramic_drawers : false);
+  //   FD.append("ceramic_tiles", changeData.ceramic_tiles ? changeData.ceramic_tiles : false);
+  //   FD.append("weaving", changeData.weaving ? changeData.weaving : false);
+  //   FD.append("knife", changeData.knife ? changeData.knife : false);
+  //   FD.append(
+  //     "mobile_store",
+  //     changeData.mobile_store ? changeData.mobile_store : true
+  //   );
+  //   FD.append(
+  //     "online_store",
+  //     changeData.online_store ? changeData.online_store : true
+  //   );
+  //   FD.append(
+  //     "continue_selling",
+  //     changeData.continue_selling ? changeData.continue_selling : true
+  //   );
+  //   FD.append(
+  //     "wall_hanging",
+  //     changeData.wall_hanging ? changeData.wall_hanging : false
+  //   );
+
+  //   FD.append(
+  //     "not_suitable_for_Micro_Dish",
+  //     changeData.not_suitable_for_Micro_Dish
+  //       ? changeData.not_suitable_for_Micro_Dish
+  //       : false
+  //   );
+
+  //   FD.append("tilt_top", changeData.tilt_top ? changeData.tilt_top : false);
+  //   FD.append(
+  //     "inside_compartments",
+  //     changeData.inside_compartments ? changeData.inside_compartments : false
+  //   );
+  //   FD.append("stackable", changeData.stackable ? changeData.stackable : false);
+  //   FD.append("tax_rate", changeData.tax_rate);
+
+  //   const res = addDraft(FD);
+
+  //   res
+  //     .then((data) => {
+
+  //       if (data.status === 203) {
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "error",
+  //           message: data.data.message,
+  //         }));
+  //       } else {
+  //         // console.log(form.row)
+  //         // form.setRow(form.row.map((set) => {
+  //         //   if (set.action === form.payload.row.action) {
+  //         //     set.SKU = changeData.SKU
+  //         //     set.product_title = changeData.product_title
+  //         //     set.category_name = multiOBJ.category_name || changeData.category_name
+  //         //     set.sub_category_name = multiOBJ.sub_category_name || changeData.sub_category_name
+  //         //     set.product_description = changeData.product_description
+  //         //     set.product_image = data.data.image
+  //         //     set.seo_title = changeData.seo_title
+  //         //     set.seo_description = changeData.seo_description
+  //         //     set.seo_keyword = changeData.seo_keyword
+  //         //     set.featured_image = featured[0] !== undefined ? `${imageLink}${featured[0].path}` : changeData.featured_image
+  //         //     set.specification_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
+  //         //     set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
+  //         //     set.primary_material = changeData.primary_material
+  //         //     set.warehouse = changeData.warehouse
+  //         //     // set.warehouse_name = changeData.warehouse_name
+  //         //     set.primary_material_name = changeData.primary_material_name
+  //         //     set.length_main = changeData.length_main
+  //         //     set.breadth = changeData.breadth
+  //         //     set.height = changeData.height
+  //         //     set.bangalore_stock = changeData.bangalore_stock
+  //         //     set.jodhpur_stock = changeData.jodhpur_stock
+  //         //     set.weight = changeData.weight
+  //         //     set.hinge = multiOBJ.hinge_name || changeData.hinge_name
+  //         //     set.knob = multiOBJ.knob_name || changeData.knob_name
+  //         //     set.textile = multiOBJ.textile_name || changeData.textile_name
+  //         //     set.textile_type = multiOBJ.textile_type || changeData.textile_type
+  //         //     set.handle = multiOBJ.handle_name || changeData.handle_name
+  //         //     set.door = multiOBJ.door_name || changeData.door_name
+  //         //     set.fitting = multiOBJ.fitting_name || changeData.fitting_name
+  //         //     set.selling_points = changeData.selling_points
+  //         //     set.top_size = changeData.top_size
+  //         //     set.dial_size = changeData.dial_size
+  //         //     set.seating_size_width = changeData.seating_size_width
+  //         //     set.seating_size_depth = changeData.seating_size_depth
+  //         //     set.seating_size_height = changeData.seating_size_height
+  //         //     set.weight_capacity = changeData.weight_capacity
+  //         //     set.fabric = changeData.fabric
+  //         //     set.fabric_name = changeData.fabric_name
+  //         //     set.wall_hanging = changeData.wall_hanging
+  //         //     set.assembly_required = changeData.assembly_required
+  //         //     set.assembly_part = changeData.assembly_part
+  //         //     set.assembly_level = changeData.assembly_level
+  //         //     set.legs = changeData.legs
+  //         //     set.mirror = changeData.mirror
+  //         //     set.mirror_length = changeData.mirror_length
+  //         //     set.mirror_width = changeData.mirror_width
+  //         //     set.silver = changeData.silver
+  //         //     set.silver_weight = changeData.silver_weight
+  //         //     set.joints = changeData.joints
+  //         //     set.upholstery = changeData.upholstery
+  //         //     set.wheel = changeData.wheel
+  //         //     set.trolley = changeData.trolley
+  //         //     set.trolley_material = changeData.trolley_material
+  //         //     set.rotating_seats = changeData.rotating_seats
+  //         //     set.eatable_oil_polish = changeData.eatable_oil_polish
+  //         //     set.no_chemical = changeData.no_chemical
+  //         //     set.straight_back = changeData.straight_back
+  //         //     set.lean_back = changeData.lean_back
+  //         //     set.weaving = changeData.weaving
+  //         //     set.knife = changeData.knife
+  //         //     set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
+  //         //     set.tilt_top = changeData.tilt_top
+  //         //     set.inside_compartments = changeData.inside_compartments
+  //         //     set.stackable = changeData.stackable
+  //         //     set.MRP = changeData.MRP
+  //         //     set.tax_rate = changeData.tax_rate
+  //         //     set.selling_price = changeData.selling_price
+  //         //     set.showroom_price = changeData.showroom_price
+  //         //     set.discount_limit = changeData.discount_limit
+  //         //     set.polish_time = changeData.polish_time
+  //         //     set.manufacturing_time = changeData.manufacturing_time
+  //         //     set.status = changeData.status
+  //         //     set.returnDays = changeData.returnDays
+  //         //     set.COD = changeData.COD
+  //         //     set.returnable = changeData.returnable
+  //         //     set.drawer = changeData.drawer
+  //         //     set.drawer_count = changeData.drawer_count
+  //         //     set.mobile_store = changeData.mobile_store
+  //         //     set.online_store = changeData.online_store
+  //         //     set.continue_selling = changeData.continue_selling
+  //         //     set.range = changeData.range
+  //         //     set.action = changeData
+  //         //     set.polish = changeData.polish
+  //         //     set.action.polish_name = JSON.stringify(changeData.polish)
+  //         //     set.action.warehouse_name = JSON.stringify(changeData.warehouse)
+  //         //     set.action.primary_material_name = JSON.stringify(changeData.primary_material)
+  //         //     return set
+  //         //   }
+  //         //   else return set;
+  //         // }))
+
+  //         handleClose();
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "success",
+  //           message: data.data.message,
+  //         }));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       dispatch(setAlert({
+  //         open: true,
+  //         variant: "error",
+  //         message: "Something Went Wrong !!!",
+  //       }));
+  //     });
+  // };
+
   const handleUpdateProduct = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
-    let multiOBJ = {};
-
 
     FD.append("DID", SKU);
     FD.append("AID", changeData.SKU);
@@ -2958,27 +3464,17 @@ const SideForm = () => {
 
     FD.append("_id", changeData._id);
 
-    // Image.map((element) => {
-    //   return FD.append("specification_image", element);
-    // });
-
-    // featured.map((element) => {
-    //   return FD.append("featured_image", element);
-    // });
-
-    // Mannequin.map((element) => {
-    //   return FD.append("mannequin_image", element);
-    // });
-
     FD.append("specification_image", changeData.specification_image);
     FD.append("featured_image", changeData.featured_image);
     FD.append("mannequin_image", changeData.mannequin_image);
 
+    console.log(changeData.primary_material)
 
     FD.append(
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
     );
+
     FD.append(
       "warehouse_name",
       JSON.stringify(changeData.warehouse)
@@ -2988,9 +3484,8 @@ const SideForm = () => {
       JSON.stringify(changeData.polish)
     );
 
-    category.map((item) => {
-      if (item._id === changeData.category_name) multiOBJ = { ...multiOBJ, category_name: item.category_name }
 
+    category.map((item) => {
       return (
         item._id === changeData.category_name &&
         FD.append("category_name", item.category_name)
@@ -2998,85 +3493,75 @@ const SideForm = () => {
     });
 
     subCategory.map((item) => {
-      if (item._id === changeData.sub_category_name) multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name }
-
       return (
         item._id === changeData.sub_category_name &&
         FD.append("sub_category_name", item.sub_category_name)
       );
     });
 
-    // polishCatalog.map((item) => {
-    //   if (item._id === changeData.polish) multiOBJ = { ...multiOBJ, polish_name: item.polish_name }
 
-    //   return (
-    //     item._id === changeData.polish &&
-    //     FD.append("polish_name", item.polish_name)
-    //   );
-    // });
-
-    catalog.textile.map((item) => {
-      if (item.SKU === changeData.textile_type) multiOBJ = { ...multiOBJ, textile_name: item.title }
-
-      return (
-        item.SKU === changeData.textile_type &&
-        FD.append("textile_name", item.title)
-      );
-    });
     catalog.hinge.map((item) => {
-      if (item.SKU === changeData.hinge) multiOBJ = { ...multiOBJ, hinge_name: item.title }
-
       return (
         item.SKU === changeData.hinge &&
         FD.append("hinge_name", item.title)
       );
     });
     catalog.fitting.map((item) => {
-      if (item.SKU === changeData.fitting) multiOBJ = { ...multiOBJ, fitting_name: item.title }
-
       return (
         item.SKU === changeData.fitting &&
         FD.append("fitting_name", item.title)
       );
     });
-
-
     catalog.knob.map((item) => {
-      if (item.SKU === changeData.knob) multiOBJ = { ...multiOBJ, knob_name: item.title }
-
       return (
         item.SKU === changeData.knob && FD.append("knob_name", item.title)
       );
     });
     catalog.door.map((item) => {
-      if (item.SKU === changeData.door) multiOBJ = { ...multiOBJ, door_name: item.title }
-
       return (
         item.SKU === changeData.door && FD.append("door_name", item.title)
       );
     });
+    catalog.wheel.map((item) => {
+      return (
+        item.SKU === changeData.wheel && FD.append("wheel_name", item.title)
+      );
+    });
     catalog.handle.map((item) => {
-      if (item.SKU === changeData.handle) multiOBJ = { ...multiOBJ, handle_name: item.title }
-
       return (
         item.SKU === changeData.handle &&
         FD.append("handle_name", item.title)
       );
     });
+    catalog.ceramic_tiles.map((item) => {
+      return (
+        item.SKU === changeData.ceramic_tiles &&
+        FD.append("ceramic_tiles_name", item.title)
+      );
+    });
+    catalog.ceramic_drawer.map((item) => {
+      return (
+        item.SKU === changeData.ceramic_drawer &&
+        FD.append("ceramic_drawer_name", item.title)
+      );
+    });
 
-    if (showFabric === "Yes") {
-      catalog.fabric.map((item) => {
-        if (item.SKU === changeData.fabric) multiOBJ = { ...multiOBJ, fabric_name: item.title }
+    catalog.fabric.map((item) => {
+      return (
+        item.fabric === changeData.fabric &&
+        FD.append("fabric_name", item.title)
+      );
+    });
 
-        return (
-          item.SKU === changeData.fabric &&
-          FD.append("fabric_name", item.title)
-        );
-      });
-    }
+    catalog.wheel.map((item) => {
+      return (
+        item.wheel === changeData.wheel &&
+        FD.append("wheel_name", item.title)
+      );
+    });
 
+    FD.append("parentProduct", changeData.SKU);
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
-    FD.append("assembly_level", changeData.assembly_level);
     FD.append("returnable", changeData.returnable);
     FD.append("COD", changeData.COD);
     FD.append("polish", changeData.polish);
@@ -3085,22 +3570,65 @@ const SideForm = () => {
     FD.append("handle", changeData.handle);
     FD.append("door", changeData.door);
     FD.append("fitting", changeData.fitting);
-    FD.append("textile", changeData.textile);
-    FD.append("textile_type", changeData.textile_type);
+
+    FD.append("cradle_bed", changeData.cradle_bed);
+    if (changeData.cradle_bed) {
+      FD.append("cradle_bed_depth", changeData.cradle_bed_depth);
+      FD.append("cradle_bed_height", changeData.cradle_bed_height);
+      FD.append("cradle_bed_width", changeData.cradle_bed_width);
+    }
+
+    FD.append("wheel_included", changeData.wheel_included);
+
+    if (changeData.wheel_included) {
+      FD.append("wheel_qty", changeData.wheel_qty);
+      FD.append("wheel", changeData.wheel);
+    }
+    if (changeData.handle !== 'None') {
+      FD.append("handle_qty", changeData.handle_qty);
+    }
+    if (changeData.hinge !== 'None') {
+      FD.append("hinge_qty", changeData.hinge_qty);
+    }
+    if (changeData.door !== 'None') {
+      FD.append("door_qty", changeData.door_qty);
+    }
+    if (changeData.knob !== 'None') {
+      FD.append("knob_qty", changeData.knob_qty);
+    }
+    if (changeData.fabric !== 'None') {
+      FD.append("fabric_qty", changeData.fabric_qty);
+    }
+
+    FD.append("ceramic_drawer_included", changeData.ceramic_drawer_included);
+
+    if (changeData.ceramic_drawer_included) {
+      FD.append("ceramic_drawer", changeData.ceramic_drawer);
+      FD.append("ceramic_drawer_qty", changeData.ceramic_drawer_qty);
+    }
+
+    FD.append("ceramic_tiles_included", changeData.ceramic_tiles_included);
+
+    if (changeData.ceramic_tiles_included) {
+      FD.append("ceramic_tiles", changeData.ceramic_tiles);
+      FD.append("ceramic_tiles_qty", changeData.ceramic_tiles_qty);
+    }
+
+    FD.append("mattress", changeData.mattress);
+    FD.append("mattress_length", changeData.mattress_length);
+    FD.append("mattress_breadth", changeData.mattress_breadth);
+    FD.append("plywood", changeData.plywood);
+
+
     FD.append("range", changeData.range);
-    FD.append("unit", changeData.unit);
-    FD.append("quantity", changeData.quantity);
     FD.append("category_id", changeData.category_name);
     FD.append("back_style", changeData.back_style);
     FD.append("sub_category_id", changeData.sub_category_name);
     FD.append("polish_time", changeData.polish_time);
     FD.append("manufacturing_time", changeData.manufacturing_time);
     FD.append("product_title", changeData.product_title);
-
     FD.append("product_description", changeData.product_description);
     FD.append("selling_points", JSON.stringify(changeData.selling_points));
-
-    FD.append("SKU", changeData.SKU);
     FD.append("MRP", changeData.MRP ? changeData.MRP : 0);
     FD.append(
       "showroom_price",
@@ -3109,19 +3637,18 @@ const SideForm = () => {
     FD.append("seo_title", changeData.seo_title);
     FD.append("seo_description", changeData.seo_description);
     FD.append("seo_keyword", changeData.seo_keyword);
-    FD.append("discount_limit", changeData.discount_limit);
-    FD.append("selling_price", changeData.selling_price ? changeData.selling_price : 0);
+    FD.append("discount_limit", changeData.discount_limit || 0);
+    FD.append("selling_price", changeData.selling_price);
     FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
+    // FD.append("polish", changeData.polish);
     FD.append("fabric", changeData.fabric);
+    FD.append("CVW", changeData.CVW);
 
     FD.append("drawer", changeData.drawer);
 
-    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
-      FD.append("jodhpur_stock", changeData.jodhpur_stock);
-
-    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
-      FD.append("bangalore_stock", changeData.bangalore_stock);
+    FD.append("unit", changeData.unit);
+    FD.append("quantity", changeData.quantity ? changeData.quantity : 1);
 
     if (changeData.drawer !== undefined || changeData.drawer !== "none")
       FD.append(
@@ -3130,23 +3657,27 @@ const SideForm = () => {
       );
 
     //  // //console.log(secMaterial)
-    // if (changeData.secondary_material_weight !== undefined)
-    //   FD.append(
-    //     "secondary_material_weight",
-    //     changeData.secondary_material_weight
-    //   );
+    if (changeData.secondary_material_weight !== undefined)
+      FD.append(
+        "secondary_material_weight",
+        changeData.secondary_material_weight
+      );
     FD.append(
       "length_main",
       changeData.length_main ? changeData.length_main : 0
     );
-    FD.append("package_length", changeData.package_length);
-    FD.append("package_height", changeData.package_height);
-    FD.append("package_breadth", changeData.package_breadth);
+    FD.append("assembly_level", changeData.assembly_level);
+
+    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
+    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
+    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+
     FD.append("breadth", changeData.breadth ? changeData.breadth : 0);
     FD.append("height", changeData.height ? changeData.height : 0);
     FD.append("weight", changeData.weight ? changeData.weight : 0);
 
-    FD.append("top_size", changeData.top_size);
+    FD.append("top_size_length", changeData.top_size_length);
+    FD.append("top_size_breadth", changeData.top_size_breadth);
     FD.append("dial_size", changeData.dial_size);
     FD.append(
       "seating_size_width",
@@ -3162,6 +3693,13 @@ const SideForm = () => {
     );
     FD.append("weight_capacity", changeData.weight_capacity);
     FD.append("assembly_required", changeData.assembly_required);
+
+    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+      FD.append("jodhpur_stock", changeData.jodhpur_stock);
+
+    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+      FD.append("bangalore_stock", changeData.bangalore_stock);
+
 
     if (changeData.assembly_required === "shipping")
       FD.append("assembly_part", changeData.assembly_part);
@@ -3196,7 +3734,6 @@ const SideForm = () => {
       "upholstery",
       changeData.upholstery ? changeData.upholstery : "no"
     );
-    FD.append("wheel", changeData.wheel ? changeData.wheel : "no");
     FD.append("trolley", changeData.trolley ? changeData.trolley : "no");
     FD.append("silver", changeData.silver ? changeData.silver : "no");
     FD.append(
@@ -3211,8 +3748,6 @@ const SideForm = () => {
       "no_chemical",
       changeData.no_chemical ? changeData.no_chemical : false
     );
-    FD.append("ceramic_drawers", changeData.ceramic_drawers ? changeData.ceramic_drawers : false);
-    FD.append("ceramic_tiles", changeData.ceramic_tiles ? changeData.ceramic_tiles : false);
     FD.append("weaving", changeData.weaving ? changeData.weaving : false);
     FD.append("knife", changeData.knife ? changeData.knife : false);
     FD.append(
@@ -3227,6 +3762,7 @@ const SideForm = () => {
       "continue_selling",
       changeData.continue_selling ? changeData.continue_selling : true
     );
+
     FD.append(
       "wall_hanging",
       changeData.wall_hanging ? changeData.wall_hanging : false
@@ -3249,124 +3785,33 @@ const SideForm = () => {
 
     const res = addDraft(FD);
 
+
     res
       .then((data) => {
+        // //console.log(data.status);
 
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
-          // console.log(form.row)
-          // form.setRow(form.row.map((set) => {
-          //   if (set.action === form.payload.row.action) {
-          //     set.SKU = changeData.SKU
-          //     set.product_title = changeData.product_title
-          //     set.category_name = multiOBJ.category_name || changeData.category_name
-          //     set.sub_category_name = multiOBJ.sub_category_name || changeData.sub_category_name
-          //     set.product_description = changeData.product_description
-          //     set.product_image = data.data.image
-          //     set.seo_title = changeData.seo_title
-          //     set.seo_description = changeData.seo_description
-          //     set.seo_keyword = changeData.seo_keyword
-          //     set.featured_image = featured[0] !== undefined ? `${imageLink}${featured[0].path}` : changeData.featured_image
-          //     set.specification_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.specification_image
-          //     set.mannequin_image = Mannequin[0] !== undefined ? `${imageLink}${Mannequin[0].path}` : changeData.mannequin_image
-          //     set.primary_material = changeData.primary_material
-          //     set.warehouse = changeData.warehouse
-          //     // set.warehouse_name = changeData.warehouse_name
-          //     set.primary_material_name = changeData.primary_material_name
-          //     set.length_main = changeData.length_main
-          //     set.breadth = changeData.breadth
-          //     set.height = changeData.height
-          //     set.bangalore_stock = changeData.bangalore_stock
-          //     set.jodhpur_stock = changeData.jodhpur_stock
-          //     set.weight = changeData.weight
-          //     set.hinge = multiOBJ.hinge_name || changeData.hinge_name
-          //     set.knob = multiOBJ.knob_name || changeData.knob_name
-          //     set.textile = multiOBJ.textile_name || changeData.textile_name
-          //     set.textile_type = multiOBJ.textile_type || changeData.textile_type
-          //     set.handle = multiOBJ.handle_name || changeData.handle_name
-          //     set.door = multiOBJ.door_name || changeData.door_name
-          //     set.fitting = multiOBJ.fitting_name || changeData.fitting_name
-          //     set.selling_points = changeData.selling_points
-          //     set.top_size = changeData.top_size
-          //     set.dial_size = changeData.dial_size
-          //     set.seating_size_width = changeData.seating_size_width
-          //     set.seating_size_depth = changeData.seating_size_depth
-          //     set.seating_size_height = changeData.seating_size_height
-          //     set.weight_capacity = changeData.weight_capacity
-          //     set.fabric = changeData.fabric
-          //     set.fabric_name = changeData.fabric_name
-          //     set.wall_hanging = changeData.wall_hanging
-          //     set.assembly_required = changeData.assembly_required
-          //     set.assembly_part = changeData.assembly_part
-          //     set.assembly_level = changeData.assembly_level
-          //     set.legs = changeData.legs
-          //     set.mirror = changeData.mirror
-          //     set.mirror_length = changeData.mirror_length
-          //     set.mirror_width = changeData.mirror_width
-          //     set.silver = changeData.silver
-          //     set.silver_weight = changeData.silver_weight
-          //     set.joints = changeData.joints
-          //     set.upholstery = changeData.upholstery
-          //     set.wheel = changeData.wheel
-          //     set.trolley = changeData.trolley
-          //     set.trolley_material = changeData.trolley_material
-          //     set.rotating_seats = changeData.rotating_seats
-          //     set.eatable_oil_polish = changeData.eatable_oil_polish
-          //     set.no_chemical = changeData.no_chemical
-          //     set.straight_back = changeData.straight_back
-          //     set.lean_back = changeData.lean_back
-          //     set.weaving = changeData.weaving
-          //     set.knife = changeData.knife
-          //     set.not_suitable_for_Micro_Dish = changeData.not_suitable_for_Micro_Dish
-          //     set.tilt_top = changeData.tilt_top
-          //     set.inside_compartments = changeData.inside_compartments
-          //     set.stackable = changeData.stackable
-          //     set.MRP = changeData.MRP
-          //     set.tax_rate = changeData.tax_rate
-          //     set.selling_price = changeData.selling_price
-          //     set.showroom_price = changeData.showroom_price
-          //     set.discount_limit = changeData.discount_limit
-          //     set.polish_time = changeData.polish_time
-          //     set.manufacturing_time = changeData.manufacturing_time
-          //     set.status = changeData.status
-          //     set.returnDays = changeData.returnDays
-          //     set.COD = changeData.COD
-          //     set.returnable = changeData.returnable
-          //     set.drawer = changeData.drawer
-          //     set.drawer_count = changeData.drawer_count
-          //     set.mobile_store = changeData.mobile_store
-          //     set.online_store = changeData.online_store
-          //     set.continue_selling = changeData.continue_selling
-          //     set.range = changeData.range
-          //     set.action = changeData
-          //     set.polish = changeData.polish
-          //     set.action.polish_name = JSON.stringify(changeData.polish)
-          //     set.action.warehouse_name = JSON.stringify(changeData.warehouse)
-          //     set.action.primary_material_name = JSON.stringify(changeData.primary_material)
-          //     return set
-          //   }
-          //   else return set;
-          // }))
 
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
-        console.log(err);
+        // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3432,10 +3877,10 @@ const SideForm = () => {
       .then((data) => {
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -3480,18 +3925,18 @@ const SideForm = () => {
           }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3551,10 +3996,10 @@ const SideForm = () => {
       .then((data) => {
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -3603,18 +4048,18 @@ const SideForm = () => {
           }))
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3649,10 +4094,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -3665,19 +4110,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3709,10 +4154,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -3726,31 +4171,31 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
 
 
 
-//   function checksum(g){
-//     console.log(g)
-//     let val = g.target.value
-//     let regTest = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/.test(val)
-//     if(regTest) return regTest
-// }
+  //   function checksum(g){
+  //     console.log(g)
+  //     let val = g.target.value
+  //     let regTest = /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/.test(val)
+  //     if(regTest) return regTest
+  // }
   const handleSupplier = (e) => {
     e.preventDefault();
 
@@ -3773,35 +4218,35 @@ const SideForm = () => {
         if (data.status === 200) {
           form.setRow([...form.row, {
             id: form.row.length + 1,
-            supplier_name : data.data.response.supplier_name,
-            mobile : data.data.response.mobile,
-            gst_no : data.data.response.gst_no,
-            alt_mobile : data.data.response.alt_mobile,
-            specialization : data.data.response.specialization,
-            SID : data.data.response.SID,
-            address : data.data.response.address,
+            supplier_name: data.data.response.supplier_name,
+            mobile: data.data.response.mobile,
+            gst_no: data.data.response.gst_no,
+            alt_mobile: data.data.response.alt_mobile,
+            specialization: data.data.response.specialization,
+            SID: data.data.response.SID,
+            address: data.data.response.address,
             action: data.data.response._id
           }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         } else {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3831,42 +4276,43 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action)
-           { set.supplier_name = e.target.supplier_name.value
-            set.mobile = e.target.mobile.value
-            set.gst_no = e.target.gst_no.value
-            set.alt_mobile = e.target.alt_mobile.value
-            set.specialization = e.target.specialization.value
-            set.SID = e.target.SID.value
-            set.address = e.target.address.value  }
+            if (set.action === form.payload.row.action) {
+              set.supplier_name = e.target.supplier_name.value
+              set.mobile = e.target.mobile.value
+              set.gst_no = e.target.gst_no.value
+              set.alt_mobile = e.target.alt_mobile.value
+              set.specialization = e.target.specialization.value
+              set.SID = e.target.SID.value
+              set.address = e.target.address.value
+            }
             return set;
           }))
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
 
- 
+
 
   const handleInward = (e) => {
     e.preventDefault();
@@ -3888,10 +4334,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           // form.setRow([...form.row, {
           //   id: form.row.length + 1,
@@ -3901,19 +4347,19 @@ const SideForm = () => {
           // }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3932,7 +4378,7 @@ const SideForm = () => {
     FD.append('driver_no', e.target.driver_no.value)
     FD.append('quantity', e.target.quantity.value)
 
-    
+
     const res = addOutward(FD);
 
     res
@@ -3942,10 +4388,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           // form.setRow([...form.row, {
           //   id: form.row.length + 1,
@@ -3955,18 +4401,18 @@ const SideForm = () => {
           // }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -3978,11 +4424,11 @@ const SideForm = () => {
     FD.append('product_articles', changeData.product_articles || '')
     FD.append('hardware_articles', changeData.hardware_articles || '')
     FD.append('purpose', changeData.purpose)
-    if (changeData.purpose === 'Others')  FD.append('reason', e.target.reason.value)
+    if (changeData.purpose === 'Others') FD.append('reason', e.target.reason.value)
     FD.append('quantity', e.target.quantity.value)
     FD.append('warehouse', e.target.warehouse.value)
 
-    
+
     const res = addTransfer(FD);
 
     res
@@ -3992,10 +4438,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           // form.setRow([...form.row, {
           //   id: form.row.length + 1,
@@ -4005,18 +4451,18 @@ const SideForm = () => {
           // }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4047,10 +4493,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -4063,19 +4509,19 @@ const SideForm = () => {
           setImages([]);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4111,10 +4557,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -4125,19 +4571,19 @@ const SideForm = () => {
           }))
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4162,27 +4608,27 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           setImages([]);
           setUrl(data.data.url);
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4210,10 +4656,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -4230,19 +4676,19 @@ const SideForm = () => {
           setUrl(data.data.url);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4273,10 +4719,10 @@ const SideForm = () => {
         if (data.status === 203) {
           setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
             if (set.action === form.payload.row.action) {
@@ -4293,19 +4739,19 @@ const SideForm = () => {
           setUrl(data.data.url);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4338,28 +4784,28 @@ const SideForm = () => {
         if (data.status !== 200) {
           // setImages([]);
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message || "Something Went Wrong !!!",
+            open: true,
+            variant: "error",
+            message: data.data.message || "Something Went Wrong !!!",
           }));
         } else {
           // setImages([]);
           // setUrl(data.data.url);
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4511,6 +4957,19 @@ const SideForm = () => {
       );
     });
 
+    FD.append("restocking_time", changeData.restocking_time);
+    FD.append("selling_points", JSON.stringify(changeData.selling_points));
+    FD.append("seo_title", changeData.seo_title);
+    FD.append("seo_description", changeData.seo_description);
+    FD.append("seo_keyword", changeData.seo_keyword);
+    FD.append("hardware_polish", changeData.hardware_polish);
+    FD.append("min_quantity", changeData.min_quantity);
+    FD.append(
+      "continue_selling",
+      changeData.continue_selling ? changeData.continue_selling : true
+    );
+
+
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
     FD.append("returnable", changeData.returnable);
     FD.append("COD", changeData.COD);
@@ -4546,6 +5005,9 @@ const SideForm = () => {
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
 
+
+
+
     const res = addHardware(FD);
 
     res
@@ -4554,10 +5016,10 @@ const SideForm = () => {
 
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -4586,18 +5048,18 @@ const SideForm = () => {
           }])
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
@@ -4630,6 +5092,19 @@ const SideForm = () => {
         FD.append("sub_category_name", item.sub_category_name)
       );
     });
+
+    FD.append("restocking_time", changeData.restocking_time);
+    FD.append("selling_points", JSON.stringify(changeData.selling_points));
+    FD.append("seo_title", changeData.seo_title);
+    FD.append("seo_description", changeData.seo_description);
+    FD.append("seo_keyword", changeData.seo_keyword);
+    FD.append("hardware_polish", changeData.hardware_polish);
+    FD.append("min_quantity", changeData.min_quantity);
+    FD.append(
+      "continue_selling",
+      changeData.continue_selling ? changeData.continue_selling : true
+    );
+
 
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
     FD.append("returnable", changeData.returnable);
@@ -4674,10 +5149,10 @@ const SideForm = () => {
 
         if (data.status === 203) {
           dispatch(setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
         } else {
           form.setRow(form.row.map((set) => {
 
@@ -4707,59 +5182,63 @@ const SideForm = () => {
           }))
           handleClose();
           dispatch(setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-  }));
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
         }
       })
       .catch((err) => {
         // //console.log(err);
         dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
         }));
       });
   };
 
-    // load new searchList
-const handleSupplierList = async (e) => {
-  const delayDebounceFn = setTimeout(() => {
-    getSupplierDropdown(e.target.value)
-    .then((res)=>{
-      setProductSKU(old => ({...old,
-        supplier : res.data.Suppliers
-      }));
-    })
-    .catch((err)=>{
-      setProductSKU(old => ({...old,
-        supplier : []
-      }));
-    })
-  }, 1000)
-  return () => clearTimeout(delayDebounceFn)
-  
-}
-const handleSearch = async (e) => {
-  const delayDebounceFn = setTimeout(() => {
-    getArticlesId(e.target.value)
-    .then((res)=>{
-      setProductSKU(old=>({...old,
-        P_SKU : res.data.P_SKU,
-        H_SKU : res.data.H_SKU
-      }));
-    })
-    .catch((err)=>{
-      setProductSKU(old=>({...old,
-        P_SKU : [],
-        H_SKU : []
-      }));
-    })
-  }, 1000)
-  return () => clearTimeout(delayDebounceFn)
-  
-}
+  // load new searchList
+  const handleSupplierList = async (e) => {
+    const delayDebounceFn = setTimeout(() => {
+      getSupplierDropdown(e.target.value)
+        .then((res) => {
+          setProductSKU(old => ({
+            ...old,
+            supplier: res.data.Suppliers
+          }));
+        })
+        .catch((err) => {
+          setProductSKU(old => ({
+            ...old,
+            supplier: []
+          }));
+        })
+    }, 1000)
+    return () => clearTimeout(delayDebounceFn)
+
+  }
+  const handleSearch = async (e) => {
+    const delayDebounceFn = setTimeout(() => {
+      getArticlesId(e.target.value)
+        .then((res) => {
+          setProductSKU(old => ({
+            ...old,
+            P_SKU: res.data.P_SKU,
+            H_SKU: res.data.H_SKU
+          }));
+        })
+        .catch((err) => {
+          setProductSKU(old => ({
+            ...old,
+            P_SKU: [],
+            H_SKU: []
+          }));
+        })
+    }, 1000)
+    return () => clearTimeout(delayDebounceFn)
+
+  }
 
 
 
@@ -5731,27 +6210,101 @@ const handleSearch = async (e) => {
                                 }
                                 label="Wall Hanging"
                               />
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                    checked={changeData.ceramic_drawers}
+                                    checked={changeData.ceramic_drawer_included}
                                     onChange={handleProductFelids}
-                                    name="ceramic_drawers"
+                                    name="ceramic_drawer_included"
                                   />
                                 }
                                 label="Ceramic Drawers"
                               />
+
+                              {changeData.ceramic_drawer_included && <><TextField sx={{ mt: 2, mb: 2 }}
+                                size="small"
+                                fullWidth
+                                id="outlined-select"
+                                select
+                                name="ceramic_drawer"
+                                label="Ceramic Drawer"
+                                multiple
+                                value={changeData.ceramic_drawer}
+                                onChange={handleProductFelids}
+                                helperText="Please select your Ceramic Tiles."
+                              >
+                                {catalog.ceramic_drawer.map(
+                                  (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                                )}
+                                <MenuItem key={"none"} value="None">
+                                  {"None"}
+                                </MenuItem>
+                              </TextField>
+                                <TextField
+                                  sx={{ mb: 2 }}
+                                  value={changeData.ceramic_drawer_qty}
+                                  onChange={handleProductFelids}
+                                  size={'small'}
+                                  fullWidth
+                                  label='Ceramic Drawer Quantity'
+                                  type='number'
+                                  helperText='Enter the number of ceramic drawer included.'
+                                  name='ceramic_drawer_qty' />
+                              </>}
+
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                    checked={changeData.ceramic_tiles}
+                                    checked={changeData.ceramic_tiles_included}
                                     onChange={handleProductFelids}
-                                    name="ceramic_tiles"
+                                    name="ceramic_tiles_included"
                                   />
                                 }
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
+                            {changeData.ceramic_tiles_included && <><TextField sx={{ mt: 2, mb: 2 }}
+                              size="small"
+                              fullWidth
+                              id="outlined-select"
+                              select
+                              name="ceramic_tiles"
+                              label="Ceramic Tiles"
+                              multiple
+                              value={changeData.ceramic_tiles}
+                              onChange={handleProductFelids}
+                              helperText="Please select your Ceramic Tiles."
+                            >
+                              {catalog.ceramic_tiles.map(
+                                (option) => option.status && <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  {option.title}
+                                </MenuItem>
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                              <TextField
+                                sx={{ mb: 2 }}
+                                value={changeData.ceramic_tiles_qty}
+                                onChange={handleProductFelids}
+                                size={'small'}
+                                fullWidth
+                                label='Ceramic Tiles Quantity'
+                                type='number'
+                                helperText='Enter the number of ceramic tiles included.'
+                                name='ceramic_tiles_qty' />
+                            </>}
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -5774,6 +6327,7 @@ const handleSearch = async (e) => {
                         </StepContent>
                       </Step>
                       {/* Features ends */}
+
                       {/* Miscellaneous */}
                       <Step>
                         <StepLabel>Miscellaneous</StepLabel>
@@ -5944,7 +6498,6 @@ const handleSearch = async (e) => {
                         </StepContent>
                       </Step>
                       {/* Miscellaneous ends */}
-
 
                       {/* Inventory & Shipping */}
                       <Step>
@@ -6147,65 +6700,6 @@ const handleSearch = async (e) => {
                               helperText="From bottom to top"
                             />
 
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Selling Points{" "}
-                            </FormLabel>
-
-                            <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12} sx={{ mb: 2 }} >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
-                                      fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
-                                  </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
-                                        onClick={() => {
-                                          setData({
-                                            ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
-                                        }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
-                            </Grid>
 
                             <Box sx={{ display: 'flex', mb: 2 }}>
 
@@ -6329,6 +6823,67 @@ const handleSearch = async (e) => {
                               onChange={handleProductFelids}
                             />
 
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <Grid container sx={{ mt: 1 }}>
+                              <Grid item xs={12} sx={{ mb: 2 }} >
+                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
+                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
+                                    onChange={handleProductFelids}
+                                    label='Write a point...' /></Grid>
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? <Button
+                                      fullWidth
+                                      onClick={() => {
+                                        changeData.item !== '' && setData({
+                                          ...changeData,
+                                          selling_points: [...changeData.selling_points, changeData.item],
+                                          item: ''
+                                        });
+                                      }}
+                                      variant='outlined'>Add</Button> : <Button onClick={() => {
+                                        setData({
+                                          ...changeData,
+                                          selling_points: changeData.selling_points.filter((row, i) => {
+                                            return i !== changeData.select;
+                                          }),
+                                          select: undefined
+
+                                        })
+
+
+                                      }}
+                                        variant='outlined'>Remove</Button>}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && <Grid sx={{
+                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
+                                border: '2px solid #91441f',
+                                padding: '7px'
+                              }} item xs={12}>
+                                <ul style={{ listStyleType: 'square' }}>
+                                  {
+                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
+                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                          setData({
+                                            ...changeData,
+                                            select: index,
+                                            item: item
+                                          })
+                                        }}
+                                        variant='body'>{index + 1 + ". "}{item}</Typography>
+                                      </li>
+                                    })
+                                  }
+                                </ul>
+                              </Grid>}
+                            </Grid>
+
+
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
@@ -6436,6 +6991,19 @@ const handleSearch = async (e) => {
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
+                            id="outlined-select"
+                            type='number'
+                            name="CVW"
+                            label="CVW Number"
+                            value={changeData.CVW || ''}
+                            onChange={handleProductFelids}
+                          />
+
+
+
+                          <TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
                             // required
                             id="outlined-select"
                             select
@@ -6538,6 +7106,18 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.hinge !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.hinge_qty}
+                            size={'small'}
+                            helperText="Enter the number of hinges pieces ."
+                            fullWidth
+                            onChange={handleProductFelids}
+                            label='Hinge Quantity'
+                            type='number'
+                            name='hinge_qty' />}
+
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -6564,6 +7144,17 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.knob !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            size={'small'}
+                            fullWidth
+                            helperText="Enter the number of knob pieces ."
+                            value={changeData.knob_qty}
+                            onChange={handleProductFelids}
+                            label='Knob Quantity'
+                            type='number'
+                            name='knob_qty' />}
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -6588,6 +7179,18 @@ const handleSearch = async (e) => {
                               {"None"}
                             </MenuItem>
                           </TextField>
+
+                          {changeData.door !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.door_qty}
+                            helperText="Enter the number of doors."
+                            size={'small'}
+                            fullWidth
+                            onChange={handleProductFelids}
+                            label='Door Quantity'
+                            type='number'
+                            name='door_qty' />}
+
 
                           <TextField sx={{ mb: 2 }}
                             size="small"
@@ -6614,6 +7217,18 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.handle !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.handle_qty}
+                            helperText="Enter the number of handles."
+                            onChange={handleProductFelids}
+                            size={'small'}
+                            fullWidth
+                            label='Handle Quantity'
+                            type='number'
+                            name='handle_qty' />}
+
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -6638,6 +7253,7 @@ const handleSearch = async (e) => {
                               {"None"}
                             </MenuItem>
                           </TextField>
+
 
 
                           <FormControl>
@@ -6717,7 +7333,7 @@ const handleSearch = async (e) => {
                             fullWidth
                             // autoComplete={false}
                             id="fullWidth"
-                            label="Top Size"
+                            label="Top Size Length"
                             type="number"
                             InputProps={{
                               startAdornment: (
@@ -6727,8 +7343,27 @@ const handleSearch = async (e) => {
                               ),
                             }}
                             variant="outlined"
-                            name="top_size"
-                            value={changeData.top_size}
+                            name="top_size_length"
+                            value={changeData.top_size_length}
+                            onChange={handleProductFelids}
+                          />
+                          <TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            // autoComplete={false}
+                            id="fullWidth"
+                            label="Top Size Breadth"
+                            type="number"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  Inch
+                                </InputAdornment>
+                              ),
+                            }}
+                            variant="outlined"
+                            name="top_size_breadth"
+                            value={changeData.top_size_breadth}
                             onChange={handleProductFelids}
                           />
 
@@ -6757,13 +7392,13 @@ const handleSearch = async (e) => {
 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
-                              Wheel
+                              Wheel Included
                             </FormLabel>
                             <RadioGroup
                               sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
-                              name="wheel"
-                              value={changeData.wheel || "no"}
+                              name="wheel_included"
+                              value={changeData.wheel_included || "no"}
                               onChange={handleProductFelids}
                             >
                               <FormControlLabel
@@ -6779,6 +7414,42 @@ const handleSearch = async (e) => {
                             </RadioGroup>
                           </FormControl>
                           <br />
+
+                          {changeData.wheel_included === "yes" && <><TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="wheel"
+                            label="Wheel"
+                            multiple
+                            value={changeData.wheel}
+                            onChange={handleProductFelids}
+                            helperText="Please select your wheel."
+                          >
+                            {catalog.wheel.map(
+                              (option) => option.status && <MenuItem
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
+                            )}
+                            <MenuItem key={"none"} value="None">
+                              {"None"}
+                            </MenuItem>
+                          </TextField>
+                            <TextField
+                              sx={{ mb: 2 }}
+                              value={changeData.wheel_qty}
+                              onChange={handleProductFelids}
+                              size={'small'}
+                              fullWidth
+                              label='Wheel Quantity'
+                              type='number'
+                              helperText='Enter the number of wheel included.'
+                              name='wheel_qty' />
+                          </>}
 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
@@ -6894,7 +7565,7 @@ const handleSearch = async (e) => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-
+                          {/* 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Textile
@@ -6946,6 +7617,148 @@ const handleSearch = async (e) => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
+                          )}
+
+                          <br /> */}
+
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Plywood Included
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.plywood || "no"}
+                              onChange={handleProductFelids}
+                              name="plywood"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+                          <br />
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Mattress
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.mattress || "no"}
+                              onChange={handleProductFelids}
+                              name="mattress"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.mattress === "yes" && (
+                            <>
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                type='number'
+                                id="outlined-select"
+                                name="mattress_length"
+                                label="Mattress Length"
+                                value={changeData.mattress_length}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="mattress_breadth"
+                                label="Mattress Breadth"
+                                value={changeData.mattress_breadth}
+                                onChange={handleProductFelids}
+                              />
+                            </>
+                          )}
+
+                          <br />
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Cradle Bed
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.cradle_bed || "no"}
+                              onChange={handleProductFelids}
+                              name="cradle_bed"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.cradle_bed === "yes" && (
+                            <>
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                type='number'
+                                id="outlined-select"
+                                name="cradle_bed_height"
+                                label="Cradle Bed Height"
+                                value={changeData.cradle_bed_height}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="cradle_bed_width"
+                                label="Cradle Bed Width"
+                                value={changeData.cradle_bed_width}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="cradle_bed_depth"
+                                label="Cradle Bed Depth"
+                                value={changeData.cradle_bed_depth}
+                                onChange={handleProductFelids}
+                              /></>
                           )}
 
                           <br />
@@ -7005,7 +7818,18 @@ const handleSearch = async (e) => {
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
-                              </TextField>{" "}
+                              </TextField>
+
+                              <TextField
+                                sx={{ mb: 2 }}
+                                value={changeData.fabric_qty}
+                                onChange={handleProductFelids}
+                                size={'small'}
+                                fullWidth
+                                label='Fabric Quantity'
+                                type='number'
+                                helperText='Enter the fabric quantity in meter.'
+                                name='fabric_qty' />
                             </>
                           )}
 
@@ -8050,27 +8874,101 @@ const handleSearch = async (e) => {
                                 }
                                 label="Wall Hanging"
                               />
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                    checked={changeData.ceramic_drawers}
+                                    checked={changeData.ceramic_drawer_included}
                                     onChange={handleProductFelids}
-                                    name="ceramic_drawers"
+                                    name="ceramic_drawer_included"
                                   />
                                 }
                                 label="Ceramic Drawers"
                               />
+
+                              {changeData.ceramic_drawer_included && <><TextField sx={{ mt: 2, mb: 2 }}
+                                size="small"
+                                fullWidth
+                                id="outlined-select"
+                                select
+                                name="ceramic_drawer"
+                                label="Ceramic Drawer"
+                                multiple
+                                value={changeData.ceramic_drawer}
+                                onChange={handleProductFelids}
+                                helperText="Please select your Ceramic Tiles."
+                              >
+                                {catalog.ceramic_drawer.map(
+                                  (option) => option.status && <MenuItem
+                                    key={option.SKU}
+                                    value={option.SKU}
+                                  >
+                                    {option.title}
+                                  </MenuItem>
+                                )}
+                                <MenuItem key={"none"} value="None">
+                                  {"None"}
+                                </MenuItem>
+                              </TextField>
+                                <TextField
+                                  sx={{ mb: 2 }}
+                                  value={changeData.ceramic_drawer_qty}
+                                  onChange={handleProductFelids}
+                                  size={'small'}
+                                  fullWidth
+                                  label='Ceramic Drawer Quantity'
+                                  type='number'
+                                  helperText='Enter the number of ceramic drawer included.'
+                                  name='ceramic_drawer_qty' />
+                              </>}
+
+
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                    checked={changeData.ceramic_tiles}
+                                    checked={changeData.ceramic_tiles_included}
                                     onChange={handleProductFelids}
-                                    name="ceramic_tiles"
+                                    name="ceramic_tiles_included"
                                   />
                                 }
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
+                            {changeData.ceramic_tiles_included && <><TextField sx={{ mt: 2, mb: 2 }}
+                              size="small"
+                              fullWidth
+                              id="outlined-select"
+                              select
+                              name="ceramic_tiles"
+                              label="Ceramic Tiles"
+                              multiple
+                              value={changeData.ceramic_tiles}
+                              onChange={handleProductFelids}
+                              helperText="Please select your Ceramic Tiles."
+                            >
+                              {catalog.ceramic_tiles.map(
+                                (option) => option.status && <MenuItem
+                                  key={option.SKU}
+                                  value={option.SKU}
+                                >
+                                  {option.title}
+                                </MenuItem>
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                              <TextField
+                                sx={{ mb: 2 }}
+                                value={changeData.ceramic_tiles_qty}
+                                onChange={handleProductFelids}
+                                size={'small'}
+                                fullWidth
+                                label='Ceramic Tiles Quantity'
+                                type='number'
+                                helperText='Enter the number of ceramic tiles included.'
+                                name='ceramic_tiles_qty' />
+                            </>}
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -8093,6 +8991,7 @@ const handleSearch = async (e) => {
                         </StepContent>
                       </Step>
                       {/* Features ends */}
+
                       {/* Miscellaneous */}
                       <Step>
                         <StepLabel>Miscellaneous</StepLabel>
@@ -8263,7 +9162,6 @@ const handleSearch = async (e) => {
                         </StepContent>
                       </Step>
                       {/* Miscellaneous ends */}
-
 
                       {/* Inventory & Shipping */}
                       <Step>
@@ -8466,72 +9364,12 @@ const handleSearch = async (e) => {
                               helperText="From bottom to top"
                             />
 
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Selling Points{" "}
-                            </FormLabel>
-
-                            <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12} sx={{ mb: 2 }} >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
-                                      fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
-                                  </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
-                                        onClick={() => {
-                                          setData({
-                                            ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
-                                        }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
-                            </Grid>
-
 
                             <Box sx={{ display: 'flex', mb: 2 }}>
 
                               <TextField
                                 size="small"
-                                sx={{ width: '85%' }}
+                                sx={{ width: '90%' }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -8545,7 +9383,7 @@ const handleSearch = async (e) => {
                               <TextField
                                 id="outlined-select-currency"
                                 select
-                                sx={{ ml: 1 }}
+                                sx={{ ml: 1, width: '10%' }}
                                 size='small'
                                 label="Unit"
                                 name='unit'
@@ -8648,6 +9486,67 @@ const handleSearch = async (e) => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <Grid container sx={{ mt: 1 }}>
+                              <Grid item xs={12} sx={{ mb: 2 }} >
+                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
+                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
+                                    onChange={handleProductFelids}
+                                    label='Write a point...' /></Grid>
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? <Button
+                                      fullWidth
+                                      onClick={() => {
+                                        changeData.item !== '' && setData({
+                                          ...changeData,
+                                          selling_points: [...changeData.selling_points, changeData.item],
+                                          item: ''
+                                        });
+                                      }}
+                                      variant='outlined'>Add</Button> : <Button onClick={() => {
+                                        setData({
+                                          ...changeData,
+                                          selling_points: changeData.selling_points.filter((row, i) => {
+                                            return i !== changeData.select;
+                                          }),
+                                          select: undefined
+
+                                        })
+
+
+                                      }}
+                                        variant='outlined'>Remove</Button>}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && <Grid sx={{
+                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
+                                border: '2px solid #91441f',
+                                padding: '7px'
+                              }} item xs={12}>
+                                <ul style={{ listStyleType: 'square' }}>
+                                  {
+                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
+                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                          setData({
+                                            ...changeData,
+                                            select: index,
+                                            item: item
+                                          })
+                                        }}
+                                        variant='body'>{index + 1 + ". "}{item}</Typography>
+                                      </li>
+                                    })
+                                  }
+                                </ul>
+                              </Grid>}
+                            </Grid>
+
 
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
@@ -8756,12 +9655,25 @@ const handleSearch = async (e) => {
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
+                            id="outlined-select"
+                            type='number'
+                            name="CVW"
+                            label="CVW Number"
+                            value={changeData.CVW || ''}
+                            onChange={handleProductFelids}
+                          />
+
+
+
+                          <TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
                             // required
                             id="outlined-select"
                             select
                             name="tax_rate"
                             label="Tax Rate"
-                            value={changeData.tax_rate || ''}
+                            value={changeData.tax_rate}
                             onChange={handleProductFelids}
                             multiple
                             helperText="Please select your tax rate."
@@ -8841,7 +9753,7 @@ const handleSearch = async (e) => {
                             name="hinge"
                             label="Hinge"
                             multiple
-                            value={changeData.hinge || ''}
+                            value={changeData.hinge}
                             onChange={handleProductFelids}
                             helperText="Please select your hinge."
                           >
@@ -8858,6 +9770,18 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.hinge !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.hinge_qty}
+                            size={'small'}
+                            helperText="Enter the number of hinges pieces ."
+                            fullWidth
+                            onChange={handleProductFelids}
+                            label='Hinge Quantity'
+                            type='number'
+                            name='hinge_qty' />}
+
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -8866,10 +9790,11 @@ const handleSearch = async (e) => {
                             name="knob"
                             label="Knob"
                             multiple
-                            value={changeData.knob || ''}
+                            value={changeData.knob}
                             onChange={handleProductFelids}
                             helperText="Please select your knob."
                           >
+                            {console.log(catalog)}
                             {catalog.knob.map(
                               (option) => option.status && <MenuItem
                                 key={option.SKU}
@@ -8883,6 +9808,17 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.knob !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            size={'small'}
+                            fullWidth
+                            helperText="Enter the number of knob pieces ."
+                            value={changeData.knob_qty}
+                            onChange={handleProductFelids}
+                            label='Knob Quantity'
+                            type='number'
+                            name='knob_qty' />}
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -8891,7 +9827,7 @@ const handleSearch = async (e) => {
                             name="door"
                             label="Door"
                             multiple
-                            value={changeData.door || ''}
+                            value={changeData.door}
                             onChange={handleProductFelids}
                             helperText="Please select your door."
                           >
@@ -8908,6 +9844,18 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.door !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.door_qty}
+                            helperText="Enter the number of doors."
+                            size={'small'}
+                            fullWidth
+                            onChange={handleProductFelids}
+                            label='Door Quantity'
+                            type='number'
+                            name='door_qty' />}
+
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -8916,7 +9864,7 @@ const handleSearch = async (e) => {
                             name="handle"
                             label="Handle"
                             multiple
-                            value={changeData.handle || ''}
+                            value={changeData.handle}
                             onChange={handleProductFelids}
                             helperText="Please select your handle."
                           >
@@ -8933,6 +9881,18 @@ const handleSearch = async (e) => {
                             </MenuItem>
                           </TextField>
 
+                          {changeData.handle !== 'None' && <TextField
+                            sx={{ mb: 2 }}
+                            value={changeData.handle_qty}
+                            helperText="Enter the number of handles."
+                            onChange={handleProductFelids}
+                            size={'small'}
+                            fullWidth
+                            label='Handle Quantity'
+                            type='number'
+                            name='handle_qty' />}
+
+
                           <TextField sx={{ mb: 2 }}
                             size="small"
                             fullWidth
@@ -8941,7 +9901,7 @@ const handleSearch = async (e) => {
                             label="Fitting"
                             name="fitting"
                             multiple
-                            value={changeData.fitting || ''}
+                            value={changeData.fitting}
                             onChange={handleProductFelids}
                             helperText="Please select your fitting."
                           >
@@ -8957,6 +9917,7 @@ const handleSearch = async (e) => {
                               {"None"}
                             </MenuItem>
                           </TextField>
+
 
 
                           <FormControl>
@@ -9036,7 +9997,7 @@ const handleSearch = async (e) => {
                             fullWidth
                             // autoComplete={false}
                             id="fullWidth"
-                            label="Top Size"
+                            label="Top Size Length"
                             type="number"
                             InputProps={{
                               startAdornment: (
@@ -9046,8 +10007,27 @@ const handleSearch = async (e) => {
                               ),
                             }}
                             variant="outlined"
-                            name="top_size"
-                            value={changeData.top_size}
+                            name="top_size_length"
+                            value={changeData.top_size_length}
+                            onChange={handleProductFelids}
+                          />
+                          <TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            // autoComplete={false}
+                            id="fullWidth"
+                            label="Top Size Breadth"
+                            type="number"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  Inch
+                                </InputAdornment>
+                              ),
+                            }}
+                            variant="outlined"
+                            name="top_size_breadth"
+                            value={changeData.top_size_breadth}
                             onChange={handleProductFelids}
                           />
 
@@ -9076,13 +10056,13 @@ const handleSearch = async (e) => {
 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
-                              Wheel
+                              Wheel Included
                             </FormLabel>
                             <RadioGroup
                               sx={{ mb: 2 }}
                               aria-labelledby="demo-radio-buttons-group-label"
-                              name="wheel"
-                              value={changeData.wheel || "no"}
+                              name="wheel_included"
+                              value={changeData.wheel_included || "no"}
                               onChange={handleProductFelids}
                             >
                               <FormControlLabel
@@ -9098,6 +10078,42 @@ const handleSearch = async (e) => {
                             </RadioGroup>
                           </FormControl>
                           <br />
+
+                          {changeData.wheel_included === "yes" && <><TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="wheel"
+                            label="Wheel"
+                            multiple
+                            value={changeData.wheel}
+                            onChange={handleProductFelids}
+                            helperText="Please select your wheel."
+                          >
+                            {catalog.wheel.map(
+                              (option) => option.status && <MenuItem
+                                key={option.SKU}
+                                value={option.SKU}
+                              >
+                                {option.title}
+                              </MenuItem>
+                            )}
+                            <MenuItem key={"none"} value="None">
+                              {"None"}
+                            </MenuItem>
+                          </TextField>
+                            <TextField
+                              sx={{ mb: 2 }}
+                              value={changeData.wheel_qty}
+                              onChange={handleProductFelids}
+                              size={'small'}
+                              fullWidth
+                              label='Wheel Quantity'
+                              type='number'
+                              helperText='Enter the number of wheel included.'
+                              name='wheel_qty' />
+                          </>}
 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
@@ -9213,7 +10229,7 @@ const handleSearch = async (e) => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-
+                          {/* 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Textile
@@ -9265,6 +10281,148 @@ const handleSearch = async (e) => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
+                          )}
+
+                          <br /> */}
+
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Plywood Included
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.plywood || "no"}
+                              onChange={handleProductFelids}
+                              name="plywood"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+                          <br />
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Mattress
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.mattress || "no"}
+                              onChange={handleProductFelids}
+                              name="mattress"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.mattress === "yes" && (
+                            <>
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                type='number'
+                                id="outlined-select"
+                                name="mattress_length"
+                                label="Mattress Length"
+                                value={changeData.mattress_length}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="mattress_breadth"
+                                label="Mattress Breadth"
+                                value={changeData.mattress_breadth}
+                                onChange={handleProductFelids}
+                              />
+                            </>
+                          )}
+
+                          <br />
+
+                          <FormControl>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Cradle Bed
+                            </FormLabel>
+                            <RadioGroup
+                              sx={{ mb: 2 }}
+
+                              aria-labelledby="demo-radio-buttons-group-label"
+                              value={changeData.cradle_bed || "no"}
+                              onChange={handleProductFelids}
+                              name="cradle_bed"
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+
+
+                          {changeData.cradle_bed === "yes" && (
+                            <>
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                fullWidth
+                                type='number'
+                                id="outlined-select"
+                                name="cradle_bed_height"
+                                label="Cradle Bed Height"
+                                value={changeData.cradle_bed_height}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="cradle_bed_width"
+                                label="Cradle Bed Width"
+                                value={changeData.cradle_bed_width}
+                                onChange={handleProductFelids}
+                              />
+                              <TextField sx={{ mb: 2 }}
+                                size="small"
+                                type='number'
+                                fullWidth
+                                id="outlined-select"
+                                name="cradle_bed_depth"
+                                label="Cradle Bed Depth"
+                                value={changeData.cradle_bed_depth}
+                                onChange={handleProductFelids}
+                              /></>
                           )}
 
                           <br />
@@ -9324,7 +10482,18 @@ const handleSearch = async (e) => {
                                 <MenuItem key={"none"} value="None">
                                   {"None"}
                                 </MenuItem>
-                              </TextField>{" "}
+                              </TextField>
+
+                              <TextField
+                                sx={{ mb: 2 }}
+                                value={changeData.fabric_qty}
+                                onChange={handleProductFelids}
+                                size={'small'}
+                                fullWidth
+                                label='Fabric Quantity'
+                                type='number'
+                                helperText='Enter the fabric quantity in meter.'
+                                name='fabric_qty' />
                             </>
                           )}
 
@@ -11358,7 +12527,7 @@ const handleSearch = async (e) => {
                             fullWidth
                             // autoComplete={false}
                             id="fullWidth"
-                            label="Top Size"
+                            label="Top Size Length"
                             type="number"
                             InputProps={{
                               startAdornment: (
@@ -11368,8 +12537,27 @@ const handleSearch = async (e) => {
                               ),
                             }}
                             variant="outlined"
-                            name="top_size"
-                            value={changeData.top_size}
+                            name="top_size_length"
+                            value={changeData.top_size_length}
+                            onChange={handleProductFelids}
+                          />
+                          <TextField sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            // autoComplete={false}
+                            id="fullWidth"
+                            label="Top Size Breadth"
+                            type="number"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  Inch
+                                </InputAdornment>
+                              ),
+                            }}
+                            variant="outlined"
+                            name="top_size_breadth"
+                            value={changeData.top_size_breadth}
                             onChange={handleProductFelids}
                           />
 
@@ -11535,7 +12723,7 @@ const handleSearch = async (e) => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-
+                          {/* 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
                               Textile
@@ -11560,7 +12748,7 @@ const handleSearch = async (e) => {
                               />
                             </RadioGroup>
                           </FormControl>
-
+ */}
 
                           {changeData.textile === "yes" && (
                             <TextField sx={{ mb: 2 }}
@@ -12421,127 +13609,8 @@ const handleSearch = async (e) => {
 
             {/* update merge Products Ends */}
 
-            {/*  add textile */}
-
-            {form.formType === "textile" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Textile
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add Textile and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleTextile) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <ImagePreviews
-                      text={"Please Drag and Drop the Textile image"}
-                    >
-                      {" "}
-                    </ImagePreviews>
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="textile_name"
-                      label="Textile"
-                      type="text"
-                      helperText="Please enter your textile"
-                    />
 
 
-                    <FormGroup>
-                      <FormControlLabel
-                        control={<Checkbox name="textile_status" />}
-                        label="Status (On/Off)"
-                      />
-                    </FormGroup>
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Textile
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-            {/* add textile Ends */}
-
-            {/*  update textile */}
-
-            {form.formType === "update_textile" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Textile
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update your Textile and necessary information from here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdateTextile) }}
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <ImagePreviews
-                      text={"Please Drag and Drop the Textile image"}
-                    >
-                      {" "}
-                    </ImagePreviews>
-
-                    <TextField sx={{ mb: 2 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      onChange={handleChangeData}
-                      value={changeData.textile_name}
-                      name="textile_name"
-                      label="Textile"
-                      helperText="Please enter the update"
-                    />
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Textile
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )}
-
-            {/* update Textile Ends */}
-
-         
 
             {/*  add Category */}
 
@@ -12807,8 +13876,8 @@ const handleSearch = async (e) => {
             )}
             {/* update primaryMaterial Ends */}
 
-       
-  
+
+
 
             {/*  add Supplier */}
 
@@ -12834,14 +13903,14 @@ const handleSearch = async (e) => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                 <TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       id="outlined-select"
                       name="SID"
                       disabled
-                      value  = {SKU || ''}
-                      onChange = {handleChangeData}
+                      value={SKU || ''}
+                      onChange={handleChangeData}
                       label="Supplier ID"
                       type="text"
                     />
@@ -12849,8 +13918,8 @@ const handleSearch = async (e) => {
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.supplier_name}
-                      onChange = {handleChangeData}
+                      value={changeData.supplier_name}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="supplier_name"
                       label="Supplier Name"
@@ -12859,8 +13928,8 @@ const handleSearch = async (e) => {
                     <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      value  = {changeData.mobile}
-                      onChange = {handleChangeData}
+                      value={changeData.mobile}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="mobile"
                       label="Mobile"
@@ -12870,8 +13939,8 @@ const handleSearch = async (e) => {
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.alt_mobile}
-                      onChange = {handleChangeData}
+                      value={changeData.alt_mobile}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="alt_mobile"
                       label="Alternate Number"
@@ -12882,18 +13951,18 @@ const handleSearch = async (e) => {
                       fullWidth
                       // required
                       id="outlined-select"
-                      value  = {changeData.specialization}
-                      onChange = {handleChangeData}
+                      value={changeData.specialization}
+                      onChange={handleChangeData}
                       name="specialization"
                       label="Specialization"
                       type="text"
                     />
-                        <TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.gst_no}
-                      onChange = {handleChangeData}
+                      value={changeData.gst_no}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="gst_no"
                       label="GST Number"
@@ -12903,11 +13972,11 @@ const handleSearch = async (e) => {
                     <TextareaAutosize sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      placeholder = "Address"
+                      placeholder="Address"
                       minRows={5}
-                      maxRows= {5}
-                      value  = {changeData.address}
-                      onChange = {handleChangeData}
+                      maxRows={5}
+                      value={changeData.address}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="address"
                       label="Address"
@@ -12952,14 +14021,14 @@ const handleSearch = async (e) => {
                     enctype="multipart/form-data"
                     method="post"
                   >
-                      <TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      disabled 
+                      disabled
                       id="outlined-select"
                       name="SID"
-                      value  = {changeData.SID || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.SID || ''}
+                      onChange={handleChangeData}
                       label="Supplier ID"
                       type="text"
                     />
@@ -12967,8 +14036,8 @@ const handleSearch = async (e) => {
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.supplier_name || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.supplier_name || ''}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="supplier_name"
                       label="Supplier Name"
@@ -12977,8 +14046,8 @@ const handleSearch = async (e) => {
                     <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      value  = {changeData.mobile || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.mobile || ''}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="mobile"
                       label="Mobile"
@@ -12988,8 +14057,8 @@ const handleSearch = async (e) => {
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.alt_mobile || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.alt_mobile || ''}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="alt_mobile"
                       label="Alternate Number"
@@ -13000,18 +14069,18 @@ const handleSearch = async (e) => {
                       fullWidth
                       // required
                       id="outlined-select"
-                      value  = {changeData.specialization || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.specialization || ''}
+                      onChange={handleChangeData}
                       name="specialization"
                       label="Specialization"
                       type="text"
                     />
-                        <TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
-                      value  = {changeData.gst_no || ''}
-                      onChange = {handleChangeData}
+                      value={changeData.gst_no || ''}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="gst_no"
                       label="GST Number"
@@ -13021,11 +14090,11 @@ const handleSearch = async (e) => {
                     <TextareaAutosize sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      placeholder = "Address"
+                      placeholder="Address"
                       minRows={5}
-                      maxRows= {5}
-                      value  = {changeData.address || ''}
-                      onChange = {handleChangeData}
+                      maxRows={5}
+                      value={changeData.address || ''}
+                      onChange={handleChangeData}
                       id="outlined-select"
                       name="address"
                       label="Address"
@@ -13046,7 +14115,7 @@ const handleSearch = async (e) => {
             )}
             {/* update suppliers Ends */}
 
-       
+
             {/*  update blog  */}
 
             {form.formType === "update_blog" && (
@@ -13382,7 +14451,7 @@ const handleSearch = async (e) => {
 
             {/* Add Blog Ends */}
 
-          
+
             {/*  add subCategory */}
 
             {form.formType === "subcategory" && (
@@ -14500,8 +15569,6 @@ const handleSearch = async (e) => {
                               name="selling_price"
                             />
 
-
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -14513,6 +15580,7 @@ const handleSearch = async (e) => {
                               }
                               label="Show On Website"
                             />
+
 
                           </Box >
                           <Box className="stepAction">
@@ -14612,7 +15680,7 @@ const handleSearch = async (e) => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 2}
+                                disabled={activeStep === 3}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -14663,37 +15731,24 @@ const handleSearch = async (e) => {
                               </>
                             )}
 
-                            <Typography component={'span'} variant="Caption">
-                              {" "}
-                              Polish in {changeData.polish_time} Days
-                            </Typography>
-                            <Slider
-                              aria-label="Construction Days"
-                              defaultValue={0}
-                              size="small"
-                              valueLabelDisplay="auto"
-                              name="polish_time"
-                              value={changeData.polish_time}
-                              onChange={handleProductFelids}
-                              helperText="Please select your polish time"
-                            />
+
 
                             <Typography component={'span'} variant="Caption">
                               {" "}
-                              Manufactured in {
-                                changeData.manufacturing_time
+                              Restocking in {
+                                changeData.restocking_time
                               }{" "}
                               Days
                             </Typography>
                             <Slider
-                              aria-label="Construction Days"
+                              aria-label="restocking time"
                               defaultValue={0}
                               size="small"
                               valueLabelDisplay="auto"
-                              name="manufacturing_time"
-                              value={changeData.manufacturing_time}
+                              name="restocking_time"
+                              value={changeData.restocking_time}
                               onChange={handleProductFelids}
-                              helperText="Please select your manufacturing time"
+                              helperText="Please select your restocking time."
                             />
 
                             <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
@@ -14826,7 +15881,53 @@ const handleSearch = async (e) => {
                                   </MenuItem>
                                 ))}
                               </TextField>
+
                             </Box>
+                            <Box sx={{ display: 'flex', mb: 2 }}>
+
+                              <TextField
+                                size="small"
+                                sx={{ width: '85%' }}
+                                id="fullWidth"
+                                label="Minimum Quantity For Sell"
+                                type="Number"
+                                variant="outlined"
+                                name="min_quantity"
+                                value={changeData.min_quantity}
+                                onChange={handleProductFelids}
+                              />
+
+
+                              <TextField
+                                id="outlined-select-currency"
+                                select
+                                sx={{ ml: 1 }}
+                                size='small'
+                                label="Unit"
+                                name='unit'
+                                value={changeData.unit || ''}
+                                onChange={handleProductFelids}
+                              >
+                                {unitCatalog.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+
+                            </Box>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.continue_selling}
+                                    onChange={handleProductFelids}
+                                    name="continue_selling"
+                                  />
+                                }
+                                label="Continue Selling"
+                              />
+                            </FormGroup>
                           </Box >
                           <Box className="stepAction">
                             <Button
@@ -14840,7 +15941,7 @@ const handleSearch = async (e) => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 2}
+                              disabled={activeStep === 3}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -14850,6 +15951,285 @@ const handleSearch = async (e) => {
                       </Step>
                       {/* Inventory & Shipping End */}
 
+                      {/* SEO */}
+                      <Step>
+                        <StepLabel>SEO</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 4}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Title"
+                              type="text"
+                              variant="outlined"
+                              name="seo_title"
+                              value={changeData.seo_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Description"
+                              type="text"
+                              variant="outlined"
+                              name="seo_description"
+                              value={changeData.seo_description}
+                              onChange={handleProductFelids}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Keyword"
+                              type="text"
+                              variant="outlined"
+                              name="seo_keyword"
+                              value={changeData.seo_keyword}
+                              onChange={handleProductFelids}
+                            />
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <Grid container sx={{ mt: 1 }}>
+                              <Grid item xs={12} sx={{ mb: 2 }} >
+                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
+                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
+                                    onChange={handleProductFelids}
+                                    label='Write a point...' /></Grid>
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? <Button
+                                      fullWidth
+                                      onClick={() => {
+                                        changeData.item !== '' && setData({
+                                          ...changeData,
+                                          selling_points: [...changeData.selling_points, changeData.item],
+                                          item: ''
+                                        });
+                                      }}
+                                      variant='outlined'>Add</Button> : <Button onClick={() => {
+                                        setData({
+                                          ...changeData,
+                                          selling_points: changeData.selling_points.filter((row, i) => {
+                                            return i !== changeData.select;
+                                          }),
+                                          select: undefined
+
+                                        })
+
+
+                                      }}
+                                        variant='outlined'>Remove</Button>}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && <Grid sx={{
+                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
+                                border: '2px solid #91441f',
+                                padding: '7px'
+                              }} item xs={12}>
+                                <ul style={{ listStyleType: 'square' }}>
+                                  {
+                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
+                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                          setData({
+                                            ...changeData,
+                                            select: index,
+                                            item: item
+                                          })
+                                        }}
+                                        variant='body'>{index + 1 + ". "}{item}</Typography>
+                                      </li>
+                                    })
+                                  }
+                                </ul>
+                              </Grid>}
+                            </Grid>
+
+
+                            {/* product description  */}
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Product Description
+                            </FormLabel>
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              onChange={handleProductFelids}
+                              defaultValue={changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+                            {/* <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (editorRef.current = editor)
+                              }
+                              init={{
+                                height: 300,
+                                menubar: true,
+                              }}
+                            /> */}
+                            <br />
+                            {/* selling points  */}
+
+                            {/* <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="selling_points"
+                              defaultValue={"Selling Points" || changeData.selling_points}
+                              type="text"
+                              helperText="Please enter your selling points."
+                            /> */}
+
+                            {/* <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (sellingRef.current = editor)
+                              }
+                              init={{
+                                height: 400,
+                                menubar: true,
+                              }}
+                            /> */}
+                          </Box > <br />
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 4}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* SEO End */}
+
+                      {/* Extra details */}
+                      <Step>
+                        <StepLabel>Extra Details</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 4}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="hardware_polish"
+                              label="Hardware Polish"
+                              value={changeData.hardware_polish || ''}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Hardware Polish"
+                            >
+                              {hardware_polish.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    {option}
+                                  </MenuItem>
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+
+
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 4}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Extra details */}
 
 
                     </Stepper>
@@ -14931,7 +16311,7 @@ const handleSearch = async (e) => {
                               type="text"
                               variant="outlined"
                               name="SKU"
-                              value={changeData.SKU || ''}
+                              value={SKU || ''}
                             />
 
                             <TextField sx={{ mb: 2 }}
@@ -14956,7 +16336,6 @@ const handleSearch = async (e) => {
                               id="outlined-select"
                               select
                               disabled
-
                               name="category_name"
                               label="Category"
                               value={changeData.category_name || ''}
@@ -14989,7 +16368,7 @@ const handleSearch = async (e) => {
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
-                              value={changeData.sub_category_name || ''}
+                              value={changeData.sub_category_name}
                               onChange={handleProductFelids}
                               helperText="Please select your sub category"
                             >
@@ -15009,7 +16388,6 @@ const handleSearch = async (e) => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
 
 
                             <TextField sx={{ mb: 2 }}
@@ -15066,12 +16444,10 @@ const handleSearch = async (e) => {
                               name="selling_price"
                             />
 
-
-
                             <FormControlLabel
                               control={
                                 <Checkbox
-                                  checked={changeData.status || false}
+                                  checked={changeData.status}
                                   onChange={handleProductFelids}
                                   name="status"
                                   helperText="Check it if want it on mobile."
@@ -15079,6 +16455,7 @@ const handleSearch = async (e) => {
                               }
                               label="Show On Website"
                             />
+
 
                           </Box >
                           <Box className="stepAction">
@@ -15103,6 +16480,62 @@ const handleSearch = async (e) => {
                       </Step>
                       {/* // Specification Ends*/}
 
+                      {/* Images */}
+                      <Step>
+                        <StepLabel>Images</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 6}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            {/* <AcceptMaxFiles className="dorpContainer"/> */}
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Hardware Images
+                            </FormLabel>
+                            <ProductsPreviews
+                              text={"Please Drag and Drop the hardware images"}
+                            ></ProductsPreviews>
+
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 6}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Images End */}
+
 
                       {/* Inventory & Shipping */}
                       <Step>
@@ -15122,7 +16555,7 @@ const handleSearch = async (e) => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 1}
+                                disabled={activeStep === 3}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -15173,37 +16606,24 @@ const handleSearch = async (e) => {
                               </>
                             )}
 
-                            <Typography component={'span'} variant="Caption">
-                              {" "}
-                              Polish in {changeData.polish_time} Days
-                            </Typography>
-                            <Slider
-                              aria-label="Construction Days"
-                              defaultValue={0}
-                              size="small"
-                              valueLabelDisplay="auto"
-                              name="polish_time"
-                              value={changeData.polish_time}
-                              onChange={handleProductFelids}
-                              helperText="Please select your polish time"
-                            />
+
 
                             <Typography component={'span'} variant="Caption">
                               {" "}
-                              Manufactured in {
-                                changeData.manufacturing_time
+                              Restocking in {
+                                changeData.restocking_time
                               }{" "}
                               Days
                             </Typography>
                             <Slider
-                              aria-label="Construction Days"
+                              aria-label="restocking time"
                               defaultValue={0}
                               size="small"
                               valueLabelDisplay="auto"
-                              name="manufacturing_time"
-                              value={changeData.manufacturing_time}
+                              name="restocking_time"
+                              value={changeData.restocking_time}
                               onChange={handleProductFelids}
-                              helperText="Please select your manufacturing time"
+                              helperText="Please select your restocking time."
                             />
 
                             <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
@@ -15304,40 +16724,86 @@ const handleSearch = async (e) => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
+
+                            <Box sx={{ display: 'flex', mb: 2 }}>
+
+                              <TextField
+                                size="small"
+                                sx={{ width: '85%' }}
+                                id="fullWidth"
+                                label="Quantity"
+                                type="Number"
+                                variant="outlined"
+                                name="quantity"
+                                value={changeData.quantity}
+                                onChange={handleProductFelids}
+                              />
+
+
+                              <TextField
+                                id="outlined-select-currency"
+                                select
+                                sx={{ ml: 1 }}
+                                size='small'
+                                label="Unit"
+                                name='unit'
+                                value={changeData.unit || ''}
+                                onChange={handleProductFelids}
+                              >
+                                {unitCatalog.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+
+                            </Box>
+                            <Box sx={{ display: 'flex', mb: 2 }}>
+
+                              <TextField
+                                size="small"
+                                sx={{ width: '85%' }}
+                                id="fullWidth"
+                                label="Minimum Quantity For Sell"
+                                type="Number"
+                                variant="outlined"
+                                name="min_quantity"
+                                value={changeData.min_quantity}
+                                onChange={handleProductFelids}
+                              />
+
+
+                              <TextField
+                                id="outlined-select-currency"
+                                select
+                                sx={{ ml: 1 }}
+                                size='small'
+                                label="Unit"
+                                name='unit'
+                                value={changeData.unit || ''}
+                                onChange={handleProductFelids}
+                              >
+                                {unitCatalog.map((option) => (
+                                  <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+
+                            </Box>
+                            <FormGroup>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={changeData.continue_selling}
+                                    onChange={handleProductFelids}
+                                    name="continue_selling"
+                                  />
+                                }
+                                label="Continue Selling"
+                              />
+                            </FormGroup>
                           </Box >
-
-                          <Box sx={{ display: 'flex', mb: 2 }}>
-
-                            <TextField
-                              size="small"
-                              sx={{ width: '85%' }}
-                              id="fullWidth"
-                              label="Quantity"
-                              type="Number"
-                              variant="outlined"
-                              name="quantity"
-                              value={changeData.quantity}
-                              onChange={handleProductFelids}
-                            />
-
-
-                            <TextField
-                              id="outlined-select-currency"
-                              select
-                              sx={{ ml: 1 }}
-                              size='small'
-                              label="Unit"
-                              name='unit'
-                              value={changeData.unit || ''}
-                              onChange={handleProductFelids}
-                            >
-                              {unitCatalog.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -15350,7 +16816,7 @@ const handleSearch = async (e) => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 1}
+                              disabled={activeStep === 3}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -15359,6 +16825,286 @@ const handleSearch = async (e) => {
                         </StepContent>
                       </Step>
                       {/* Inventory & Shipping End */}
+
+                      {/* SEO */}
+                      <Step>
+                        <StepLabel>SEO</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 4}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Title"
+                              type="text"
+                              variant="outlined"
+                              name="seo_title"
+                              value={changeData.seo_title}
+                              onChange={handleProductFelids}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Description"
+                              type="text"
+                              variant="outlined"
+                              name="seo_description"
+                              value={changeData.seo_description}
+                              onChange={handleProductFelids}
+                            />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="SEO Keyword"
+                              type="text"
+                              variant="outlined"
+                              name="seo_keyword"
+                              value={changeData.seo_keyword}
+                              onChange={handleProductFelids}
+                            />
+
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <Grid container sx={{ mt: 1 }}>
+                              <Grid item xs={12} sx={{ mb: 2 }} >
+                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
+                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
+                                    onChange={handleProductFelids}
+                                    label='Write a point...' /></Grid>
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? <Button
+                                      fullWidth
+                                      onClick={() => {
+                                        changeData.item !== '' && setData({
+                                          ...changeData,
+                                          selling_points: [...changeData.selling_points, changeData.item],
+                                          item: ''
+                                        });
+                                      }}
+                                      variant='outlined'>Add</Button> : <Button onClick={() => {
+                                        setData({
+                                          ...changeData,
+                                          selling_points: changeData.selling_points.filter((row, i) => {
+                                            return i !== changeData.select;
+                                          }),
+                                          select: undefined
+
+                                        })
+
+
+                                      }}
+                                        variant='outlined'>Remove</Button>}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && <Grid sx={{
+                                maxHeight: '100px', overflowY: 'scroll', mb: 2,
+                                border: '2px solid #91441f',
+                                padding: '7px'
+                              }} item xs={12}>
+                                <ul style={{ listStyleType: 'square' }}>
+                                  {
+                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
+                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                          setData({
+                                            ...changeData,
+                                            select: index,
+                                            item: item
+                                          })
+                                        }}
+                                        variant='body'>{index + 1 + ". "}{item}</Typography>
+                                      </li>
+                                    })
+                                  }
+                                </ul>
+                              </Grid>}
+                            </Grid>
+
+
+                            {/* product description  */}
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Product Description
+                            </FormLabel>
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="product_description"
+                              onChange={handleProductFelids}
+                              defaultValue={changeData.product_description}
+                              type="text"
+                              helperText="Please enter your product description"
+                            />
+                            {/* <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (editorRef.current = editor)
+                              }
+                              init={{
+                                height: 300,
+                                menubar: true,
+                              }}
+                            /> */}
+                            <br />
+                            {/* selling points  */}
+
+                            {/* <FormLabel id="demo-radio-buttons-group-label">
+                              Selling Points{" "}
+                            </FormLabel>
+
+                            <TextareaAutosize
+                              fullWidth
+                              minRows={5}
+                              id="outlined-select"
+                              name="selling_points"
+                              defaultValue={"Selling Points" || changeData.selling_points}
+                              type="text"
+                              helperText="Please enter your selling points."
+                            /> */}
+
+                            {/* <Editor
+                              apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
+                              onInit={(event, editor) =>
+                                (sellingRef.current = editor)
+                              }
+                              init={{
+                                height: 400,
+                                menubar: true,
+                              }}
+                            /> */}
+                          </Box > <br />
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 4}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* SEO End */}
+
+                      {/* Extra details */}
+                      <Step>
+                        <StepLabel>Extra Details</StepLabel>
+                        <StepContent className="stepContent">
+                          <Box className="fields">
+                            {" "}
+                            <Box className="stepAction">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                disabled={activeStep === 0}
+                                onClick={handleBackStep}
+                              >
+                                Back
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                disabled={activeStep === 4}
+                                onClick={handleNextStep}
+                              >
+                                Continue
+                              </Button>
+                            </Box > <br />
+
+                            <TextField sx={{ mb: 2 }}
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="hardware_polish"
+                              label="Hardware Polish"
+                              value={changeData.hardware_polish || ''}
+                              multiple
+                              onChange={handleProductFelids}
+                              helperText="Please select your Hardware Polish"
+                            >
+                              {hardware_polish.map(
+                                (option) =>
+                                  <MenuItem
+                                    key={option}
+                                    value={option}
+                                  >
+                                    {option}
+                                  </MenuItem>
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+
+
+
+                          </Box >
+                          <Box className="stepAction">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              disabled={activeStep === 0}
+                              onClick={handleBackStep}
+                            >
+                              Back
+                            </Button>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={activeStep === 4}
+                              onClick={handleNextStep}
+                            >
+                              Continue
+                            </Button>
+                          </Box>
+                        </StepContent>
+                      </Step>
+                      {/* Extra details */}
 
 
 
@@ -15370,7 +17116,7 @@ const handleSearch = async (e) => {
                       fullWidth
                       variant="contained"
                     >
-                      Add Hardware
+                      Update Hardware
                     </Button>
                   </form>
                 </Grid>
@@ -15405,55 +17151,55 @@ const handleSearch = async (e) => {
                     method="post"
                   >
 
-                <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.product_articles || ''} 
-                  {...params} 
-                  label="Product SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
-                />
-                <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.hardware_articles || ''}
-                  {...params} 
-                  label="Hardware SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
-                />
-                            
-                            
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.P_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.product_articles || ''}
+                        {...params}
+                        label="Product SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                    />
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.H_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.hardware_articles || ''}
+                        {...params}
+                        label="Hardware SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                    />
 
-                  <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  required
-                  autoHighlight
-                  clearOnEscape
-                  id="combo-box-demo"
-                  options={productSKU.supplier.map((row)=>{return row.SID})}
-                  onChange={(e, newMember) => setData(old=>({...old,supplier : newMember}))}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList} 
-                  value = {changeData.supplier || ''} 
-                  name = 'supplier'
-                  {...params} 
-                  label="Supplier" />}
-                />
 
-                  
+
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      required
+                      autoHighlight
+                      clearOnEscape
+                      id="combo-box-demo"
+                      options={productSKU.supplier.map((row) => { return row.SID })}
+                      onChange={(e, newMember) => setData(old => ({ ...old, supplier: newMember }))}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList}
+                        value={changeData.supplier || ''}
+                        name='supplier'
+                        {...params}
+                        label="Supplier" />}
+                    />
+
+
                     <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
@@ -15524,65 +17270,65 @@ const handleSearch = async (e) => {
                     method="post"
                   >
 
-<Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.product_articles || ''} 
-                  {...params} 
-                  label="Product SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
-                />
-                <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.hardware_articles || ''} 
-                  
-                  {...params} 
-                  label="Hardware SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
-                />
-                            
-                            
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.P_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.product_articles || ''}
+                        {...params}
+                        label="Product SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                    />
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.H_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.hardware_articles || ''}
 
-                  <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  required
-                  autoHighlight
-                  clearOnEscape
-                  id="combo-box-demo"
-                  options={productSKU.supplier.map((row)=>{return row.SID})}
-                  onChange={(e, newMember) => setData(old=>({...old,supplier : newMember}))}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList} 
-                  value = {changeData.supplier || ''} 
-                  name = 'supplier'
-                  {...params} 
-                  label="Supplier" />}
-                />
+                        {...params}
+                        label="Hardware SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                    />
 
-                <TextField sx={{ mb: 1 }}
+
+
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      required
+                      autoHighlight
+                      clearOnEscape
+                      id="combo-box-demo"
+                      options={productSKU.supplier.map((row) => { return row.SID })}
+                      onChange={(e, newMember) => setData(old => ({ ...old, supplier: newMember }))}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList}
+                        value={changeData.supplier || ''}
+                        name='supplier'
+                        {...params}
+                        label="Supplier" />}
+                    />
+
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
-                      name = 'driver_name'
+                      name='driver_name'
                       id="fullWidth"
                       label="Driver Name"
                       type="text"
                       variant="outlined"
                     />
-                <TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       id="fullWidth"
@@ -15601,7 +17347,7 @@ const handleSearch = async (e) => {
                       variant="outlined"
                       name="vehicle_no"
                     />
-                    
+
 
                     <TextField sx={{ mb: 1 }}
                       size="small"
@@ -15640,21 +17386,21 @@ const handleSearch = async (e) => {
                       )}
                     </TextField>
 
-                    {changeData.purpose === 'Others' && 
-                    <TextareaAutosize 
-                      size="small"
-                      fullWidth
-                      minRows = {3}
-                      maxRows = {3}
-                      required
-                      resize = {'none'}
-                      id="fullWidth"
-                      placeholder="Please eloburate the reson here..."
-                      type="text"
-                      variant="outlined"
-                      name="reason"
-                    />
-                          }
+                    {changeData.purpose === 'Others' &&
+                      <TextareaAutosize
+                        size="small"
+                        fullWidth
+                        minRows={3}
+                        maxRows={3}
+                        required
+                        resize={'none'}
+                        id="fullWidth"
+                        placeholder="Please eloburate the reson here..."
+                        type="text"
+                        variant="outlined"
+                        name="reason"
+                      />
+                    }
 
 
                     <Button
@@ -15678,7 +17424,7 @@ const handleSearch = async (e) => {
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
                   <Typography component={'span'} variant="h5">
-                  Transfer
+                    Transfer
                     <Typography component={'span'}
                       sx={{ display: "block !important" }}
                       variant="caption"
@@ -15697,37 +17443,37 @@ const handleSearch = async (e) => {
                     method="post"
                   >
 
-<Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.P_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.product_articles || ''} 
-                  {...params} 
-                  label="Product SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,product_articles : newMember}))}
-                />
-                <Autocomplete
-                  disablePortal
-                  size = 'small'
-                  fullWidth
-                  multiple
-                  autoHighlight
-                  id="combo-box-demo"
-                  options={productSKU.H_SKU.map((row)=>{return row.SKU})}
-                  renderInput={(params) => <TextField onKeyUpCapture={handleSearch} 
-                  value = {changeData.hardware_articles || ''} 
-                  {...params} 
-                  label="Hardware SKU" />}
-                  onChange={(e, newMember) => setData(old=>({...old,hardware_articles : newMember}))}
-                />
-                            
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.P_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.product_articles || ''}
+                        {...params}
+                        label="Product SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                    />
+                    <Autocomplete
+                      disablePortal
+                      size='small'
+                      fullWidth
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.H_SKU.map((row) => { return row.SKU })}
+                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                        value={changeData.hardware_articles || ''}
+                        {...params}
+                        label="Hardware SKU" />}
+                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                    />
 
-               
+
+
 
                     <TextField sx={{ mb: 1 }}
                       size="small"
@@ -15739,7 +17485,7 @@ const handleSearch = async (e) => {
                       name="quantity"
                     />
 
-<TextField sx={{ mb: 1 }}
+                    <TextField sx={{ mb: 1 }}
                       fullWidth
                       id="outlined-select"
                       select
@@ -15790,22 +17536,22 @@ const handleSearch = async (e) => {
                       )}
                     </TextField>
 
-                    {changeData.purpose === 'Others' && 
-                    <TextareaAutosize 
-                      size="small"
-                      fullWidth
-                      minRows = {3}
-                      maxRows = {3}
-                      required
-                      resize = {'none'}
-                      id="fullWidth"
-                      placeholder="Please eloburate the reson here..."
-                      type="text"
-                      variant="outlined"
-                      name="reason"
-                    />
-                          }
-               
+                    {changeData.purpose === 'Others' &&
+                      <TextareaAutosize
+                        size="small"
+                        fullWidth
+                        minRows={3}
+                        maxRows={3}
+                        required
+                        resize={'none'}
+                        id="fullWidth"
+                        placeholder="Please eloburate the reson here..."
+                        type="text"
+                        variant="outlined"
+                        name="reason"
+                      />
+                    }
+
 
                     <Button
                       color="primary"

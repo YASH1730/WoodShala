@@ -14,16 +14,17 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
-import {useDispatch} from 'react-redux'
-import {setAlert} from '../../store/action/action'
+import { useDispatch } from 'react-redux'
+import { setAlert } from '../../../store/action/action'
 import {
   getDraft,
+
   getLastProduct,
   deleteDraft,
   getProductDetails,
   dropDraft,
   getMetaDraft
-} from "../../services/service";
+} from "../../../services/service";
 
 import {
   DataGrid,
@@ -34,7 +35,7 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from "@mui/material/Pagination";
 
-import '../../assets/custom/css/action.css'
+import '../../../assets/custom/css/action.css'
 
 // icon 
 import PendingIcon from '@mui/icons-material/Pending';
@@ -44,7 +45,7 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
 export default function Action() {
   // useContext
 
-  const dispatch  = useDispatch();
+  const dispatch = useDispatch();
 
   const [display, setDisplay] = useState({});
   const [search, setSearch] = useState("");
@@ -53,9 +54,9 @@ export default function Action() {
   const [SKU, setSKU] = useState('');
   const [meta, setMeta] = useState(
     {
-      total : 0,
-      pending : 0,
-      resolved : 0
+      total: 0,
+      pending: 0,
+      resolved: 0
     }
   );
 
@@ -73,14 +74,14 @@ export default function Action() {
 
 
   useEffect(() => {
-    
+
     getMetaDraft()
-    .then((data)=>{
-      console.log(data)
-      setMeta(
-        {...data.data}
-      )
-    })
+      .then((data) => {
+        console.log(data)
+        setMeta(
+          { ...data.data }
+        )
+      })
 
     getDraft()
       .then((data) => {
@@ -93,7 +94,7 @@ export default function Action() {
               DID: row.DID,
               AID: row.AID,
               type: row.type,
-              operation : row.operation,
+              operation: row.operation,
               message: row.message,
               status: row.draftStatus,
               action: row,
@@ -153,7 +154,7 @@ export default function Action() {
             onClick={() => {
               console.log(params)
               setDisplay({
-                data: JSON.parse(params.formattedValue.payload),
+                data: params.formattedValue.payload,
                 type: params.formattedValue.type,
                 status: true,
                 draftStatus: params.formattedValue.draftStatus,
@@ -172,10 +173,10 @@ export default function Action() {
                   return set.action._id !== params.formattedValue._id;
                 }))
                 dispatch(setAlert({
-                    open: true,
-                    variant: "success",
-                    message: "Notification deleted successfully !!!",
-                  
+                  open: true,
+                  variant: "success",
+                  message: "Notification deleted successfully !!!",
+
                 }));
               });
             }}
@@ -223,70 +224,72 @@ export default function Action() {
   const handleClose = () => setDisplay({ status: false });
 
   function SpringModal() {
-    const handleSubmit = async (e)=>{
-    e.preventDefault();
-    let response = ''; 
-    if(e.target.action.value === 'Approved')
-    {
-      switch (display.operation) {
-        case 'inertProduct':
-          display.data.draftStatus = e.target.action.value;
-          display.data.status = true;
-          display.data.SKU = SKU;
-          display.data.AID = SKU;
-    
-          response = await dropDraft(display.data)
-          if(response.status === 200)
-          {
-            dispatch(setAlert({
-                open: true,
-                variant: "success",
-                message: response.data.message,
-              
-            }));
-           setDisplay({status : false})
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      let response = '';
+      if (e.target.action.value === 'Approved') {
+        // console.log(typeof (display.operation))
+        switch (display.operation) {
+          case 'insertProduct':
 
-          }
-          else{
-            dispatch(setAlert({
-                open: true,
-                variant: "error",
-                message: 'Something Went Wrong !!!',
-              
-            }));
-           setDisplay({status : false})
-          }
-          break;
-        case 'updateProduct' :
             display.data.draftStatus = e.target.action.value;
             display.data.status = true;
-            response  = await dropDraft(display.data)
-            if(response.status === 200)
-          {
-            dispatch(setAlert({
+            display.data.SKU = SKU;
+            display.data.AID = SKU;
+
+            console.log(display.data)
+
+            response = await dropDraft(display.data)
+            if (response.status === 200) {
+              dispatch(setAlert({
                 open: true,
                 variant: "success",
                 message: response.data.message,
-              
-            }));
-           setDisplay({status : false})
 
-          }
-          else{
-            dispatch(setAlert({
+              }));
+              setDisplay({ status: false })
+
+            }
+            else {
+              dispatch(setAlert({
                 open: true,
                 variant: "error",
                 message: 'Something Went Wrong !!!',
-              
-            }));
-           setDisplay({status : false})
-          }
-           break;
-        default:
-          break;
+
+              }));
+              setDisplay({ status: false })
+            }
+            break;
+          case 'updateProduct':
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            response = await dropDraft(display.data)
+            if (response.status === 200) {
+              dispatch(setAlert({
+                open: true,
+                variant: "success",
+                message: response.data.message,
+
+              }));
+              setDisplay({ status: false })
+
+            }
+            else {
+              dispatch(setAlert({
+                open: true,
+                variant: "error",
+                message: 'Something Went Wrong !!!',
+
+              }));
+              setDisplay({ status: false })
+            }
+            break;
+          default:
+            console.log('no operation found')
+            break;
+        }
       }
-    }
-    else setDisplay({status : false})
+      else setDisplay({ status: false })
     }
 
     function Content() {
@@ -296,17 +299,18 @@ export default function Action() {
 
         switch (display.operation) {
           case 'insertProduct':
-              setPeer([])
-              getSKU();
+            setPeer([])
+            getSKU();
             break;
           case 'updateProduct':
-              getProductDetails(display.data.AID)
-                .then((res) => {
-                  res.data = JSON.stringify(res.data)
-                  res.data = JSON.parse(res.data)
-                  if (res.data) setPeer(res.data)
-                })
-                .catch((err) => { console.log(err) })
+            getProductDetails(display.data.AID)
+              .then((res) => {
+                res.data = JSON.stringify(res.data)
+                res.data = JSON.parse(res.data)
+                console.log(res.data)
+                if (res.data) setPeer(res.data)
+              })
+              .catch((err) => { console.log(err) })
             break;
           default:
             setPeer([])
@@ -321,9 +325,9 @@ export default function Action() {
           return (<>
             <Grid container>
               <Grid item xs={12}> <Typography variant='h5' sx={{ textAlign: 'center', mb: 1 }}>Data View</Typography></Grid>
-              
+
               {/* // Before */}
-              {display.operation === 'updateProduct' && <Grid item xs={6} p = {1}>
+              {display.operation === 'updateProduct' && <Grid item xs={6} p={1}>
                 <Typography variant='h6' sx={{ textAlign: 'center' }} >Before</Typography>
                 <Box sx={{ height: '300px', overflow: 'scroll' }}>
                   {
@@ -331,8 +335,8 @@ export default function Action() {
                       return <>
                         <Divider />
                         <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                        {peer[key] != display.data[key] ? <Typography sx={{ color: 'red !important' }} variant='button'>{peer[key]}</Typography>:
-                        <Typography variant='button'>{peer[key]}</Typography>}
+                        {peer[key] != display.data[key] ? <Typography sx={{ color: 'red !important' }} variant='button'>{peer[key]}</Typography> :
+                          <Typography variant='button'>{peer[key]}</Typography>}
                       </>
                     })
                   }
@@ -342,27 +346,27 @@ export default function Action() {
 
               {/* After and product details */}
 
-              <Grid item p = {1} xs={display.operation === 'updateProduct' ? 6 : 12}>
+              <Grid item p={1} xs={display.operation === 'updateProduct' ? 6 : 12}>
                 <Typography variant='h6' sx={{ textAlign: 'center' }} >{display.operation === 'updateProduct' ? 'After' : 'Product Details'}</Typography>
                 <Box sx={{ height: '300px', overflow: 'scroll', p: 2 }}>
                   {
-                    display.operation === 'updateProduct' ? 
-                    Object.keys(display.data).map(function (key) {
-                      return <>
-                        <Divider />
-                        <Typography sx={{ fontWeight: 'bold !important' }}  variant='button'>{key + ' :: '}</Typography>
-                        {peer[key] != display.data[key]  ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography>:
-                        <Typography variant='button'>{display.data[key]}</Typography>}
-                      </>
-                    })
-                    :
-                    Object.keys(display.data).map(function (key) {
-                      return <>
-                        <Divider />
-                        <Typography sx={{ fontWeight: 'bold !important' }}  variant='button'>{key + ' :: '}</Typography>
-                        <Typography variant='button'>{display.data[key]}</Typography>
-                      </>
-                    })
+                    display.operation === 'updateProduct' ?
+                      Object.keys(display.data).map(function (key) {
+                        return <>
+                          <Divider />
+                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
+                          {peer[key] != display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
+                            <Typography variant='button'>{display.data[key]}</Typography>}
+                        </>
+                      })
+                      :
+                      Object.keys(display.data).map(function (key) {
+                        return <>
+                          <Divider />
+                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
+                          <Typography variant='button'>{display.data[key]}</Typography>
+                        </>
+                      })
                   }
                 </Box>
               </Grid>
@@ -380,22 +384,22 @@ export default function Action() {
 
     function ActionForm() {
 
-      const [status,setStatus] = useState(display.draftStatus)
-      return (<Grid container sx = {{p : 1}}>
+      const [status, setStatus] = useState(display.draftStatus)
+      return (<Grid container sx={{ p: 1 }}>
         <Grid item xs={12} >
           <form encType="multipart/form-data"
-                    method="post" onSubmit = {handleSubmit} >
+            method="post" onSubmit={handleSubmit} >
             <TextField sx={{ mb: 2 }}
               size="small"
               fullWidth
               // required
               id="outlined-select"
               select
-              disabled = {status === 'Approved'}
+              disabled={status === 'Approved'}
               name="action"
               label="Action"
               value={status}
-              onChange={(e)=>{setStatus(e.target.value)}}
+              onChange={(e) => { setStatus(e.target.value) }}
               helperText="Please select your action"
             >
               {Status.map(
@@ -408,7 +412,7 @@ export default function Action() {
               )}
             </TextField>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Button size='small' type = 'submit' variant='contained'>Save Action</Button>
+              <Button size='small' type='submit' variant='contained'>Save Action</Button>
               <Button size='small' onClick={() => { setDisplay({ status: false }) }} variant='outlined'>Cancel</Button>
             </Box>
           </form>
@@ -481,22 +485,22 @@ export default function Action() {
 
       <br></br>
 
-      <Grid className = 'actionDash'  container>
-        <Grid sx={{backgroundColor : '#0000ff8c'}} item xs={12} className = 'card' md={3.8}>
-        <PlaylistAddCheckCircleIcon fontSize = {'large'}/>
-          <Typography variant = 'h6'>Total Request</Typography>
-          <Typography variant = 'h4'>{meta.total}</Typography>
+      <Grid className='actionDash' container>
+        <Grid sx={{ backgroundColor: '#0000ff8c' }} item xs={12} className='card' md={3.8}>
+          <PlaylistAddCheckCircleIcon fontSize={'large'} />
+          <Typography variant='h6'>Total Request</Typography>
+          <Typography variant='h4'>{meta.total}</Typography>
         </Grid>
-        <Grid sx={{backgroundColor : '#ffbd29'}} className = 'card' item xs={12} md={3.8}>
-          <PendingIcon fontSize = {'large'}/>
-          <Typography variant = 'h6'>Pending Request</Typography>
-          <Typography variant = 'h4'>{meta.pending}</Typography>
+        <Grid sx={{ backgroundColor: '#ffbd29' }} className='card' item xs={12} md={3.8}>
+          <PendingIcon fontSize={'large'} />
+          <Typography variant='h6'>Pending Request</Typography>
+          <Typography variant='h4'>{meta.pending}</Typography>
 
         </Grid>
-        <Grid sx={{backgroundColor : '#40b13e'}} item xs={12} className = 'card' md={3.8}>
-        <CheckCircleIcon fontSize = {'large'}/>
-          <Typography variant = 'h6'>Resolved Request</Typography>
-          <Typography variant = 'h4'>{meta.resolved}</Typography>
+        <Grid sx={{ backgroundColor: '#40b13e' }} item xs={12} className='card' md={3.8}>
+          <CheckCircleIcon fontSize={'large'} />
+          <Typography variant='h6'>Resolved Request</Typography>
+          <Typography variant='h4'>{meta.resolved}</Typography>
 
         </Grid>
       </Grid>

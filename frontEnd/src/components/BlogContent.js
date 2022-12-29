@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 import ReactHtmlParser from "react-html-parser";
-import Footer from "./Footer";
+import Footer from "./Utility/Footer";
 
 import { Image } from 'mui-image'
 //logo

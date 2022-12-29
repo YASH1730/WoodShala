@@ -9,7 +9,7 @@ import {
   InputAdornment,
   Button,Box
 } from "@mui/material";
-import { getGallery, deleteImage } from "../../services/service";
+import { getGallery, deleteImage } from "../../../services/service";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import AddIcon from "@mui/icons-material/Add";

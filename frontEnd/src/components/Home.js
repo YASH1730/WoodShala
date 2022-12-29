@@ -50,20 +50,20 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 // import redux 
-import {setAlert, setMode,setTab} from '../store/action/action'
-import { useDispatch,useSelector } from "react-redux";
+import { setAlert, setMode, setTab } from '../store/action/action'
+import { useDispatch, useSelector } from "react-redux";
 
 const Home = (props) => {
 
   const dispatch = useDispatch()
-  const {auth,mode,tab} = useSelector(state=>state);
+  const { auth, mode, tab } = useSelector(state => state);
 
   const history = props.history;
 
 
   // states
   const [anchor, setAnchor] = useState(null);
- 
+
 
   useEffect(() => {
     // console.log(state.Auth.isLogin)
@@ -81,10 +81,10 @@ const Home = (props) => {
 
   const handleClose = (direct = undefined) => {
     handleMenuClose();
-    if(direct) history(direct);
+    if (direct) history(direct);
     return dispatch(setTab({
-        open: false
-      }
+      open: false
+    }
     ))
   };
 
@@ -94,392 +94,394 @@ const Home = (props) => {
     const [type, setType] = useState({
       product: false,
       admin: false,
-      order : false
+      order: false
     });
 
-    function ListTabs(){return (
-      <Box
-        sx={{ flexGrow: 1, display: "flex", width: 250, flexDirection: 'column' }}
-        role="presentation"
-      >
+    function ListTabs() {
+      return (
+        <Box
+          sx={{ flexGrow: 1, display: "flex", width: 250, flexDirection: 'column' }}
+          role="presentation"
+        >
 
-        {/* // heading */}
-        <Grid container sx={{ p: 2.5, mb: 3 }}>
-          <Grid item xs={12} sx={{ maxHeight: '1px' }}  >
-            <Typography variant='h5' sx={{ textAlign: 'center' }}>Woodsala</Typography>
+          {/* // heading */}
+          <Grid container sx={{ p: 2.5, mb: 3 }}>
+            <Grid item xs={12} sx={{ maxHeight: '1px' }}  >
+              <Typography variant='h5' sx={{ textAlign: 'center' }}>Woodsala</Typography>
+            </Grid>
           </Grid>
-        </Grid>
 
-        {/* // all routes  */}
-        <Divider />
-        <Grid container sx={{ p: 1 }}>
-          <Grid item xs={12} sx={{ maxHeight: '1px' }}  >
-            <List dense = {true} sx={{
-              width: '100%',
-              bgcolor: 'background.paper',
-            }} component="nav" aria-label="mailbox folders">
+          {/* // all routes  */}
+          <Divider />
+          <Grid container sx={{ p: 1 }}>
+            <Grid item xs={12} sx={{ maxHeight: '1px' }}  >
+              <List dense={true} sx={{
+                width: '100%',
+                bgcolor: 'background.paper',
+              }} component="nav" aria-label="mailbox folders">
 
-              <ListItem  onClick={() => { handleClose('/dashboard'); }}>
-                <ListItemAvatar >
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <GridViewIcon color={window.location.pathname === '/dashboard' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
+                <ListItem onClick={() => { handleClose('/dashboard'); }}>
+                  <ListItemAvatar >
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <GridViewIcon color={window.location.pathname === '/dashboard' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Dashboard" />
+                </ListItem>
 
-              <ListItem onClick={(e) => { setType({ ...type, product: !type.product }) }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <ShoppingBagOutlinedIcon color={window.location.pathname === '/merge' || window.location.pathname === '/products' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Product" />
-                {type.product ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              {/* // product nested menu */}
-              <Collapse in={type.product} timeout="auto" unmountOnExit>
-                <List dense = {true} component="div" disablePadding>
+                <ListItem onClick={(e) => { setType({ ...type, product: !type.product }) }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <ShoppingBagOutlinedIcon color={window.location.pathname === '/merge' || window.location.pathname === '/products' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Product" />
+                  {type.product ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                {/* // product nested menu */}
+                <Collapse in={type.product} timeout="auto" unmountOnExit>
+                  <List dense={true} component="div" disablePadding>
 
-                  <ListItem sx={{ pl: 4 }}  onClick={() => {  handleClose('/products'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <ShoppingBagOutlinedIcon color={window.location.pathname === '/products' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Product" />
-                  </ListItem>
-                  <ListItem  sx={{ pl: 4 }} onClick={() => { handleClose('/merge'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <MergeIcon color={window.location.pathname === '/merge' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Merge Product" />
-                  </ListItem >
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/products'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <ShoppingBagOutlinedIcon color={window.location.pathname === '/products' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Product" />
+                    </ListItem>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/merge'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <MergeIcon color={window.location.pathname === '/merge' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Merge Product" />
+                    </ListItem >
 
-                  <ListItem  sx={{ pl: 4 }} onClick={() => { handleClose('/variation'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <AccountTreeIcon color={window.location.pathname === '/variation' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Variation" />
-                  </ListItem >
-                </List>
-              </Collapse>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/variation'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <AccountTreeIcon color={window.location.pathname === '/variation' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Variation" />
+                    </ListItem >
+                  </List>
+                </Collapse>
 
-              <ListItem  onClick={() => {  handleClose('/action'); }}>
-                <ListItemAvatar >
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <DraftsIcon color={window.location.pathname === '/action' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Action Center" />
-              </ListItem>
-
-
-              <ListItem  onClick={(e) => { setType({ ...type, order: !type.order }) }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <InboxIcon color={window.location.pathname === '/order' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Order" />
-                {type.order ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-
-              {/* // order nested menu */}
-              <Collapse in={type.order} timeout="auto" unmountOnExit>
-                <List dense = {true} component="div" disablePadding>
-
-                  <ListItem sx={{ pl: 4 }}   onClick={() => {  handleClose('/order'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <ShoppingBagOutlinedIcon color={window.location.pathname === '/order' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Orders" />
-                  </ListItem>
-                  <ListItem  sx={{ pl: 4 }} onClick={() => { handleClose('/create_order'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <AddIcon color={window.location.pathname === '/create_order' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Create Order" />
-                  </ListItem >
-                </List>
-              </Collapse>
-
-              <ListItem  onClick={() => { handleClose('/customer'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <PeopleAltOutlinedIcon color={window.location.pathname === '/customer' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Customer" />
-              </ListItem>
-
-              <ListItem  onClick={() => { handleClose('/reward'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <EmojiEventsIcon color={window.location.pathname === '/reward' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Reward" />
-              </ListItem>
-
-              <ListItem  onClick={() => {  handleClose('/blogs'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <ArticleIcon color={window.location.pathname === '/dashboard' ? 'blogs' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Blog" />
-              </ListItem>
-
-              <ListItem  onClick={() => {  handleClose('/banner'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <ViewCarouselIcon color={window.location.pathname === '/banner' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Banner" />
-              </ListItem>
-
-              <ListItem  onClick={() => { handleClose('/inventory'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <InventoryIcon color={window.location.pathname === '/inventory' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Inventory" />
-              </ListItem>
+                <ListItem onClick={() => { handleClose('/action'); }}>
+                  <ListItemAvatar >
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <DraftsIcon color={window.location.pathname === '/action' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Action Center" />
+                </ListItem>
 
 
-              <ListItem  onClick={(e) => { setType({ ...type, admin: !type.admin }) }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <AdminPanelSettingsIcon color={window.location.pathname === '/admin' || window.location.pathname === '/user' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Admin" />
-                {type.admin ? <ExpandLess /> : <ExpandMore />}
+                <ListItem onClick={(e) => { setType({ ...type, order: !type.order }) }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <InboxIcon color={window.location.pathname === '/order' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Order" />
+                  {type.order ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
 
-              </ListItem>
-              {/* // admin nested menu */}
-              <Collapse in={type.admin} timeout="auto" unmountOnExit>
-                <List dense = {true} component="div" disablePadding>
+                {/* // order nested menu */}
+                <Collapse in={type.order} timeout="auto" unmountOnExit>
+                  <List dense={true} component="div" disablePadding>
 
-                  <ListItem sx={{ pl: 4 }}  onClick={() => {  handleClose('/user'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <AssignmentIndIcon color={window.location.pathname === '/user' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="User" />
-                  </ListItem>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/order'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <ShoppingBagOutlinedIcon color={window.location.pathname === '/order' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Orders" />
+                    </ListItem>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/create_order'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <AddIcon color={window.location.pathname === '/create_order' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Create Order" />
+                    </ListItem >
+                  </List>
+                </Collapse>
 
-                  <ListItem sx={{ pl: 4 }}  onClick={() => {  handleClose('/suppliers'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <AssignmentIndIcon color={window.location.pathname === '/suppliers' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Suppliers" />
-                  </ListItem>
+                <ListItem onClick={() => { handleClose('/customer'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <PeopleAltOutlinedIcon color={window.location.pathname === '/customer' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Customer" />
+                </ListItem>
+
+                <ListItem onClick={() => { handleClose('/reward'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <EmojiEventsIcon color={window.location.pathname === '/reward' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Reward" />
+                </ListItem>
+
+                <ListItem onClick={() => { handleClose('/blogs'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <ArticleIcon color={window.location.pathname === '/dashboard' ? 'blogs' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Blog" />
+                </ListItem>
+
+                <ListItem onClick={() => { handleClose('/banner'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <ViewCarouselIcon color={window.location.pathname === '/banner' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Banner" />
+                </ListItem>
+
+                <ListItem onClick={() => { handleClose('/inventory'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <InventoryIcon color={window.location.pathname === '/inventory' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Inventory" />
+                </ListItem>
 
 
-                  <ListItem  sx={{ pl: 4 }} onClick={() => {  handleClose('/settings'); }}>
-                    <ListItemAvatar>
-                      <Avatar
-                        sx={{
-                          width: '30px',
-                          height: '30px',
-                          svg: {
-                            fontSize: '1rem'
-                          }
-                        }}>
-                        <SettingsOutlinedIcon color={window.location.pathname === '/settings' ? 'primary' : ''} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Settings" />
-                  </ListItem >
-                </List>
-              </Collapse>
+                <ListItem onClick={(e) => { setType({ ...type, admin: !type.admin }) }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <AdminPanelSettingsIcon color={window.location.pathname === '/admin' || window.location.pathname === '/user' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Admin" />
+                  {type.admin ? <ExpandLess /> : <ExpandMore />}
 
-              <ListItem  onClick={() => {  handleClose('/hardware'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <HardwareIcon color={window.location.pathname === '/hardware' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Hardware" />
-              </ListItem>
+                </ListItem>
+                {/* // admin nested menu */}
+                <Collapse in={type.admin} timeout="auto" unmountOnExit>
+                  <List dense={true} component="div" disablePadding>
+
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/user'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <AssignmentIndIcon color={window.location.pathname === '/user' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="User" />
+                    </ListItem>
+
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/suppliers'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <AssignmentIndIcon color={window.location.pathname === '/suppliers' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Suppliers" />
+                    </ListItem>
 
 
-              <ListItem  onClick={() => {  handleClose('/accessories'); }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      width: '30px',
-                      height: '30px',
-                      svg: {
-                        fontSize: '1.1rem'
-                      }
-                    }}>
-                    <CategoryIcon color={window.location.pathname === '/accessories' ? 'primary' : ''} />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary="Accessories" />
-              </ListItem>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/settings'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <SettingsOutlinedIcon color={window.location.pathname === '/settings' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Settings" />
+                    </ListItem >
+                  </List>
+                </Collapse>
 
-              {/* // logout  */}
-              <Divider sx={{ margin: "auto", mt : 2 }}/>
-              <ListItem onClick={handleLogout}>
-                <Button
-                  color="primary"
-                  size = 'small'
-                  sx={{ margin: "auto", mt : 2 }}
-                  startIcon={<LogoutIcon />}
-                  variant="contained"
-                >
-                  Log Out
-                </Button>
-              </ListItem>
+                <ListItem onClick={() => { handleClose('/hardware'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <HardwareIcon color={window.location.pathname === '/hardware' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Hardware" />
+                </ListItem>
 
-            </List>
+
+                <ListItem onClick={() => { handleClose('/accessories'); }}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: '30px',
+                        height: '30px',
+                        svg: {
+                          fontSize: '1.1rem'
+                        }
+                      }}>
+                      <CategoryIcon color={window.location.pathname === '/accessories' ? 'primary' : ''} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Accessories" />
+                </ListItem>
+
+                {/* // logout  */}
+                <Divider sx={{ margin: "auto", mt: 2 }} />
+                <ListItem onClick={handleLogout}>
+                  <Button
+                    color="primary"
+                    size='small'
+                    sx={{ margin: "auto", mt: 2 }}
+                    startIcon={<LogoutIcon />}
+                    variant="contained"
+                  >
+                    Log Out
+                  </Button>
+                </ListItem>
+
+              </List>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
-    )}
+        </Box>
+      )
+    }
 
     return (
       <div>
@@ -505,10 +507,10 @@ const Home = (props) => {
       >
         <MenuItem sx={{ padding: 0.5 }} onClick={handleLogout} >
 
-            <ListItemIcon>
-              <LogoutIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemIcon>Logout</ListItemIcon>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemIcon>Logout</ListItemIcon>
 
 
 
@@ -519,14 +521,14 @@ const Home = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    dispatch(setAlert({
-        isLogin: false,
-        WDToken: null,
-        role: null
-    }))
     handleMenuClose()
     handleClose();
-    history("/");
+    dispatch(setAlert({
+      isLogin: false,
+      WDToken: null,
+      role: null
+    }))
+    return history("/");
 
   };
 
@@ -562,8 +564,8 @@ const Home = (props) => {
               className="hamIcon"
               onClick={() => {
                 dispatch(setTab({
-                    open: true
-                  }
+                  open: true
+                }
                 ))
               }}
               size="small"
@@ -576,7 +578,7 @@ const Home = (props) => {
               className="hamIcon"
               onClick={() => {
                 dispatch(setTab({
-                    open: false
+                  open: false
                 }))
               }}
               size="small"
@@ -598,8 +600,8 @@ const Home = (props) => {
             <IconButton
               onClick={() => {
                 dispatch(setMode({
-                    type: false
-                  }
+                  type: false
+                }
                 ));
               }}
               size="small"
@@ -613,7 +615,7 @@ const Home = (props) => {
                 dispatch(setMode({
                   type: true
                 }
-              ));
+                ));
               }}
               size="small"
               color="primary"
@@ -637,7 +639,7 @@ const Home = (props) => {
 
       {/* Sidenav  */}
       {/* {VerticalTabs()} */}
-      <SwipeableTemporaryDrawer/>
+      <SwipeableTemporaryDrawer />
       {/* Sidenav Ends  */}
     </Box>
   );

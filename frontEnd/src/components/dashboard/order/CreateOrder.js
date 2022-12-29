@@ -26,10 +26,10 @@ import {
 // import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
 // import { customOrderList} from "../../services/service";
-import "../../assets/custom/css/category.css";
+import "../../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
-import {useDispatch} from 'react-redux'
-import {setAlert} from '../../store/action/action'
+import { useDispatch } from 'react-redux'
+import { setAlert } from '../../../store/action/action'
 
 import {
     DataGrid,
@@ -40,7 +40,7 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from "@mui/material/Pagination";
 
-import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../services/service'
+import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../../services/service'
 import { useConfirm } from "material-ui-confirm";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -163,49 +163,49 @@ export default function CreateOrder() {
         customer: [],
         products: [],
         address: [],
-        channel : [
+        channel: [
             {
-            key : '3rd Party Vendor',
-            value : '3rd Party Vendor',
+                key: '3rd Party Vendor',
+                value: '3rd Party Vendor',
             },
             {
-            key : 'Amazon',
-            value : 'Amazon',
+                key: 'Amazon',
+                value: 'Amazon',
             },
             {
-            key : 'Bengaluru Showroom',
-            value : 'Bengaluru Showroom',
+                key: 'Bengaluru Showroom',
+                value: 'Bengaluru Showroom',
             },
             {
-            key : 'Etsy',
-            value : 'Etsy',
+                key: 'Etsy',
+                value: 'Etsy',
             },
             {
-            key : 'Flipkart',
-            value : 'Flipkart',
+                key: 'Flipkart',
+                value: 'Flipkart',
             },
             {
-            key : 'Jodhpur Showroom',
-            value : 'Jodhpur Showroom',
+                key: 'Jodhpur Showroom',
+                value: 'Jodhpur Showroom',
             },
             {
-            key : 'JioMart',
-            value : 'JioMart',
+                key: 'JioMart',
+                value: 'JioMart',
             },
             {
-            key : 'Meesho',
-            value : 'Meesho',
+                key: 'Meesho',
+                value: 'Meesho',
             },
             {
-            key : 'Online',
-            value : 'Online',
+                key: 'Online',
+                value: 'Online',
             },
             {
-            key : 'Others',
-            value : 'Others',
+                key: 'Others',
+                value: 'Others',
             },
-    
-    ]
+
+        ]
     })
 
 
@@ -230,7 +230,7 @@ export default function CreateOrder() {
         paid: 0,
         note: '',
         custom_order: true,
-        sale_channel : 'Online'
+        sale_channel: 'Online'
     })
 
     //  State for stepper
@@ -242,7 +242,7 @@ export default function CreateOrder() {
     };
 
     // context
-    const dispatch  = useDispatch();
+    const dispatch = useDispatch();
     const [pageSize, setPageSize] = useState(50);
 
 
@@ -263,9 +263,9 @@ export default function CreateOrder() {
     // catalog reload 
     useEffect(() => {
         customerCatalog()
-        .then(async (cus) => {
+            .then(async (cus) => {
                 //console.log(cus)
-                
+
                 getPresentSKUs().then((res) => {
                     //console.log(res)
                     setCatalogs({
@@ -483,7 +483,7 @@ export default function CreateOrder() {
                     // return `O-0${index}`
 
                 } else {
-                     setData({ ...data, O: "O-01001" });
+                    setData({ ...data, O: "O-01001" });
                     // return 'O-01001'
                 }
             })
@@ -511,7 +511,7 @@ export default function CreateOrder() {
             state: '',
             paid: 0,
             note: '',
-            sale_channel : 'Online'
+            sale_channel: 'Online'
         })
         setActiveStep(0)
         setValue(0)
@@ -807,22 +807,22 @@ export default function CreateOrder() {
                         state: '',
                         paid: 0,
                         note: '',
-                        sale_channel : 'Online'
+                        sale_channel: 'Online'
                     })
                     dispatch(setAlert({
-                            open: true,
-                            variant: "error",
-                            message: data.data.message || "Something Went Wrong !!!",
-                        }
+                        open: true,
+                        variant: "error",
+                        message: data.data.message || "Something Went Wrong !!!",
+                    }
                     ));
 
                 } else {
-                   
-                    dispatch(setAlert( {
-                            open: true,
-                            variant: "success",
-                            message: data.data.message,
-                        
+
+                    dispatch(setAlert({
+                        open: true,
+                        variant: "success",
+                        message: data.data.message,
+
                     }));
                     resetValue();
 
@@ -830,10 +830,10 @@ export default function CreateOrder() {
             })
             .catch((err) => {
                 dispatch(setAlert({
-                        open: true,
-                        variant: "error",
-                        message: "Something Went Wrong !!!",
-                    }
+                    open: true,
+                    variant: "error",
+                    message: "Something Went Wrong !!!",
+                }
                 ));
             });
     }
@@ -1094,6 +1094,8 @@ export default function CreateOrder() {
                                                     type="text"
                                                 />
 
+
+
                                                 {catalogs.address.length > 0 ? <TextField sx={{ mb: 2 }}
                                                     fullWidth
                                                     size="small"
@@ -1118,6 +1120,7 @@ export default function CreateOrder() {
                                                     <MenuItem key={"none"} value={undefined}>
                                                         {"None"}
                                                     </MenuItem>
+
                                                 </TextField> : <>  <FormLabel id="demo-radio-buttons-group-label">
                                                     Shipping Address
                                                 </FormLabel>
@@ -1135,6 +1138,7 @@ export default function CreateOrder() {
                                                         label="Shipping"
                                                         type="text"
                                                     /></>}
+
 
 
 
@@ -1259,7 +1263,7 @@ export default function CreateOrder() {
                                         <br></br>
 
                                         <Grid item xs={12}>
-                                            <TextField fullWidth sx={{ mb: 2 }} size='small' name = 'O' disabled label='O' value={data.O} ></TextField>
+                                            <TextField fullWidth sx={{ mb: 2 }} size='small' name='O' disabled label='O' value={data.O} ></TextField>
                                         </Grid>
 
                                         <Grid item xs={12}>

@@ -10,15 +10,15 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { listCustomer, deleteCustomer  } from "../../services/service";
-import "../../assets/custom/css/category.css";
+import { listCustomer, deleteCustomer  } from "../../../services/service";
+import "../../../assets/custom/css/category.css";
 
 import {
   DataGrid
 } from "@mui/x-data-grid";
 
 import {useDispatch} from "react-redux";
-import {setAlert,setForm} from "../../store/action/action";
+import {setAlert,setForm} from "../../../store/action/action";
 
 
 

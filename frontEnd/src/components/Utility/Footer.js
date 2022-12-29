@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography, IconButton } from "@mui/material";
 
-import "../assets/custom/css/footer.css";
+import "../../assets/custom/css/footer.css";
 
 // social icons
 import FacebookRoundedIcon from "@mui/icons-material/FacebookRounded";

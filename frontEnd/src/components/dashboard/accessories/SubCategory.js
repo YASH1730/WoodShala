@@ -6,49 +6,66 @@ import {
   Button,
   IconButton,Switch
 } from "@mui/material";
-// import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { categoryList , statusCategory } from '../../services/service'
-import '../../assets/custom/css/category.css'
+import { setForm, setAlert } from "../../../store/action/action";
 import {useDispatch} from 'react-redux'
-import {setAlert,setForm} from '../../store/action/action'
+import { getSubCatagories, changeSubSatatus } from '../../../services/service'
+
 
 import {
-  DataGrid
+  DataGrid,
+// gridPageCountSelector,
+  // gridPageSelector,
+  // useGridApiContext,
+  // useGridSelector,
 } from '@mui/x-data-grid';
+// import Pagination from '@mui/material/Pagination';
+
+// function CustomPagination() {
+//   const apiRef = useGridApiContext();
+//   const page = useGridSelector(apiRef, gridPageSelector);
+//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+//   return (
+//     <Pagination
+//       color="primary"
+//       count={pageCount}
+//       page={page + 1}
+//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
+//     />
+//   );
+// }
 
 
-export default function Category() {
 
-
-  const dispatch = useDispatch();
-
-  const [pageSize, setPageSize] = useState(50);
-
-
-  const [check,setCheck] = useState([])
+export default function SubCategory() {
 
   const [search, setSearch] = useState("");
+  const [check,setCheck] = useState([])
+
+const dispatch = useDispatch(); 
+const [pageSize, setPageSize] = useState(50);
 
 
   const [Row, setRows] = useState([])
+  // function for get cetegory list
 
   useEffect(() => {
-    categoryList()
+    getSubCatagories()
       .then((data) => {
-        
         setCheck(data.data.map((row,index)=>{
-          return row.category_status
+          return row.sub_category_status
         }))
 
         setRows(data.data.map((row,index) => {
 
           return ({
-            id: index + 1 ,
-            category_image: row.category_image,
-            category_name: row.category_name,
-            category_status: row.category_status,
+            id: index+1,
+            category_id : row.category_id,
+            category_name : row.category_name,
+            sub_category_name: row.sub_category_name,
+            sub_category_status: row.sub_category_status,
             action: row._id
           })
         }))
@@ -65,23 +82,24 @@ export default function Category() {
       headerName: "ID",
       width: 100
     },
+
     {
-      field: 'category_image',
+      field: 'category_name',
       align: 'center',
-      headerName: 'Image',
-      width: 200,
-      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='category' /> : "Image Not Give"}</div>,
+      headerName: 'Parent Category Name',
+      width: 200
     },
     {
-      field: "category_name",
-      headerName: "Category Name",
+      field: "sub_category_name",
+      headerName: "Sub Category Name",
       width: 200,
     },
     {
-      field: "category_status",
-      headerName: "Category Status",
+      field: "sub_category_status",
+      headerName: "Sub Category Status",
       width: 200,
       renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
+
 
     },
     {
@@ -91,9 +109,9 @@ export default function Category() {
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          dispatch(setForm( {
+         dispatch(setForm({
             state : true,
-            formType : 'update_category',
+            formType : 'update_Subcategory',
             payload : params,
             row : Row,
             setRow : setRows,
@@ -109,8 +127,8 @@ export default function Category() {
           })
         }) }} aria-label="delete"  >
           <DeleteIcon />
-        </IconButton> */}
-        
+        </IconButton>
+         */}
       </div>,
     }
 
@@ -118,19 +136,16 @@ export default function Category() {
 
 
   const handleSwitch = (e)=>{
-    // //console.log(e.target.name)
-    // //console.log(check)
-
     const id = e.target.name.split(' ')
+
     const FD = new FormData()
 
     FD.append('_id',id[0])
-    FD.append('category_status',e.target.checked)
+    FD.append('sub_category_status',e.target.checked)
 
-    const res = statusCategory(FD);
+    const res = changeSubSatatus(FD);
 
     res.then((data)=>{
-
       setCheck(check.map((row,index)=>{
         // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
@@ -138,16 +153,14 @@ export default function Category() {
         else 
         return row
       }))
-      
-      dispatch(setAlert( {
+      dispatch(setAlert({
         open : true,
         variant : 'success',
-        message : "Category Status Updated Successfully !!!"
-  
+        message : " Sub Category Status Updated Successfully !!!"
       }))
     })
     .catch((err)=>{
-      //console.log(err)
+      console.log(err)
       dispatch(setAlert({
         open : true,
         variant : 'error',
@@ -176,22 +189,24 @@ export default function Category() {
           }}
           rows={Row}
           columns={columns}
+          
+          
           disableSelectionOnClick
-          pagination
+        pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           rowsPerPageOptions={[25,50, 100]}
-          
         />
       </div>
     );
   }
 
+ 
 
   return (
     <>
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-        Category
+        Sub Category
       </Typography>
 
       <br></br>
@@ -224,14 +239,14 @@ export default function Category() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch(setForm( { state: true, formType: "category",row : Row,setRow : setRows }));
+             dispatch(setForm({ state: true, formType: "subcategory",row : Row,setRow : setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
           >
-            Add Category
+            Sub Category
           </Button>
         </Grid>
       </Grid>
@@ -242,7 +257,8 @@ export default function Category() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography component={'span'} variant="h6"> Category List </Typography>
+          <Typography component={'span'} variant="h6"> Sub Category </Typography>
+          <br></br>
           {DataGridView()}
         </Grid>
       </Grid>

@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { setForm, setAlert } from "../../store/action/action";
-import {useDispatch} from 'react-redux'
-import { getSubCatagories, changeSubSatatus } from '../../services/service'
-
+import { useDispatch } from 'react-redux'
+import {setAlert,setForm } from "../../../store/action/action";
+import { getPrimaryMaterial,changePrimaryMaterialStatus } from '../../../services/service'
+import '../../../assets/custom/css/category.css'
 
 import {
   DataGrid,
@@ -21,6 +21,7 @@ import {
   // useGridSelector,
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
+
 
 // function CustomPagination() {
 //   const apiRef = useGridApiContext();
@@ -39,7 +40,7 @@ import {
 
 
 
-export default function SubCategory() {
+export default function PrimaryMaterial() {
 
   const [search, setSearch] = useState("");
   const [check,setCheck] = useState([])
@@ -47,25 +48,24 @@ export default function SubCategory() {
 const dispatch = useDispatch(); 
 const [pageSize, setPageSize] = useState(50);
 
-
   const [Row, setRows] = useState([])
-  // function for get cetegory list
+  // function for get category list
 
   useEffect(() => {
-    getSubCatagories()
+    getPrimaryMaterial()
       .then((data) => {
         setCheck(data.data.map((row,index)=>{
-          return row.sub_category_status
+          return row.primaryMaterial_status
         }))
 
         setRows(data.data.map((row,index) => {
 
           return ({
             id: index+1,
-            category_id : row.category_id,
-            category_name : row.category_name,
-            sub_category_name: row.sub_category_name,
-            sub_category_status: row.sub_category_status,
+            primaryMaterial_name: row.primaryMaterial_name,
+            primaryMaterial_image : row.primaryMaterial_image,
+            primaryMaterial_description: row.primaryMaterial_description,
+            primaryMaterial_status: row.primaryMaterial_status,
             action: row._id
           })
         }))
@@ -82,21 +82,28 @@ const [pageSize, setPageSize] = useState(50);
       headerName: "ID",
       width: 100
     },
-
     {
-      field: 'category_name',
-      align: 'center',
-      headerName: 'Parent Category Name',
-      width: 200
-    },
-    {
-      field: "sub_category_name",
-      headerName: "Sub Category Name",
+      field: "primaryMaterial_name",
+      headerName: "Material Name",
       width: 200,
+      
     },
     {
-      field: "sub_category_status",
-      headerName: "Sub Category Status",
+      field: "primaryMaterial_image",
+      headerName: "Material Image",
+      width: 200,
+      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='material' /> : "Image Not Give"}</div>,
+
+    },
+    {
+      field: "primaryMaterial_description",
+      headerName: "Material Description",
+      width: 200,
+      
+    },
+    {
+      field: "primaryMaterial_status",
+      headerName: "Material Status",
       width: 200,
       renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
 
@@ -111,7 +118,7 @@ const [pageSize, setPageSize] = useState(50);
         <IconButton onClick={() => { 
          dispatch(setForm({
             state : true,
-            formType : 'update_Subcategory',
+            formType : 'update_PrimaryMaterial',
             payload : params,
             row : Row,
             setRow : setRows,
@@ -141,9 +148,9 @@ const [pageSize, setPageSize] = useState(50);
     const FD = new FormData()
 
     FD.append('_id',id[0])
-    FD.append('sub_category_status',e.target.checked)
+    FD.append('primaryMaterial_status',e.target.checked)
 
-    const res = changeSubSatatus(FD);
+    const res = changePrimaryMaterialStatus(FD);
 
     res.then((data)=>{
       setCheck(check.map((row,index)=>{
@@ -153,18 +160,19 @@ const [pageSize, setPageSize] = useState(50);
         else 
         return row
       }))
-      dispatch(setAlert({
+      dispatch(setAlert( {
         open : true,
         variant : 'success',
-        message : " Sub Category Status Updated Successfully !!!"
+        message : " Material Status Updated Successfully !!!"
+  
       }))
     })
     .catch((err)=>{
-      console.log(err)
+      //console.log(err)
       dispatch(setAlert({
         open : true,
         variant : 'error',
-        message : "May be duplicate found !!!"
+        message : "Something Went Wrong !!!"
   
       }))
     })
@@ -185,7 +193,7 @@ const [pageSize, setPageSize] = useState(50);
       <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
-            items: [{ columnField: 'category_name', operatorValue: 'contains', value: `${search}` }],
+            items: [{ columnField: 'primaryMaterial_name', operatorValue: 'contains', value: `${search}` }],
           }}
           rows={Row}
           columns={columns}
@@ -201,12 +209,11 @@ const [pageSize, setPageSize] = useState(50);
     );
   }
 
- 
 
   return (
     <>
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-        Sub Category
+        Material
       </Typography>
 
       <br></br>
@@ -229,7 +236,7 @@ const [pageSize, setPageSize] = useState(50);
             fullWidth
             // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
-            label="Search by category type"
+            label="Search by material name"
             type="text"
             onChange={handelSearch}
           />
@@ -239,25 +246,26 @@ const [pageSize, setPageSize] = useState(50);
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch(setForm({ state: true, formType: "subcategory",row : Row,setRow : setRows }));
+             dispatch(setForm({ state: true, formType: "primaryMaterial",row : Row,setRow : setRows} ));
             }}
             sx={{ width: "100%" }}
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
           >
-            Sub Category
+            Add Material
           </Button>
         </Grid>
       </Grid>
 
       {/* Section 1 ends  */}
       <br></br>
+
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography component={'span'} variant="h6"> Sub Category </Typography>
+          <Typography component={'span'} variant="h6"> Material List </Typography>
           <br></br>
           {DataGridView()}
         </Grid>

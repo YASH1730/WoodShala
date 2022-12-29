@@ -12,10 +12,10 @@ import {
 import RepeatIcon from '@mui/icons-material/Repeat';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from '@mui/icons-material/Remove';
-import { setForm } from "../../store/action/action";
-import { listEntires, totalEntries } from '../../services/service'
-import '../../assets/custom/css/stock.css'
-import '../../assets/custom/css/action.css'
+import { setForm } from "../../../store/action/action";
+import { listEntires, totalEntries } from '../../../services/service'
+import '../../../assets/custom/css/stock.css'
+import '../../../assets/custom/css/action.css'
 
 import { DataGrid } from '@mui/x-data-grid';
 import { useDispatch } from "react-redux";

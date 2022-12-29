@@ -11,7 +11,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 // import AddIcon from "@mui/icons-material/Add";
-import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct } from '../../services/service'
+import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct } from '../../../services/service'
 import MergeIcon from '@mui/icons-material/Merge';
 import {
   DataGrid,
@@ -21,7 +21,7 @@ import {
   // useGridSelector,
 } from '@mui/x-data-grid';
 // import Pagination from '@mui/material/Pagination';
-import { setAlert,setForm } from '../../store/action/action'
+import { setAlert,setForm } from '../../../store/action/action'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import {useDispatch} from 'react-redux' 
 

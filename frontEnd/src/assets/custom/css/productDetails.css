@@ -111,3 +111,20 @@
 .detailsCarsole .react-multi-carousel-list {
     height: 400px !important;
 }
+
+.navigation {
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    top: 50%;
+}
+
+.navigation svg {
+    transition: all 300ms;
+    font-size: 2rem;
+}
+
+.navigation svg:hover {
+    transform: scale(1.4);
+}

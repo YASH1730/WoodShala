@@ -4,53 +4,51 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,
-  Box
+  IconButton,Switch
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { getSupplier } from '../../services/service'
-import '../../assets/custom/css/category.css'
+import { categoryList , statusCategory } from '../../../services/service'
+import '../../../assets/custom/css/category.css'
+import {useDispatch} from 'react-redux'
+import {setAlert,setForm} from '../../../store/action/action'
 
 import {
-  DataGrid,
-// gridPageCountSelector,
-  // gridPageSelector,
-  // useGridApiContext,
-  // useGridSelector,
+  DataGrid
 } from '@mui/x-data-grid';
-// import Pagination from '@mui/material/Pagination';
 
-import { setForm } from "../../store/action/action";
-import {useDispatch} from "react-redux";
 
-export default function Suppliers() {
+export default function Category() {
+
+
+  const dispatch = useDispatch();
+
+  const [pageSize, setPageSize] = useState(50);
+
+
+  const [check,setCheck] = useState([])
 
   const [search, setSearch] = useState("");
 
-const dispatch = useDispatch();
-
 
   const [Row, setRows] = useState([])
-  // function for get cetegory list
 
   useEffect(() => {
-    getSupplier()
+    categoryList()
       .then((data) => {
-       
         
+        setCheck(data.data.map((row,index)=>{
+          return row.category_status
+        }))
+
         setRows(data.data.map((row,index) => {
 
           return ({
-            id: index+1,
-            supplier_name : row.supplier_name, 
-            mobile : row.mobile, 
-            gst_no : row.gst_no, 
-            alt_mobile : row.alt_mobile, 
-            specialization : row.specialization, 
-            SID : row.SID, 
-            address : row.address, 
+            id: index + 1 ,
+            category_image: row.category_image,
+            category_name: row.category_name,
+            category_status: row.category_status,
             action: row._id
           })
         }))
@@ -65,39 +63,27 @@ const dispatch = useDispatch();
     {
       field: "id",
       headerName: "ID",
-      width: 50
+      width: 100
     },
     {
-      field: "SID",
-      headerName: "Supplier ID",
-      width: 100, 
+      field: 'category_image',
+      align: 'center',
+      headerName: 'Image',
+      width: 200,
+      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='category' /> : "Image Not Give"}</div>,
     },
     {
-      field: "supplier_name",
-      headerName: "Supplier Name",
+      field: "category_name",
+      headerName: "Category Name",
       width: 200,
     },
     {
-      field: "mobile",
-      headerName: "Mobile Number",
-      width: 150, 
+      field: "category_status",
+      headerName: "Category Status",
+      width: 200,
+      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
+
     },
-    {
-      field: "alt_mobile",
-      headerName: "Alternate Mobile",
-      width: 150, 
-    },
-    {
-      field: "gst_no",
-      headerName: "GST Number",
-      width: 200, 
-    },
-    {
-      field: "specialization",
-      headerName: "Specialization",
-      width: 200, 
-    },
- 
     {
       field: "action",
       headerName: "Actions",
@@ -105,9 +91,9 @@ const dispatch = useDispatch();
       renderCell: (params) => 
       <div className="categoryImage" >
         <IconButton onClick={() => { 
-          dispatch(setForm({
+          dispatch(setForm( {
             state : true,
-            formType : 'update_supplier',
+            formType : 'update_category',
             payload : params,
             row : Row,
             setRow : setRows,
@@ -123,13 +109,57 @@ const dispatch = useDispatch();
           })
         }) }} aria-label="delete"  >
           <DeleteIcon />
-        </IconButton>
-         */}
+        </IconButton> */}
+        
       </div>,
     }
 
   ];
 
+
+  const handleSwitch = (e)=>{
+    // //console.log(e.target.name)
+    // //console.log(check)
+
+    const id = e.target.name.split(' ')
+    const FD = new FormData()
+
+    FD.append('_id',id[0])
+    FD.append('category_status',e.target.checked)
+
+    const res = statusCategory(FD);
+
+    res.then((data)=>{
+
+      setCheck(check.map((row,index)=>{
+        // //console.log(parseInt(id[1]) === index)
+        if (parseInt(id[1]) === index)
+        return !row
+        else 
+        return row
+      }))
+      
+      dispatch(setAlert( {
+        open : true,
+        variant : 'success',
+        message : "Category Status Updated Successfully !!!"
+  
+      }))
+    })
+    .catch((err)=>{
+      //console.log(err)
+      dispatch(setAlert({
+        open : true,
+        variant : 'error',
+        message : "May be duplicate found !!!"
+  
+      }))
+    })
+
+    
+  
+
+  } 
 
   const handelSearch = (e)=>{
     //console.log(e.target.value)
@@ -142,17 +172,16 @@ const dispatch = useDispatch();
       <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
-            items: [{ columnField: 'SID', operatorValue: 'contains', value: `${search}` }],
+            items: [{ columnField: 'category_name', operatorValue: 'contains', value: `${search}` }],
           }}
           rows={Row}
           columns={columns}
-          
-          
           disableSelectionOnClick
-
-// components={{
-//   Pagination: CustomPagination,
-// }}
+          pagination
+          pageSize={pageSize}
+          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+          rowsPerPageOptions={[25,50, 100]}
+          
         />
       </div>
     );
@@ -160,10 +189,9 @@ const dispatch = useDispatch();
 
 
   return (
-    <Box  sx = {{pl:4,pr:4}}>
-
+    <>
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-      Suppliers
+        Category
       </Typography>
 
       <br></br>
@@ -185,9 +213,8 @@ const dispatch = useDispatch();
           <TextField
             fullWidth
             // autoComplete={false}
-            size = 'small'
             id="demo-helper-text-aligned-no-helper"
-            label="Search Suppliers"
+            label="Search by category type"
             type="text"
             onChange={handelSearch}
           />
@@ -197,32 +224,30 @@ const dispatch = useDispatch();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch(setForm({ state: true, formType: "add_supplier", row : Row,setRow : setRows }));
+              dispatch(setForm( { state: true, formType: "category",row : Row,setRow : setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"
             startIcon={<AddIcon />}
             variant="contained"
           >
-            Add Supplier
+            Add Category
           </Button>
         </Grid>
       </Grid>
 
       {/* Section 1 ends  */}
       <br></br>
-
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <Typography component={'span'} variant="h6"> Suppliers List</Typography>
-          <br></br>
+          <Typography component={'span'} variant="h6"> Category List </Typography>
           {DataGridView()}
         </Grid>
       </Grid>
 
       {/* data grid ends  */}
-    </Box>
+    </>
   );
 }
