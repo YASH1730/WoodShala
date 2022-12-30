@@ -932,7 +932,7 @@ const SideForm = () => {
           showroom_price: row.showroom_price,
           polish_time: row.polish_time,
           restocking_time: row.restocking_time,
-          selling_points: row.selling_points,
+          selling_points: row.selling_points || [],
           seo_title: row.seo_title,
           seo_description: row.seo_description,
           seo_keyword: row.seo_keyword,
@@ -2403,7 +2403,6 @@ const SideForm = () => {
     FD.append("warehouse", changeData.warehouse);
     // FD.append("polish", changeData.polish);
     FD.append("fabric", changeData.fabric);
-    FD.append("CVW", changeData.CVW);
 
     FD.append("drawer", changeData.drawer);
 
@@ -5044,7 +5043,7 @@ const SideForm = () => {
             package_breadth: data.data.response.package_breadth,
             unit: data.data.response.unit,
             range: data.data.response.range,
-            action: data.data.response
+            action: data.data.response._id
           }])
           handleClose();
           dispatch(setAlert({
@@ -5069,6 +5068,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    console.log(form.payload.row.action)
     FD.append("_id", form.payload.row.action);
 
     FD.append("status", changeData.status === 'on' ? true : false);
@@ -5093,7 +5093,7 @@ const SideForm = () => {
       );
     });
 
-    FD.append("restocking_time", changeData.restocking_time);
+    FD.append("restocking_time", changeData.restocking_time || 0);
     FD.append("selling_points", JSON.stringify(changeData.selling_points));
     FD.append("seo_title", changeData.seo_title);
     FD.append("seo_description", changeData.seo_description);
@@ -16621,7 +16621,7 @@ const SideForm = () => {
                               size="small"
                               valueLabelDisplay="auto"
                               name="restocking_time"
-                              value={changeData.restocking_time}
+                              value={changeData.restocking_time || 0}
                               onChange={handleProductFelids}
                               helperText="Please select your restocking time."
                             />
@@ -16646,7 +16646,8 @@ const SideForm = () => {
                             {
 
                               changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
+                                let stock;
+                                row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
                                 return <>
 
                                   <TextField sx={{ mb: 2 }}
