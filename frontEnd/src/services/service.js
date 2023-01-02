@@ -4,7 +4,6 @@ import config from '../config.json'
 
 const API = config.Official_API;
 
-
 //  login
 
 export const login = async (data) => {
@@ -60,7 +59,7 @@ export const statusCategory = async (data) => {
   });
 };
 
-// =========================== CURD FOR PRODUCTS  ===========================
+// =========================== CURD FOR PRODUCTS  =========================
 
 // for  adding category to the list
 
