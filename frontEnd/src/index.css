@@ -26,3 +26,13 @@ code {
     height: 50px;
     border-radius: 50%;
 }
+
+
+/* // utility */
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}

@@ -83,7 +83,7 @@ export const variation = async (data) => {
 // for listing the products
 
 export const getListProduct = async (data) => {
-  return await axios.get(`${API}/getListProduct?page=${data.page}&limit=${data.limit}`, {
+  return await axios.get(`${API}/getListProduct?filter=${JSON.stringify(data)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -142,7 +142,7 @@ export const getPresentSKUs = async () => {
 
 // get product details for display  
 export const getProductDetails = async (data) => {
-  return await axios.get(`${API}/getProductDetails?SKU=${data}`,{
+  return await axios.get(`${API}/getProductDetails?SKU=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -688,7 +688,7 @@ export const deleteDraft = async (id) => {
 };
 
 export const addDraft = async (data) => {
-  return await axios.post(`${API}/addDraft`,data,{
+  return await axios.post(`${API}/addDraft`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -730,7 +730,7 @@ export const updateBulk = async (data) => {
 
 
 export const dropDraft = async (data) => {
-  return await axios.post(`${API}/dropDraft`,data, {
+  return await axios.post(`${API}/dropDraft`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -878,7 +878,7 @@ export const getLastMergeProduct = async () => {
 // for  adding order to the list
 
 export const addOrder = async (data) => {
-  return await axios.post(`${API}/placeOrder`,data,{
+  return await axios.post(`${API}/placeOrder`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -888,7 +888,7 @@ export const addOrder = async (data) => {
 // for  get order list
 
 export const getOrder = async () => {
-  return await axios.get(`${API}/listOrders`,{
+  return await axios.get(`${API}/listOrders`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -897,7 +897,7 @@ export const getOrder = async () => {
 // for  get customOrderList list
 
 export const customOrderList = async () => {
-  return await axios.get(`${API}/customOrderList`,{
+  return await axios.get(`${API}/customOrderList`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -915,7 +915,7 @@ export const changeOrderStatus = async (data) => {
 
 // order ID at last
 export const getLastOrder = async () => {
-  return await axios.get(`${API}/getLastOrder`,{
+  return await axios.get(`${API}/getLastOrder`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -924,7 +924,7 @@ export const getLastOrder = async () => {
 
 // cusotm product ID at last
 export const getLastCp = async () => {
-  return await axios.get(`${API}/getLastCp`,{
+  return await axios.get(`${API}/getLastCp`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -933,7 +933,7 @@ export const getLastCp = async () => {
 
 // add custom product 
 export const addCustomProduct = async (data) => {
-  return await axios.post(`${API}/addCustomProduct`,data,{
+  return await axios.post(`${API}/addCustomProduct`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -941,7 +941,7 @@ export const addCustomProduct = async (data) => {
 };
 // add delete product 
 export const deleteOrder = async (data) => {
-  return await axios.delete(`${API}/deleteOrder?_id=${data}`,{
+  return await axios.delete(`${API}/deleteOrder?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -953,7 +953,7 @@ export const deleteOrder = async (data) => {
 // for  list customer to the list
 
 export const listCustomer = async () => {
-  return await axios.get(`${API}/listCustomer`,{
+  return await axios.get(`${API}/listCustomer`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -963,7 +963,7 @@ export const listCustomer = async () => {
 // for  list customer to the list
 
 export const deleteCustomer = async () => {
-  return await axios.delete(`${API}/deleteCustomer`,{
+  return await axios.delete(`${API}/deleteCustomer`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -999,21 +999,21 @@ export const customerCatalog = async () => {
 
 // add Inward
 export const addInward = async (data) => {
-  return await axios.post(`${API}/addInward`,data, {
+  return await axios.post(`${API}/addInward`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
   });
 };
 export const addOutward = async (data) => {
-  return await axios.post(`${API}/addOutward`,data, {
+  return await axios.post(`${API}/addOutward`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
   });
 };
 export const addTransfer = async (data) => {
-  return await axios.post(`${API}/addTransfer`,data, {
+  return await axios.post(`${API}/addTransfer`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },

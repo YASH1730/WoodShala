@@ -5,7 +5,8 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton
+  IconButton,
+  MenuItem
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -13,9 +14,8 @@ import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import {
   getListProduct,
-  //  deleteProduct,
-  //   getListMergeProduct,
-  //    deleteMergeProduct
+  categoryList,
+  getSubCatagories
 } from '../../../services/service'
 import {
   DataGrid,
@@ -27,7 +27,8 @@ import {
 // import Pagination from '@mui/material/Pagination';
 import { useDispatch } from "react-redux";
 import { setForm } from "../../../store/action/action";
-
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 // this is commented because needs a custom per page size 
 // function CustomPagination() {
 //   const apiRef = useGridApiContext();
@@ -49,59 +50,83 @@ export default function Products(props) {
 
   // store
   const dispatch = useDispatch();
-  // const [pageSize, setPageSize] = useState(50);
-
-
-  // states
-  const [search, setSearch] = useState('')
 
   // page state to controlling the pagination on server side
   const [pageState, setPageState] = useState({
     data: [],
     isLoading: false,
     page: 1,
-    pageSize: 50,
-    total: 0
+    limit: 50,
+    total: 0,
+    title: "",
+    category: undefined,
+    SKU: undefined,
+    subCategory: undefined,
+    filter: false
   })
 
+  // catalog State
+  const [catalog, setCatalog] = useState({
+    category: [],
+    subCategory: []
+  })
 
+  const fetchData = async () => {
+    setPageState(lastState => ({
+      ...lastState,
+      isLoading: true
+    }))
+    getListProduct({
+      page: pageState.page,
+      limit: pageState.limit,
+      total: pageState.total,
+      title: pageState.title,
+      category: pageState.category,
+      SKU: pageState.SKU,
+      subCategory: pageState.subCategory
+    })
+      .then((data) => {
+        setPageState(lastState => ({
+          ...lastState,
+          data: data.data.data.map((row, index) => {
+            return {
+              id: index + 1,
+              SKU: row.SKU,
+              product_title: row.product_title,
+              category_name: row.category_name,
+              sub_category_name: row.sub_category_name,
+              specification_image: row.specification_image,
+              mannequin_image: row.mannequin_image,
+              status: row.status ? 'Activated' : 'Deactivated',
+              featured_image: row.featured_image,
+              action: row
+            }
+          }),
+          isLoading: false,
+          total: data.data.total,
+          filter: false
+        }))
+      })
+      .catch((err) => {
+      })
+  }
 
   useMemo(() => {
-
-    const fetchData = async () => {
-      setPageState(lastState => ({
-        ...lastState,
-        isLoading: true
-      }))
-      getListProduct({ page: pageState.page, limit: pageState.pageSize })
-        .then((data) => {
-          setPageState(lastState => ({
-            ...lastState,
-            data: data.data.data.map((row, index) => {
-              return {
-                id: index + 1,
-                SKU: row.SKU,
-                product_title: row.product_title,
-                category_name: row.category_name,
-                sub_category_name: row.sub_category_name,
-                specification_image: row.specification_image,
-                mannequin_image: row.mannequin_image,
-                status: row.status ? 'Activated' : 'Deactivated',
-                featured_image: row.featured_image,
-                action: row
-              }
-            }),
-            isLoading: false,
-            total: data.data.total
-          }))
-        })
-        .catch((err) => {
-        })
-    }
-
     fetchData();
+  }, [pageState.page, pageState.limit, pageState.filter]);
 
-  }, [pageState.page, pageState.pageSize])
+  useMemo(async () => {
+    let cat = await categoryList();
+    let subCat = await getSubCatagories();
+
+    console.log(cat)
+    console.log(subCat)
+    setCatalog({
+      category: cat.data,
+      subCategory: subCat.data
+    })
+
+  }, [])
 
 
 
@@ -209,8 +234,6 @@ export default function Products(props) {
 
   ];
 
-
-
   function DataGridView() {
     return (
       <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
@@ -219,14 +242,23 @@ export default function Products(props) {
           rowCount={pageState.total}
           loading={pageState.isLoading}
           rowsPerPageOptions={[10, 30, 50, 70, 100]}
+          filterModel={{
+            items: [
+              {
+                columnField: "product_title",
+                operatorValue: "contains",
+                value: `${pageState.title}`,
+              },
+            ],
+          }}
           pagination
           page={pageState.page - 1}
-          pageSize={pageState.pageSize}
+          limit={pageState.limit}
           paginationMode="server"
           onPageChange={(newPage) => {
             setPageState(old => ({ ...old, page: newPage + 1 }))
           }}
-          onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
+          onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, limit: newPageSize }))}
           columns={columns}
         />
       </div>
@@ -235,8 +267,18 @@ export default function Products(props) {
   }
 
   const handleSearch = (e) => {
-    // //console.log(e.target.value)
-    setSearch(e.target.value)
+    return setPageState(old => ({ ...old, [e.target.name]: e.target.value }));
+  }
+
+  const clearFilter = () => {
+    return setPageState(old => ({
+      ...old,
+      title: '',
+      category: undefined,
+      SKU: undefined,
+      subCategory: undefined,
+      filter: !old.filter
+    }))
   }
 
   return (
@@ -251,69 +293,133 @@ export default function Products(props) {
 
       <Grid
         container
-        p={3}
+        p={2}
         sx={{
           boxShadow: 1,
           borderRadius: 2,
-          justifyContent: "center !important",
-          alignItems: "center !important",
-          gap: "15px",
+          gap: '10px',
+          alignItems: "center !important"
         }}
       >
-        <Grid xs={12} md={9}>
+        <Grid xs={12} md={2.5}>
           <TextField
             fullWidth
-            // autoComplete={false}
+            size={"small"}
+            id="demo-helper-text-aligned-no-helper"
+            label="Search by Title"
+            onChange={handleSearch}
+            value={pageState.title}
+            name='title'
+            type="text"
+          />
+        </Grid>
+        <Grid xs={12} md={2.5}>
+          <TextField
+            fullWidth
+            size={"small"}
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
+            value={pageState.SKU}
             onChange={handleSearch}
-            name='seachQuery'
-            type="search"
+            name='SKU'
+            type="text"
           />
         </Grid>
 
-
-
-        <Grid xs={12} md={2.8}>
-          <Button
-            sx={{ width: "100%" }}
-            color="primary"
-            startIcon={<AddIcon />}
-            variant="contained"
-            onClick={() => { dispatch(setForm({ state: true, formType: 'product' })) }}
+        <Grid xs={12} md={2.5}>
+          <TextField
+            id="outlined-select-currency"
+            select
+            fullWidth
+            size='small'
+            label="Category"
+            name='category'
+            value={pageState.category || 'None'}
+            onChange={handleSearch}
           >
-            Add Product
+            {catalog.category.map((option) => (
+              <MenuItem key={option.category_name} value={option.category_name}>
+                {option.category_name}
+              </MenuItem>
+            ))}
+            <MenuItem key={'None'} value={"None"}>
+              None
+            </MenuItem>
+          </TextField>
+
+        </Grid>
+        <Grid className='flex' xs={12} md={2.5}>
+          <TextField
+            id="outlined-select-currency"
+            select
+            fullWidth
+            size='small'
+            label="Sub Category"
+            name='subCategory'
+            value={pageState.subCategory || 'None'}
+            onChange={handleSearch}
+          >
+            {catalog.subCategory.map((option) => pageState.category === option.category_name && <MenuItem key={option.sub_category_name} value={option.sub_category_name}>
+              {option.sub_category_name}
+            </MenuItem>)}
+            <MenuItem key={'None'} value={"None"}>
+              None
+            </MenuItem>
+          </TextField>
+        </Grid>
+        <Grid sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '5px'
+        }} xs={12} md={1.5}>
+          <Button
+            color="primary"
+            fullWidth
+            variant="contained"
+            onClick={() => { setPageState(old => ({ ...old, filter: !old.filter })) }}
+          >
+            <FilterAltIcon />
+          </Button>
+          <Button
+            color="primary"
+            fullWidth
+            variant="outlined"
+            onClick={clearFilter}
+          >
+            <FilterAltOffIcon />
           </Button>
         </Grid>
-      </Grid>
+
+      </Grid >
 
       {/* Section 1 ends  */}
-      <br></br>
+      < br />
       {/* data grid  */}
 
-      <Grid container scaping={2} className="overviewContainer">
+      < Grid container scaping={2} className="overviewContainer" >
         <Grid item p={2} xs={12} md={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <div style={
-            {
-              display: 'flex',
-              justifyContent: 'space-between',
-            }
-          } >
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }} >
 
             <Typography component={'span'} variant="h6"> Product List </Typography>
+
+            <Button
+              color="primary"
+              startIcon={<AddIcon />}
+              variant="contained"
+              onClick={() => { dispatch(setForm({ state: true, formType: 'product' })) }}
+            >
+              Add Product
+            </Button>
           </div>
           {DataGridView()}
         </Grid>
-        {/* <Grid item p={2} xs={12} md= {5.9} sx={{ boxShadow: 2, borderRadius: 5 }}>
 
-          <Typography component={'span'} variant="h6"> Merge Product List </Typography>
-        <br></br>
-          <br></br>
-          {DataGridView(MergeRow,mergeColumns,false)}
-        </Grid> */}
-      </Grid>
+      </ Grid>
 
       {/* data grid ends  */}
-    </Box>
+    </Box >
   );
 }
