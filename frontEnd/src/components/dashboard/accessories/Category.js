@@ -4,15 +4,15 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,Switch
+  IconButton, Switch
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { categoryList , statusCategory } from '../../../services/service'
+import { categoryList, statusCategory } from '../../../services/service'
 import '../../../assets/custom/css/category.css'
-import {useDispatch} from 'react-redux'
-import {setAlert,setForm} from '../../../store/action/action'
+import { useDispatch } from 'react-redux'
+import { setAlert, setForm } from '../../../store/action/action'
 
 import {
   DataGrid
@@ -27,7 +27,7 @@ export default function Category() {
   const [pageSize, setPageSize] = useState(50);
 
 
-  const [check,setCheck] = useState([])
+  const [check, setCheck] = useState([])
 
   const [search, setSearch] = useState("");
 
@@ -37,15 +37,15 @@ export default function Category() {
   useEffect(() => {
     categoryList()
       .then((data) => {
-        
-        setCheck(data.data.map((row,index)=>{
+
+        setCheck(data.data.map((row, index) => {
           return row.category_status
         }))
 
-        setRows(data.data.map((row,index) => {
+        setRows(data.data.map((row, index) => {
 
           return ({
-            id: index + 1 ,
+            id: index + 1,
             category_image: row.category_image,
             category_name: row.category_name,
             category_status: row.category_status,
@@ -81,27 +81,27 @@ export default function Category() {
       field: "category_status",
       headerName: "Category Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
+      renderCell: (params) => <Switch onChange={handleSwitch} name={`${params.row.action + ' ' + (params.row.id - 1)}`} checked={check[params.row.id - 1]}></Switch>,
 
     },
     {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) => 
-      <div className="categoryImage" >
-        <IconButton onClick={() => { 
-          dispatch(setForm( {
-            state : true,
-            formType : 'update_category',
-            payload : params,
-            row : Row,
-            setRow : setRows,
-          })) 
-        }} aria-label="delete"  >
-          <CreateIcon />
-        </IconButton>
-        {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
+      renderCell: (params) =>
+        <div className="categoryImage" >
+          <IconButton onClick={() => {
+            dispatch(setForm({
+              state: true,
+              formType: 'update_category',
+              payload: params,
+              row: Row,
+              setRow: setRows,
+            }))
+          }} aria-label="delete"  >
+            <CreateIcon />
+          </IconButton>
+          {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
           dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
@@ -110,58 +110,58 @@ export default function Category() {
         }) }} aria-label="delete"  >
           <DeleteIcon />
         </IconButton> */}
-        
-      </div>,
+
+        </div>,
     }
 
   ];
 
 
-  const handleSwitch = (e)=>{
+  const handleSwitch = (e) => {
     // //console.log(e.target.name)
     // //console.log(check)
 
     const id = e.target.name.split(' ')
     const FD = new FormData()
 
-    FD.append('_id',id[0])
-    FD.append('category_status',e.target.checked)
+    FD.append('_id', id[0])
+    FD.append('category_status', e.target.checked)
 
     const res = statusCategory(FD);
 
-    res.then((data)=>{
+    res.then((data) => {
 
-      setCheck(check.map((row,index)=>{
+      setCheck(check.map((row, index) => {
         // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
-        return !row
-        else 
-        return row
+          return !row
+        else
+          return row
       }))
-      
-      dispatch(setAlert( {
-        open : true,
-        variant : 'success',
-        message : "Category Status Updated Successfully !!!"
-  
-      }))
-    })
-    .catch((err)=>{
-      //console.log(err)
+
       dispatch(setAlert({
-        open : true,
-        variant : 'error',
-        message : "May be duplicate found !!!"
-  
+        open: true,
+        variant: 'success',
+        message: "Category Status Updated Successfully !!!"
+
       }))
     })
+      .catch((err) => {
+        //console.log(err)
+        dispatch(setAlert({
+          open: true,
+          variant: 'error',
+          message: "May be duplicate found !!!"
 
-    
-  
+        }))
+      })
 
-  } 
 
-  const handelSearch = (e)=>{
+
+
+  }
+
+  const handelSearch = (e) => {
     //console.log(e.target.value)
     setSearch(e.target.value)
   }
@@ -169,7 +169,7 @@ export default function Category() {
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'category_name', operatorValue: 'contains', value: `${search}` }],
@@ -180,8 +180,8 @@ export default function Category() {
           pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25,50, 100]}
-          
+          rowsPerPageOptions={[25, 50, 100]}
+
         />
       </div>
     );
@@ -224,7 +224,7 @@ export default function Category() {
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-              dispatch(setForm( { state: true, formType: "category",row : Row,setRow : setRows }));
+              dispatch(setForm({ state: true, formType: "category", row: Row, setRow: setRows, setCheck }));
             }}
             sx={{ width: "100%" }}
             color="primary"

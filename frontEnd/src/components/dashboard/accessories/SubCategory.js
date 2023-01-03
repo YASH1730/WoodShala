@@ -4,48 +4,27 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,Switch
+  IconButton, Switch
 } from "@mui/material";
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import { setForm, setAlert } from "../../../store/action/action";
-import {useDispatch} from 'react-redux'
-import { getSubCatagories, changeSubSatatus } from '../../../services/service'
-
+import { useDispatch } from 'react-redux'
+import { getSubCatagories, changeSubSatatus, deleteCategory } from '../../../services/service'
 
 import {
   DataGrid,
-// gridPageCountSelector,
-  // gridPageSelector,
-  // useGridApiContext,
-  // useGridSelector,
 } from '@mui/x-data-grid';
-// import Pagination from '@mui/material/Pagination';
-
-// function CustomPagination() {
-//   const apiRef = useGridApiContext();
-//   const page = useGridSelector(apiRef, gridPageSelector);
-//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-//   return (
-//     <Pagination
-//       color="primary"
-//       count={pageCount}
-//       page={page + 1}
-//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
-//     />
-//   );
-// }
 
 
 
 export default function SubCategory() {
 
   const [search, setSearch] = useState("");
-  const [check,setCheck] = useState([])
+  const [check, setCheck] = useState([])
 
-const dispatch = useDispatch(); 
-const [pageSize, setPageSize] = useState(50);
+  const dispatch = useDispatch();
+  const [pageSize, setPageSize] = useState(50);
 
 
   const [Row, setRows] = useState([])
@@ -54,16 +33,16 @@ const [pageSize, setPageSize] = useState(50);
   useEffect(() => {
     getSubCatagories()
       .then((data) => {
-        setCheck(data.data.map((row,index)=>{
+        setCheck(data.data.map((row, index) => {
           return row.sub_category_status
         }))
 
-        setRows(data.data.map((row,index) => {
+        setRows(data.data.map((row, index) => {
 
           return ({
-            id: index+1,
-            category_id : row.category_id,
-            category_name : row.category_name,
+            id: index + 1,
+            category_id: row.category_id,
+            category_name: row.category_name,
             sub_category_name: row.sub_category_name,
             sub_category_status: row.sub_category_status,
             action: row._id
@@ -98,7 +77,7 @@ const [pageSize, setPageSize] = useState(50);
       field: "sub_category_status",
       headerName: "Sub Category Status",
       width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
+      renderCell: (params) => <Switch onChange={handleSwitch} name={`${params.row.action + ' ' + (params.row.id - 1)}`} checked={check[params.row.id - 1]}></Switch>,
 
 
     },
@@ -106,75 +85,73 @@ const [pageSize, setPageSize] = useState(50);
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) => 
-      <div className="categoryImage" >
-        <IconButton onClick={() => { 
-         dispatch(setForm({
-            state : true,
-            formType : 'update_Subcategory',
-            payload : params,
-            row : Row,
-            setRow : setRows,
-          })) 
-        }} aria-label="delete"  >
-          <CreateIcon />
-        </IconButton>
-        {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
-          dispatch({type : Notify,payload : {
-            open : true,
-            variant : 'success',
-            message : 'Category Deleted !!!'
-          })
-        }) }} aria-label="delete"  >
-          <DeleteIcon />
-        </IconButton>
-         */}
-      </div>,
+      renderCell: (params) =>
+        <div className="categoryImage" >
+          <IconButton onClick={() => {
+            dispatch(setForm({
+              state: true,
+              formType: 'update_Subcategory',
+              payload: params,
+              row: Row,
+              setRow: setRows,
+            }))
+          }} aria-label="delete"  >
+            <CreateIcon />
+          </IconButton>
+          {/* <IconButton onClick={() => {
+            deleteCategory(params.formattedValue).then((res) => {
+
+            })
+          }} aria-label="delete"  >
+            <DeleteIcon />
+          </IconButton> */}
+
+        </div>,
     }
 
   ];
 
 
-  const handleSwitch = (e)=>{
+  const handleSwitch = (e) => {
     const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',id[0])
-    FD.append('sub_category_status',e.target.checked)
+    FD.append('_id', id[0])
+    FD.append('sub_category_status', e.target.checked)
 
     const res = changeSubSatatus(FD);
 
-    res.then((data)=>{
-      setCheck(check.map((row,index)=>{
+    res.then((data) => {
+      setCheck(check.map((row, index) => {
         // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
-        return !row
-        else 
-        return row
+          return !row
+        else
+          return row
       }))
       dispatch(setAlert({
-        open : true,
-        variant : 'success',
-        message : " Sub Category Status Updated Successfully !!!"
+        open: true,
+        variant: 'success',
+        message: " Sub Category Status Updated Successfully !!!"
       }))
     })
-    .catch((err)=>{
-      console.log(err)
-      dispatch(setAlert({
-        open : true,
-        variant : 'error',
-        message : "May be duplicate found !!!"
-  
-      }))
-    })
+      .catch((err) => {
+        console.log(err)
+        dispatch(setAlert({
+          open: true,
+          variant: 'error',
+          message: "May be duplicate found !!!"
 
-    
-  
+        }))
+      })
 
-  } 
 
-  const handelSearch = (e)=>{
+
+
+  }
+
+  const handelSearch = (e) => {
     //console.log(e.target.value)
     setSearch(e.target.value)
   }
@@ -182,26 +159,26 @@ const [pageSize, setPageSize] = useState(50);
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'category_name', operatorValue: 'contains', value: `${search}` }],
           }}
           rows={Row}
           columns={columns}
-          
-          
+
+
           disableSelectionOnClick
-        pagination
+          pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25,50, 100]}
+          rowsPerPageOptions={[25, 50, 100]}
         />
       </div>
     );
   }
 
- 
+
 
   return (
     <>
@@ -239,7 +216,7 @@ const [pageSize, setPageSize] = useState(50);
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch(setForm({ state: true, formType: "subcategory",row : Row,setRow : setRows }));
+              dispatch(setForm({ state: true, formType: "subcategory", row: Row, setRow: setRows, setCheck: setCheck }));
             }}
             sx={{ width: "100%" }}
             color="primary"

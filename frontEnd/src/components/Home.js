@@ -521,7 +521,7 @@ const Home = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    handleMenuClose()
+    setAnchor(null);
     handleClose();
     dispatch(setAlert({
       isLogin: false,

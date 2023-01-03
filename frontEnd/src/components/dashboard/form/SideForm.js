@@ -1799,6 +1799,7 @@ const SideForm = () => {
             category_image: data.data.response.category_image,
             action: data.data.response
           }])
+          form.setCheck(old => [...old, data.data.response.category_status])
           setImages([]);
           handleClose();
           dispatch(setAlert({
@@ -4106,6 +4107,7 @@ const SideForm = () => {
             primaryMaterial_status: data.data.response.primaryMaterial_status,
             action: data.data.response
           }])
+          form.setCheck(old => [...old, data.data.response.primaryMaterial_status])
           setImages([]);
           handleClose();
           dispatch(setAlert({
@@ -4505,6 +4507,7 @@ const SideForm = () => {
             sub_category_status: data.data.response.sub_category_status,
             action: data.data.response
           }])
+          form.setCheck(old => [...old, data.data.response.sub_category_status])
           setImages([]);
           handleClose();
           dispatch(setAlert({
@@ -5819,7 +5822,7 @@ const SideForm = () => {
                                 <Checkbox
                                   checked={changeData.online_store}
                                   onChange={handleProductFelids}
-                                  name="mobile_store"
+                                  name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
                               }
@@ -8420,7 +8423,7 @@ const SideForm = () => {
                                 <Checkbox
                                   checked={changeData.online_store}
                                   onChange={handleProductFelids}
-                                  name="mobile_store"
+                                  name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
                               }

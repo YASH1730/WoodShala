@@ -40,15 +40,15 @@ export const editCategory = async (data) => {
   });
 };
 
-// for delete the category
-export const deleteCategory = async (data) => {
-  console.log(data);
-  return await axios.delete(`${API}/deleteCategory/?ID=${data}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
-    },
-  });
-};
+// // for delete the category
+// export const deleteCategory = async (data) => {
+//   console.log(data);
+//   return await axios.delete(`${API}/deletePrimaryMaterial/?ID=${data}`, {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+//     },
+//   });
+// };
 
 // for status the category
 export const statusCategory = async (data) => {

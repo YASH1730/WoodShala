@@ -27,13 +27,17 @@ import {
 
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import CancelIcon from '@mui/icons-material/Cancel';
 // APis function 
-import { getProductDetails } from '../../services/service'
+import { getProductDetails, getLastProduct } from '../../services/service'
 
-
+// redux store
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/action/action"
 
 export default function ProductDetails(props) {
 
+  const dispatch = useDispatch();
 
   // state
   const [imageIndex, setIndex] = useState(0); // use for updating the images
@@ -51,13 +55,24 @@ export default function ProductDetails(props) {
   useMemo(() => {
     getProductDetails(SKU)
       .then((response) => {
-        setData(response.data)
+        if (response.data) {
+          setData(response.data)
+        }
+        else {
+          props.history("productDetails/P-0" + (parseInt(SKU.split('-')[1]) - 1))
+          dispatch(setAlert({
+            open: true,
+            variant: 'warning',
+            message: 'No more product left !!!'
+          }))
+        }
       })
       .catch((err) => {
         console.log(err)
       })
 
   }, [SKU]);
+
 
   // const handleChange = (panel) => (event, newExpanded) => {
   //   setExpanded(newExpanded ? panel : false);
@@ -215,6 +230,7 @@ export default function ProductDetails(props) {
   ]
 
 
+
   return (
     <>
       {/* // navigation buttons  */}
@@ -229,11 +245,11 @@ export default function ProductDetails(props) {
         {/* main section  */}
         <Grid container className="mainSec">
           {/* Image sec */}
-          <Grid item xs={12} >
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography component={'span'} sx={{ display: "block", mb: 3 }} variant="h5">
               Product Details
             </Typography>
-
+            <IconButton color='primary' onClick={() => { props.history('/products') }}><CancelIcon /></IconButton>
           </Grid>
 
           <Grid item className="imageSec" xs={12} md={6}>
