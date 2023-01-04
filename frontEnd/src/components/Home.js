@@ -50,7 +50,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 // import redux 
-import { setAlert, setMode, setTab } from '../store/action/action'
+import { setAlert, setAuth, setMode, setTab } from '../store/action/action'
 import { useDispatch, useSelector } from "react-redux";
 
 const Home = (props) => {
@@ -67,9 +67,9 @@ const Home = (props) => {
 
   useEffect(() => {
     // console.log(state.Auth.isLogin)
-    if (auth.isLogin === false)
+    if (auth.isAuth === false)
       history("/");
-  }, [auth.isLogin]);
+  }, [auth.isAuth]);
 
   const handleMenuClose = () => {
     setAnchor(null);
@@ -523,10 +523,15 @@ const Home = (props) => {
     localStorage.clear();
     setAnchor(null);
     handleClose();
-    dispatch(setAlert({
-      isLogin: false,
+    dispatch(setAuth({
+      isAuth: false,
       WDToken: null,
       role: null
+    }))
+    dispatch(setAlert({
+      open: true,
+      variant: 'success',
+      message: 'Logging Out !!!'
     }))
     return history("/");
 

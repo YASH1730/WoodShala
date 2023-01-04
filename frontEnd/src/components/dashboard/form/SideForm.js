@@ -907,6 +907,8 @@ const SideForm = () => {
 
         const row = form.payload.row;
 
+        console.log(row)
+
         setData({
           SKU: row.SKU,
           title: row.title,
@@ -915,7 +917,7 @@ const SideForm = () => {
           sub_category_name: row.sub_category_id,
           sub_category_id: row.sub_category_id,
           hardware_image: row.hardware_image,
-          warehouse: row.warehouse,
+          warehouse: row.warehouse || [],
           bangalore_stock: row.bangalore_stock,
           jodhpur_stock: row.jodhpur_stock,
           manufacturing_time: row.manufacturing_time,
@@ -4324,7 +4326,8 @@ const SideForm = () => {
     FD.append('hardware_articles', changeData.hardware_articles)
     FD.append('supplier', changeData.supplier)
     FD.append('vehicle_no', e.target.vehicle_no.value)
-    FD.append('driver_name', e.target.driver_name.value)
+    FD.append('driver_name', e.target.driver_name.value);
+    FD.append('driver_no', e.target.driver_no.value);
     FD.append('quantity', e.target.quantity.value)
 
     const res = addInward(FD);
@@ -4340,12 +4343,19 @@ const SideForm = () => {
             message: data.data.message,
           }));
         } else {
-          // form.setRow([...form.row, {
-          //   id: form.row.length + 1,
-          //   polish_name: data.data.response.polish_name,
-          //   polish_status: data.data.response.polish_status,
-          //   action: data.data.response
-          // }])
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
+            inward_id: data.data.response.inward_id,
+            order_no: data.data.response.order_no,
+            driver_name: data.data.response.driver_name,
+            driver_no: data.data.response.driver_no,
+            vehicle_no: data.data.response.vehicle_no,
+            supplier: data.data.response.supplier,
+            product_articles: data.data.response.product_articles,
+            hardware_articles: data.data.response.hardware_articles,
+            quantity: data.data.response.quantity,
+            date: data.data.response.date,
+          }])
           handleClose();
           dispatch(setAlert({
             open: true,
@@ -4355,7 +4365,7 @@ const SideForm = () => {
         }
       })
       .catch((err) => {
-        // //console.log(err);
+        console.log(err);
         setImages([]);
         dispatch(setAlert({
           open: true,
@@ -4394,12 +4404,22 @@ const SideForm = () => {
             message: data.data.message,
           }));
         } else {
-          // form.setRow([...form.row, {
-          //   id: form.row.length + 1,
-          //   polish_name: data.data.response.polish_name,
-          //   polish_status: data.data.response.polish_status,
-          //   action: data.data.response
-          // }])
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
+            outward_id: data.data.response.outward_id,
+            order_no: data.data.response.order_no,
+            driver_name: data.data.response.driver_name,
+            driver_no: data.data.response.driver_no,
+            vehicle_no: data.data.response.vehicle_no,
+            supplier: data.data.response.supplier,
+            product_articles: data.data.response.product_articles,
+            hardware_articles: data.data.response.hardware_articles,
+            quantity: data.data.response.quantity,
+            purpose: data.data.response.purpose,
+            reason: data.data.response.reason,
+            date: data.data.response.date,
+
+          }])
           handleClose();
           dispatch(setAlert({
             open: true,
@@ -4444,12 +4464,18 @@ const SideForm = () => {
             message: data.data.message,
           }));
         } else {
-          // form.setRow([...form.row, {
-          //   id: form.row.length + 1,
-          //   polish_name: data.data.response.polish_name,
-          //   polish_status: data.data.response.polish_status,
-          //   action: data.data.response
-          // }])
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
+            transfer_id : data.data.response.transfer_id,
+            order_no : data.data.response.order_no,
+            warehouse : data.data.response.warehouse,
+            product_articles : data.data.response.product_articles,
+            hardware_articles : data.data.response.hardware_articles,
+            quantity : data.data.response.quantity,
+            purpose : data.data.response.purpose,
+            reason : data.data.response.reason,
+            date : data.data.response.date,
+          }])
           handleClose();
           dispatch(setAlert({
             open: true,
@@ -17222,6 +17248,15 @@ const SideForm = () => {
                       type="text"
                       variant="outlined"
                       name="driver_name"
+                    />
+                    <TextField sx={{ mb: 1 }}
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Driver Number"
+                      type="Number"
+                      variant="outlined"
+                      name="driver_no"
                     />
 
                     <TextField sx={{ mb: 1 }}

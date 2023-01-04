@@ -15,10 +15,10 @@ import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { Link } from "react-router-dom";
-import {login} from '../services/service'
+import { login } from '../services/service'
 
-import {useDispatch,useSelector} from 'react-redux'
-import {setAlert,setAuth} from '../store/action/action'
+import { useDispatch, useSelector } from 'react-redux'
+import { setAlert, setAuth } from '../store/action/action'
 
 
 export default function EntryPoints(props) {
@@ -26,16 +26,16 @@ export default function EntryPoints(props) {
   // history var for location and jumping throw path 
   const history = props.history;
 
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch()
   // const state = useSelector(state=>state) 
 
   // store import 
-  const {auth} = useSelector(state=>state);
-  
-  useEffect(()=>{
-    if(auth.isLogin === true)
+  const { auth } = useSelector(state => state);
+
+  useEffect(() => {
+    if (auth.isAuth === true)
       history('/dashboard')
-  },[auth.isLogin])
+  }, [auth.isAuth])
 
   // context 
 
@@ -45,7 +45,7 @@ export default function EntryPoints(props) {
     setPostVal(event.target.value);
   };
 
- 
+
   const post = [
     {
       value: "Admin",
@@ -55,7 +55,7 @@ export default function EntryPoints(props) {
       value: "Super Admin",
       label: "Super Admin",
     },
-    
+
   ];
 
   const [currency, setCurrency] = React.useState("EUR");
@@ -64,45 +64,44 @@ export default function EntryPoints(props) {
     setCurrency(event.target.value);
   };
 
-  const handleLogin = (e)=>{
+  const handleLogin = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-    FD.append('role',postVal);
-    FD.append('email',e.target.email.value);
-    FD.append('password',e.target.password.value);
+    FD.append('role', postVal);
+    FD.append('email', e.target.email.value);
+    FD.append('password', e.target.password.value);
 
     let res = login(FD)
 
-    res.then((data)=>{
+    res.then((data) => {
       //console.log(data)
 
-      if(data.status === 200)
-      {
+      if (data.status === 200) {
 
         dispatch(setAuth({
-          isAuth : true,
-          token : data.data.token,
-          role : data.data.role
+          isAuth: true,
+          token: data.data.token,
+          role: data.data.role
         }))
 
         dispatch(setAlert({
-          open : true,
-          variant : 'success',
-          message : data.data.message
+          open: true,
+          variant: 'success',
+          message: data.data.message
         }))
 
-        localStorage.setItem('WDToken',data.data.token);
+        localStorage.setItem('WDToken', data.data.token);
 
         history('/dashboard')
 
       }
       else {
         dispatch(setAlert({
-          open : true,
-          variant : 'error',
-          message : data.data.message
+          open: true,
+          variant: 'error',
+          message: data.data.message
         }))
       }
     })
@@ -134,20 +133,20 @@ export default function EntryPoints(props) {
               {/* Form Side */}
               <Grid item p={6} sm={12} md={6} lg={6}>
                 <Typography component={'span'} variant="h4">Login</Typography>
-                  <Box
-                    sx={{
-                      "& .MuiTextField-root": { mt: 2 },
-                      margin: "auto",
-                    }}
-                  >
-                    <form method="post" onSubmit= {handleLogin} className="formStyle">
+                <Box
+                  sx={{
+                    "& .MuiTextField-root": { mt: 2 },
+                    margin: "auto",
+                  }}
+                >
+                  <form method="post" onSubmit={handleLogin} className="formStyle">
                     <TextField
                       fullWidth
-                       
+
                       id="fullWidth"
                       label="Email"
                       type="email"
-                      name = 'email'
+                      name='email'
                       variant="outlined"
                     />
 
@@ -155,32 +154,32 @@ export default function EntryPoints(props) {
                       fullWidth
                       id="fullWidth"
                       type="password"
-                      name = 'password'
+                      name='password'
                       label="Password"
                       variant="outlined"
                     />
- <TextField
-                fullWidth
-                id="outlined-select"
-                select
-                label="Staff Role"
-                value={postVal}
-                multiple
-                name = 'role'
-                onChange={handleChangePost}
-                helperText="Please select the staff role"
-              >
-                {post.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+                    <TextField
+                      fullWidth
+                      id="outlined-select"
+                      select
+                      label="Staff Role"
+                      value={postVal}
+                      multiple
+                      name='role'
+                      onChange={handleChangePost}
+                      helperText="Please select the staff role"
+                    >
+                      {post.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
 
                     <Button
                       variant="contained"
                       color="primary"
-                      type = 'submit'
+                      type='submit'
                       sx={{
                         width: "100%",
                         marginTop: "5%",
@@ -190,11 +189,11 @@ export default function EntryPoints(props) {
                       {" "}
                       Log In
                     </Button>
-                </form>
-                  </Box>
+                  </form>
+                </Box>
 
                 <hr />
-{/* 
+                {/* 
                 <FacebookLogin
                   appId="1088597931155576"
                   autoLoad={true}
@@ -228,7 +227,7 @@ export default function EntryPoints(props) {
                 >
                   Forgot Password?
                 </Typography>
-{/* 
+                {/* 
                 <Typography component={'span'} variant="caption" color="primary">
                   <Link className="links" to="/register">
                     I do not have an account. Create Account
@@ -269,7 +268,7 @@ export default function EntryPoints(props) {
                   >
                     <TextField
                       fullWidth
-                       
+
                       id="fullWidth"
                       label="Name"
                       type="text"
@@ -278,7 +277,7 @@ export default function EntryPoints(props) {
 
                     <TextField
                       fullWidth
-                       
+
                       id="fullWidth"
                       label="Email"
                       type="email"

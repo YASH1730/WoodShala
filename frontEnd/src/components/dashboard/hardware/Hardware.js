@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Typography,
   TextField,
@@ -30,7 +30,7 @@ export default function Hardware() {
   const [Row, setRows] = useState([])
   // function for get  list
 
-  useEffect(() => {
+  useMemo(() => {
     getHardware()
       .then((data) => {
         setCheck(data.data.map((row, index) => {
@@ -143,7 +143,7 @@ export default function Hardware() {
           <IconButton onClick={() => {
             deleteHardware(params.formattedValue).then((res) => {
               setRows(Row.filter((set) => {
-                return set.action._id !== params.formattedValue._id
+                return set.action !== params.formattedValue
               }))
               dispatch(setAlert({
                 open: true,
@@ -253,7 +253,7 @@ export default function Hardware() {
         <Grid xs={12} md={9}>
           <TextField
             fullWidth
-            // autoComplete={false}
+            size="small"
             id="demo-helper-text-aligned-no-helper"
             label="Search by hardware"
             type="text"

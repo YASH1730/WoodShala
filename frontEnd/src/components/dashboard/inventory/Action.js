@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Typography,
   TextField,
@@ -72,9 +72,7 @@ export default function Action() {
     padding: "1%"
   };
 
-
-  useEffect(() => {
-
+  useMemo(() => {
     getMetaDraft()
       .then((data) => {
         console.log(data)
@@ -82,6 +80,9 @@ export default function Action() {
           { ...data.data }
         )
       })
+  }, [Row])
+
+  useMemo(() => {
 
     getDraft()
       .then((data) => {
@@ -152,7 +153,7 @@ export default function Action() {
         <div>
           <IconButton
             onClick={() => {
-              console.log(params)
+              // console.log(params)
               setDisplay({
                 data: params.formattedValue.payload,
                 type: params.formattedValue.type,
@@ -241,6 +242,14 @@ export default function Action() {
 
             response = await dropDraft(display.data)
             if (response.status === 200) {
+
+              setRows(Row.map(item => {
+                if (item.DID === display.data.DID) {
+                  item.status = 'Approved';
+                  item.AID = SKU;
+                }
+                return item
+              }))
               dispatch(setAlert({
                 open: true,
                 variant: "success",

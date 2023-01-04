@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Typography,
   TextField,
   Grid,
   Button,
   MenuItem,
-   Box
+  Box
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import CreateIcon from '@mui/icons-material/Create';
@@ -29,9 +29,9 @@ export default function Inventory() {
   const [search, setSearch] = useState({ warehouse: '' });
   const [columns, setColumns] = useState([])
   const [meta, setMeta] = useState({
-    inward : 0,
-    outward : 0,
-    transfer : 0
+    inward: 0,
+    outward: 0,
+    transfer: 0
   })
   const [pageState, setPageState] = useState({
     data: [],
@@ -45,27 +45,27 @@ export default function Inventory() {
 
   const [Row, setRows] = useState([])
 
-  useEffect(() => {
-    setPageState(old=>({...old,isLoading : true}))
+  useMemo(() => {
+    setPageState(old => ({ ...old, isLoading: true }))
     fetchEntires()
-  }, [pageState.page,pageState.pageSize]);
+  }, [pageState.page, pageState.pageSize, Row]);
 
-  useEffect(() => {
-    setPageState(old=>({...old,isLoading : true,data : []}));
+  useMemo(() => {
+    setPageState(old => ({ ...old, isLoading: true, data: [] }));
     fetchEntires();
-    entires();
   }, [pageState.entires]);
 
-  async function entires(){
+  useMemo(() => { entires() }, [Row])
+
+  async function entires() {
     const res = await totalEntries()
-    if (res.status === 200)
-    {
+    if (res.status === 200) {
       setMeta({
-        inward : res.data.inward,
-        outward : res.data.outward,
-        transfer : res.data.transfer,
+        inward: res.data.inward,
+        outward: res.data.outward,
+        transfer: res.data.transfer,
       })
-    }  
+    }
   }
 
   async function fetchEntires() {
@@ -97,13 +97,14 @@ export default function Inventory() {
                 supplier: row.supplier,
                 vehicle_no: row.vehicle_no,
                 driver_name: row.driver_name,
+                driver_no: row.driver_no,
                 quantity: row.quantity,
                 order_no: row.order_no,
                 inward_id: row.inward_id,
                 date: row.date
               }
             }),
-            total : res.data.total,
+            total: res.data.total,
             isLoading: false
           }))
         }
@@ -145,7 +146,7 @@ export default function Inventory() {
                 date: row.date
               }
             }),
-            total : res.data.total,
+            total: res.data.total,
             isLoading: false
           }))
         }
@@ -181,7 +182,7 @@ export default function Inventory() {
                 date: row.date
               }
             }),
-            total : res.data.total,
+            total: res.data.total,
             isLoading: false
           }))
         }
@@ -221,7 +222,7 @@ export default function Inventory() {
           rows={pageState.data}
           rowCount={pageState.total}
           loading={pageState.isLoading}
-          rowsPerPageOptions={[5,10, 30, 50, 70, 100]}
+          rowsPerPageOptions={[5, 10, 30, 50, 70, 100]}
           pagination
           page={pageState.page - 1}
           pageSize={pageState.pageSize}
@@ -310,8 +311,9 @@ export default function Inventory() {
           <Button
             onClick={() => {
               dispatch(setForm({
-                  state: true, formType: "inward", row: Row,
-                  setRow: setRows}
+                state: true, formType: "inward", row: Row,
+                setRow: setRows
+              }
               ));
             }}
             sx={{ width: "100%" }}
@@ -327,8 +329,8 @@ export default function Inventory() {
           <Button
             onClick={() => {
               dispatch(setForm({
-                  state: true, formType: "outward", row: Row,
-                  setRow: setRows
+                state: true, formType: "outward", row: Row,
+                setRow: setRows
               }));
             }}
             sx={{ width: "100%" }}
@@ -344,8 +346,8 @@ export default function Inventory() {
           <Button
             onClick={() => {
               dispatch(setForm({
-                  state: true, formType: "transfer", row: Row,
-                  setRow: setRows
+                state: true, formType: "transfer", row: Row,
+                setRow: setRows
               }));
             }}
             sx={{ width: "100%" }}
