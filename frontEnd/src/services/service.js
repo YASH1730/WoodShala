@@ -133,7 +133,7 @@ export const getHardwareDropdown = async () => {
 // for getting the last product
 
 export const getPresentSKUs = async (data) => {
-  return await axios.get(`${API}/getPresentSKUs?search=${data}`, {
+  return await axios.get(`${API}/getPresentSKUs?search=${data}`,  {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
