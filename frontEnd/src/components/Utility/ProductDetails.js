@@ -254,10 +254,7 @@ export default function ProductDetails(props) {
 
           <Grid item className="imageSec" xs={12} md={6}>
             <Grid container>
-              <Grid item xs={12} sx={{
-                maxWidth: '400px',
-                maxHeight: '450px'
-              }}>
+              <Grid item xs={8} sx={{ margin: 'auto' }}>
                 <img
                   className="showImage"
                   src={data.product_image[imageIndex]}

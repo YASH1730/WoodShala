@@ -59,7 +59,7 @@ export const statusCategory = async (data) => {
   });
 };
 
-// =========================== CURD FOR PRODUCTS  =========================
+// =========================== CURD FOR PRODUCTS  ===========================
 
 // for  adding category to the list
 
@@ -132,8 +132,8 @@ export const getHardwareDropdown = async () => {
 
 // for getting the last product
 
-export const getPresentSKUs = async () => {
-  return await axios.get(`${API}/getPresentSKUs`, {
+export const getPresentSKUs = async (data) => {
+  return await axios.get(`${API}/getPresentSKUs?search=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -887,8 +887,8 @@ export const addOrder = async (data) => {
 
 // for  get order list
 
-export const getOrder = async () => {
-  return await axios.get(`${API}/listOrders`, {
+export const getOrder = async (data) => {
+  return await axios.get(`${API}/listOrders?filter=${JSON.stringify(data)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import PropTypes from 'prop-types';
 import {
     Typography,
@@ -40,7 +40,7 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from "@mui/material/Pagination";
 
-import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct } from '../../../services/service'
+import { customerCatalog, getPresentSKUs, getLastOrder, addOrder, getLastCp, addCustomProduct, getArticlesId } from '../../../services/service'
 import { useConfirm } from "material-ui-confirm";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -92,6 +92,8 @@ const style = {
     p: 2,
 };
 
+
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -129,6 +131,7 @@ export default function CreateOrder() {
 
     const editorRef = useRef();
     const [value, setValue] = useState(0);
+    const [productRow, setProductRows] = useState([]);
 
 
     // confirm box 
@@ -145,23 +148,13 @@ export default function CreateOrder() {
     }
 
 
-    // states 
-    const [search, setSearch] = useState({
-        customer_email: undefined,
-        O: undefined,
-        date: '',
-        customer: '',
-
-    });
     // multiple images
     const [files, setFiles] = useState([]);
 
-    const [productRow, setProductRows] = useState([]);
-    // const [pageSize, setPageSize] = useState(50);
 
     const [catalogs, setCatalogs] = useState({
         customer: [],
-        products: [],
+        product: [],
         address: [],
         channel: [
             {
@@ -207,6 +200,19 @@ export default function CreateOrder() {
 
         ]
     })
+
+    // for dynamic product SKUs
+    const handleSearch = async (e) => {
+        const delayDebounceFn = setTimeout(() => {
+            getPresentSKUs(e.target.value)
+                .then((res) => {
+                    console.log(res.data)
+                    setCatalogs(old => ({ ...old, product: res.data }))
+                }, 1000)
+            return () => clearTimeout(delayDebounceFn)
+
+        })
+    }
 
 
     // state for data 
@@ -261,23 +267,15 @@ export default function CreateOrder() {
 
 
     // catalog reload 
-    useEffect(() => {
+    useMemo(() => {
         customerCatalog()
             .then(async (cus) => {
-                //console.log(cus)
-
-                getPresentSKUs().then((res) => {
-                    //console.log(res)
-                    setCatalogs({
-                        ...catalogs,
-                        customer: cus.data,
-                        products: res.data
-                    })
-                    getO();
-
-                });
+                setCatalogs({
+                    ...catalogs,
+                    customer: cus.data,
+                })
+                getO();
             })
-
     }, [])
 
 
@@ -326,9 +324,9 @@ export default function CreateOrder() {
     // }, [search]);
 
     // for product data row 
-    useEffect(() => {
+    useMemo(() => {
 
-        const rows = catalogs.products.filter((row) => { return data.product_array.includes(row.SKU) && row })
+        const rows = catalogs.product.filter((row) => { return data.product_array.includes(row.SKU) && row })
 
         setProductRows(rows.map((dataOBJ, index) => {
 
@@ -383,7 +381,7 @@ export default function CreateOrder() {
             </div>
         ));
 
-        useEffect(() => {
+        useMemo(() => {
             // Make sure to revoke the data uris to avO memory leaks, will run on unmount
             return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
         }, []);
@@ -473,7 +471,7 @@ export default function CreateOrder() {
 
     ];
 
-    const getO = async () => {
+    async function getO() {
         await getLastOrder()
             .then((res) => {
                 console.log(res)
@@ -522,19 +520,8 @@ export default function CreateOrder() {
         return (
             <div style={{ height: height, width: "100%" }}>
                 <DataGrid
-                    filterModel={{
-                        items: [
-                            {
-                                columnField: "order_time",
-                                operatorValue: "contains",
-                                value: `${search.date}`,
-                            },
-                        ],
-                    }}
                     rows={Row}
                     columns={columns}
-
-
                     disableSelectionOnClick
                     pagination
                     pageSize={pageSize}
@@ -549,13 +536,12 @@ export default function CreateOrder() {
 
     const handelData = (e) => {
         console.log(e.target.name)
-        if (e.target.name === 'shipping') {
-            const row = catalogs.address.filter((data) => { return data.shipping === e.target.value })
+        if (e.target.name === 'shipping' && catalogs.address.length > 0) {
+            const row = catalogs.address.filter((data) => { return data.address === e.target.value })
             console.log(row)
             setData({ ...data, [e.target.name]: e.target.value, city: row[0].city, state: row[0].state })
 
         }
-
         else if (e.target.name !== 'discount')
             setData({ ...data, [e.target.name]: e.target.value })
         else {
@@ -591,7 +577,7 @@ export default function CreateOrder() {
 
     // custom modal
     const [open, setOpen] = useState(false);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => { setFiles([]); setOpen(false) };
 
     // customer id 
     const getCUS = async () => {
@@ -635,21 +621,24 @@ export default function CreateOrder() {
 
 
 
-        await addCustomProduct(FD)
+        let response = await addCustomProduct(FD)
 
         setData({ ...data, quantity: { ...data.quantity, [e.target.CUS.value]: e.target.quantity.value } })
-
+        console.log(response)
         setProductRows(
             [...productRow, {
                 id: productRow.length + 1,
-                SKU: e.target.CUS.value,
-                product_title: e.target.product_title.value,
-                dimension: e.target.length.value + 'x' + e.target.breadth.value + 'x' + e.target.height.value,
-                MRP: e.target.MRP.value,
-                qty: e.target.quantity.value,
-                selling_price: e.target.MRP.value - ((e.target.MRP.value / 100) * e.target.discount.value),
-                discount_limit: e.target.discount.value,
+                SKU: response.data.data.CUS,
+                product_title: response.data.data.product_title,
+                product_image: response.data.data.product_image.length > 0 ? response.data.data.product_image[0] : "",
+                dimension: response.data.data.length + 'x' + response.data.data.breadth + 'x' + response.data.data.height,
+                MRP: response.data.data.MRP,
+                qty: response.data.data.quantity,
+                selling_price: response.data.data.MRP - ((response.data.data.MRP / 100) * response.data.data.discount),
+                discount_limit: response.data.data.discount,
             }])
+
+        setFiles([])
 
         handleClose();
     }
@@ -657,7 +646,7 @@ export default function CreateOrder() {
     // custom product model
     function CustomProduct() {
 
-        useEffect(() => {
+        useMemo(() => {
             getCUS();
 
         }, [open])
@@ -1111,10 +1100,10 @@ export default function CreateOrder() {
                                                     {catalogs.address.map(
                                                         (option) =>
                                                             <MenuItem
-                                                                key={option.shipping}
-                                                                value={option.shipping}
+                                                                key={option.address}
+                                                                value={option.address}
                                                             >
-                                                                {option.shipping}
+                                                                {option.address}
                                                             </MenuItem>
                                                     )}
                                                     <MenuItem key={"none"} value={undefined}>
@@ -1177,27 +1166,22 @@ export default function CreateOrder() {
                                     <InputLabel sx={{ mb: 2 }} id="demo-multiple-checkbox-label">
                                         Select Product
                                     </InputLabel>
-                                    <Select
-                                        multiple
+
+                                    <Autocomplete
                                         sx={{ mb: 2 }}
-                                        fullWidth
-                                        value={data.product_array}
+                                        disablePortal
                                         size='small'
-                                        name="product_array"
-                                        onChange={handelData}
-                                        renderValue={(selected) => selected.join(", ")}
-                                    >
-                                        {catalogs.products.map((option) => (
-                                            <MenuItem key={option._id} value={option.SKU}>
-                                                <Checkbox
-                                                    checked={
-                                                        data.product_array.indexOf(option.SKU) > -1
-                                                    }
-                                                />
-                                                <ListItemText primary={option.SKU} />
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
+                                        fullWidth
+                                        multiple
+                                        autoHighlight
+                                        id="combo-box-demo"
+                                        options={catalogs.product.map((row) => { return row.SKU })}
+                                        renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
+                                            value={data.product_array || ''}
+                                            {...params}
+                                            label="Product SKU" />}
+                                        onChange={(e, newMember) => setData(old => ({ ...old, product_array: newMember }))}
+                                    />
                                     <div style={
                                         {
                                             display: 'flex',
