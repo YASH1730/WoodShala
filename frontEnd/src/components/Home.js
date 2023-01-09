@@ -187,7 +187,7 @@ const Home = (props) => {
                       <ListItemText primary="Merge Product" />
                     </ListItem >
 
-                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/variation'); }}>
+                    {/* <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/variation'); }}>
                       <ListItemAvatar>
                         <Avatar
                           sx={{
@@ -201,7 +201,7 @@ const Home = (props) => {
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText primary="Variation" />
-                    </ListItem >
+                    </ListItem > */}
                   </List>
                 </Collapse>
 

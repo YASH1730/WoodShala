@@ -6,12 +6,16 @@ import {
   Grid,
   Button,
   IconButton,
-  MenuItem
+  MenuItem,
+  Tooltip
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
+// import ControlPointDuplicateIcon from '@mui/icons-material/ControlPointDuplicate';
+import question from "../../../assets/img/question.svg";
+import DifferenceIcon from '@mui/icons-material/Difference';
 import {
   getListProduct,
   categoryList,
@@ -139,7 +143,7 @@ export default function Products(props) {
       headerName: "Featured Image",
       width: 160,
       align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+      renderCell: (params) => <div className="categoryImage" > <img src={params.formattedValue || question} alt='featured' /></div>,
 
     },
     {
@@ -147,7 +151,7 @@ export default function Products(props) {
       headerName: "Specification Image",
       width: 160,
       align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
 
     },
     {
@@ -155,7 +159,7 @@ export default function Products(props) {
       headerName: "Mannequin Image",
       width: 160,
       align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
 
     },
     {
@@ -180,40 +184,55 @@ export default function Products(props) {
     {
       field: "action",
       headerName: "Actions",
-      width: 200,
+      width: 250,
       renderCell: (params) =>
-        <div>
+        <Box sx={{ display: 'flex', gap: '5px' }}>
 
-          <IconButton onClick={() => {
+          <Tooltip title="Update">
 
-            //console.log(params)
+            <IconButton onClick={() => {
 
-            dispatch(setForm({
-              state: true,
-              formType: 'update_product',
-              payload: params
-            }))
+              //console.log(params)
 
-          }} aria-label="update"  >
-            <CreateIcon />
-          </IconButton>
-          <IconButton onClick={() => {
+              dispatch(setForm({
+                state: true,
+                formType: 'update_product',
+                payload: params
+              }))
 
-            console.log(params)
-            props.history(`/productDetails/${params.row.SKU}`)
+            }} aria-label="update"  >
+              <CreateIcon />
+            </IconButton>
+          </Tooltip>
 
-            // dispatch({type : OpenBox, payload :{
-            //       state : true,
-            //       formType : 'update_product',
-            //       payload : params,
-            //       row : Row,
-            //       setRow : //setRows
-            //     }}) 
+          <Tooltip title="View">
 
-          }} aria-label="update"  >
-            <RemoveRedEyeIcon />
-          </IconButton>
+            <IconButton onClick={() => {
 
+              console.log(params)
+              props.history(`/productDetails/${params.row.SKU}`)
+
+
+            }} aria-label="update"  >
+              <RemoveRedEyeIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Create Variations">
+            <IconButton onClick={() => {
+
+              dispatch(setForm({
+                state: true,
+                formType: 'variation',
+                payload: params,
+                setRow: setPageState
+              }))
+
+            }}>
+
+              <DifferenceIcon />
+            </IconButton>
+          </Tooltip>
           {/* <IconButton onClick={() => { deleteProduct(params.formattedValue._id).then((res)=>{
                  //setRows(Row.filter((set)=>{
                   return  set.action._id !== params.formattedValue._id  ;
@@ -229,7 +248,7 @@ export default function Products(props) {
               <DeleteIcon />
         </IconButton> */}
 
-        </div>,
+        </Box>,
     }
 
   ];

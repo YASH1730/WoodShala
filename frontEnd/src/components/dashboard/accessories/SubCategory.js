@@ -45,6 +45,11 @@ export default function SubCategory() {
             category_name: row.category_name,
             sub_category_name: row.sub_category_name,
             sub_category_status: row.sub_category_status,
+            seo_title: row.seo_title,
+            seo_description: row.seo_description,
+            seo_keyword: row.seo_keyword,
+            product_description: row.product_description,
+
             action: row._id
           })
         }))

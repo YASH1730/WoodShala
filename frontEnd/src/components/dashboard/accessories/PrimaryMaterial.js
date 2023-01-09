@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux'
 import { setAlert, setForm } from "../../../store/action/action";
 import { getPrimaryMaterial, changePrimaryMaterialStatus } from '../../../services/service'
 import '../../../assets/custom/css/category.css'
+import question from "../../../assets/img/question.svg";
 
 import {
   DataGrid,
@@ -77,7 +78,7 @@ export default function PrimaryMaterial() {
       field: "primaryMaterial_image",
       headerName: "Material Image",
       width: 200,
-      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='material' /> : "Image Not Give"}</div>,
+      renderCell: (params) => <div className="categoryImage" >{<img src={params.formattedValue !== undefined ? params.formattedValue : question} alt='category' />}</div>,
 
     },
     {

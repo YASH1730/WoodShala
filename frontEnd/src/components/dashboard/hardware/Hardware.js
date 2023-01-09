@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
+import question from "../../../assets/img/question.svg";
+
 import AddIcon from "@mui/icons-material/Add";
 import { getHardware, changeHardwareStatus, deleteHardware } from '../../../services/service'
 import '../../../assets/custom/css/category.css'
@@ -103,7 +105,7 @@ export default function Hardware() {
       align: 'center',
       headerName: 'Image',
       width: 150,
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue[0]} alt='Hardware' /></div>,
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue[0] !== 'undefined' ? params.formattedValue : question} alt='Hardware' /></div>,
     },
     {
       field: "status",

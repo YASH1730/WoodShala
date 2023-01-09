@@ -274,6 +274,12 @@ export default function Action() {
             display.data.status = true;
             response = await dropDraft(display.data)
             if (response.status === 200) {
+              setRows(Row.map(item => {
+                if (item.DID === display.data.DID) {
+                  item.status = 'Approved';
+                }
+                return item
+              }))
               dispatch(setAlert({
                 open: true,
                 variant: "success",

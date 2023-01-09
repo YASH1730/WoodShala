@@ -7,6 +7,9 @@ import {
   IconButton, Switch
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
+import question from "../../../assets/img/question.svg";
+
+
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import { categoryList, statusCategory } from '../../../services/service'
@@ -49,6 +52,10 @@ export default function Category() {
             category_image: row.category_image,
             category_name: row.category_name,
             category_status: row.category_status,
+            seo_title: row.seo_title,
+            seo_description: row.seo_description,
+            seo_keyword: row.seo_keyword,
+            product_description: row.product_description,
             action: row._id
           })
         }))
@@ -70,7 +77,7 @@ export default function Category() {
       align: 'center',
       headerName: 'Image',
       width: 200,
-      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='category' /> : "Image Not Give"}</div>,
+      renderCell: (params) => <div className="categoryImage" >{<img src={params.formattedValue !== 'undefined' ? params.formattedValue : question} alt='category' />}</div>,
     },
     {
       field: "category_name",

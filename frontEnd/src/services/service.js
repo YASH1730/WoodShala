@@ -835,8 +835,8 @@ export const addMergeProduct = async (data) => {
 
 // for listing the MergeProducts
 
-export const getListMergeProduct = async () => {
-  return await axios.get(`${API}/getListMergeProduct`, {
+export const getListMergeProduct = async (data) => {
+  return await axios.get(`${API}/getListMergeProduct?filter=${JSON.stringify(data)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
     },
@@ -1042,40 +1042,49 @@ export const totalEntries = async (data) => {
 };
 
 // update stock 
-// export const updateStock = async (data) => {
-//   return await axios.patch(`${API}/updateStock`,data, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
-//     },
-//   });
-// };
+export const updateStock = async (data) => {
+  return await axios.patch(`${API}/updateStock`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
 
-// // list stock 
-// export const listStock = async () => {
-//   return await axios.get(`${API}/listStock`, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
-//     },
-//   });
-// };
+// list stock 
+export const listStock = async () => {
+  return await axios.get(`${API}/listStock`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
 
-// // list stock 
-// export const preview = async (data) => {
-//   return await axios.get(`${API}/preview?SKU=${data}`, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
-//     },
-//   });
-// };
+// list stock 
+export const preview = async (data) => {
+  return await axios.get(`${API}/preview?SKU=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
 
-// // delete stock 
-// export const deleteStock = async (data) => {
-//   return await axios.delete(`${API}/deleteStock?_id=${data}`, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
-//     },
-//   });
-// };
+// delete stock 
+export const deleteStock = async (data) => {
+  return await axios.delete(`${API}/deleteStock?_id=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
+
+//  getStockSKU getting stocked SKUs
+export const getStockSKU = async (data) => {
+  return await axios.get(`${API}/getStockSKU?search=${data.search}&warehouse=${data.warehouse}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+    },
+  });
+};
 
 // ================== CURD for Hardware ==========================
 

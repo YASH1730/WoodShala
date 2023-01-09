@@ -5,22 +5,22 @@ import {
   Grid,
   InputAdornment,
   IconButton,
-  Button,Box
+  Button, Box
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { listCustomer, deleteCustomer  } from "../../../services/service";
+import { listCustomer, deleteCustomer } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
 import {
   DataGrid
 } from "@mui/x-data-grid";
 
-import {useDispatch} from "react-redux";
-import {setAlert,setForm} from "../../../store/action/action";
+import { useDispatch } from "react-redux";
+import { setAlert, setForm } from "../../../store/action/action";
 
-
+import question from '../../../assets/img/question.svg'
 
 
 // import Pagination from "@mui/material/Pagination";
@@ -45,11 +45,11 @@ export default function Customer() {
   const [search, setSearch] = useState({
     email: undefined,
     CID: undefined,
-    date : ''
-    
+    date: ''
+
   });
 
-const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   const [Row, setRows] = useState([]);
   const [pageSize, setPageSize] = useState(50);
@@ -75,16 +75,16 @@ const dispatch = useDispatch();
           final.map((row, index) => {
             return {
               id: index + 1,
-              CID : row.CID ,
-              register_time : row.register_time ,
-              profile_image : row.profile_image ,
-              username : row.username ,
-              mobile : row.mobile ,
-              email : row.email ,
-              password : row.password ,
-              city : row.city ,
-              state : row.state ,
-              shipping : row.shipping ,
+              CID: row.CID,
+              register_time: row.register_time,
+              profile_image: row.profile_image,
+              username: row.username,
+              mobile: row.mobile,
+              email: row.email,
+              password: row.password,
+              city: row.city,
+              state: row.state,
+              shipping: row.shipping,
               action: row,
             };
           })
@@ -108,7 +108,7 @@ const dispatch = useDispatch();
       align: 'center',
       headerName: 'Image',
       width: 200,
-      renderCell: (params) => <div className="categoryImage" >{params.formattedValue !== "undefined" ? <img src={params.formattedValue} alt='profile_image' /> : "Image Not Give"}</div>,
+      renderCell: (params) => <div className="categoryImage" >{<img src={params.formattedValue || question} alt='profile_image' />}</div>,
     },
     {
       field: "CID",
@@ -159,19 +159,22 @@ const dispatch = useDispatch();
           >
             <CreateIcon />
           </IconButton> */}
-          <IconButton onClick={() => { deleteCustomer(params.formattedValue).then((res)=>{
+          <IconButton onClick={() => {
+            deleteCustomer(params.formattedValue).then((res) => {
 
-          setRows(Row.filter((set)=>{ return set.action._id !== params.formattedValue._id
-          }))
-         dispatch(setAlert({
-            open : true,
-            variant : 'success',
-            message : 'Customer Deleted !!!'
-          }))
-        }) }} aria-label="delete"  >
-          <DeleteIcon />
-        </IconButton>
-        
+              setRows(Row.filter((set) => {
+                return set.action._id !== params.formattedValue._id
+              }))
+              dispatch(setAlert({
+                open: true,
+                variant: 'success',
+                message: 'Customer Deleted !!!'
+              }))
+            })
+          }} aria-label="delete"  >
+            <DeleteIcon />
+          </IconButton>
+
         </div>
       ),
     },
@@ -217,7 +220,7 @@ const dispatch = useDispatch();
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [
@@ -230,20 +233,20 @@ const dispatch = useDispatch();
           }}
           rows={Row}
           columns={columns}
-          
-          
+
+
           disableSelectionOnClick
-        pagination
+          pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25,50, 100]}
+          rowsPerPageOptions={[25, 50, 100]}
         />
       </div>
     );
   }
 
   return (
-    <Box  sx = {{pl:4,pr:4}}>
+    <Box sx={{ pl: 4, pr: 4 }}>
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
         Customer
       </Typography>
@@ -305,7 +308,7 @@ const dispatch = useDispatch();
             onChange={handelSearch}
           />
         </Grid>
-        
+
 
       </Grid>
 
@@ -316,24 +319,24 @@ const dispatch = useDispatch();
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-        <div style= {
+          <div style={
             {
-              display  : 'flex',
-              justifyContent : 'space-between',
+              display: 'flex',
+              justifyContent: 'space-between',
             }
           } >
 
-          <Typography component={'span'} variant="h6"> Customer List </Typography>
-          <Button
-            onClick={() => {
-              dispatch(setForm({ state: true, formType: "add_customer", row : Row,setRow : setRows }));
-            }}
-            color="primary"
-            variant="contained"
-          >
-            <AddIcon />
-           
-          </Button>
+            <Typography component={'span'} variant="h6"> Customer List </Typography>
+            <Button
+              onClick={() => {
+                dispatch(setForm({ state: true, formType: "add_customer", row: Row, setRow: setRows }));
+              }}
+              color="primary"
+              variant="contained"
+            >
+              <AddIcon />
+
+            </Button>
           </div>
           {DataGridView()}
         </Grid>

@@ -13,7 +13,7 @@ import RepeatIcon from '@mui/icons-material/Repeat';
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from '@mui/icons-material/Remove';
 import { setForm } from "../../../store/action/action";
-import { listEntires, totalEntries } from '../../../services/service'
+import { listEntires, totalEntries, listStock } from '../../../services/service'
 import '../../../assets/custom/css/stock.css'
 import '../../../assets/custom/css/action.css'
 
@@ -26,7 +26,7 @@ export default function Inventory() {
 
   const dispatch = useDispatch()
 
-  const [search, setSearch] = useState({ warehouse: '' });
+  const [search, setSearch] = useState('');
   const [columns, setColumns] = useState([])
   const [meta, setMeta] = useState({
     inward: 0,
@@ -39,7 +39,7 @@ export default function Inventory() {
     page: 1,
     pageSize: 50,
     total: 0,
-    entires: 'Inward'
+    entires: 'Stock'
   })
 
 
@@ -76,13 +76,13 @@ export default function Inventory() {
           { field: "id", headerName: "ID", width: 50 },
           { field: "inward_id", headerName: "Inward Id", width: 100 },
           { field: "order_no", headerName: "Order Number", width: 150 },
+          { field: "warehouse", headerName: "Warehouse", width: 100 },
           { field: "driver_name", headerName: "Driver Name", width: 150 },
           { field: "driver_no", headerName: "Driver Number", width: 150 },
           { field: "vehicle_no", headerName: "Vehicle Number", width: 150 },
           { field: "supplier", headerName: "Supplier", width: 150 },
           { field: "product_articles", headerName: "Product", width: 200 },
           { field: "hardware_articles", headerName: "Hardware", width: 200 },
-          { field: "quantity", headerName: "Quantity", width: 100 },
           { field: "date", headerName: "Time", width: 150 },
         ])
         res = await listEntires(pageState)
@@ -92,8 +92,8 @@ export default function Inventory() {
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles,
-                hardware_articles: row.hardware_articles,
+                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
+                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
                 supplier: row.supplier,
                 vehicle_no: row.vehicle_no,
                 driver_name: row.driver_name,
@@ -101,6 +101,7 @@ export default function Inventory() {
                 quantity: row.quantity,
                 order_no: row.order_no,
                 inward_id: row.inward_id,
+                warehouse: row.warehouse,
                 date: row.date
               }
             }),
@@ -132,8 +133,8 @@ export default function Inventory() {
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles,
-                hardware_articles: row.hardware_articles,
+                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
+                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
                 supplier: row.supplier,
                 vehicle_no: row.vehicle_no,
                 driver_name: row.driver_name,
@@ -144,6 +145,35 @@ export default function Inventory() {
                 purpose: row.purpose,
                 reason: row.reason,
                 date: row.date
+              }
+            }),
+            total: res.data.total,
+            isLoading: false
+          }))
+        }
+        break;
+      case 'Stock':
+        setColumns([
+          { field: "id", headerName: "ID", width: 50 },
+          { field: "product_id", headerName: "SKU", width: 150 },
+          { field: "stock", headerName: "Stock (Unit)", width: 150 },
+          { field: "warehouse", headerName: "Wearhouse", width: 200 },
+          { field: "createdAt", headerName: "Created At", width: 200 },
+          { field: "lastupdated", headerName: "Last Updated", width: 200 },
+        ])
+        res = await listEntires(pageState)
+        if (res.status === 200) {
+          console.log(res.data.data)
+          setPageState(lastState => ({
+            ...lastState,
+            data: res.data.data.map((row, index) => {
+              return {
+                id: index + 1,
+                product_id: row.product_id,
+                stock: row.stock,
+                warehouse: row.warehouse,
+                lastupdated: row.updatedAt,
+                createdAt: row.createdAt,
               }
             }),
             total: res.data.total,
@@ -171,8 +201,8 @@ export default function Inventory() {
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles,
-                hardware_articles: row.hardware_articles,
+                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
+                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
                 quantity: row.quantity,
                 order_no: row.order_no,
                 transfer_id: row.transfer_id,
@@ -196,10 +226,7 @@ export default function Inventory() {
 
   const handelSearch = (e) => {
     //console.log(e)
-    setSearch({
-      ...search,
-      [e.target.name]: e.target.value
-    })
+    setSearch(e.target.value)
   }
 
   const warehouse = [
@@ -212,7 +239,7 @@ export default function Inventory() {
       label: "Jodhpur (Rajasthan)",
     },
   ];
-  const Entires = ['Inward', 'Outward', 'Transfer'];
+  const Entires = ['Inward', 'Outward', 'Transfer', 'Stock'];
 
 
   function DataGridView() {
@@ -224,6 +251,15 @@ export default function Inventory() {
           loading={pageState.isLoading}
           rowsPerPageOptions={[5, 10, 30, 50, 70, 100]}
           pagination
+          filterModel={{
+            items: [
+              {
+                columnField: "product_id",
+                operatorValue: "contains",
+                value: `${search}`,
+              },
+            ],
+          }}
           page={pageState.page - 1}
           pageSize={pageState.pageSize}
           paginationMode="server"
@@ -283,29 +319,14 @@ export default function Inventory() {
           <TextField
             fullWidth
             id="outlined-select"
-            select
             size='small'
             name="warehouse"
-            label="Select Warehouse..."
-            value={search.warehouse || ''}
+            label="SKU Search For Stocks"
+            value={search || ''}
             onChange={handelSearch}
             multiple
-          >
-            {warehouse.map(
-              (option) =>
-                <MenuItem
-                  key={option.value}
-                  value={option.value}
-                >
-                  {option.value}
-                </MenuItem>
-            )}
-            <MenuItem key={"none"} value={''}>
-              {"None"}
-            </MenuItem>
-          </TextField>
-        </Grid>
-
+          />
+          </Grid>
 
         <Grid xs={12} md={1.5}>
           <Button
