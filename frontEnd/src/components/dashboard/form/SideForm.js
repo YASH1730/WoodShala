@@ -2037,7 +2037,8 @@ const SideForm = () => {
   const resetAll = () => {
     setProductSKU({
       P_SKU: [],
-      H_SKU: []
+      H_SKU: [],
+      supplier: []
     })
     setImages([]);
     setFeatured([]);
@@ -4009,7 +4010,8 @@ const SideForm = () => {
         } else {
           setProductSKU({
             P_SKU: [],
-            H_SKU: []
+            H_SKU: [],
+            supplier: []
           })
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -4086,7 +4088,8 @@ const SideForm = () => {
         } else {
           setProductSKU({
             P_SKU: [],
-            H_SKU: []
+            H_SKU: [],
+            supplier: []
           })
           form.setRow([...form.row, {
             id: form.row.length + 1,
@@ -4161,7 +4164,8 @@ const SideForm = () => {
         } else {
           setProductSKU({
             P_SKU: [],
-            H_SKU: []
+            H_SKU: [],
+            supplier: []
           })
           form.setRow([...form.row, {
             id: form.row.length + 1,
