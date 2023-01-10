@@ -1785,6 +1785,7 @@ const SideForm = () => {
   };
   // function for handling Customer
   const handleCustomer = (e) => {
+
     e.preventDefault();
 
     const FD = new FormData();
@@ -2004,10 +2005,10 @@ const SideForm = () => {
             if (set.action === form.payload.row.action) {
               set.category_name = e.target.category_name.value;
               Image[0] !== undefined ? set.category_image = `https://admin.woodshala.in/upload/${Image[0].path}` : console.log();
-              set.seo_title = e.target.seo_title;
-              set.seo_description = e.target.seo_description;
-              set.seo_keyword = e.target.seo_keyword;
-              set.product_description = e.target.product_description;
+              set.seo_title = changeData.seo_title;
+              set.seo_description = changeData.seo_description;
+              set.seo_keyword = changeData.seo_keyword;
+              set.product_description = changeData.product_description;
 
             }
             return set;
@@ -2898,7 +2899,7 @@ const SideForm = () => {
         } else {
           form.setRow(old => ({
             ...old, data: [...old.data, {
-              id: form.row.length + 1,
+              id: old.data.length + 1,
               SKU: data.data.response.SKU,
               CVW: data.data.response.CVW,
               product_title: data.data.response.product_title,
@@ -3546,7 +3547,7 @@ const SideForm = () => {
               seo_title: data.data.response.seo_title,
               seo_description: data.data.response.seo_description,
               seo_keyword: data.data.response.seo_keyword,
-              action: data.data.response
+              action: data.data.response._id
             }]
           }))
           handleClose();

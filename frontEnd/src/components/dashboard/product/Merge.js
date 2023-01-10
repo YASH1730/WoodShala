@@ -13,6 +13,7 @@ import CreateIcon from '@mui/icons-material/Create';
 // import AddIcon from "@mui/icons-material/Add";
 import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct } from '../../../services/service'
 import MergeIcon from '@mui/icons-material/Merge';
+import question from '../../../assets/img/question.svg'
 import {
   DataGrid,
 } from '@mui/x-data-grid';
@@ -134,7 +135,7 @@ export default function Products(props) {
       headerName: "Featured Image",
       width: 160,
       align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
 
     },
     {
@@ -142,7 +143,7 @@ export default function Products(props) {
       headerName: "Specification Image",
       width: 160,
       align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue} alt='featured' /></div>,
+      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
 
     },
     {
@@ -185,21 +186,29 @@ export default function Products(props) {
             <CreateIcon />
           </IconButton>
 
-          <IconButton onClick={() => {
-            deleteMergeProduct(params.formattedValue._id).then((res) => {
-              setPageState(old => ({
-                ...old, total: old - 1, data: old.data.filter((set) => {
-                  return set.action._id !== params.formattedValue._id;
-                })
-              }))
+          <IconButton onClick={async () => {
+            let res = await deleteMergeProduct(params.formattedValue)
 
-              dispatch(setAlert({
+            if (res.status !== 200) {
+              return dispatch(setAlert({
                 open: true,
-                variant: 'success',
-                message: "Merged Product deleted successfully !!!"
+                variant: 'error',
+                message: "Please provide valid ID !!!"
 
               }))
-            })
+            }
+            setPageState(old => ({
+              ...old, total: old - 1, data: old.data.filter((set) => {
+                return set.action !== params.formattedValue;
+              })
+            }))
+
+            dispatch(setAlert({
+              open: true,
+              variant: 'success',
+              message: "Merged Product deleted successfully !!!"
+
+            }))
           }} aria-label="delete"  >
             <DeleteIcon />
           </IconButton>
