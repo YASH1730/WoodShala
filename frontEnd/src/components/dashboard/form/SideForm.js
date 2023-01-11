@@ -740,6 +740,9 @@ const SideForm = () => {
     plywood: 'no',
     wheel_qty: 0,
     cradle_bed: 'no',
+    amazon_url: '',
+    flipkart_url: '',
+    jiomart_url: '',
     cradle_bed_depth: 0,
     cradle_bed_height: 0,
     cradle_bed_width: 0,
@@ -1120,6 +1123,10 @@ const SideForm = () => {
           plywood: form.payload.row.action.plywood,
           top_size_breadth: form.payload.row.action.top_size_breadth,
           top_size_length: form.payload.row.action.top_size_length,
+          amazon_url: form.payload.row.action.amazon_url,
+          flipkart_url: form.payload.row.action.flipkart_url,
+          jiomart_url: form.payload.row.action.jiomart_url,
+
         });
 
         setCat(form.payload.row.action.category_id);
@@ -1350,6 +1357,10 @@ const SideForm = () => {
           plywood: form.payload.row.action.plywood,
           top_size_breadth: form.payload.row.action.top_size_breadth,
           top_size_length: form.payload.row.action.top_size_length,
+          amazon_url: form.payload.row.action.amazon_url,
+          flipkart_url: form.payload.row.action.flipkart_url,
+          jiomart_url: form.payload.row.action.jiomart_url,
+
         });
 
         setCat(form.payload.row.action.category_id);
@@ -1668,58 +1679,58 @@ const SideForm = () => {
 
 
 
-  // function for handling category
-  const handleTextile = (e) => {
-    e.preventDefault();
+  // // function for handling category
+  // const handleTextile = (e) => {
+  //   e.preventDefault();
 
-    const FD = new FormData();
+  //   const FD = new FormData();
 
-    FD.append("textile_image", Image[0]);
-    FD.append("textile_name", e.target.textile_name.value);
-    FD.append("textile_status", e.target.textile_status.checked);
+  //   FD.append("textile_image", Image[0]);
+  //   FD.append("textile_name", e.target.textile_name.value);
+  //   FD.append("textile_status", e.target.textile_status.checked);
 
-    // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
+  //   // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
-    const res = addTextile(FD);
+  //   const res = addTextile(FD);
 
-    res
-      .then((data) => {
-        // //console.log(data.status);
+  //   res
+  //     .then((data) => {
+  //       // //console.log(data.status);
 
-        if (data.status === 203) {
-          setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
-        } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            textile_name: data.data.response.textile_name,
-            textile_status: data.data.response.textile_status,
-            textile_image: data.data.response.textile_image,
-            action: data.data.response
-          }])
-          setImages([]);
-          handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
-      });
-  };
+  //       if (data.status === 203) {
+  //         setImages([]);
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "error",
+  //           message: data.data.message,
+  //         }));
+  //       } else {
+  //         form.setRow([...form.row, {
+  //           id: form.row.length + 1,
+  //           textile_name: data.data.response.textile_name,
+  //           textile_status: data.data.response.textile_status,
+  //           textile_image: data.data.response.textile_image,
+  //           action: data.data.response
+  //         }])
+  //         setImages([]);
+  //         handleClose();
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "success",
+  //           message: data.data.message,
+  //         }));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setImages([]);
+  //       dispatch(setAlert({
+  //         open: true,
+  //         variant: "error",
+  //         message: "Something Went Wrong !!!",
+  //       }));
+  //     });
+  // };
 
 
   // function for handling category
@@ -1913,60 +1924,60 @@ const SideForm = () => {
       });
   };
 
-  // function for handling update category
-  const handleUpdateTextile = (e) => {
-    e.preventDefault();
+  // // function for handling update category
+  // const handleUpdateTextile = (e) => {
+  //   e.preventDefault();
 
-    const FD = new FormData();
+  //   const FD = new FormData();
 
-    FD.append("_id", form.payload.row.action);
+  //   FD.append("_id", form.payload.row.action);
 
-    Image[0] !== undefined && FD.append("fabric_image", Image[0]);
+  //   Image[0] !== undefined && FD.append("fabric_image", Image[0]);
 
-    e.target.textile_name.value !== ""
-      ? FD.append("textile_name", e.target.textile_name.value)
-      : console.log();
+  //   e.target.textile_name.value !== ""
+  //     ? FD.append("textile_name", e.target.textile_name.value)
+  //     : console.log();
 
-    const res = editTextile(FD);
-    res
-      .then((data) => {
-        // //console.log(data.status);
+  //   const res = editTextile(FD);
+  //   res
+  //     .then((data) => {
+  //       // //console.log(data.status);
 
-        if (data.status === 203) {
-          setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
-        } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.textile_name = e.target.textile_name.value;
-              set.textile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
+  //       if (data.status === 203) {
+  //         setImages([]);
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "error",
+  //           message: data.data.message,
+  //         }));
+  //       } else {
+  //         form.setRow(form.row.map((set) => {
+  //           if (set.action === form.payload.row.action) {
+  //             set.textile_name = e.target.textile_name.value;
+  //             set.textile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
 
-            }
-            return set;
-          }))
-          setImages([]);
-          handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
-      });
-  };
+  //           }
+  //           return set;
+  //         }))
+  //         setImages([]);
+  //         handleClose();
+  //         dispatch(setAlert({
+  //           open: true,
+  //           variant: "success",
+  //           message: data.data.message,
+  //         }));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // //console.log(err);
+  //       setImages([]);
+  //       dispatch(setAlert({
+  //         open: true,
+  //         variant: "error",
+  //         message: "Something Went Wrong !!!",
+  //       }));
+  //     });
+  // };
 
   // function for handling update category
   const handleUpdateCategory = (e) => {
@@ -2061,6 +2072,9 @@ const SideForm = () => {
       savedImages: [],
       shipping: "",
       product_title: "",
+      amazon_url: '',
+      flipkart_url: '',
+      jiomart_url: '',
       seo_title: "",
       seo_description: "",
       specification_image: '',
@@ -2304,6 +2318,9 @@ const SideForm = () => {
     FD.append("handle", changeData.handle);
     FD.append("door", changeData.door);
     FD.append("fitting", changeData.fitting);
+    FD.append("amazon_url", changeData.amazon_url);
+    FD.append("flipkart_url", changeData.flipkart_url);
+    FD.append("jiomart_url", changeData.jiomart_url);
 
     FD.append("cradle_bed", changeData.cradle_bed);
     if (changeData.cradle_bed) {
@@ -2669,6 +2686,9 @@ const SideForm = () => {
     FD.append("handle", changeData.handle);
     FD.append("door", changeData.door);
     FD.append("fitting", changeData.fitting);
+    FD.append("amazon_url", changeData.amazon_url);
+    FD.append("flipkart_url", changeData.flipkart_url);
+    FD.append("jiomart_url", changeData.jiomart_url);
 
     FD.append("cradle_bed", changeData.cradle_bed);
     if (changeData.cradle_bed) {
@@ -3019,6 +3039,10 @@ const SideForm = () => {
               variations: data.data.response.variations,
               variant_label: data.data.response.variant_label,
               parent_SKU: data.data.response.parent_SKU,
+              amazon_url: data.data.response.amazon_url,
+              flipkart_url: data.data.response.flipkart_url,
+              jiomart_url: data.data.response.jiomart_url,
+
               action: data.data.response
             }]
           }))
@@ -3052,6 +3076,9 @@ const SideForm = () => {
     FD.append("parentProduct", changeData.SKU);
     FD.append("variations", changeData.variations);
     FD.append("variant_label", changeData.variant_label);
+    FD.append("amazon_url", changeData.amazon_url);
+    FD.append("flipkart_url", changeData.flipkart_url);
+    FD.append("jiomart_url", changeData.jiomart_url);
 
 
     files.map((element) => {
@@ -5075,7 +5102,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -5660,7 +5687,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -5854,7 +5881,7 @@ const SideForm = () => {
 
                       {/* Features */}
                       <Step>
-                        <StepLabel>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6101,7 +6128,7 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel>Miscellaneous</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6272,7 +6299,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6529,7 +6556,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6733,7 +6760,7 @@ const SideForm = () => {
 
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel>Extra-Details</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -7336,62 +7363,6 @@ const SideForm = () => {
                             value={changeData.seating_size_height}
                             onChange={handleProductFelids}
                           />
-                          {/* 
-                          <FormControl>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                              Textile
-                            </FormLabel>
-                            <RadioGroup
-                              sx={{ mb : 1 }}
-
-                              aria-labelledby="demo-radio-buttons-group-label"
-                              value={changeData.textile || "no"}
-                              onChange={handleProductFelids}
-                              name="textile"
-                            >
-                              <FormControlLabel
-                                value="yes"
-                                control={<Radio />}
-                                label="Yes"
-                              />
-                              <FormControlLabel
-                                value="no"
-                                control={<Radio />}
-                                label="No"
-                              />
-                            </RadioGroup>
-                          </FormControl>
-
-
-                          {changeData.textile === "yes" && (
-                            <TextField sx={{ mb : 1 }}
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="textile_type"
-                              label="Textile"
-                              value={changeData.textile_type}
-                              onChange={handleProductFelids}
-                              multiple
-                              helperText="Please select your textile."
-                            >
-                              {catalog.textile.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                          )}
-
-                          <br /> */}
-
 
                           <FormControl>
                             <FormLabel id="demo-radio-buttons-group-label">
@@ -7604,6 +7575,51 @@ const SideForm = () => {
                             </>
                           )}
 
+                          <br />
+                          <FormControl sx={{ mb: 1 }}>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Vendor URLs
+                            </FormLabel>
+                          </FormControl>
+
+                          <TextField
+                            type='url'
+                            fullWidth
+                            sx={{ mb: 1 }}
+                            size='small'
+                            name='amazon_url'
+                            label='Amazon'
+                            onChange={handleProductFelids}
+                            value={changeData.amazon_url}
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='flipkart_url'
+                            label='Flipkart'
+                            onChange={handleProductFelids}
+                            value={changeData.flipkart_url}
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='jiomart_url'
+                            label='Jio Mart'
+                            onChange={handleProductFelids}
+                            value={changeData.jiomart_url}
+                          />
+
 
 
                           <Box className="stepAction">
@@ -7676,7 +7692,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8261,7 +8277,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8518,7 +8534,7 @@ const SideForm = () => {
 
                       {/* Features */}
                       <Step>
-                        <StepLabel>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8765,7 +8781,7 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel>Miscellaneous</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8936,7 +8952,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -9193,7 +9209,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -9397,7 +9413,7 @@ const SideForm = () => {
 
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel>Extra-Details</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -10268,6 +10284,50 @@ const SideForm = () => {
                             </>
                           )}
 
+                          <br />
+                          <FormControl sx={{ mb: 1 }}>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Vendor URLs
+                            </FormLabel>
+                          </FormControl>
+                          <TextField
+                            type='url'
+                            fullWidth
+                            sx={{ mb: 1 }}
+                            size='small'
+                            name='amazon_url'
+                            label='Amazon'
+                            onChange={handleProductFelids}
+                            value={changeData.amazon_url || ''}
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='flipkart_url'
+                            label='Flipkart'
+                            onChange={handleProductFelids}
+                            value={changeData.flipkart_url || ''}
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='jiomart_url'
+                            label='Jio Mart'
+                            onChange={handleProductFelids}
+                            value={changeData.jiomart_url || ''}
+                          />
+
 
 
                           <Box className="stepAction">
@@ -10339,7 +10399,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -10937,7 +10997,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11194,7 +11254,7 @@ const SideForm = () => {
 
                       {/* Features */}
                       <Step>
-                        <StepLabel>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11441,7 +11501,7 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel>Miscellaneous</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11612,7 +11672,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11869,7 +11929,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -12073,7 +12133,7 @@ const SideForm = () => {
 
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel>Extra-Details</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -12944,6 +13004,51 @@ const SideForm = () => {
                             </>
                           )}
 
+                          <br />
+                          <FormControl sx={{ mb: 1 }}>
+                            <FormLabel id="demo-radio-buttons-group-label">
+                              Vendor URLs
+                            </FormLabel>
+                          </FormControl>
+
+                          <TextField
+                            type='url'
+                            fullWidth
+                            sx={{ mb: 1 }}
+                            size='small'
+                            name='amazon_url'
+                            label='Amazon'
+                            onChange={handleProductFelids}
+                            value={changeData.amazon_url}
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='flipkart_url'
+                            label='Flipkart'
+                            onChange={handleProductFelids}
+                            value={changeData.flipkart_url}
+                          />
+                          <TextField
+                            type='url'
+                            sx={{ mb: 1 }}
+                            size='small'
+                            fullWidth
+                            placeholder="https://example.com"
+                            pattern="https://.*"
+                            name='jiomart_url'
+                            label='Jio Mart'
+                            onChange={handleProductFelids}
+                            value={changeData.jiomart_url}
+                          />
+
 
 
                           <Box className="stepAction">
@@ -13017,7 +13122,7 @@ const SideForm = () => {
 
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13311,7 +13416,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13487,7 +13592,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13713,7 +13818,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13926,7 +14031,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14226,7 +14331,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14483,7 +14588,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14709,7 +14814,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14888,9 +14993,6 @@ const SideForm = () => {
             )}
 
             {/* update merge Products Ends */}
-
-
-
 
             {/*  add Category */}
 
@@ -16916,7 +17018,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17119,7 +17221,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17176,7 +17278,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17465,7 +17567,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17668,7 +17770,7 @@ const SideForm = () => {
 
                       {/* Extra details */}
                       <Step>
-                        <StepLabel>Extra Details</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Extra Details</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17791,7 +17893,7 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel>Specifications</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17994,7 +18096,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel>Images</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18051,7 +18153,7 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel>Inventory & Shipping</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18341,7 +18443,7 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel>SEO</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18544,7 +18646,7 @@ const SideForm = () => {
 
                       {/* Extra details */}
                       <Step>
-                        <StepLabel>Extra Details</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Extra Details</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
