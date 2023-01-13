@@ -81,8 +81,9 @@
 
 .fields {
     display: flex;
-    row-gap: 2px;
     flex-direction: column;
+    justify-content: center;
+    gap: 15px !important;
 }
 
 .imageCross {
