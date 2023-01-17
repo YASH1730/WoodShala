@@ -4,39 +4,23 @@ import {
   TextField,
   Grid,
   Button,
-  IconButton,Switch
+  IconButton, Switch
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
-import { OpenBox, Notify } from "../../store/Types";
-import {Store } from "../../store/Context";
-import { getPolish,changePolishStatus } from '../../services/service'
-import '../../assets/custom/css/category.css'
+
+import { getPolish, changePolishStatus } from '../../../services/service'
+import '../../../assets/custom/css/category.css'
+
+// Redux
+import { useDispatch } from 'react-redux'
+import { setAlert, setForm } from '../../../store/action/action'
 
 import {
   DataGrid,
-// gridPageCountSelector,
-  // gridPageSelector,
-  // useGridApiContext,
-  // useGridSelector,
 } from '@mui/x-data-grid';
-// import Pagination from '@mui/material/Pagination';
 
-// function CustomPagination() {
-//   const apiRef = useGridApiContext();
-//   const page = useGridSelector(apiRef, gridPageSelector);
-//   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-//   return (
-//     <Pagination
-//       color="primary"
-//       count={pageCount}
-//       page={page + 1}
-//       onChange={(event, value) => apiRef.current.setPage(value - 1)}
-//     />
-//   );
-// }
 
 
 
@@ -44,10 +28,10 @@ import {
 export default function Polish() {
 
   const [search, setSearch] = useState("");
-  const [check,setCheck] = useState([])
+  const [check, setCheck] = useState([])
   const [pageSize, setPageSize] = useState(50);
 
-const {dispatch} = Store(); 
+  const dispatch = useDispatch();
 
   const [Row, setRows] = useState([])
   // function for get cetegory list
@@ -55,17 +39,21 @@ const {dispatch} = Store();
   useEffect(() => {
     getPolish()
       .then((data) => {
-        setCheck(data.data.map((row,index)=>{
+        setCheck(data.data.map((row, index) => {
           return row.polish_status
         }))
 
-        setRows(data.data.map((row,index) => {
+        setRows(data.data.map((row, index) => {
 
           return ({
-            id: index+1,
+            id: index + 1,
             polish_name: row.polish_name,
-            polish_status: row.polish_status,
-            action: row._id
+            polish_type: row.polish_type,
+            polish_finish: row.polish_finish,
+            level: row.level,
+            lock: row.lock,
+            price: row.price,
+            action: row
           })
         }))
       })
@@ -87,31 +75,52 @@ const {dispatch} = Store();
       width: 200,
     },
     {
-      field: "polish_status",
-      headerName: "Polish Status",
-      width: 200,
-      renderCell: (params) => <Switch onChange ={handleSwitch} name = {`${params.row.action+' '+(params.row.id-1)}`}   checked = {check[params.row.id-1]}></Switch> ,
-
-
+      field: "polish_type",
+      headerName: "Type",
+      width: 150,
     },
+    {
+      field: "polish_finish",
+      headerName: "Finishing",
+      width: 150,
+    },
+    {
+      field: "price",
+      headerName: "Price",
+      type: 'number',
+      width: 100,
+    },
+    {
+      field: "lock",
+      headerName: "Lock",
+      width: 100,
+    },
+    // {
+    //   field: "polish_status",
+    //   headerName: "Polish Status",
+    //   width: 200,
+    //   renderCell: (params) => <Switch onChange={handleSwitch} name={`${params.row.action + ' ' + (params.row.id - 1)}`} checked={check[params.row.id - 1]}></Switch>,
+
+
+    // },
     {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) => 
-      <div className="categoryImage" >
-        <IconButton onClick={() => { 
-         dispatch({type : OpenBox,payload : {
-            state : true,
-            formType : 'update_polish',
-            payload : params,
-            row : Row,
-            setRow : setRows,
-          } }) 
-        }} aria-label="delete"  >
-          <CreateIcon />
-        </IconButton>
-        {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
+      renderCell: (params) =>
+        <div className="categoryImage" >
+          <IconButton onClick={() => {
+            dispatch(setForm({
+              state: true,
+              formType: 'update_polish',
+              payload: params,
+              row: Row,
+              setRow: setRows,
+            }))
+          }} aria-label="delete"  >
+            <CreateIcon />
+          </IconButton>
+          {/* <IconButton onClick={() => { deleteCategory(params.formattedValue).then((res)=>{
           dispatch({type : Notify,payload : {
             open : true,
             variant : 'success',
@@ -121,53 +130,53 @@ const {dispatch} = Store();
           <DeleteIcon />
         </IconButton>
          */}
-      </div>,
+        </div>,
     }
 
   ];
 
 
-  const handleSwitch = (e)=>{
+  const handleSwitch = (e) => {
     const id = e.target.name.split(' ')
 
     const FD = new FormData()
 
-    FD.append('_id',id[0])
-    FD.append('polish_status',e.target.checked)
+    FD.append('_id', id[0])
+    FD.append('polish_status', e.target.checked)
 
     const res = changePolishStatus(FD);
 
-    res.then((data)=>{
-      setCheck(check.map((row,index)=>{
+    res.then((data) => {
+      setCheck(check.map((row, index) => {
         // //console.log(parseInt(id[1]) === index)
         if (parseInt(id[1]) === index)
-        return !row
-        else 
-        return row
+          return !row
+        else
+          return row
       }))
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'success',
-        message : " Polish Status Updated Successfully !!!"
-  
-      } })
+      dispatch(setAlert({
+        open: true,
+        variant: 'success',
+        message: " Polish Status Updated Successfully !!!"
+
+      }))
     })
-    .catch((err)=>{
-      //console.log(err)
-      dispatch({type : Notify,payload : {
-        open : true,
-        variant : 'error',
-        message : "Something Went Wrong !!!"
-  
-      } })
-    })
+      .catch((err) => {
+        //console.log(err)
+        dispatch(setAlert({
+          open: true,
+          variant: 'error',
+          message: "Something Went Wrong !!!"
 
-    
-  
+        }))
+      })
 
-  } 
 
-  const handelSearch = (e)=>{
+
+
+  }
+
+  const handelSearch = (e) => {
     //console.log(e.target.value)
     setSearch(e.target.value)
   }
@@ -175,21 +184,21 @@ const {dispatch} = Store();
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [{ columnField: 'polish_name', operatorValue: 'contains', value: `${search}` }],
           }}
           rows={Row}
           columns={columns}
-          
-          
+
+
           disableSelectionOnClick
-        pagination
+          pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25,50, 100]}
-          
+          rowsPerPageOptions={[25, 50, 100]}
+
         />
       </div>
     );
@@ -199,7 +208,7 @@ const {dispatch} = Store();
   return (
     <>
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-      Polish
+        Polish
       </Typography>
 
       <br></br>
@@ -232,7 +241,7 @@ const {dispatch} = Store();
         <Grid xs={12} md={2.8}>
           <Button
             onClick={() => {
-             dispatch({type : OpenBox,payload : { state: true, formType: "addPolish", row : Row,setRow : setRows }});
+              dispatch(setForm({ state: true, formType: "addPolish", row: Row, setRow: setRows }));
             }}
             sx={{ width: "100%" }}
             color="primary"

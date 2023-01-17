@@ -74,7 +74,9 @@ import {
   addOutward,
   uploadImage,
   addTransfer,
-  getStockSKU
+  getStockSKU,
+  addPolish,
+  editPolish
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -141,7 +143,7 @@ const SideForm = () => {
   const [featured, setFeatured] = useState([]);
 
   // image link 
-  const imageLink = 'https://woodshala.in/upload/'
+  const imageLink = 'https://admin.woodshala.in/upload/'
 
   const confirm = useConfirm();
 
@@ -158,7 +160,7 @@ const SideForm = () => {
 
   // single images
   const [Image, setImages] = useState([]);
-  // const [Mannequin, setMannequin] = useState([]);
+  const [Indoor, setIndoor] = useState([]);
 
   // modal state
   const [open, setOpen] = useState(false);
@@ -197,9 +199,7 @@ const SideForm = () => {
       </div>
     ));
 
-    useEffect(() => {
-      return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, []);
+
 
     return (
       <section className="container dorpContainer">
@@ -344,10 +344,6 @@ const SideForm = () => {
       </div>
     ));
 
-    useEffect(() => {
-      // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-      return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, []);
 
     return (
       <section className="container dorpContainer">
@@ -359,54 +355,105 @@ const SideForm = () => {
       </section>
     );
   }
-  // function MannequinPreviews(props) {
-  //   const { getRootProps, getInputProps } = useDropzone({
-  //     accept: "image/*",
-  //     multiple: false,
-  //     onDrop: (acceptedFiles) => {
-  //       setMannequin(
-  //         acceptedFiles.map((file) =>
-  //           Object.assign(file, {
-  //             preview: URL.createObjectURL(file),
-  //           })
-  //         )
-  //       );
-  //     },
-  //   });
 
-  //   const thumbs = Mannequin.map((file) => (
-  //     <div style={thumb} key={file.name}>
-  //       <div style={thumbInner}>
-  //         <img
-  //           src={file.preview}
-  //           style={img}
-  //           alt="Images"
-  //           // Revoke data uri after image is loaded
-  //           onLoad={() => {
-  //             URL.revokeObjectURL(file.preview);
-  //           }}
-  //         />
-  //       </div>
-  //     </div>
-  //   ));
+  function IndoorPreviews(props) {
+    const [acceptedFileItems, setAcceptedFileItems] = useState([])
+    const [fileRejectionItems, setFileRejectionItems] = useState([])
 
-  //   useEffect(() => {
-  //     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-  //     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  //   }, []);
+    const { getRootProps, getInputProps } = useDropzone({
+      accept: "image/*",
+      multiple: true,
+      onDrop: (acceptedFiles) => {
+        Dimension(acceptedFiles, setIndoor)
+      }
+    });
 
-  //   return (
-  //     <section className="container dorpContainer">
-  //       <div {...getRootProps({ className: "dropzone" })}>
-  //         <input {...getInputProps()} />
-  //         <p>{props.text}</p>
-  //       </div>
-  //       <aside style={thumbsContainer}>{thumbs}</aside>
-  //     </section>
-  //   );
-  // }
+
+    // for check the file state in done or
+    useMemo(() => {
+
+      if (Indoor) {
+        // REJECTED FILES
+        setFileRejectionItems(Indoor.map((file) => {
+          return !file.validate ? <div style={thumb} key={file.name}>
+            <div style={thumbInner}>
+              {/* {console.log(file.validate)} */}
+
+              <img
+                src={URL.createObjectURL(file)}
+                style={img}
+                alt="Images"
+                // Revoke data uri after image is loaded
+                onLoad={() => {
+                  URL.revokeObjectURL(file.preview);
+                }}
+              />
+            </div>
+          </div> : null;
+        }
+        ));
+
+        // accepted
+        setAcceptedFileItems(Indoor.map(
+          (file, index) => {
+            return file.validate ? <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div> : null;
+          }
+        ))
+      }
+    }
+
+      , [Indoor]);
+
+
+    useEffect(() => {
+
+      // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+      return () => Indoor.forEach((file) => URL.revokeObjectURL(file.preview));
+    }, []);
+
+    return (
+      <section className="container dorpContainer">
+        <div {...getRootProps({ className: "dropzone" })}>
+          <input {...getInputProps()} />
+          <p>{props.text}</p>
+        </div>
+        <aside >
+          <h4>Accepted files</h4>
+          <aside style={thumbsContainer}>{acceptedFileItems}</aside>
+          <h4>Rejected files</h4>
+          <aside style={thumbsContainer}>{fileRejectionItems}</aside>
+        </aside>
+      </section>
+    );
+  }
+
+
 
   // static catalog
+
+  const polishCatalog = [
+    'Stain Finish',
+    'Distressed Polish',
+    'Antique Touch',
+    'Duco Paint',
+    'Natural Finish',
+    'Oil Massge'
+  ]
+
   const taxRateCatalog = [
     {
       value: "18",
@@ -594,6 +641,18 @@ const SideForm = () => {
   const purpose = [
     'Manufacturing', 'Repairing', 'Polish', 'Packing', 'Shipping', 'Others'
   ]
+  const level = [
+    'Level 1',
+    'Level 2',
+    'Level 3',
+    'Level 4',
+    'Level 5',
+    'Level 6',
+    'Level 7',
+    'Level 8',
+    'Level 9',
+    'Level 10',
+  ]
   const hardware_polish = [
     'Matt', 'Glossy', 'Semi Glossy'
   ]
@@ -769,6 +828,13 @@ const SideForm = () => {
     wood_weight: 0,
     metal_weight: 0,
     package_weight: 0,
+    polish_name: '',
+    polish_type: 'None',
+    polish_finish: 'None',
+    level: 'None',
+    lock: false,
+    price: 0,
+    indoorSavedImage: [],
   });
 
   // function for generating Merged product  ID
@@ -885,7 +951,9 @@ const SideForm = () => {
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
-          setData({ ...changeData, category_name: data.data.filter((row) => { return row.category_name === 'Hardware' })[0]._id })
+          let hardware = data.data.filter((row) => { return row.category_name === 'Hardware' })
+
+          setData({ ...changeData, category_name: hardware.length > 0 ? hardware[0]._id : 'None' })
           return setCategory(data.data);
         });
 
@@ -958,6 +1026,7 @@ const SideForm = () => {
         getHardwareDropdown().then((data) => {
           if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
         })
+
 
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1503,8 +1572,24 @@ const SideForm = () => {
       case 'add_supplier':
         getSID();
         break;
+      case 'update_polish':
+        // console.log(form.payload.row)
+        setData({
+          ...changeData,
+          _id: form.payload.row.action._id,
+          polish_name: form.payload.row.action.polish_name,
+          polish_type: form.payload.row.action.polish_type,
+          level: form.payload.row.action.level,
+          polish_finish: form.payload.row.action.polish_finish,
+          outDoor_image: form.payload.row.action.outDoor_image,
+          savedImages: form.payload.row.action.outDoor_image,
+          inDoor_image: form.payload.row.action.inDoor_image,
+          indoorSavedImage: form.payload.row.action.inDoor_image,
+          lock: form.payload.row.action.lock,
+          price: form.payload.row.action.price,
+        })
+        break;
       default:
-      // //console.log("");
     }
   }, [form.formType, form.state]);
 
@@ -1642,7 +1727,8 @@ const SideForm = () => {
     "continue_selling",
     "ceramic_drawer_included",
     "ceramic_tiles_included",
-    "status"
+    "status",
+    'lock'
   ];
 
   //  for product felids
@@ -1673,59 +1759,6 @@ const SideForm = () => {
   };
 
 
-
-  // // function for handling category
-  // const handleTextile = (e) => {
-  //   e.preventDefault();
-
-  //   const FD = new FormData();
-
-  //   FD.append("textile_image", Image[0]);
-  //   FD.append("textile_name", e.target.textile_name.value);
-  //   FD.append("textile_status", e.target.textile_status.checked);
-
-  //   // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
-
-  //   const res = addTextile(FD);
-
-  //   res
-  //     .then((data) => {
-  //       // //console.log(data.status);
-
-  //       if (data.status === 203) {
-  //         setImages([]);
-  //         dispatch(setAlert({
-  //           open: true,
-  //           variant: "error",
-  //           message: data.data.message,
-  //         }));
-  //       } else {
-  //         form.setRow([...form.row, {
-  //           id: form.row.length + 1,
-  //           textile_name: data.data.response.textile_name,
-  //           textile_status: data.data.response.textile_status,
-  //           textile_image: data.data.response.textile_image,
-  //           action: data.data.response
-  //         }])
-  //         setImages([]);
-  //         handleClose();
-  //         dispatch(setAlert({
-  //           open: true,
-  //           variant: "success",
-  //           message: data.data.message,
-  //         }));
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setImages([]);
-  //       dispatch(setAlert({
-  //         open: true,
-  //         variant: "error",
-  //         message: "Something Went Wrong !!!",
-  //       }));
-  //     });
-  // };
 
 
   // function for handling category
@@ -1919,60 +1952,6 @@ const SideForm = () => {
       });
   };
 
-  // // function for handling update category
-  // const handleUpdateTextile = (e) => {
-  //   e.preventDefault();
-
-  //   const FD = new FormData();
-
-  //   FD.append("_id", form.payload.row.action);
-
-  //   Image[0] !== undefined && FD.append("fabric_image", Image[0]);
-
-  //   e.target.textile_name.value !== ""
-  //     ? FD.append("textile_name", e.target.textile_name.value)
-  //     : console.log();
-
-  //   const res = editTextile(FD);
-  //   res
-  //     .then((data) => {
-  //       // //console.log(data.status);
-
-  //       if (data.status === 203) {
-  //         setImages([]);
-  //         dispatch(setAlert({
-  //           open: true,
-  //           variant: "error",
-  //           message: data.data.message,
-  //         }));
-  //       } else {
-  //         form.setRow(form.row.map((set) => {
-  //           if (set.action === form.payload.row.action) {
-  //             set.textile_name = e.target.textile_name.value;
-  //             set.textile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
-
-  //           }
-  //           return set;
-  //         }))
-  //         setImages([]);
-  //         handleClose();
-  //         dispatch(setAlert({
-  //           open: true,
-  //           variant: "success",
-  //           message: data.data.message,
-  //         }));
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // //console.log(err);
-  //       setImages([]);
-  //       dispatch(setAlert({
-  //         open: true,
-  //         variant: "error",
-  //         message: "Something Went Wrong !!!",
-  //       }));
-  //     });
-  // };
 
   // function for handling update category
   const handleUpdateCategory = (e) => {
@@ -2180,7 +2159,12 @@ const SideForm = () => {
       wood_weight: 0,
       metal_weight: 0,
       package_weight: 0,
-
+      polish_type: 'None',
+      polish_finish: 'None',
+      level: 'None',
+      lock: false,
+      price: 0,
+      indoorSavedImage: []
 
     });
     document.getElementById("myForm").reset();
@@ -4980,6 +4964,140 @@ const SideForm = () => {
       });
   };
 
+  const handlePolish = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    FD.append("polish_name", e.target.polish_name.value);
+    FD.append("polish_type", changeData.polish_type);
+    FD.append("polish_finish", changeData.polish_finish);
+    FD.append("level", changeData.level);
+    FD.append("lock", e.target.lock.checked);
+    FD.append("price", e.target.price.value);
+
+
+    files.map((element) => {
+      if (element.validate) return FD.append("outDoor_image", element);
+    });
+    Indoor.map((element) => {
+      if (element.validate) return FD.append("inDoor_image", element);
+    });
+
+
+    const res = addPolish(FD);
+
+    res
+      .then((data) => {
+        // //console.log(data.status);
+
+        if (data.status === 203) {
+          dispatch(setAlert({
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
+        } else {
+          form.setRow([...form.row, {
+            id: form.row.length + 1,
+            polish_name: data.data.response.polish_name,
+            polish_type: data.data.response.polish_type,
+            polish_finish: data.data.response.polish_finish,
+            outDoor_image: data.data.response.outDoor_image,
+            inDoor_image: data.data.response.inDoor_image,
+            lock: data.data.response.lock,
+            price: data.data.response.price,
+            action: data.data.response
+          }])
+          handleClose();
+          dispatch(setAlert({
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
+        }
+      })
+      .catch((err) => {
+
+        dispatch(setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        }));
+      });
+  };
+  const handleUpdatePolish = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    FD.append('_id', changeData._id);
+
+    FD.append("polish_type", changeData.polish_type);
+    FD.append("polish_finish", changeData.polish_finish);
+    FD.append("level", changeData.level);
+    FD.append("polish_name", changeData.polish_name);
+    FD.append("lock", changeData.lock);
+    FD.append("price", changeData.price);
+    FD.append("savedOutDoor", JSON.stringify(changeData.savedImages));
+    FD.append("savedIndoor", JSON.stringify(changeData.indoorSavedImage));
+
+
+    files.map((element) => {
+      if (element.validate) return FD.append("outDoor_image", element);
+    });
+    Indoor.map((element) => {
+      if (element.validate) return FD.append("inDoor_image", element);
+    });
+
+
+    const res = editPolish(FD);
+
+    res
+      .then((data) => {
+        // //console.log(data.status);
+
+        if (data.status === 203) {
+          dispatch(setAlert({
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          }));
+        } else {
+          form.setRow(form.row.map((set) => {
+
+            if (set.action === form.payload.row.action) {
+              set.polish_name = changeData.polish_name
+              set.polish_type = changeData.polish_type
+              set.polish_finish = changeData.polish_finish
+              set.level = changeData.level
+              set.outDoor_image = changeData.outDoor_image
+              set.inDoor_image = changeData.inDoor_image
+              set.lock = changeData.lock
+              set.price = changeData.price
+            }
+            return set;
+          }))
+          handleClose();
+          dispatch(setAlert({
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          }));
+        }
+      })
+      .catch((err) => {
+        //console.log(err);
+        setImages([]);
+        setIndoor([]);
+        dispatch(setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        }));
+      });
+  };
+
   // load new searchList
   const handleSupplierList = async (e) => {
     const delayDebounceFn = setTimeout(() => {
@@ -5097,7 +5215,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleProduct) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -5426,18 +5544,18 @@ const SideForm = () => {
                             >
                               {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                                  key={option.polish_name}
+                                  value={option.polish_name}
                                 >
                                   <Checkbox
                                     checked={
                                       changeData.polish.indexOf(
-                                        option.SKU
+                                        option.polish_name
                                       ) > -1
                                     }
                                   />
                                   <ListItemText
-                                    primary={option.title}
+                                    primary={option.polish_name}
                                   />
                                 </MenuItem>
                               ))}
@@ -5673,7 +5791,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -7728,7 +7846,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleUpdateProduct) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -8058,18 +8176,18 @@ const SideForm = () => {
                             >
                               {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                                  key={option.polish_name}
+                                  value={option.polish_name}
                                 >
                                   <Checkbox
                                     checked={
                                       changeData.polish.indexOf(
-                                        option.SKU
+                                        option.polish_name
                                       ) > -1
                                     }
                                   />
                                   <ListItemText
-                                    primary={option.title}
+                                    primary={option.polish_name}
                                   />
                                 </MenuItem>
                               ))}
@@ -8305,7 +8423,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -10478,7 +10596,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleVariation) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -11067,7 +11185,7 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
+                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13242,7 +13360,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleMergeProduct) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -14151,7 +14269,7 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateMergeProduct) }} enctype="multipart/form-data"
+                    onSubmit={(e) => { confirmBox(e, handleUpdateMergeProduct) }} encType="multipart/form-data"
                     method="post"
                   >
 
@@ -15146,7 +15264,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleCategory) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -15269,7 +15387,7 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdateCategory) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -15384,7 +15502,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handlePrimaryMaterial) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -15460,7 +15578,7 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdatePrimaryMaterial) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -15527,7 +15645,7 @@ const SideForm = () => {
                     className="form"
                     onSubmit={(e) => { confirmBox(e, handleSupplier) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <TextField
@@ -15645,7 +15763,7 @@ const SideForm = () => {
                     className="form"
                     onSubmit={(e) => { confirmBox(e, handleUpdateSupplier) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <TextField
@@ -15778,7 +15896,7 @@ const SideForm = () => {
                         <form
                           className="form"
                           id="myForm" onSubmit={(e) => { confirmBox(e, handleUpload) }}
-                          enctype="multipart/form-data"
+                          encType="multipart/form-data"
                           method="post"
                         >
                           <FormLabel id="demo-radio-buttons-group-label">
@@ -15815,7 +15933,7 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdateBlog) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <FeaturesPreviews
@@ -15948,7 +16066,7 @@ const SideForm = () => {
                         <form
                           className="form"
                           id="myForm" onSubmit={(e) => { confirmBox(e, handleUpload) }}
-                          enctype="multipart/form-data"
+                          encType="multipart/form-data"
                           method="post"
                         >
                           <FormLabel id="demo-radio-buttons-group-label">
@@ -15985,7 +16103,7 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm" onSubmit={(e) => { confirmBox(e, handleAddBlog) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <FormLabel id="demo-radio-buttons-group-label">
@@ -16099,7 +16217,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleSubCategories) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
@@ -16241,7 +16359,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleUpdateSubCategories) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
@@ -16395,7 +16513,7 @@ const SideForm = () => {
                         <form
                           className="form"
                           id="myForm" onSubmit={(e) => { confirmBox(e, handleAddress) }}
-                          enctype="multipart/form-data"
+                          encType="multipart/form-data"
                           method="post"
                         >
 
@@ -16498,7 +16616,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleCustomer) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -16608,7 +16726,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleUpdateCustomer) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <ImagePreviews
@@ -16739,7 +16857,7 @@ const SideForm = () => {
                   <form
                     className="form" onSubmit={(e) => { confirmBox(e, handleOrder) }}
                     id="myForm"
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <TextField
@@ -16932,187 +17050,7 @@ const SideForm = () => {
               </Grid>
             )}
 
-            {/* update order */}
 
-            {/*  add stock */}
-
-            {/* {form.formType === "addStock" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Add Stock
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Add your product stock and necessary information from
-                      here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleAddStock) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb : 1 }}
-                      fullWidth
-                      id="outlined-select"
-                      select
-                      name="warehouse"
-                      label="Select Warehouse..."
-                      value={changeData.warehouse || ''}
-                      onChange={handleProductFelids}
-                      multiple
-                    >
-                      {warehouse.map(
-                        (option) =>
-                          <MenuItem
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.value}
-                          </MenuItem>
-                      )}
-                      <MenuItem key={"none"} value="None">
-                        {"None"}
-                      </MenuItem>
-                    </TextField>
-
-                    <TextField sx={{ mb : 1 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      name="product_id"
-                      value={changeData.product_id}
-                      onChange={handleProductFelids}
-                      label="SKU"
-                      type="text"
-                      helperText="Please enter your product_id (SKU)"
-                    />
-
-                    <TextField sx={{ mb : 1 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      name="stock"
-                      value={changeData.stock}
-                      onChange={handleProductFelids}
-                      label="Stock Size"
-                      type="Number"
-                      helperText="Please enter your stock size"
-                    />
-
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Add Stock
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )} */}
-            {/* add Stock Ends */}
-
-            {/*  update stock */}
-
-            {/* {form.formType === "update_Stock" && (
-              <Grid container p={5}>
-                <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
-                    Update Stock
-                    <Typography component={'span'}
-                      sx={{ display: "block !important" }}
-                      variant="caption"
-                    >
-                      Update your product stock and necessary information from
-                      here
-                    </Typography>
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={12} mt={5}>
-                  <form
-                    className="form"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateStock) }}
-                    id="myForm"
-                    enctype="multipart/form-data"
-                    method="post"
-                  >
-                    <TextField sx={{ mb : 1 }}
-                      fullWidth
-                      id="outlined-select"
-                      select
-                      disabled
-                      name="warehouse"
-                      label="Select Warehouse..."
-                      value={changeData.warehouse || ''}
-                      multiple
-                    >
-                      {warehouse.map(
-                        (option) =>
-                          <MenuItem
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.value}
-                          </MenuItem>
-                      )}
-                      <MenuItem key={"none"} value="None">
-                        {"None"}
-                      </MenuItem>
-                    </TextField>
-
-                    <TextField sx={{ mb : 1 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      disabled
-                      name="product_id"
-                      value={changeData.product_id}
-                      onChange={handleProductFelids}
-                      label="SKU"
-                      type="text"
-                      helperText="Please enter your product_id (SKU)"
-                    />
-
-                    <TextField sx={{ mb : 1 }}
-                      size="small"
-                      fullWidth
-                      id="outlined-select"
-                      name="stock"
-                      value={changeData.stock}
-                      onChange={handleProductFelids}
-                      label="Stock Size"
-                      type="Number"
-                      helperText="Please enter your stock size"
-                    />
-
-
-
-
-                    <Button
-                      color="primary"
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Update Stock
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            )} */}
-            {/* update Stock Ends */}
 
 
             {/* add Hardware */}
@@ -17136,7 +17074,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleHardware) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -18011,7 +17949,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleUpdateHardware) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
                     <Stepper
@@ -18890,7 +18828,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleInward) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
 
@@ -19090,7 +19028,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleOutward) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
 
@@ -19344,7 +19282,7 @@ const SideForm = () => {
                     className="form"
                     id="myForm"
                     onSubmit={(e) => { confirmBox(e, handleTransfer) }}
-                    enctype="multipart/form-data"
+                    encType="multipart/form-data"
                     method="post"
                   >
 
@@ -19540,6 +19478,512 @@ const SideForm = () => {
             )}
 
             {/* add Transfer Ends */}
+
+            {/*  add Polish Material */}
+
+            {form.formType === "addPolish" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Add Polish
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add your Polish and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form" onSubmit={(e) => { confirmBox(e, handlePolish) }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+
+
+
+                    <TextField sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="polish_name"
+                      label="Polish Name"
+                      type="text"
+                      helperText="Please enter your primary material"
+                    />
+
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Outdoor Images
+                    </FormLabel>
+                    <ProductsPreviews text={'Please Drag and Drop the outdoor image'}> </ProductsPreviews>
+
+                    {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      {
+                        files.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = files;
+                                console.log(">>>>>>", temp, files);
+                                temp.splice(index, 1);
+                                setFiles([...temp])
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Indoor Images
+                    </FormLabel>
+                    <IndoorPreviews text={'Please Drag and Drop the indoor image'}> </IndoorPreviews>
+
+                    {Indoor.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      {
+                        Indoor.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = Indoor;
+                                console.log(">>>>>>", temp, Indoor);
+                                temp.splice(index, 1);
+                                setIndoor([...temp])
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="polish_type"
+                      label="Polish Type"
+                      value={changeData.polish_type || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your polish type."
+                      required
+                    >
+                      {polishCatalog.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+                    </TextField>
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="polish_finish"
+                      label="Polish Finish"
+                      value={changeData.polish_finish || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your polish finish."
+                      required
+                    >
+
+                      <MenuItem
+                        key={'Glossy'}
+                        value={'Glossy'}
+                      >
+                        {'Glossy'}
+                      </MenuItem>
+
+                      <MenuItem
+                        key={'Matt'}
+                        value={'Matt'}
+                      >
+                        {'Matt'}
+                      </MenuItem>
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+
+                    </TextField>
+
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="level"
+                      label="Polish Level"
+                      value={changeData.level || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your polish level."
+                      required
+                    >
+                      {level.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+                    </TextField>
+
+                    <TextField sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="price"
+                      label="Price (per Inch)"
+                      type="number"
+                    />
+
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={changeData.lock}
+                          onChange={handleProductFelids}
+                          name="lock"
+                        />
+                      }
+                      label="Lock Polish"
+                    />
+
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Polish
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add addPolish  Ends */}
+
+            {/*  update Polish Material */}
+
+            {form.formType === "update_polish" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={'span'} variant="h5">
+                    Update Polish
+                    <Typography component={'span'}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Update your Polish and necessary information from here
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdatePolish) }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+
+                    <TextField sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="polish_name"
+                      value={changeData.polish_name || ''}
+                      onChange={handleProductFelids}
+                      label="Polish Name"
+                      type="text"
+                      helperText="Please enter your primary material"
+                    />
+
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Outdoor Images
+                    </FormLabel>
+                    <ProductsPreviews text={'Please Drag and Drop the outdoor image'}> </ProductsPreviews>
+
+                    {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      {
+                        files.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = files;
+                                console.log(">>>>>>", temp, files);
+                                temp.splice(index, 1);
+                                setFiles([...temp])
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+
+                    {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      <FormLabel id="demo-radio-buttons-group-label">
+                        Saved Images
+                      </FormLabel>
+                      {
+                        changeData.savedImages.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = changeData.savedImages;
+                                temp.splice(index, 1);
+                                setData({ ...changeData, savedImages: temp })
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={img} alt='productImage' />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Indoor Images
+                    </FormLabel>
+                    <IndoorPreviews text={'Please Drag and Drop the indoor image'}> </IndoorPreviews>
+
+                    {/* {console.log(Indoor)} */}
+                    {Indoor.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      {
+                        Indoor.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = Indoor;
+                                console.log(">>>>>>", temp, Indoor);
+                                temp.splice(index, 1);
+                                setIndoor([...temp])
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+
+                    {changeData.indoorSavedImage.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
+                      <FormLabel id="demo-radio-buttons-group-label">
+                        Saved Images
+                      </FormLabel>
+                      {
+                        changeData.indoorSavedImage.map((img, index) => {
+                          return <>
+                            <Grid item xs={2} sx={{ position: 'relative' }} >
+                              <CancelIcon onClick={() => {
+                                // this function is for removing the image from savedImage array 
+                                let temp = changeData.indoorSavedImage;
+                                temp.splice(index, 1);
+                                setData({ ...changeData, indoorSavedImage: temp })
+                              }} className='imageCross' color='primary' />
+                              <img style={{ width: '100%' }} src={img} alt='productImage' />
+                            </Grid>
+                          </>
+                        })
+                      }
+                    </Grid>
+                    }
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      id="outlined-select"
+                      value={changeData.polish_type || ''}
+                      onChange={handleProductFelids}
+                      select
+                      name="polish_type"
+                      label="Polish Type"
+                      multiple
+                      helperText="Please select your polish type."
+                      required
+                    >
+                      {polishCatalog.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+                    </TextField>
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="polish_finish"
+                      value={changeData.polish_finish || ''}
+                      onChange={handleProductFelids}
+                      label="Polish Finish"
+                      multiple
+                      helperText="Please select your polish finish."
+                      required
+                    >
+
+                      <MenuItem
+                        key={'Glossy'}
+                        value={'Glossy'}
+                      >
+                        {'Glossy'}
+                      </MenuItem>
+
+                      <MenuItem
+                        key={'Matt'}
+                        value={'Matt'}
+                      >
+                        {'Matt'}
+                      </MenuItem>
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+
+                    </TextField>
+
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="level"
+                      label="Polish Level"
+                      value={changeData.level || ''}
+                      multiple
+                      onChange={handleProductFelids}
+                      helperText="Please select your polish level."
+                      required
+                    >
+                      {level.map(
+                        (option) =>
+                          option && (
+                            <MenuItem
+                              key={option}
+                              value={option}
+                            >
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                      <MenuItem
+                        key={'None'}
+                        value={'None'}
+                      >
+                        {'None'}
+                      </MenuItem>
+                    </TextField>
+
+                    <TextField sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="price"
+                      value={changeData.price || 0}
+                      onChange={handleProductFelids}
+                      label="Price (per Inch)"
+                      type="number"
+                    />
+
+
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={changeData.lock}
+                          onChange={handleProductFelids}
+                          name="lock"
+                        />
+                      }
+                      label="Lock Polish"
+                    />
+
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Update Polish
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* update addPolish  Ends */}
 
           </Box>
         </Backdrop>

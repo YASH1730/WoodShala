@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Typography,
 } from "@mui/material";
@@ -13,7 +13,7 @@ import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBullet
 // import PolicyIcon from '@mui/icons-material/Policy';
 import ForestIcon from "@mui/icons-material/Forest";
 // import FilterListIcon from "@mui/icons-material/FilterList";
-// import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 // import InsertLinkIcon from "@mui/icons-material/InsertLink";
 // import ConstructionIcon from "@mui/icons-material/Construction";
 // import AdjustIcon from "@mui/icons-material/Adjust";
@@ -26,7 +26,7 @@ import Category from "./dashboard/accessories/Category";
 import SubCategory from "./dashboard/accessories/SubCategory";
 import PrimaryMaterial from "./dashboard/accessories/PrimaryMaterial";
 // import SecondaryMaterial from "./dashboard/SecondaryMaterial";
-// import Polish from "./dashboard/Polish";
+import Polish from "./dashboard/accessories/Polish";
 // import Hinge from "./dashboard/Hinge";
 // import Fitting from "./dashboard/Fitting";
 // import Knob from "./dashboard/Knob";
@@ -37,18 +37,18 @@ import PrimaryMaterial from "./dashboard/accessories/PrimaryMaterial";
 // import Policy from "./dashboard/Policy";
 
 const components = [
-Category,
-SubCategory,
-PrimaryMaterial,
-// Polish,
-// Fitting,
-// Hinge,
-// Knob,
-// Door,
-// Handle,
-// Fabric,
-// Textile,
-// Policy
+  Category,
+  SubCategory,
+  PrimaryMaterial,
+  Polish,
+  // Fitting,
+  // Hinge,
+  // Knob,
+  // Door,
+  // Handle,
+  // Fabric,
+  // Textile,
+  // Policy
 ]
 
 function TabPanel(props) {
@@ -90,52 +90,52 @@ function a11yProps(index) {
 
 export default function Admin() {
 
-const [value, setValue] = useState(localStorage.getItem('tab') !== null ? parseInt(localStorage.getItem('tab'))  : 0);
+  const [value, setValue] = useState(localStorage.getItem('tab') !== null ? parseInt(localStorage.getItem('tab')) : 0);
 
-const handleChange = (event, newValue) => {
-  localStorage.setItem('tab',newValue)
-  setValue(newValue);
-};
+  const handleChange = (event, newValue) => {
+    localStorage.setItem('tab', newValue)
+    setValue(newValue);
+  };
 
-function BasicTabs() {
+  function BasicTabs() {
 
 
-  return (
-    <Box  sx={{ width: '100%' }} >
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className = 'tabContainer'>
-         
-        <Tabs   variant="scrollable" value={value} onChange={handleChange} aria-label="basic tabs example">
-           <Tab
-                  wrapped
-                  icon={<FormatListBulletedOutlinedIcon />}
-                  label="Category"
-                  {...a11yProps(0)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ViewCarouselIcon />}
-                  label="Sub Category"
-                  {...a11yProps(1)}
-                />
-                <Tab
-                  wrapped
-                  icon={<ForestIcon />}
-                  label="Material"
-                  {...a11yProps(2)}
-                />
-                {/* <Tab
-                  wrapped
-                  icon={<AutoAwesomeIcon />}
-                  label="Polish"
-                  {...a11yProps(3)}
-                /> */}
-                {/* <Tab
+    return (
+      <Box sx={{ width: '100%' }} >
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className='tabContainer'>
+
+          <Tabs variant="scrollable" value={value} onChange={handleChange} aria-label="basic tabs example">
+            <Tab
+              wrapped
+              icon={<FormatListBulletedOutlinedIcon />}
+              label="Category"
+              {...a11yProps(0)}
+            />
+            <Tab
+              wrapped
+              icon={<ViewCarouselIcon />}
+              label="Sub Category"
+              {...a11yProps(1)}
+            />
+            <Tab
+              wrapped
+              icon={<ForestIcon />}
+              label="Material"
+              {...a11yProps(2)}
+            />
+            <Tab
+              wrapped
+              icon={<AutoAwesomeIcon />}
+              label="Polish"
+              {...a11yProps(3)}
+            />
+            {/* <Tab
                   wrapped
                   icon={<ConstructionIcon />}
                   label="Fitting"
                   {...a11yProps(4)}
                 /> */}
-                {/* <Tab
+            {/* <Tab
                   wrapped
                   icon={<InsertLinkIcon />}
                   label="Hinge"
@@ -159,7 +159,7 @@ function BasicTabs() {
                   label="Handle Material"
                   {...a11yProps(8)}
                 /> */}
-                {/* <Tab
+            {/* <Tab
                   wrapped
                   icon={<WavesIcon />}
                   label="Fabric"
@@ -171,36 +171,36 @@ function BasicTabs() {
                   label="Textile"
                   {...a11yProps(10)}
                 /> */}
-                {/* <Tab
+            {/* <Tab
                   wrapped
                   icon={<PolicyIcon />}
                   label="Policy"
                   {...a11yProps(11)}
                 /> */}
-        </Tabs>
+          </Tabs>
+        </Box>
+
+        {components.map((Component, index) => {
+
+          return <TabPanel value={value} index={index}>
+            <Component />
+          </TabPanel>
+
+        })}
+
       </Box>
-
-      {components.map((Component,index)=>{
-
-      return <TabPanel value={value} index={index}>
-          <Component />
-        </TabPanel>
-
-      })}
-
-    </Box>
-  );
-}
+    );
+  }
 
   return (
-    <Box  sx = {{pl:4,pr:4}}>
- 
+    <Box sx={{ pl: 4, pr: 4 }}>
+
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-      Accessories
+        Accessories
       </Typography>
 
-    <br />
-    {BasicTabs()}
+      <br />
+      {BasicTabs()}
 
     </Box>
   );
