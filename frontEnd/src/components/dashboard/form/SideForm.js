@@ -224,7 +224,7 @@ const SideForm = () => {
       })
       return image
     })
-    Promise.all(result).then(res => setFiles(res))
+    Promise.all(result).then(res => setFiles(old => { return [...old, ...res] }))
   }
 
 
