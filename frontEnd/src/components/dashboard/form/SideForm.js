@@ -701,6 +701,7 @@ const SideForm = () => {
   // pres data
   const [changeData, setData] = useState({
     CVW: 0,
+    ACIN: '',
     primary_material: [],
     product_articles: [],
     hardware_articles: [],
@@ -1075,6 +1076,7 @@ const SideForm = () => {
         setData({
           _id: form.payload.value._id || form.payload.row.action._id,
           SKU: form.payload.row.action.SKU,
+          ACIN: form.payload.row.action.ACIN,
           CVW: form.payload.row.action.CVW,
           product_title: form.payload.row.action.product_title,
           category_name: form.payload.row.action.category_id,
@@ -1758,9 +1760,6 @@ const SideForm = () => {
     dispatch(setForm({ state: false, formType: null, payload: null }));
   };
 
-
-
-
   // function for handling category
   const handleCategory = (e) => {
     e.preventDefault();
@@ -2032,6 +2031,7 @@ const SideForm = () => {
     setActiveStep(0);
     setData({
       CVW: 0,
+      ACIN: '',
       warehouse_to: '',
       primary_material: [],
       product_articles: [],
@@ -2561,6 +2561,7 @@ const SideForm = () => {
     FD.append("parent_SKU", changeData.SKU);
 
     FD.append('SKU', SKU);
+    FD.append('ACIN', changeData.ACIN);
 
     FD.append("variant_label", changeData.variant_label);
     FD.append("specification_image", changeData.specification_image);
@@ -10632,6 +10633,21 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
+                              disabled
+                              id="fullWidth"
+                              required
+                              label="ACIN Number"
+                              type="text"
+                              variant="outlined"
+                              name="ACIN"
+                              value={changeData.ACIN}
+                              onChange={handleProductFelids}
+                            />
+
+
+                            <TextField
+                              size="small"
+                              fullWidth
                               // autoComplete={false}
                               id="fullWidth"
                               // // required
@@ -10713,19 +10729,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
-                            />
-                            <TextField
-                              size="small"
-                              fullWidth
-                              // autoComplete={false}
-                              id="fullWidth"
-                              required
-                              label="Variant Label"
-                              type="text"
-                              variant="outlined"
-                              name="variant_label"
-                              value={changeData.variant_label}
                               onChange={handleProductFelids}
                             />
 
@@ -10938,18 +10941,18 @@ const SideForm = () => {
                             >
                               {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
                                 <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                                  key={option.polish_name}
+                                  value={option.polish_name}
                                 >
                                   <Checkbox
                                     checked={
                                       changeData.polish.indexOf(
-                                        option.SKU
+                                        option.polish_name
                                       ) > -1
                                     }
                                   />
                                   <ListItemText
-                                    primary={option.title}
+                                    primary={option.polish_name}
                                   />
                                 </MenuItem>
                               ))}
