@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   IconButton,
   Menu,
@@ -47,11 +47,14 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import MergeIcon from '@mui/icons-material/Merge';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
+// import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 // import redux 
-import { setAlert, setAuth, setMode, setTab } from '../store/action/action'
+import { setAlert, setAuth, setMode, setTab, setRefreshBox } from '../store/action/action'
 import { useDispatch, useSelector } from "react-redux";
+
+// refresh component 
+import RefreshToken from './Utility/RefreshToken'
 
 const Home = (props) => {
 
@@ -66,10 +69,11 @@ const Home = (props) => {
 
 
   useEffect(() => {
-    // console.log(state.Auth.isLogin)
     if (auth.isAuth === false)
       history("/");
   }, [auth.isAuth]);
+
+
 
   const handleMenuClose = () => {
     setAnchor(null);
@@ -367,7 +371,7 @@ const Home = (props) => {
                           fontSize: '1.1rem'
                         }
                       }}>
-                      <AdminPanelSettingsIcon color={window.location.pathname === '/admin' || window.location.pathname === '/user' ? 'primary' : ''} />
+                      <AdminPanelSettingsIcon color={window.location.pathname === '/admin' || window.location.pathname === '/security' || window.location.pathname === '/suppliers' || window.location.pathname === '/settings' ? 'primary' : ''} />
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText primary="Admin" />
@@ -378,7 +382,7 @@ const Home = (props) => {
                 <Collapse in={type.admin} timeout="auto" unmountOnExit>
                   <List dense={true} component="div" disablePadding>
 
-                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/user'); }}>
+                    <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/security'); }}>
                       <ListItemAvatar>
                         <Avatar
                           sx={{
@@ -388,10 +392,10 @@ const Home = (props) => {
                               fontSize: '1rem'
                             }
                           }}>
-                          <AssignmentIndIcon color={window.location.pathname === '/user' ? 'primary' : ''} />
+                          <AssignmentIndIcon color={window.location.pathname === '/security' ? 'primary' : ''} />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary="User" />
+                      <ListItemText primary="Security" />
                     </ListItem>
 
                     <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/suppliers'); }}>
@@ -554,6 +558,9 @@ const Home = (props) => {
       mb: 3,
       display: window.location.pathname === '/blog' || window.location.pathname === '/blogContent' || window.location.pathname === '/' ? "none" : 'block'
     }}>
+      {/* refresh modal  */}
+      <RefreshToken />
+      {/* refresh modal  */}
       {/* Top Bar  */}
       <title>{titleCase(window.location.pathname.split('/')[1])}</title>
       <Grid

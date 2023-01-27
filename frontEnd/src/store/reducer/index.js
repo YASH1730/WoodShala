@@ -1,14 +1,15 @@
-import {combineReducers} from 'redux'
+import { combineReducers } from 'redux'
 
 // reducers 
-import {alert,auth,mode,tab,form} from './utility'
+import { alert, auth, mode, tab, form, refresh } from './utility'
 
-const  globalReducer= combineReducers({
+const globalReducer = combineReducers({
     alert,
     auth,
     mode,
     tab,
-    form
+    form,
+    refresh
 })
 
 export default globalReducer;

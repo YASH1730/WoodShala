@@ -36,3 +36,25 @@ code {
     align-items: center;
     flex-direction: column;
 }
+
+
+/* // modal css  */
+
+.modalCss {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400;
+    box-shadow: 24;
+    padding: 2%;
+    background-color: white;
+}
+
+.refreshBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 2%;
+    padding: 1%;
+}

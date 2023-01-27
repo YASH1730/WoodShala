@@ -11,7 +11,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { Typography, Grid,Box } from "@mui/material";
+import { Typography, Grid, Box } from "@mui/material";
 import "../../assets/custom/css/dashboard.css";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -128,7 +128,7 @@ const Dashboard = () => {
     {
       field: "age",
       headerName: "Age",
-      
+
       width: 110,
       editable: true,
     },
@@ -157,12 +157,12 @@ const Dashboard = () => {
 
   function DataGridView() {
     return (
-      <div style={{ marginTop : '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
-          
-          
+
+
           disableSelectionOnClick
         />
       </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
   }
 
   return (
-    <Box  sx = {{pl:4,pr:4}}>
+    <Box sx={{ pl: 4, pr: 4 }}>
       {/* Dashboard Overview */}
 
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
@@ -357,7 +357,7 @@ const Dashboard = () => {
       <br></br>
 
       {/* char view  */}
-
+      {/* 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item xs={12} md={5.8} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography component={'span'} p={2} variant="h6">
@@ -414,7 +414,7 @@ const Dashboard = () => {
             </PieChart>
           </ResponsiveContainer>
         </Grid>
-      </Grid>
+      </Grid> */}
       <br></br>
       <br></br>
 

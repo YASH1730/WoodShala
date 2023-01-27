@@ -16,7 +16,7 @@ export const login = async (data) => {
 export const addCategory = async (data) => {
   return await axios.post(`${API}/addCategory`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -25,7 +25,7 @@ export const addCategory = async (data) => {
 export const categoryList = async (data) => {
   return await axios.get(`${API}/listCategory`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -35,7 +35,7 @@ export const editCategory = async (data) => {
   // console.log(data.ID)
   return await axios.patch(`${API}/editCategory/?ID=${data.ID}`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -45,7 +45,7 @@ export const editCategory = async (data) => {
 //   console.log(data);
 //   return await axios.delete(`${API}/deletePrimaryMaterial/?ID=${data}`, {
 //     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+//       Authorization: `Bearer ${localStorage.getItem("token")}`,
 //     },
 //   });
 // };
@@ -54,7 +54,7 @@ export const editCategory = async (data) => {
 export const statusCategory = async (data) => {
   return await axios.post(`${API}/changeStatusCategory`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -66,7 +66,7 @@ export const statusCategory = async (data) => {
 export const addProduct = async (data) => {
   return await axios.post(`${API}/addProducts`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -75,7 +75,7 @@ export const addProduct = async (data) => {
 export const variation = async (data) => {
   return await axios.post(`${API}/variation`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -85,7 +85,7 @@ export const variation = async (data) => {
 export const getListProduct = async (data) => {
   return await axios.get(`${API}/getListProduct?filter=${JSON.stringify(data)}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -95,7 +95,7 @@ export const getListProduct = async (data) => {
 export const deleteProduct = async (ID) => {
   return await axios.delete(`${API}/deleteProduct/?ID=${ID}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -105,7 +105,7 @@ export const deleteProduct = async (ID) => {
 export const updateProduct = async (data) => {
   return await axios.patch(`${API}/updateProduct`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -115,7 +115,7 @@ export const updateProduct = async (data) => {
 export const getLastProduct = async () => {
   return await axios.get(`${API}/getLastProduct`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -125,7 +125,7 @@ export const getLastProduct = async () => {
 export const getHardwareDropdown = async () => {
   return await axios.get(`${API}/getHardwareDropdown`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -133,9 +133,9 @@ export const getHardwareDropdown = async () => {
 // for getting the last product
 
 export const getPresentSKUs = async (data) => {
-  return await axios.get(`${API}/getPresentSKUs?search=${data}`,  {
+  return await axios.get(`${API}/getPresentSKUs?search=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -144,7 +144,7 @@ export const getPresentSKUs = async (data) => {
 export const getProductDetails = async (data) => {
   return await axios.get(`${API}/getProductDetails?SKU=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 }
@@ -157,7 +157,7 @@ export const getProductDetails = async (data) => {
 export const addBanner = async (data) => {
   return await axios.post(`${API}/addBanner`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -167,7 +167,7 @@ export const addBanner = async (data) => {
 export const listBanner = async () => {
   return await axios.get(`${API}/listBanner`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -178,7 +178,7 @@ export const changeStatus = async (data) => {
   return await axios.patch(`${API}/changeStatusBanner`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -189,7 +189,7 @@ export const addSubCategories = async (data) => {
   return await axios.post(`${API}/addSubCategories`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -199,7 +199,7 @@ export const addSubCategories = async (data) => {
 export const getSubCatagories = async () => {
   return await axios.get(`${API}/getSubCatagories`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -208,7 +208,7 @@ export const getSubCatagories = async () => {
 export const changeSubSatatus = async (data) => {
   return await axios.patch(`${API}/changeSubStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -217,7 +217,7 @@ export const changeSubSatatus = async (data) => {
 export const editSubCatagories = async (data) => {
   return await axios.patch(`${API}/editSubCatagories`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -228,7 +228,7 @@ export const addPrimaryMaterial = async (data) => {
   return await axios.post(`${API}/addPrimaryMaterial`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -238,7 +238,7 @@ export const addPrimaryMaterial = async (data) => {
 export const getPrimaryMaterial = async () => {
   return await axios.get(`${API}/getPrimaryMaterial`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -247,7 +247,7 @@ export const getPrimaryMaterial = async () => {
 export const changePrimaryMaterialStatus = async (data) => {
   return await axios.patch(`${API}/changePrimaryMaterialStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -256,7 +256,7 @@ export const changePrimaryMaterialStatus = async (data) => {
 export const editPrimaryMaterial = async (data) => {
   return await axios.patch(`${API}/editPrimaryMaterial`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -267,7 +267,7 @@ export const addSecondaryMaterial = async (data) => {
   return await axios.post(`${API}/addSecondaryMaterial`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -277,7 +277,7 @@ export const addSecondaryMaterial = async (data) => {
 export const getSecondaryMaterial = async () => {
   return await axios.get(`${API}/getSecondaryMaterial`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -286,7 +286,7 @@ export const getSecondaryMaterial = async () => {
 export const changeSecondaryMaterialStatus = async (data) => {
   return await axios.patch(`${API}/changeSecondaryMaterialStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -295,7 +295,7 @@ export const changeSecondaryMaterialStatus = async (data) => {
 export const editSecondaryMaterial = async (data) => {
   return await axios.patch(`${API}/editSecondaryMaterial`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -306,7 +306,7 @@ export const addPolish = async (data) => {
   return await axios.post(`${API}/addPolish`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -316,7 +316,7 @@ export const addPolish = async (data) => {
 export const getPolish = async () => {
   return await axios.get(`${API}/getPolish`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -325,7 +325,7 @@ export const getPolish = async () => {
 export const changePolishStatus = async (data) => {
   return await axios.patch(`${API}/changePolishStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -335,7 +335,7 @@ export const changePolishStatus = async (data) => {
 export const editPolish = async (data) => {
   return await axios.patch(`${API}/editPolish`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -346,7 +346,7 @@ export const addHinge = async (data) => {
   return await axios.post(`${API}/addHinge`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -356,7 +356,7 @@ export const addHinge = async (data) => {
 export const getHinge = async () => {
   return await axios.get(`${API}/getHinge`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -365,7 +365,7 @@ export const getHinge = async () => {
 export const changeHingeStatus = async (data) => {
   return await axios.patch(`${API}/changeHingeStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -375,7 +375,7 @@ export const changeHingeStatus = async (data) => {
 export const editHinge = async (data) => {
   return await axios.patch(`${API}/editHinge`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -385,7 +385,7 @@ export const addFitting = async (data) => {
   return await axios.post(`${API}/addFitting`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -395,7 +395,7 @@ export const addFitting = async (data) => {
 export const getFitting = async () => {
   return await axios.get(`${API}/getFitting`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -404,7 +404,7 @@ export const getFitting = async () => {
 export const changeFittingStatus = async (data) => {
   return await axios.patch(`${API}/changeFittingStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -414,7 +414,7 @@ export const changeFittingStatus = async (data) => {
 export const editFitting = async (data) => {
   return await axios.patch(`${API}/editFitting`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -424,7 +424,7 @@ export const addKnob = async (data) => {
   return await axios.post(`${API}/addKnob`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -434,7 +434,7 @@ export const addKnob = async (data) => {
 export const getKnob = async () => {
   return await axios.get(`${API}/getKnob`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -443,7 +443,7 @@ export const getKnob = async () => {
 export const changeKnobStatus = async (data) => {
   return await axios.patch(`${API}/changeKnobStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -453,7 +453,7 @@ export const changeKnobStatus = async (data) => {
 export const editKnob = async (data) => {
   return await axios.patch(`${API}/editKnob`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -463,7 +463,7 @@ export const addSupplier = async (data) => {
   return await axios.post(`${API}/addSupplier`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -473,7 +473,7 @@ export const addSupplier = async (data) => {
 export const getSupplier = async () => {
   return await axios.get(`${API}/getSupplier`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -482,7 +482,7 @@ export const getSupplier = async () => {
 export const getSupplierDropdown = async (data) => {
   return await axios.get(`${API}/getSupplierDropdown?search=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -492,7 +492,7 @@ export const getSupplierDropdown = async (data) => {
 export const editSupplier = async (data) => {
   return await axios.patch(`${API}/editSupplier`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -502,7 +502,7 @@ export const editSupplier = async (data) => {
 export const getLastSupplier = async (data) => {
   return await axios.get(`${API}/getLastSupplier`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -513,7 +513,7 @@ export const addHandle = async (data) => {
   return await axios.post(`${API}/addHandle`, data, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -523,7 +523,7 @@ export const addHandle = async (data) => {
 export const getHandle = async () => {
   return await axios.get(`${API}/getHandle`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -532,7 +532,7 @@ export const getHandle = async () => {
 export const changeHandleStatus = async (data) => {
   return await axios.patch(`${API}/changeHandleStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -542,7 +542,7 @@ export const changeHandleStatus = async (data) => {
 export const editHandle = async (data) => {
   return await axios.patch(`${API}/editHandle`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -554,7 +554,7 @@ export const editHandle = async (data) => {
 export const getGallery = async (data) => {
   return await axios.get(`${API}/getGallery/?SKU=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -566,7 +566,7 @@ export const deleteImage = async (data) => {
     `${API}/deleteImage/?SKU=${data.SKU}&imageIndex=${data.imageIndex}`,
     {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     }
   );
@@ -577,7 +577,7 @@ export const deleteImage = async (data) => {
 export const updateImage = async (data) => {
   return await axios.patch(`${API}/updateImage`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -587,7 +587,7 @@ export const updateImage = async (data) => {
 export const addImage = async (data) => {
   return await axios.post(`${API}/addImage`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -599,7 +599,7 @@ export const addImage = async (data) => {
 export const uploadImage = async (data) => {
   return await axios.post(`${API}/uploadImage`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -609,7 +609,7 @@ export const uploadImage = async (data) => {
 export const createBlog = async (data) => {
   return await axios.post(`${API}/createBlog`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -619,7 +619,7 @@ export const createBlog = async (data) => {
 export const getBlogHome = async () => {
   return await axios.get(`${API}/getBlogHome`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -629,7 +629,7 @@ export const getBlogHome = async () => {
 export const getBlog = async (data) => {
   return await axios.get(`${API}/getBlog?uuid=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -640,7 +640,7 @@ export const deleteBLog = async (data) => {
   console.log(data)
   return await axios.delete(`${API}/deleteBLog?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -650,7 +650,7 @@ export const deleteBLog = async (data) => {
 export const updateBlog = async (data) => {
   return await axios.patch(`${API}/updateBlog`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -660,21 +660,21 @@ export const updateBlog = async (data) => {
 export const getDraft = async () => {
   return await axios.get(`${API}/getDraft`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
 export const getDraftID = async () => {
   return await axios.get(`${API}/getDraftID`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
 export const getMetaDraft = async () => {
   return await axios.get(`${API}/getMetaDraft`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -682,7 +682,7 @@ export const getMetaDraft = async () => {
 export const deleteDraft = async (id) => {
   return await axios.delete(`${API}/deleteDraft?ID=${id}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -690,7 +690,7 @@ export const deleteDraft = async (id) => {
 export const addDraft = async (data) => {
   return await axios.post(`${API}/addDraft`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -698,7 +698,7 @@ export const addDraft = async (data) => {
 export const getProduct = async () => {
   return await axios.get(`${API}/getProduct`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -706,7 +706,7 @@ export const getProduct = async () => {
 export const getArticlesId = async (data) => {
   return await axios.get(`${API}/getArticlesId?search=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -714,7 +714,7 @@ export const getArticlesId = async (data) => {
 export const changeProductStatus = async (data) => {
   return await axios.patch(`${API}/changeProductStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -723,7 +723,7 @@ export const updateBulk = async (data) => {
   console.log(data)
   return await axios.post(`${API}/updateBulk`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -732,7 +732,7 @@ export const updateBulk = async (data) => {
 export const dropDraft = async (data) => {
   return await axios.post(`${API}/dropDraft`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -742,7 +742,7 @@ export const dropDraft = async (data) => {
 export const addFabric = async (data) => {
   return await axios.post(`${API}/addFabric`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -750,7 +750,7 @@ export const addFabric = async (data) => {
 export const editFabric = async (data) => {
   return await axios.patch(`${API}/editFabric`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -758,7 +758,7 @@ export const editFabric = async (data) => {
 export const getFabric = async () => {
   return await axios.get(`${API}/getFabric`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -766,7 +766,7 @@ export const getFabric = async () => {
 export const changeFabricStatus = async (data) => {
   return await axios.patch(`${API}/changeFabricStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -774,7 +774,7 @@ export const changeFabricStatus = async (data) => {
 export const deleteFabric = async (data) => {
   return await axios.delete(`${API}/deleteFabric?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -784,7 +784,7 @@ export const deleteFabric = async (data) => {
 export const addTextile = async (data) => {
   return await axios.post(`${API}/addTextile`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -792,7 +792,7 @@ export const addTextile = async (data) => {
 export const editTextile = async (data) => {
   return await axios.patch(`${API}/editTextile`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -800,7 +800,7 @@ export const editTextile = async (data) => {
 export const getTextile = async () => {
   return await axios.get(`${API}/getTextile`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -808,7 +808,7 @@ export const getTextile = async () => {
 export const changeTextileStatus = async (data) => {
   return await axios.patch(`${API}/changeTextileStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -816,7 +816,7 @@ export const changeTextileStatus = async (data) => {
 export const deleteTextile = async (data) => {
   return await axios.delete(`${API}/deleteTextile?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -828,7 +828,7 @@ export const deleteTextile = async (data) => {
 export const addMergeProduct = async (data) => {
   return await axios.post(`${API}/addMergeProduct`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -838,7 +838,7 @@ export const addMergeProduct = async (data) => {
 export const getListMergeProduct = async (data) => {
   return await axios.get(`${API}/getListMergeProduct?filter=${JSON.stringify(data)}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -848,7 +848,7 @@ export const getListMergeProduct = async (data) => {
 export const deleteMergeProduct = async (ID) => {
   return await axios.delete(`${API}/deleteMergeProduct/?ID=${ID}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -858,7 +858,7 @@ export const deleteMergeProduct = async (ID) => {
 export const updateMergeProduct = async (data) => {
   return await axios.patch(`${API}/updateMergeProduct`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -868,7 +868,7 @@ export const updateMergeProduct = async (data) => {
 export const getLastMergeProduct = async () => {
   return await axios.get(`${API}/getLastMergeProduct`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -880,7 +880,7 @@ export const getLastMergeProduct = async () => {
 export const addOrder = async (data) => {
   return await axios.post(`${API}/placeOrder`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -890,7 +890,7 @@ export const addOrder = async (data) => {
 export const getOrder = async (data) => {
   return await axios.get(`${API}/listOrders?filter=${JSON.stringify(data)}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -899,7 +899,7 @@ export const getOrder = async (data) => {
 export const customOrderList = async () => {
   return await axios.get(`${API}/customOrderList`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -908,7 +908,7 @@ export const customOrderList = async () => {
 export const changeOrderStatus = async (data) => {
   return await axios.post(`${API}/changeOrderStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -917,7 +917,7 @@ export const changeOrderStatus = async (data) => {
 export const getLastOrder = async () => {
   return await axios.get(`${API}/getLastOrder`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -926,7 +926,7 @@ export const getLastOrder = async () => {
 export const getLastCp = async () => {
   return await axios.get(`${API}/getLastCp`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -935,7 +935,7 @@ export const getLastCp = async () => {
 export const addCustomProduct = async (data) => {
   return await axios.post(`${API}/addCustomProduct`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -943,7 +943,7 @@ export const addCustomProduct = async (data) => {
 export const deleteOrder = async (data) => {
   return await axios.delete(`${API}/deleteOrder?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -955,7 +955,7 @@ export const deleteOrder = async (data) => {
 export const listCustomer = async () => {
   return await axios.get(`${API}/listCustomer`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -965,7 +965,7 @@ export const listCustomer = async () => {
 export const deleteCustomer = async () => {
   return await axios.delete(`${API}/deleteCustomer`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -974,7 +974,7 @@ export const deleteCustomer = async () => {
 export const addCustomer = async (data) => {
   return await axios.post(`${API}/addCustomer`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -982,7 +982,7 @@ export const addCustomer = async (data) => {
 export const updateCustomer = async (data) => {
   return await axios.patch(`${API}/updateCustomer`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -990,7 +990,7 @@ export const updateCustomer = async (data) => {
 export const customerCatalog = async () => {
   return await axios.get(`${API}/customerCatalog`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1001,21 +1001,21 @@ export const customerCatalog = async () => {
 export const addInward = async (data) => {
   return await axios.post(`${API}/addInward`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
 export const addOutward = async (data) => {
   return await axios.post(`${API}/addOutward`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
 export const addTransfer = async (data) => {
   return await axios.post(`${API}/addTransfer`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1027,7 +1027,7 @@ export const addTransfer = async (data) => {
 export const listEntires = async (data) => {
   return await axios.get(`${API}/listEntires?page=${data.page}&limit=${data.pageSize}&type=${data.entires}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1036,7 +1036,7 @@ export const listEntires = async (data) => {
 export const totalEntries = async (data) => {
   return await axios.get(`${API}/totalEntries`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1045,7 +1045,7 @@ export const totalEntries = async (data) => {
 export const updateStock = async (data) => {
   return await axios.patch(`${API}/updateStock`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1054,7 +1054,7 @@ export const updateStock = async (data) => {
 export const listStock = async () => {
   return await axios.get(`${API}/listStock`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1063,7 +1063,7 @@ export const listStock = async () => {
 export const preview = async (data) => {
   return await axios.get(`${API}/preview?SKU=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1072,7 +1072,7 @@ export const preview = async (data) => {
 export const deleteStock = async (data) => {
   return await axios.delete(`${API}/deleteStock?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1081,7 +1081,7 @@ export const deleteStock = async (data) => {
 export const getStockSKU = async (data) => {
   return await axios.get(`${API}/getStockSKU?search=${data.search}&warehouse=${data.warehouse}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1091,7 +1091,7 @@ export const getStockSKU = async (data) => {
 export const addHardware = async (data) => {
   return await axios.post(`${API}/addHardware`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1099,7 +1099,7 @@ export const addHardware = async (data) => {
 export const editHardware = async (data) => {
   return await axios.patch(`${API}/editHardware`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1107,7 +1107,7 @@ export const editHardware = async (data) => {
 export const getHardware = async () => {
   return await axios.get(`${API}/getHardware`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1115,7 +1115,7 @@ export const getHardware = async () => {
 export const changeHardwareStatus = async (data) => {
   return await axios.patch(`${API}/changeHardwareStatus`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1123,7 +1123,7 @@ export const changeHardwareStatus = async (data) => {
 export const deleteHardware = async (data) => {
   return await axios.delete(`${API}/deleteHardware?_id=${data}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
@@ -1131,7 +1131,21 @@ export const deleteHardware = async (data) => {
 export const getLastHardware = async () => {
   return await axios.get(`${API}/getLastHardware`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("WDToken")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
+
+export const refreshToken = async (data) => {
+  return await axios.post(`${API}/refreshToken`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+}
+// ============== securuty log 
+
+export const listLogs = async () => {
+  return await axios.get(`${API}/listLogs`)
+}
+

@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 import { login } from '../services/service'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { setAlert, setAuth } from '../store/action/action'
+import { setAlert, setAuth, setRefreshBox } from '../store/action/action'
 
 
 export default function EntryPoints(props) {
@@ -83,8 +83,12 @@ export default function EntryPoints(props) {
         dispatch(setAuth({
           isAuth: true,
           token: data.data.token,
-          role: data.data.role
+          role: data.data.role,
+          email: data.data.email,
+          expireIn: data.data.expireIn
         }))
+
+
 
         dispatch(setAlert({
           open: true,
@@ -92,7 +96,7 @@ export default function EntryPoints(props) {
           message: data.data.message
         }))
 
-        localStorage.setItem('WDToken', data.data.token);
+        localStorage.setItem('token', data.data.token);
 
         history('/dashboard')
 

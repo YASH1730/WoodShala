@@ -11,6 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { setForm, setAlert } from "../../../store/action/action";
 import { useDispatch } from 'react-redux'
 import { getSubCatagories, changeSubSatatus, deleteCategory } from '../../../services/service'
+import question from "../../../assets/img/question.svg";
 
 import {
   DataGrid,
@@ -48,6 +49,7 @@ export default function SubCategory() {
             seo_title: row.seo_title,
             seo_description: row.seo_description,
             seo_keyword: row.seo_keyword,
+            sub_category_image: row.sub_category_image,
             product_description: row.product_description,
 
             action: row._id
@@ -66,7 +68,13 @@ export default function SubCategory() {
       headerName: "ID",
       width: 100
     },
-
+    {
+      field: 'sub_category_image',
+      align: 'center',
+      headerName: 'Image',
+      width: 200,
+      renderCell: (params) => <div className="categoryImage" >{<img src={params.formattedValue !== undefined ? params.formattedValue : question} alt='category' />}</div>,
+    },
     {
       field: 'category_name',
       align: 'center',

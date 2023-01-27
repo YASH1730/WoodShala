@@ -451,7 +451,8 @@ const SideForm = () => {
     'Antique Touch',
     'Duco Paint',
     'Natural Finish',
-    'Oil Massge'
+    'Oil Massge',
+    'Powder Coating'
   ]
 
   const taxRateCatalog = [
@@ -1961,7 +1962,7 @@ const SideForm = () => {
     FD.append("_id", form.payload.row.action);
 
     Image[0] !== undefined && FD.append("category_image", Image[0]);
-    console.log(Image[0])
+    // console.log(Image[0])
 
     FD.append("seo_title", changeData.seo_title);
     FD.append("seo_description", changeData.seo_description);
@@ -2540,7 +2541,7 @@ const SideForm = () => {
         }
       })
       .catch((err) => {
-        // //console.log(err);
+        console.log(err);
         dispatch(setAlert({
           open: true,
           variant: "error",
@@ -4226,6 +4227,7 @@ const SideForm = () => {
         FD.append("category_name", item.category_name);
     });
 
+    FD.append("sub_category_image", Image[0]);
     FD.append("category_id", e.target.category_id.value);
     FD.append("sub_category_name", e.target.sub_category_name.value);
     FD.append("sub_category_status", e.target.sub_category_status.checked);
@@ -4289,6 +4291,7 @@ const SideForm = () => {
     let catName = ''
 
     // //console.log(form.payload);
+    Image[0] !== undefined && FD.append("sub_category_image", Image[0]);
 
     FD.append("_id", form.payload.row.action);
 
@@ -16223,7 +16226,7 @@ const SideForm = () => {
                     encType="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
+                    <ImagePreviews text={'Please Drag and Drop a image for sub Category image'}> </ImagePreviews>
 
                     <TextField
                       size="small"
@@ -16365,7 +16368,7 @@ const SideForm = () => {
                     encType="multipart/form-data"
                     method="post"
                   >
-                    {/* <ImagePreviews text={'Please Drag and Drop the Category image'}> </ImagePreviews> */}
+                    <ImagePreviews text={'Please Drag and Drop a image for Sub Category.'}> </ImagePreviews>
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Category
