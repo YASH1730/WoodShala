@@ -26,7 +26,7 @@ import {
   TextareaAutosize,
   ListItemText,
   InputLabel,
-  Autocomplete
+  Autocomplete,
 } from "@mui/material";
 import { Editor } from "@tinymce/tinymce-react";
 import Slide from "@mui/material/Slide";
@@ -34,8 +34,8 @@ import Backdrop from "@mui/material/Backdrop";
 import "../../../assets/custom/css/sideForm.css";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AddIcon from '@mui/icons-material/Add';
-// service APIS 
+import AddIcon from "@mui/icons-material/Add";
+// service APIS
 import {
   addCategory,
   editCategory,
@@ -76,24 +76,22 @@ import {
   addTransfer,
   getStockSKU,
   addPolish,
-  editPolish
+  editPolish,
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
-
-import { setAlert, setForm } from '../../../store/action/action'
+import { setAlert, setForm } from "../../../store/action/action";
 import { useSelector, useDispatch } from "react-redux";
 
-import size from 'react-image-size';
+import size from "react-image-size";
 import { fromUnixTime } from "date-fns/esm";
-
 
 const option = {
   labels: {
     confirmable: "Procced",
-    cancellable: "Cancel"
-  }
-}
+    cancellable: "Cancel",
+  },
+};
 
 const thumbsContainer = {
   display: "flex",
@@ -142,21 +140,21 @@ const SideForm = () => {
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
 
-  // image link 
-  const imageLink = 'https://admin.woodshala.in/upload/'
+  // image link
+  const imageLink = "https://admin.woodshala.in/upload/";
 
   const confirm = useConfirm();
 
-
-  // confirmBox 
+  // confirmBox
   const confirmBox = (e, action) => {
     e.preventDefault();
 
     confirm({ description: `Data will listed in Database !!!` }, option)
       .then(() => action(e))
-      .catch((err) => { console.log("Operation cancelled because. ", err) });
-  }
-
+      .catch((err) => {
+        console.log("Operation cancelled because. ", err);
+      });
+  };
 
   // single images
   const [Image, setImages] = useState([]);
@@ -165,8 +163,8 @@ const SideForm = () => {
   // modal state
   const [open, setOpen] = useState(false);
 
-  // address object 
-  const [address, setAddress] = useState([])
+  // address object
+  const [address, setAddress] = useState([]);
 
   function FeaturesPreviews(props) {
     const { getRootProps, getInputProps } = useDropzone({
@@ -199,8 +197,6 @@ const SideForm = () => {
       </div>
     ));
 
-
-
     return (
       <section className="container dorpContainer">
         <div {...getRootProps({ className: "dropzone" })}>
@@ -212,7 +208,6 @@ const SideForm = () => {
     );
   }
 
-
   // function for the filter the image to the basis of ratio 1:1
   function Dimension(images, setFiles) {
     let result = images.map(async (image) => {
@@ -220,80 +215,81 @@ const SideForm = () => {
       // console.log(width,height)
       Object.assign(image, {
         preview: URL.createObjectURL(image),
-        validate: width === height ? true : false
+        validate: width === height ? true : false,
+      });
+      return image;
+    });
+    Promise.all(result).then((res) =>
+      setFiles((old) => {
+        return [...old, ...res];
       })
-      return image
-    })
-    Promise.all(result).then(res => setFiles(old => { return [...old, ...res] }))
+    );
   }
 
-
-
   function ProductsPreviews(props) {
-    const [acceptedFileItems, setAcceptedFileItems] = useState([])
-    const [fileRejectionItems, setFileRejectionItems] = useState([])
+    const [acceptedFileItems, setAcceptedFileItems] = useState([]);
+    const [fileRejectionItems, setFileRejectionItems] = useState([]);
 
     const { getRootProps, getInputProps } = useDropzone({
       accept: "image/*",
       multiple: true,
       onDrop: (acceptedFiles) => {
-        Dimension(acceptedFiles, setFiles)
-      }
+        Dimension(acceptedFiles, setFiles);
+      },
     });
-
 
     // for check the file state in done or
     useMemo(() => {
-
       if (files) {
         // REJECTED FILES
-        setFileRejectionItems(files.map((file) => {
-          return !file.validate ? <div style={thumb} key={file.name}>
-            <div style={thumbInner}>
-              {/* {console.log(file.validate)} */}
+        setFileRejectionItems(
+          files.map((file) => {
+            return !file.validate ? (
+              <div style={thumb} key={file.name}>
+                <div style={thumbInner}>
+                  {/* {console.log(file.validate)} */}
 
-              <img
-                src={URL.createObjectURL(file)}
-                style={img}
-                alt="Images"
-                // Revoke data uri after image is loaded
-                onLoad={() => {
-                  URL.revokeObjectURL(file.preview);
-                }}
-              />
-            </div>
-          </div> : null;
-        }
-        ));
+                  <img
+                    src={URL.createObjectURL(file)}
+                    style={img}
+                    alt="Images"
+                    // Revoke data uri after image is loaded
+                    onLoad={() => {
+                      URL.revokeObjectURL(file.preview);
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null;
+          })
+        );
 
         // accepted
-        setAcceptedFileItems(files.map(
-          (file, index) => {
-            return file.validate ? <div style={thumb} key={file.name}>
-              <div style={thumbInner}>
-                {/* {console.log(file.validate)} */}
+        setAcceptedFileItems(
+          files.map((file, index) => {
+            return file.validate ? (
+              <div style={thumb} key={file.name}>
+                <div style={thumbInner}>
+                  {/* {console.log(file.validate)} */}
 
-                <img
-                  src={URL.createObjectURL(file)}
-                  style={img}
-                  alt="Images"
-                  // Revoke data uri after image is loaded
-                  onLoad={() => {
-                    URL.revokeObjectURL(file.preview);
-                  }}
-                />
+                  <img
+                    src={URL.createObjectURL(file)}
+                    style={img}
+                    alt="Images"
+                    // Revoke data uri after image is loaded
+                    onLoad={() => {
+                      URL.revokeObjectURL(file.preview);
+                    }}
+                  />
+                </div>
               </div>
-            </div> : null;
-          }
-        ))
+            ) : null;
+          })
+        );
       }
-    }
-
-      , [files]);
-
+    }, [files]);
 
     useEffect(() => {
-
       // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, []);
@@ -304,7 +300,7 @@ const SideForm = () => {
           <input {...getInputProps()} />
           <p>{props.text}</p>
         </div>
-        <aside >
+        <aside>
           <h4>Accepted files</h4>
           <aside style={thumbsContainer}>{acceptedFileItems}</aside>
           <h4>Rejected files</h4>
@@ -344,7 +340,6 @@ const SideForm = () => {
       </div>
     ));
 
-
     return (
       <section className="container dorpContainer">
         <div {...getRootProps({ className: "dropzone" })}>
@@ -357,70 +352,69 @@ const SideForm = () => {
   }
 
   function IndoorPreviews(props) {
-    const [acceptedFileItems, setAcceptedFileItems] = useState([])
-    const [fileRejectionItems, setFileRejectionItems] = useState([])
+    const [acceptedFileItems, setAcceptedFileItems] = useState([]);
+    const [fileRejectionItems, setFileRejectionItems] = useState([]);
 
     const { getRootProps, getInputProps } = useDropzone({
       accept: "image/*",
       multiple: true,
       onDrop: (acceptedFiles) => {
-        Dimension(acceptedFiles, setIndoor)
-      }
+        Dimension(acceptedFiles, setIndoor);
+      },
     });
-
 
     // for check the file state in done or
     useMemo(() => {
-
       if (Indoor) {
         // REJECTED FILES
-        setFileRejectionItems(Indoor.map((file) => {
-          return !file.validate ? <div style={thumb} key={file.name}>
-            <div style={thumbInner}>
-              {/* {console.log(file.validate)} */}
+        setFileRejectionItems(
+          Indoor.map((file) => {
+            return !file.validate ? (
+              <div style={thumb} key={file.name}>
+                <div style={thumbInner}>
+                  {/* {console.log(file.validate)} */}
 
-              <img
-                src={URL.createObjectURL(file)}
-                style={img}
-                alt="Images"
-                // Revoke data uri after image is loaded
-                onLoad={() => {
-                  URL.revokeObjectURL(file.preview);
-                }}
-              />
-            </div>
-          </div> : null;
-        }
-        ));
+                  <img
+                    src={URL.createObjectURL(file)}
+                    style={img}
+                    alt="Images"
+                    // Revoke data uri after image is loaded
+                    onLoad={() => {
+                      URL.revokeObjectURL(file.preview);
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null;
+          })
+        );
 
         // accepted
-        setAcceptedFileItems(Indoor.map(
-          (file, index) => {
-            return file.validate ? <div style={thumb} key={file.name}>
-              <div style={thumbInner}>
-                {/* {console.log(file.validate)} */}
+        setAcceptedFileItems(
+          Indoor.map((file, index) => {
+            return file.validate ? (
+              <div style={thumb} key={file.name}>
+                <div style={thumbInner}>
+                  {/* {console.log(file.validate)} */}
 
-                <img
-                  src={URL.createObjectURL(file)}
-                  style={img}
-                  alt="Images"
-                  // Revoke data uri after image is loaded
-                  onLoad={() => {
-                    URL.revokeObjectURL(file.preview);
-                  }}
-                />
+                  <img
+                    src={URL.createObjectURL(file)}
+                    style={img}
+                    alt="Images"
+                    // Revoke data uri after image is loaded
+                    onLoad={() => {
+                      URL.revokeObjectURL(file.preview);
+                    }}
+                  />
+                </div>
               </div>
-            </div> : null;
-          }
-        ))
+            ) : null;
+          })
+        );
       }
-    }
-
-      , [Indoor]);
-
+    }, [Indoor]);
 
     useEffect(() => {
-
       // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
       return () => Indoor.forEach((file) => URL.revokeObjectURL(file.preview));
     }, []);
@@ -431,7 +425,7 @@ const SideForm = () => {
           <input {...getInputProps()} />
           <p>{props.text}</p>
         </div>
-        <aside >
+        <aside>
           <h4>Accepted files</h4>
           <aside style={thumbsContainer}>{acceptedFileItems}</aside>
           <h4>Rejected files</h4>
@@ -441,19 +435,17 @@ const SideForm = () => {
     );
   }
 
-
-
   // static catalog
 
   const polishCatalog = [
-    'Stain Finish',
-    'Distressed Polish',
-    'Antique Touch',
-    'Duco Paint',
-    'Natural Finish',
-    'Oil Massge',
-    'Powder Coating'
-  ]
+    "Stain Finish",
+    "Distressed Polish",
+    "Antique Touch",
+    "Duco Paint",
+    "Natural Finish",
+    "Oil Massge",
+    "Powder Coating",
+  ];
 
   const taxRateCatalog = [
     {
@@ -477,7 +469,7 @@ const SideForm = () => {
     {
       value: "Straight Back",
       label: "Straight Back",
-    }
+    },
   ];
 
   const legCatalog = [
@@ -613,7 +605,7 @@ const SideForm = () => {
     {
       value: "Carpenter Assembly",
       label: "Carpenter Assembly",
-    }
+    },
   ];
 
   const unitCatalog = [
@@ -640,31 +632,33 @@ const SideForm = () => {
   ];
 
   const purpose = [
-    'Manufacturing', 'Repairing', 'Polish', 'Packing', 'Shipping', 'Others'
-  ]
+    "Manufacturing",
+    "Repairing",
+    "Polish",
+    "Packing",
+    "Shipping",
+    "Others",
+  ];
   const level = [
-    'Level 1',
-    'Level 2',
-    'Level 3',
-    'Level 4',
-    'Level 5',
-    'Level 6',
-    'Level 7',
-    'Level 8',
-    'Level 9',
-    'Level 10',
-  ]
-  const hardware_polish = [
-    'Matt', 'Glossy', 'Semi Glossy'
-  ]
+    "Level 1",
+    "Level 2",
+    "Level 3",
+    "Level 4",
+    "Level 5",
+    "Level 6",
+    "Level 7",
+    "Level 8",
+    "Level 9",
+    "Level 10",
+  ];
+  const hardware_polish = ["Matt", "Glossy", "Semi Glossy"];
 
-
-  // redux 
-  const { form, mode } = useSelector(state => state);
+  // redux
+  const { form, mode } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   // states
-  const [cat, setCat] = useState('');
+  const [cat, setCat] = useState("");
   const [discount, setDiscount] = useState({ discount_limit: 0, MRP: 0 });
   // const [showFabric, setShowFabric] = useState("No");
 
@@ -680,7 +674,11 @@ const SideForm = () => {
   // const [fabricCatalog, setFabricCatalog] = useState([]);
   const [SKUCatalog, setSKUCatalog] = useState([]);
   const [customer, setCustomerCatalog] = useState([]);
-  const [productSKU, setProductSKU] = useState({ P_SKU: [], H_SKU: [], supplier: [] });
+  const [productSKU, setProductSKU] = useState({
+    P_SKU: [],
+    H_SKU: [],
+    supplier: [],
+  });
 
   const [catalog, setCatalog] = useState({
     hinge: [],
@@ -693,28 +691,27 @@ const SideForm = () => {
     wheel: [],
     ceramic_drawer: [],
     ceramic_tiles: [],
-  })
+  });
 
   // ref
   const editorRef = useRef();
 
-
   // pres data
   const [changeData, setData] = useState({
     CVW: 0,
-    ACIN: '',
+    ACIN: "",
     primary_material: [],
     product_articles: [],
     hardware_articles: [],
-    supplier: '',
+    supplier: "",
     range: "None",
     product_array: [],
     variation_array: [],
     warehouse: [],
     savedImages: [],
-    specification_image: '',
-    featured_image: '',
-    mannequin_image: '',
+    specification_image: "",
+    featured_image: "",
+    mannequin_image: "",
     shipping: "",
     product_title: "",
     seo_title: "",
@@ -775,15 +772,15 @@ const SideForm = () => {
     continue_selling: true,
     ceramic_drawer_included: false,
     ceramic_tiles_included: false,
-    unit: 'Pcs',
+    unit: "Pcs",
     quantity: 1,
-    textile_type: '',
-    category_id: '',
-    sub_category_id: '',
-    product_description: '',
-    legs: 'None',
+    textile_type: "",
+    category_id: "",
+    sub_category_id: "",
+    product_description: "",
+    legs: "None",
     fabric: "None",
-    assembly_level: 'Easy Assembly',
+    assembly_level: "Easy Assembly",
     mattress: "no",
     mattress_length: 0,
     mattress_breadth: 0,
@@ -795,12 +792,12 @@ const SideForm = () => {
     handle_qty: 0,
     door: "None",
     door_qty: 0,
-    plywood: 'no',
+    plywood: "no",
     wheel_qty: 0,
-    cradle_bed: 'no',
-    amazon_url: '',
-    flipkart_url: '',
-    jiomart_url: '',
+    cradle_bed: "no",
+    amazon_url: "",
+    flipkart_url: "",
+    jiomart_url: "",
     cradle_bed_depth: 0,
     cradle_bed_height: 0,
     cradle_bed_width: 0,
@@ -812,7 +809,7 @@ const SideForm = () => {
     ceramic_tiles_qty: 0,
     back_style: "None",
     weight_capacity: "None",
-    drawer: 'None',
+    drawer: "None",
     package_breadth: 0,
     package_height: 0,
     package_length: 0,
@@ -826,14 +823,14 @@ const SideForm = () => {
     restocking_time: 0,
     min_quantity: 1,
     hardware_polish: "None",
-    warehouse_to: '',
+    warehouse_to: "",
     wood_weight: 0,
     metal_weight: 0,
     package_weight: 0,
-    polish_name: '',
-    polish_type: 'None',
-    polish_finish: 'None',
-    level: 'None',
+    polish_name: "",
+    polish_type: "None",
+    polish_finish: "None",
+    level: "None",
     lock: false,
     price: 0,
     indoorSavedImage: [],
@@ -845,7 +842,6 @@ const SideForm = () => {
     getLastMergeProduct()
       .then((res) => {
         if (res.data.length > 0) {
-
           let index = parseInt(res.data[0].M.split("-")[1]) + 1;
 
           setSKU(`M-0${index}`);
@@ -945,7 +941,6 @@ const SideForm = () => {
       });
   };
 
-
   useMemo(() => {
     switch (form.formType) {
       case "hardware":
@@ -953,9 +948,14 @@ const SideForm = () => {
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
-          let hardware = data.data.filter((row) => { return row.category_name === 'Hardware' })
+          let hardware = data.data.filter((row) => {
+            return row.category_name === "Hardware";
+          });
 
-          setData({ ...changeData, category_name: hardware.length > 0 ? hardware[0]._id : 'None' })
+          setData({
+            ...changeData,
+            category_name: hardware.length > 0 ? hardware[0]._id : "None",
+          });
           return setCategory(data.data);
         });
 
@@ -966,7 +966,6 @@ const SideForm = () => {
         });
 
         // console.log(category,category.filter((row) => { return row.category_name === 'Hardware' }))
-
 
         break;
       case "update_hardware":
@@ -985,7 +984,7 @@ const SideForm = () => {
 
         const row = form.payload.row;
 
-        console.log(row)
+        console.log(row);
 
         setData({
           SKU: row.SKU,
@@ -999,7 +998,7 @@ const SideForm = () => {
           bangalore_stock: row.bangalore_stock,
           jodhpur_stock: row.jodhpur_stock,
           manufacturing_time: row.manufacturing_time,
-          status: row.status === true ? 'on' : 'off',
+          status: row.status === true ? "on" : "off",
           returnDays: row.returnDays,
           COD: row.COD,
           returnable: row.returnable,
@@ -1019,16 +1018,16 @@ const SideForm = () => {
           hardware_polish: row.hardware_polish,
           min_quantity: row.min_quantity,
           continue_selling: row.continue_selling,
-        })
+        });
         break;
       case "product":
         // getSKU();
         getDID();
 
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
-        })
-
+          if (data.data !== null)
+            return setCatalog((old) => ({ ...old, ...data.data }));
+        });
 
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1052,8 +1051,9 @@ const SideForm = () => {
       case "variation":
         getSKU();
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
-        })
+          if (data.data !== null)
+            return setCatalog((old) => ({ ...old, ...data.data }));
+        });
 
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1072,7 +1072,6 @@ const SideForm = () => {
 
           return setMaterialCatalog(data.data);
         });
-
 
         setData({
           _id: form.payload.value._id || form.payload.row.action._id,
@@ -1148,7 +1147,8 @@ const SideForm = () => {
           lean_back: form.payload.row.action.lean_back,
           weaving: form.payload.row.action.weaving,
           knife: form.payload.row.action.knife,
-          not_suitable_for_Micro_Dish: form.payload.row.action.not_suitable_for_Micro_Dish,
+          not_suitable_for_Micro_Dish:
+            form.payload.row.action.not_suitable_for_Micro_Dish,
           tilt_top: form.payload.row.action.tilt_top,
           inside_compartments: form.payload.row.action.inside_compartments,
           stackable: form.payload.row.action.stackable,
@@ -1183,11 +1183,13 @@ const SideForm = () => {
           wheel_name: form.payload.row.action.wheel_name,
           ceramic_tiles: form.payload.row.action.ceramic_tiles,
           ceramic_tiles_qty: form.payload.row.action.ceramic_tiles_qty,
-          ceramic_tiles_included: form.payload.row.action.ceramic_tiles_included,
+          ceramic_tiles_included:
+            form.payload.row.action.ceramic_tiles_included,
           ceramic_tiles_name: form.payload.row.action.ceramic_tiles_name,
           ceramic_drawers_qty: form.payload.row.action.ceramic_drawers_qty,
           ceramic_drawers: form.payload.row.action.ceramic_drawers,
-          ceramic_drawers_included: form.payload.row.action.ceramic_drawers_included,
+          ceramic_drawers_included:
+            form.payload.row.action.ceramic_drawers_included,
           ceramic_drawers_name: form.payload.row.action.ceramic_drawers_name,
           mattress: form.payload.row.action.mattress,
           mattress_length: form.payload.row.action.mattress_length,
@@ -1201,7 +1203,6 @@ const SideForm = () => {
           wood_weight: form.payload.row.action.wood_weight,
           package_weight: form.payload.row.action.package_weight,
           metal_weight: form.payload.row.action.metal_weight,
-
         });
 
         setCat(form.payload.row.action.category_id);
@@ -1268,7 +1269,6 @@ const SideForm = () => {
           seo_description: form.payload.row.seo_description,
           seo_keyword: form.payload.row.seo_keyword,
           product_description: form.payload.row.product_description,
-
         });
         break;
       case "update_blog":
@@ -1282,13 +1282,12 @@ const SideForm = () => {
         });
         break;
       case "update_product":
-
         getDID();
 
-
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
-        })
+          if (data.data !== null)
+            return setCatalog((old) => ({ ...old, ...data.data }));
+        });
 
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1307,7 +1306,6 @@ const SideForm = () => {
 
           return setMaterialCatalog(data.data);
         });
-
 
         setData({
           _id: form.payload.value._id || form.payload.row.action._id,
@@ -1385,7 +1383,8 @@ const SideForm = () => {
           lean_back: form.payload.row.action.lean_back,
           weaving: form.payload.row.action.weaving,
           knife: form.payload.row.action.knife,
-          not_suitable_for_Micro_Dish: form.payload.row.action.not_suitable_for_Micro_Dish,
+          not_suitable_for_Micro_Dish:
+            form.payload.row.action.not_suitable_for_Micro_Dish,
           tilt_top: form.payload.row.action.tilt_top,
           inside_compartments: form.payload.row.action.inside_compartments,
           stackable: form.payload.row.action.stackable,
@@ -1420,11 +1419,13 @@ const SideForm = () => {
           wheel_name: form.payload.row.action.wheel_name,
           ceramic_tiles: form.payload.row.action.ceramic_tiles,
           ceramic_tiles_qty: form.payload.row.action.ceramic_tiles_qty,
-          ceramic_tiles_included: form.payload.row.action.ceramic_tiles_included,
+          ceramic_tiles_included:
+            form.payload.row.action.ceramic_tiles_included,
           ceramic_tiles_name: form.payload.row.action.ceramic_tiles_name,
           ceramic_drawers_qty: form.payload.row.action.ceramic_drawers_qty,
           ceramic_drawers: form.payload.row.action.ceramic_drawers,
-          ceramic_drawers_included: form.payload.row.action.ceramic_drawers_included,
+          ceramic_drawers_included:
+            form.payload.row.action.ceramic_drawers_included,
           ceramic_drawers_name: form.payload.row.action.ceramic_drawers_name,
           mattress: form.payload.row.action.mattress,
           mattress_length: form.payload.row.action.mattress_length,
@@ -1461,8 +1462,9 @@ const SideForm = () => {
         getMKU();
 
         getHardwareDropdown().then((data) => {
-          if (data.data !== null) return setCatalog(old => ({ ...old, ...data.data }))
-        })
+          if (data.data !== null)
+            return setCatalog((old) => ({ ...old, ...data.data }));
+        });
 
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
@@ -1488,7 +1490,6 @@ const SideForm = () => {
 
         break;
       case "update_merge":
-
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
           return setCategory(data.data);
@@ -1499,21 +1500,22 @@ const SideForm = () => {
           return setSubCategory(data.data);
         });
 
-        console.log(form.payload.row.product_articles)
+        console.log(form.payload.row.product_articles);
 
         // for product qty
-        form.payload.row.product_articles.length > 0 && form.payload.row.product_articles.map(item => {
-          setData(old => ({
-            ...old,
-            [item.SKU]: item.qty
-          }))
-        })
+        form.payload.row.product_articles.length > 0 &&
+          form.payload.row.product_articles.map((item) => {
+            setData((old) => ({
+              ...old,
+              [item.SKU]: item.qty,
+            }));
+          });
 
-
-        setData(old => ({
+        setData((old) => ({
           ...old,
           M: form.payload.row.M,
-          product_articles: form.payload.row.product_articles.map(item => item.SKU) || [],
+          product_articles:
+            form.payload.row.product_articles.map((item) => item.SKU) || [],
           product_title: form.payload.row.product_title,
           category_name: form.payload.row.category_id,
           category_id: form.payload.row.category_id,
@@ -1550,7 +1552,7 @@ const SideForm = () => {
         }));
 
         break;
-      case 'update_Stock':
+      case "update_Stock":
         setData({
           ...changeData,
           _id: form.payload.row._id,
@@ -1558,8 +1560,8 @@ const SideForm = () => {
           stock: form.payload.row.stock,
           warehouse: form.payload.row.warehouse,
         });
-        break
-      case 'update_supplier':
+        break;
+      case "update_supplier":
         setData({
           ...changeData,
           _id: form.payload.row._id,
@@ -1571,11 +1573,11 @@ const SideForm = () => {
           SID: form.payload.row.SID,
           address: form.payload.row.address,
         });
-        break
-      case 'add_supplier':
+        break;
+      case "add_supplier":
         getSID();
         break;
-      case 'update_polish':
+      case "update_polish":
         // console.log(form.payload.row)
         setData({
           ...changeData,
@@ -1590,7 +1592,7 @@ const SideForm = () => {
           indoorSavedImage: form.payload.row.action.inDoor_image,
           lock: form.payload.row.action.lock,
           price: form.payload.row.action.price,
-        })
+        });
         break;
       default:
     }
@@ -1698,7 +1700,7 @@ const SideForm = () => {
         });
         break;
       case "inward":
-        console.log(e.target)
+        console.log(e.target);
         setData({
           ...changeData,
           [e.target.name]: e.target.value,
@@ -1731,7 +1733,7 @@ const SideForm = () => {
     "ceramic_drawer_included",
     "ceramic_tiles_included",
     "status",
-    'lock'
+    "lock",
   ];
 
   //  for product felids
@@ -1785,46 +1787,54 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            category_name: data.data.response.category_name,
-            category_status: data.data.response.category_status,
-            category_image: data.data.response.category_image,
-            seo_title: data.data.response.seo_title,
-            seo_description: data.data.response.seo_description,
-            seo_keyword: data.data.response.seo_keyword,
-            product_description: data.data.response.product_description,
-            action: data.data.response
-          }])
-          form.setCheck(old => [...old, data.data.response.category_status])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              category_name: data.data.response.category_name,
+              category_status: data.data.response.category_status,
+              category_image: data.data.response.category_image,
+              seo_title: data.data.response.seo_title,
+              seo_description: data.data.response.seo_description,
+              seo_keyword: data.data.response.seo_keyword,
+              product_description: data.data.response.product_description,
+              action: data.data.response,
+            },
+          ]);
+          form.setCheck((old) => [...old, data.data.response.category_status]);
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   // function for handling Customer
   const handleCustomer = (e) => {
-
     e.preventDefault();
 
     const FD = new FormData();
@@ -1845,42 +1855,51 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            CID: data.data.response.CID,
-            register_time: data.data.response.register_time,
-            profile_image: data.data.response.profile_image,
-            username: data.data.response.username,
-            mobile: data.data.response.mobile,
-            email: data.data.response.email,
-            password: data.data.response.password,
-            shipping: data.data.response.shipping,
-            action: data.data.response
-          }])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              CID: data.data.response.CID,
+              register_time: data.data.response.register_time,
+              profile_image: data.data.response.profile_image,
+              username: data.data.response.username,
+              mobile: data.data.response.mobile,
+              email: data.data.response.email,
+              password: data.data.response.password,
+              shipping: data.data.response.shipping,
+              action: data.data.response,
+            },
+          ]);
           setAddress([]);
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   // function for handling Customer
@@ -1910,48 +1929,57 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.CID = changeData.CID
-              set.register_time = changeData.register_time
-              set.profile_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
-              set.username = changeData.username
-              set.mobile = changeData.mobile
-              set.email = changeData.email
-              set.password = changeData.password
-              set.city = changeData.city
-              set.state = changeData.state
-              set.shipping = changeData.shipping
-
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.CID = changeData.CID;
+                set.register_time = changeData.register_time;
+                set.profile_image =
+                  Image[0] !== undefined
+                    ? `${imageLink}${Image[0].path}`
+                    : console.log();
+                set.username = changeData.username;
+                set.mobile = changeData.mobile;
+                set.email = changeData.email;
+                set.password = changeData.password;
+                set.city = changeData.city;
+                set.state = changeData.state;
+                set.shipping = changeData.shipping;
+              }
+              return set;
+            })
+          );
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
-
 
   // function for handling update category
   const handleUpdateCategory = (e) => {
@@ -1969,7 +1997,6 @@ const SideForm = () => {
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("product_description", changeData.product_description);
 
-
     e.target.category_name.value !== undefined
       ? FD.append("category_name", e.target.category_name.value)
       : console.log();
@@ -1977,44 +2004,52 @@ const SideForm = () => {
     const res = editCategory(FD);
     res
       .then((data) => {
-
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.category_name = e.target.category_name.value;
-              Image[0] !== undefined ? set.category_image = `https://admin.woodshala.in/upload/${Image[0].path}` : console.log();
-              set.seo_title = changeData.seo_title;
-              set.seo_description = changeData.seo_description;
-              set.seo_keyword = changeData.seo_keyword;
-              set.product_description = changeData.product_description;
-
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.category_name = e.target.category_name.value;
+                Image[0] !== undefined
+                  ? (set.category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
+                  : console.log();
+                set.seo_title = changeData.seo_title;
+                set.seo_description = changeData.seo_description;
+                set.seo_keyword = changeData.seo_keyword;
+                set.product_description = changeData.product_description;
+              }
+              return set;
+            })
+          );
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -2024,20 +2059,20 @@ const SideForm = () => {
     setProductSKU({
       P_SKU: [],
       H_SKU: [],
-      supplier: []
-    })
+      supplier: [],
+    });
     setImages([]);
     setFeatured([]);
     setFiles([]);
     setActiveStep(0);
     setData({
       CVW: 0,
-      ACIN: '',
-      warehouse_to: '',
+      ACIN: "",
+      warehouse_to: "",
       primary_material: [],
       product_articles: [],
       hardware_articles: [],
-      supplier: '',
+      supplier: "",
       range: "None",
       product_array: [],
       variation_array: [],
@@ -2045,14 +2080,14 @@ const SideForm = () => {
       savedImages: [],
       shipping: "",
       product_title: "",
-      amazon_url: '',
-      flipkart_url: '',
-      jiomart_url: '',
+      amazon_url: "",
+      flipkart_url: "",
+      jiomart_url: "",
       seo_title: "",
       seo_description: "",
-      specification_image: '',
-      featured_image: '',
-      mannequin_image: '',
+      specification_image: "",
+      featured_image: "",
+      mannequin_image: "",
       seo_keyword: "",
       product_des: "",
       category: "",
@@ -2109,15 +2144,15 @@ const SideForm = () => {
       continue_selling: true,
       ceramic_drawer_included: false,
       ceramic_tiles_included: false,
-      unit: 'Pcs',
+      unit: "Pcs",
       quantity: 1,
-      textile_type: '',
-      category_id: '',
-      sub_category_id: '',
-      product_description: '',
-      legs: 'None',
+      textile_type: "",
+      category_id: "",
+      sub_category_id: "",
+      product_description: "",
+      legs: "None",
       fabric: "None",
-      assembly_level: 'Easy Assembly',
+      assembly_level: "Easy Assembly",
       mattress: "no",
       mattress_length: 0,
       mattress_breadth: 0,
@@ -2129,9 +2164,9 @@ const SideForm = () => {
       handle_qty: 0,
       door: "None",
       door_qty: 0,
-      plywood: 'no',
+      plywood: "no",
       wheel_qty: 0,
-      cradle_bed: 'no',
+      cradle_bed: "no",
       cradle_bed_depth: 0,
       cradle_bed_height: 0,
       cradle_bed_width: 0,
@@ -2143,7 +2178,7 @@ const SideForm = () => {
       ceramic_tiles_qty: 0,
       back_style: "None",
       weight_capacity: "None",
-      drawer: 'None',
+      drawer: "None",
       package_breadth: 0,
       package_height: 0,
       package_length: 0,
@@ -2160,31 +2195,27 @@ const SideForm = () => {
       wood_weight: 0,
       metal_weight: 0,
       package_weight: 0,
-      polish_type: 'None',
-      polish_finish: 'None',
-      level: 'None',
+      polish_type: "None",
+      polish_finish: "None",
+      level: "None",
       lock: false,
       price: 0,
-      indoorSavedImage: []
-
+      indoorSavedImage: [],
     });
     document.getElementById("myForm").reset();
   };
-
-
 
   const handleProduct = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
 
-
     FD.append("DID", SKU);
-    FD.append("AID", 'Not Assigned ' + SKU);
-    FD.append("type", 'Product');
-    FD.append("operation", 'insertProduct');
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Product");
+    FD.append("operation", "insertProduct");
 
-    FD.append("SKU", 'Not Assigned ' + SKU);
+    FD.append("SKU", "Not Assigned " + SKU);
     FD.append("status", false);
 
     FD.append("CVW", changeData.CVW);
@@ -2193,26 +2224,19 @@ const SideForm = () => {
       if (element.validate) return FD.append("product_image", element);
     });
 
-    FD.append("specification_image", changeData.specification_image || '');
-    FD.append("featured_image", changeData.featured_image || '');
-    FD.append("mannequin_image", changeData.mannequin_image || '');
+    FD.append("specification_image", changeData.specification_image || "");
+    FD.append("featured_image", changeData.featured_image || "");
+    FD.append("mannequin_image", changeData.mannequin_image || "");
 
-    console.log(changeData.primary_material)
+    console.log(changeData.primary_material);
 
     FD.append(
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
     );
 
-    FD.append(
-      "warehouse_name",
-      JSON.stringify(changeData.warehouse)
-    );
-    FD.append(
-      "polish_name",
-      JSON.stringify(changeData.polish)
-    );
-
+    FD.append("warehouse_name", JSON.stringify(changeData.warehouse));
+    FD.append("polish_name", JSON.stringify(changeData.polish));
 
     category.map((item) => {
       return (
@@ -2228,28 +2252,21 @@ const SideForm = () => {
       );
     });
 
-
     catalog.hinge.map((item) => {
       return (
-        item.SKU === changeData.hinge &&
-        FD.append("hinge_name", item.title)
+        item.SKU === changeData.hinge && FD.append("hinge_name", item.title)
       );
     });
     catalog.fitting.map((item) => {
       return (
-        item.SKU === changeData.fitting &&
-        FD.append("fitting_name", item.title)
+        item.SKU === changeData.fitting && FD.append("fitting_name", item.title)
       );
     });
     catalog.knob.map((item) => {
-      return (
-        item.SKU === changeData.knob && FD.append("knob_name", item.title)
-      );
+      return item.SKU === changeData.knob && FD.append("knob_name", item.title);
     });
     catalog.door.map((item) => {
-      return (
-        item.SKU === changeData.door && FD.append("door_name", item.title)
-      );
+      return item.SKU === changeData.door && FD.append("door_name", item.title);
     });
     catalog.wheel.map((item) => {
       return (
@@ -2258,8 +2275,7 @@ const SideForm = () => {
     });
     catalog.handle.map((item) => {
       return (
-        item.SKU === changeData.handle &&
-        FD.append("handle_name", item.title)
+        item.SKU === changeData.handle && FD.append("handle_name", item.title)
       );
     });
     catalog.ceramic_tiles.map((item) => {
@@ -2284,8 +2300,7 @@ const SideForm = () => {
 
     catalog.wheel.map((item) => {
       return (
-        item.wheel === changeData.wheel &&
-        FD.append("wheel_name", item.title)
+        item.wheel === changeData.wheel && FD.append("wheel_name", item.title)
       );
     });
 
@@ -2319,19 +2334,19 @@ const SideForm = () => {
       FD.append("wheel_qty", changeData.wheel_qty);
       FD.append("wheel", changeData.wheel);
     }
-    if (changeData.handle !== 'None') {
+    if (changeData.handle !== "None") {
       FD.append("handle_qty", changeData.handle_qty);
     }
-    if (changeData.hinge !== 'None') {
+    if (changeData.hinge !== "None") {
       FD.append("hinge_qty", changeData.hinge_qty);
     }
-    if (changeData.door !== 'None') {
+    if (changeData.door !== "None") {
       FD.append("door_qty", changeData.door_qty);
     }
-    if (changeData.knob !== 'None') {
+    if (changeData.knob !== "None") {
       FD.append("knob_qty", changeData.knob_qty);
     }
-    if (changeData.fabric !== 'None') {
+    if (changeData.fabric !== "None") {
       FD.append("fabric_qty", changeData.fabric_qty);
     }
 
@@ -2353,7 +2368,6 @@ const SideForm = () => {
     FD.append("mattress_length", changeData.mattress_length);
     FD.append("mattress_breadth", changeData.mattress_breadth);
     FD.append("plywood", changeData.plywood);
-
 
     FD.append("range", changeData.range);
     FD.append("category_id", changeData.category_name);
@@ -2402,9 +2416,18 @@ const SideForm = () => {
     );
     FD.append("assembly_level", changeData.assembly_level);
 
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
 
     FD.append("breadth", changeData.breadth ? changeData.breadth : 0);
     FD.append("height", changeData.height ? changeData.height : 0);
@@ -2433,7 +2456,6 @@ const SideForm = () => {
 
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
-
 
     if (changeData.assembly_required === "shipping")
       FD.append("assembly_part", changeData.assembly_part);
@@ -2519,34 +2541,38 @@ const SideForm = () => {
 
     const res = addDraft(FD);
 
-
     res
       .then((data) => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleVariation = (e) => {
@@ -2556,13 +2582,13 @@ const SideForm = () => {
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
     });
-    FD.append('savedImages', JSON.stringify(changeData.savedImages));
+    FD.append("savedImages", JSON.stringify(changeData.savedImages));
 
     FD.append("status", true);
     FD.append("parent_SKU", changeData.SKU);
 
-    FD.append('SKU', SKU);
-    FD.append('ACIN', changeData.ACIN);
+    FD.append("SKU", SKU);
+    FD.append("ACIN", changeData.ACIN);
 
     FD.append("variant_label", changeData.variant_label);
     FD.append("specification_image", changeData.specification_image);
@@ -2572,22 +2598,15 @@ const SideForm = () => {
     FD.append("metal_weight", changeData.metal_weight);
     FD.append("package_weight", changeData.package_weight);
 
-    console.log(changeData.primary_material)
+    console.log(changeData.primary_material);
 
     FD.append(
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
     );
 
-    FD.append(
-      "warehouse_name",
-      JSON.stringify(changeData.warehouse)
-    );
-    FD.append(
-      "polish_name",
-      JSON.stringify(changeData.polish)
-    );
-
+    FD.append("warehouse_name", JSON.stringify(changeData.warehouse));
+    FD.append("polish_name", JSON.stringify(changeData.polish));
 
     category.map((item) => {
       return (
@@ -2603,28 +2622,21 @@ const SideForm = () => {
       );
     });
 
-
     catalog.hinge.map((item) => {
       return (
-        item.SKU === changeData.hinge &&
-        FD.append("hinge_name", item.title)
+        item.SKU === changeData.hinge && FD.append("hinge_name", item.title)
       );
     });
     catalog.fitting.map((item) => {
       return (
-        item.SKU === changeData.fitting &&
-        FD.append("fitting_name", item.title)
+        item.SKU === changeData.fitting && FD.append("fitting_name", item.title)
       );
     });
     catalog.knob.map((item) => {
-      return (
-        item.SKU === changeData.knob && FD.append("knob_name", item.title)
-      );
+      return item.SKU === changeData.knob && FD.append("knob_name", item.title);
     });
     catalog.door.map((item) => {
-      return (
-        item.SKU === changeData.door && FD.append("door_name", item.title)
-      );
+      return item.SKU === changeData.door && FD.append("door_name", item.title);
     });
     catalog.wheel.map((item) => {
       return (
@@ -2633,8 +2645,7 @@ const SideForm = () => {
     });
     catalog.handle.map((item) => {
       return (
-        item.SKU === changeData.handle &&
-        FD.append("handle_name", item.title)
+        item.SKU === changeData.handle && FD.append("handle_name", item.title)
       );
     });
     catalog.ceramic_tiles.map((item) => {
@@ -2659,8 +2670,7 @@ const SideForm = () => {
 
     catalog.wheel.map((item) => {
       return (
-        item.wheel === changeData.wheel &&
-        FD.append("wheel_name", item.title)
+        item.wheel === changeData.wheel && FD.append("wheel_name", item.title)
       );
     });
 
@@ -2691,19 +2701,19 @@ const SideForm = () => {
       FD.append("wheel_qty", changeData.wheel_qty);
       FD.append("wheel", changeData.wheel);
     }
-    if (changeData.handle !== 'None') {
+    if (changeData.handle !== "None") {
       FD.append("handle_qty", changeData.handle_qty);
     }
-    if (changeData.hinge !== 'None') {
+    if (changeData.hinge !== "None") {
       FD.append("hinge_qty", changeData.hinge_qty);
     }
-    if (changeData.door !== 'None') {
+    if (changeData.door !== "None") {
       FD.append("door_qty", changeData.door_qty);
     }
-    if (changeData.knob !== 'None') {
+    if (changeData.knob !== "None") {
       FD.append("knob_qty", changeData.knob_qty);
     }
-    if (changeData.fabric !== 'None') {
+    if (changeData.fabric !== "None") {
       FD.append("fabric_qty", changeData.fabric_qty);
     }
 
@@ -2725,7 +2735,6 @@ const SideForm = () => {
     FD.append("mattress_length", changeData.mattress_length);
     FD.append("mattress_breadth", changeData.mattress_breadth);
     FD.append("plywood", changeData.plywood);
-
 
     FD.append("range", changeData.range);
     FD.append("category_id", changeData.category_name);
@@ -2775,9 +2784,18 @@ const SideForm = () => {
     );
     FD.append("assembly_level", changeData.assembly_level);
 
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
 
     FD.append("breadth", changeData.breadth ? changeData.breadth : 0);
     FD.append("height", changeData.height ? changeData.height : 0);
@@ -2806,7 +2824,6 @@ const SideForm = () => {
 
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
-
 
     if (changeData.assembly_required === "shipping")
       FD.append("assembly_part", changeData.assembly_part);
@@ -2890,165 +2907,174 @@ const SideForm = () => {
     FD.append("stackable", changeData.stackable ? changeData.stackable : false);
     FD.append("tax_rate", changeData.tax_rate);
 
-
     const res = variation(FD);
-
 
     res
       .then((data) => {
-
-
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(old => ({
-            ...old, data: [...old.data, {
-              id: old.data.length + 1,
-              SKU: data.data.response.SKU,
-              CVW: data.data.response.CVW,
-              product_title: data.data.response.product_title,
-              category_name: data.data.response.category_name,
-              category_id: data.data.response.category_id,
-              sub_category_name: data.data.response.sub_category_name,
-              sub_category_id: data.data.response.sub_category_id,
-              product_description: data.data.response.product_description,
-              seo_title: data.data.response.seo_title,
-              seo_description: data.data.response.seo_description,
-              seo_keyword: data.data.response.seo_keyword,
-              product_image: data.data.response.product_image,
-              featured_image: data.data.response.featured_image,
-              mannequin_image: data.data.response.mannequin_image,
-              specification_image: data.data.response.specification_image,
-              primary_material: data.data.response.primary_material,
-              primary_material_name: data.data.response.primary_material_name,
-              warehouse: data.data.response.warehouse,
-              warehouse_name: data.data.response.warehouse_name,
-              length_main: data.data.response.length_main,
-              breadth: data.data.response.breadth,
-              height: data.data.response.height,
-              bangalore_stock: data.data.response.bangalore_stock,
-              jodhpur_stock: data.data.response.jodhpur_stock,
-              weight: data.data.response.weight,
-              polish: data.data.response.polish,
-              polish_name: data.data.response.polish_name,
-              hinge: data.data.response.hinge,
-              hinge_qty: data.data.response.hinge_qty,
-              hinge_name: data.data.response.hinge_name,
-              knob: data.data.response.knob,
-              knob_qty: data.data.response.knob_qty,
-              knob_name: data.data.response.knob_name,
-              handle: data.data.response.handle,
-              handle_qty: data.data.response.handle_qty,
-              handle_name: data.data.response.handle_name,
-              door: data.data.response.door,
-              door_qty: data.data.response.door_qty,
-              door_name: data.data.response.door_name,
-              fitting: data.data.response.fitting,
-              fitting_name: data.data.response.fitting_name,
-              selling_points: data.data.response.selling_points,
-              dial_size: data.data.response.dial_size,
-              seating_size_width: data.data.response.seating_size_width,
-              seating_size_depth: data.data.response.seating_size_depth,
-              seating_size_height: data.data.response.seating_size_height,
-              weight_capacity: data.data.response.weight_capacity,
-              fabric: data.data.response.fabric,
-              fabric_qty: data.data.response.fabric_qty,
-              fabric_name: data.data.response.fabric_name,
-              wall_hanging: data.data.response.wall_hanging,
-              assembly_required: data.data.response.assembly_required,
-              assembly_part: data.data.response.assembly_part,
-              legs: data.data.response.legs,
-              mirror: data.data.response.mirror,
-              mirror_length: data.data.response.mirror_length,
-              mirror_width: data.data.response.mirror_width,
-              silver: data.data.response.silver,
-              silver_weight: data.data.response.silver_weight,
-              joints: data.data.response.joints,
-              upholstery: data.data.response.upholstery,
-              trolley: data.data.response.trolley,
-              trolley_material: data.data.response.trolley_material,
-              rotating_seats: data.data.response.rotating_seats,
-              eatable_oil_polish: data.data.response.eatable_oil_polish,
-              no_chemical: data.data.response.no_chemical,
-              straight_back: data.data.response.straight_back,
-              lean_back: data.data.response.lean_back,
-              weaving: data.data.response.weaving,
-              knife: data.data.response.knife,
-              not_suitable_for_Micro_Dish: data.data.response.not_suitable_for_Micro_Dish,
-              tilt_top: data.data.response.tilt_top,
-              inside_compartments: data.data.response.inside_compartments,
-              stackable: data.data.response.stackable,
-              MRP: data.data.response.MRP,
-              tax_rate: data.data.response.tax_rate,
-              selling_price: data.data.response.selling_price,
-              showroom_price: data.data.response.showroom_price,
-              discount_limit: data.data.response.discount_limit,
-              polish_time: data.data.response.polish_time,
-              manufacturing_time: data.data.response.manufacturing_time,
-              status: data.data.response.status,
-              returnDays: data.data.response.returnDays,
-              COD: data.data.response.COD,
-              returnable: data.data.response.returnable,
-              drawer: data.data.response.drawer,
-              drawer_count: data.data.response.drawer_count,
-              mobile_store: data.data.response.mobile_store,
-              online_store: data.data.response.online_store,
-              range: data.data.response.range,
-              back_style: data.data.response.back_style,
-              package_length: data.data.response.package_length,
-              package_height: data.data.response.package_height,
-              package_breadth: data.data.response.package_breadth,
-              quantity: data.data.response.quantity,
-              unit: data.data.response.unit,
-              assembly_level: data.data.response.assembly_level,
-              continue_selling: data.data.response.continue_selling,
-              wheel: data.data.response.wheel,
-              wheel_included: data.data.response.wheel_included,
-              wheel_qty: data.data.response.wheel_qty,
-              wheel_name: data.data.response.wheel_name,
-              ceramic_tiles: data.data.response.ceramic_tiles,
-              ceramic_tiles_qty: data.data.response.ceramic_tiles_qty,
-              ceramic_tiles_included: data.data.response.ceramic_tiles_included,
-              ceramic_tiles_name: data.data.response.ceramic_tiles_name,
-              ceramic_drawers: data.data.response.ceramic_drawers,
-              ceramic_drawers_included: data.data.response.ceramic_drawers_included,
-              ceramic_drawers_name: data.data.response.ceramic_drawers_name,
-              mattress: data.data.response.mattress,
-              mattress_length: data.data.response.mattress_length,
-              mattress_breadth: data.data.response.mattress_breadth,
-              plywood: data.data.response.plywood,
-              top_size_breadth: data.data.response.top_size_breadth,
-              top_size_length: data.data.response.top_size_length,
-              ceramic_drawers_qty: data.data.response.ceramic_drawers_qty,
-              variations: data.data.response.variations,
-              variant_label: data.data.response.variant_label,
-              parent_SKU: data.data.response.parent_SKU,
-              amazon_url: data.data.response.amazon_url,
-              flipkart_url: data.data.response.flipkart_url,
-              jiomart_url: data.data.response.jiomart_url,
+          form.setRow((old) => ({
+            ...old,
+            data: [
+              ...old.data,
+              {
+                id: old.data.length + 1,
+                SKU: data.data.response.SKU,
+                CVW: data.data.response.CVW,
+                product_title: data.data.response.product_title,
+                category_name: data.data.response.category_name,
+                category_id: data.data.response.category_id,
+                sub_category_name: data.data.response.sub_category_name,
+                sub_category_id: data.data.response.sub_category_id,
+                product_description: data.data.response.product_description,
+                seo_title: data.data.response.seo_title,
+                seo_description: data.data.response.seo_description,
+                seo_keyword: data.data.response.seo_keyword,
+                product_image: data.data.response.product_image,
+                featured_image: data.data.response.featured_image,
+                mannequin_image: data.data.response.mannequin_image,
+                specification_image: data.data.response.specification_image,
+                primary_material: data.data.response.primary_material,
+                primary_material_name: data.data.response.primary_material_name,
+                warehouse: data.data.response.warehouse,
+                warehouse_name: data.data.response.warehouse_name,
+                length_main: data.data.response.length_main,
+                breadth: data.data.response.breadth,
+                height: data.data.response.height,
+                bangalore_stock: data.data.response.bangalore_stock,
+                jodhpur_stock: data.data.response.jodhpur_stock,
+                weight: data.data.response.weight,
+                polish: data.data.response.polish,
+                polish_name: data.data.response.polish_name,
+                hinge: data.data.response.hinge,
+                hinge_qty: data.data.response.hinge_qty,
+                hinge_name: data.data.response.hinge_name,
+                knob: data.data.response.knob,
+                knob_qty: data.data.response.knob_qty,
+                knob_name: data.data.response.knob_name,
+                handle: data.data.response.handle,
+                handle_qty: data.data.response.handle_qty,
+                handle_name: data.data.response.handle_name,
+                door: data.data.response.door,
+                door_qty: data.data.response.door_qty,
+                door_name: data.data.response.door_name,
+                fitting: data.data.response.fitting,
+                fitting_name: data.data.response.fitting_name,
+                selling_points: data.data.response.selling_points,
+                dial_size: data.data.response.dial_size,
+                seating_size_width: data.data.response.seating_size_width,
+                seating_size_depth: data.data.response.seating_size_depth,
+                seating_size_height: data.data.response.seating_size_height,
+                weight_capacity: data.data.response.weight_capacity,
+                fabric: data.data.response.fabric,
+                fabric_qty: data.data.response.fabric_qty,
+                fabric_name: data.data.response.fabric_name,
+                wall_hanging: data.data.response.wall_hanging,
+                assembly_required: data.data.response.assembly_required,
+                assembly_part: data.data.response.assembly_part,
+                legs: data.data.response.legs,
+                mirror: data.data.response.mirror,
+                mirror_length: data.data.response.mirror_length,
+                mirror_width: data.data.response.mirror_width,
+                silver: data.data.response.silver,
+                silver_weight: data.data.response.silver_weight,
+                joints: data.data.response.joints,
+                upholstery: data.data.response.upholstery,
+                trolley: data.data.response.trolley,
+                trolley_material: data.data.response.trolley_material,
+                rotating_seats: data.data.response.rotating_seats,
+                eatable_oil_polish: data.data.response.eatable_oil_polish,
+                no_chemical: data.data.response.no_chemical,
+                straight_back: data.data.response.straight_back,
+                lean_back: data.data.response.lean_back,
+                weaving: data.data.response.weaving,
+                knife: data.data.response.knife,
+                not_suitable_for_Micro_Dish:
+                  data.data.response.not_suitable_for_Micro_Dish,
+                tilt_top: data.data.response.tilt_top,
+                inside_compartments: data.data.response.inside_compartments,
+                stackable: data.data.response.stackable,
+                MRP: data.data.response.MRP,
+                tax_rate: data.data.response.tax_rate,
+                selling_price: data.data.response.selling_price,
+                showroom_price: data.data.response.showroom_price,
+                discount_limit: data.data.response.discount_limit,
+                polish_time: data.data.response.polish_time,
+                manufacturing_time: data.data.response.manufacturing_time,
+                status: data.data.response.status,
+                returnDays: data.data.response.returnDays,
+                COD: data.data.response.COD,
+                returnable: data.data.response.returnable,
+                drawer: data.data.response.drawer,
+                drawer_count: data.data.response.drawer_count,
+                mobile_store: data.data.response.mobile_store,
+                online_store: data.data.response.online_store,
+                range: data.data.response.range,
+                back_style: data.data.response.back_style,
+                package_length: data.data.response.package_length,
+                package_height: data.data.response.package_height,
+                package_breadth: data.data.response.package_breadth,
+                quantity: data.data.response.quantity,
+                unit: data.data.response.unit,
+                assembly_level: data.data.response.assembly_level,
+                continue_selling: data.data.response.continue_selling,
+                wheel: data.data.response.wheel,
+                wheel_included: data.data.response.wheel_included,
+                wheel_qty: data.data.response.wheel_qty,
+                wheel_name: data.data.response.wheel_name,
+                ceramic_tiles: data.data.response.ceramic_tiles,
+                ceramic_tiles_qty: data.data.response.ceramic_tiles_qty,
+                ceramic_tiles_included:
+                  data.data.response.ceramic_tiles_included,
+                ceramic_tiles_name: data.data.response.ceramic_tiles_name,
+                ceramic_drawers: data.data.response.ceramic_drawers,
+                ceramic_drawers_included:
+                  data.data.response.ceramic_drawers_included,
+                ceramic_drawers_name: data.data.response.ceramic_drawers_name,
+                mattress: data.data.response.mattress,
+                mattress_length: data.data.response.mattress_length,
+                mattress_breadth: data.data.response.mattress_breadth,
+                plywood: data.data.response.plywood,
+                top_size_breadth: data.data.response.top_size_breadth,
+                top_size_length: data.data.response.top_size_length,
+                ceramic_drawers_qty: data.data.response.ceramic_drawers_qty,
+                variations: data.data.response.variations,
+                variant_label: data.data.response.variant_label,
+                parent_SKU: data.data.response.parent_SKU,
+                amazon_url: data.data.response.amazon_url,
+                flipkart_url: data.data.response.flipkart_url,
+                jiomart_url: data.data.response.jiomart_url,
 
-              action: data.data.response
-            }]
-          }))
-          handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+                action: data.data.response,
+              },
+            ],
           }));
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -3059,8 +3085,8 @@ const SideForm = () => {
 
     FD.append("DID", SKU);
     FD.append("AID", changeData.SKU);
-    FD.append("type", 'Product');
-    FD.append("operation", 'updateProduct');
+    FD.append("type", "Product");
+    FD.append("operation", "updateProduct");
     FD.append("parentProduct", changeData.SKU);
     FD.append("variations", changeData.variations);
     FD.append("variant_label", changeData.variant_label);
@@ -3071,11 +3097,10 @@ const SideForm = () => {
     FD.append("metal_weight", changeData.metal_weight);
     FD.append("package_weight", changeData.package_weight);
 
-
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
     });
-    FD.append('savedImages', JSON.stringify(changeData.savedImages));
+    FD.append("savedImages", JSON.stringify(changeData.savedImages));
 
     FD.append("_id", changeData._id);
 
@@ -3083,22 +3108,15 @@ const SideForm = () => {
     FD.append("featured_image", changeData.featured_image);
     FD.append("mannequin_image", changeData.mannequin_image);
 
-    console.log(changeData.primary_material)
+    console.log(changeData.primary_material);
 
     FD.append(
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
     );
 
-    FD.append(
-      "warehouse_name",
-      JSON.stringify(changeData.warehouse)
-    );
-    FD.append(
-      "polish_name",
-      JSON.stringify(changeData.polish)
-    );
-
+    FD.append("warehouse_name", JSON.stringify(changeData.warehouse));
+    FD.append("polish_name", JSON.stringify(changeData.polish));
 
     category.map((item) => {
       return (
@@ -3114,28 +3132,21 @@ const SideForm = () => {
       );
     });
 
-
     catalog.hinge.map((item) => {
       return (
-        item.SKU === changeData.hinge &&
-        FD.append("hinge_name", item.title)
+        item.SKU === changeData.hinge && FD.append("hinge_name", item.title)
       );
     });
     catalog.fitting.map((item) => {
       return (
-        item.SKU === changeData.fitting &&
-        FD.append("fitting_name", item.title)
+        item.SKU === changeData.fitting && FD.append("fitting_name", item.title)
       );
     });
     catalog.knob.map((item) => {
-      return (
-        item.SKU === changeData.knob && FD.append("knob_name", item.title)
-      );
+      return item.SKU === changeData.knob && FD.append("knob_name", item.title);
     });
     catalog.door.map((item) => {
-      return (
-        item.SKU === changeData.door && FD.append("door_name", item.title)
-      );
+      return item.SKU === changeData.door && FD.append("door_name", item.title);
     });
     catalog.wheel.map((item) => {
       return (
@@ -3144,8 +3155,7 @@ const SideForm = () => {
     });
     catalog.handle.map((item) => {
       return (
-        item.SKU === changeData.handle &&
-        FD.append("handle_name", item.title)
+        item.SKU === changeData.handle && FD.append("handle_name", item.title)
       );
     });
     catalog.ceramic_tiles.map((item) => {
@@ -3170,8 +3180,7 @@ const SideForm = () => {
 
     catalog.wheel.map((item) => {
       return (
-        item.wheel === changeData.wheel &&
-        FD.append("wheel_name", item.title)
+        item.wheel === changeData.wheel && FD.append("wheel_name", item.title)
       );
     });
 
@@ -3199,19 +3208,19 @@ const SideForm = () => {
       FD.append("wheel_qty", changeData.wheel_qty);
       FD.append("wheel", changeData.wheel);
     }
-    if (changeData.handle !== 'None') {
+    if (changeData.handle !== "None") {
       FD.append("handle_qty", changeData.handle_qty);
     }
-    if (changeData.hinge !== 'None') {
+    if (changeData.hinge !== "None") {
       FD.append("hinge_qty", changeData.hinge_qty);
     }
-    if (changeData.door !== 'None') {
+    if (changeData.door !== "None") {
       FD.append("door_qty", changeData.door_qty);
     }
-    if (changeData.knob !== 'None') {
+    if (changeData.knob !== "None") {
       FD.append("knob_qty", changeData.knob_qty);
     }
-    if (changeData.fabric !== 'None') {
+    if (changeData.fabric !== "None") {
       FD.append("fabric_qty", changeData.fabric_qty);
     }
 
@@ -3233,7 +3242,6 @@ const SideForm = () => {
     FD.append("mattress_length", changeData.mattress_length);
     FD.append("mattress_breadth", changeData.mattress_breadth);
     FD.append("plywood", changeData.plywood);
-
 
     FD.append("range", changeData.range);
     FD.append("category_id", changeData.category_name);
@@ -3283,9 +3291,18 @@ const SideForm = () => {
     );
     FD.append("assembly_level", changeData.assembly_level);
 
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
 
     FD.append("breadth", changeData.breadth ? changeData.breadth : 0);
     FD.append("height", changeData.height ? changeData.height : 0);
@@ -3314,7 +3331,6 @@ const SideForm = () => {
 
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
-
 
     if (changeData.assembly_required === "shipping")
       FD.append("assembly_part", changeData.assembly_part);
@@ -3400,34 +3416,38 @@ const SideForm = () => {
 
     const res = addDraft(FD);
 
-
     res
       .then((data) => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -3436,14 +3456,13 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-
     files.map((element) => {
       if (element.validate) return FD.append("product_image", element);
     });
 
-    FD.append("specification_image", changeData.specification_image || '');
-    FD.append("featured_image", changeData.featured_image || '');
-    FD.append("mannequin_image", changeData.mannequin_image || '');
+    FD.append("specification_image", changeData.specification_image || "");
+    FD.append("featured_image", changeData.featured_image || "");
+    FD.append("mannequin_image", changeData.mannequin_image || "");
 
     category.map((item) => {
       return (
@@ -3459,14 +3478,15 @@ const SideForm = () => {
       );
     });
 
-
     let Product_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map(SKU => ({ SKU: SKU, qty: changeData[SKU] || 0 }));
+      Product_SKU = changeData.product_articles.map((SKU) => ({
+        SKU: SKU,
+        qty: changeData[SKU] || 0,
+      }));
 
-
-    FD.append('product_articles', JSON.stringify(Product_SKU));
+    FD.append("product_articles", JSON.stringify(Product_SKU));
 
     FD.append("product_description", changeData.product_description);
     FD.append("seo_title", changeData.seo_title);
@@ -3480,8 +3500,6 @@ const SideForm = () => {
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
 
-
-
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
     FD.append("product_title", changeData.product_title);
@@ -3491,9 +3509,18 @@ const SideForm = () => {
     FD.append("M", SKU);
     FD.append("polish_time", changeData.polish_time);
     FD.append("manufacturing_time", changeData.manufacturing_time);
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
     FD.append("warehouse", changeData.warehouse);
 
     FD.append(
@@ -3522,67 +3549,78 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(old => ({
-            ...old, total: old.total + 1, data: [...form.row, {
-              id: form.row.length + 1,
-              M: data.data.response.M,
-              product_articles: data.data.response.product_articles,
-              product_title: data.data.response.product_title,
-              category_name: data.data.response.category_name,
-              sub_category_name: data.data.response.category_name,
-              category_id: data.data.response.category_id,
-              sub_category_id: data.data.response.category_id,
-              warehouse: data.data.response.warehouse,
-              warehouse_name: data.data.response.warehouse_name,
-              bangalore_stock: data.data.response.bangalore_stock,
-              jodhpur_stock: data.data.response.jodhpur_stock,
-              product_description: data.data.response.product_description,
-              product_image: data.data.response.product_image,
-              featured_image: data.data.response.featured_image,
-              mannequin_image: data.data.response.mannequin_image,
-              specification_image: data.data.response.specification_image,
-              selling_points: data.data.response.selling_points,
-              selling_price: data.data.response.selling_price,
-              showroom_price: data.data.response.showroom_price,
-              discount_limit: data.data.response.discount_limit,
-              mobile_store: data.data.response.mobile_store,
-              online_store: data.data.response.online_store,
-              continue_selling: data.data.response.continue_selling,
-              COD: data.data.response.COD,
-              returnDays: data.data.response.returnDays,
-              returnable: data.data.response.returnable,
-              polish_time: data.data.response.polish_time,
-              manufacturing_time: data.data.response.manufacturing_time,
-              package_length: data.data.response.package_length,
-              package_height: data.data.response.package_height,
-              package_breadth: data.data.response.package_breadth,
-              seo_title: data.data.response.seo_title,
-              seo_description: data.data.response.seo_description,
-              seo_keyword: data.data.response.seo_keyword,
-              action: data.data.response._id
-            }]
-          }))
-          handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
+          form.setRow((old) => ({
+            ...old,
+            total: old.total + 1,
+            data: [
+              ...form.row,
+              {
+                id: form.row.length + 1,
+                M: data.data.response.M,
+                product_articles: data.data.response.product_articles,
+                product_title: data.data.response.product_title,
+                category_name: data.data.response.category_name,
+                sub_category_name: data.data.response.category_name,
+                category_id: data.data.response.category_id,
+                sub_category_id: data.data.response.category_id,
+                warehouse: data.data.response.warehouse,
+                warehouse_name: data.data.response.warehouse_name,
+                bangalore_stock: data.data.response.bangalore_stock,
+                jodhpur_stock: data.data.response.jodhpur_stock,
+                product_description: data.data.response.product_description,
+                product_image: data.data.response.product_image,
+                featured_image: data.data.response.featured_image,
+                mannequin_image: data.data.response.mannequin_image,
+                specification_image: data.data.response.specification_image,
+                selling_points: data.data.response.selling_points,
+                selling_price: data.data.response.selling_price,
+                showroom_price: data.data.response.showroom_price,
+                discount_limit: data.data.response.discount_limit,
+                mobile_store: data.data.response.mobile_store,
+                online_store: data.data.response.online_store,
+                continue_selling: data.data.response.continue_selling,
+                COD: data.data.response.COD,
+                returnDays: data.data.response.returnDays,
+                returnable: data.data.response.returnable,
+                polish_time: data.data.response.polish_time,
+                manufacturing_time: data.data.response.manufacturing_time,
+                package_length: data.data.response.package_length,
+                package_height: data.data.response.package_height,
+                package_breadth: data.data.response.package_breadth,
+                seo_title: data.data.response.seo_title,
+                seo_description: data.data.response.seo_description,
+                seo_keyword: data.data.response.seo_keyword,
+                action: data.data.response._id,
+              },
+            ],
           }));
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleUpdateMergeProduct = (e) => {
@@ -3596,9 +3634,9 @@ const SideForm = () => {
       if (element.validate) return FD.append("product_image", element);
     });
 
-    FD.append("specification_image", changeData.specification_image || '');
-    FD.append("featured_image", changeData.featured_image || '');
-    FD.append("mannequin_image", changeData.mannequin_image || '');
+    FD.append("specification_image", changeData.specification_image || "");
+    FD.append("featured_image", changeData.featured_image || "");
+    FD.append("mannequin_image", changeData.mannequin_image || "");
 
     category.map((item) => {
       return (
@@ -3614,14 +3652,15 @@ const SideForm = () => {
       );
     });
 
-
     let Product_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map(SKU => ({ SKU: SKU, qty: changeData[SKU] || 0 }));
+      Product_SKU = changeData.product_articles.map((SKU) => ({
+        SKU: SKU,
+        qty: changeData[SKU] || 0,
+      }));
 
-
-    FD.append('product_articles', JSON.stringify(Product_SKU));
+    FD.append("product_articles", JSON.stringify(Product_SKU));
 
     FD.append("product_description", changeData.product_description);
     FD.append("savedImages", JSON.stringify(changeData.savedImages));
@@ -3636,8 +3675,6 @@ const SideForm = () => {
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
 
-
-
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
     FD.append("product_title", changeData.product_title);
@@ -3647,9 +3684,18 @@ const SideForm = () => {
 
     FD.append("polish_time", changeData.polish_time);
     FD.append("manufacturing_time", changeData.manufacturing_time);
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
     FD.append("warehouse", changeData.warehouse);
 
     FD.append(
@@ -3678,18 +3724,21 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          console.log(data.data.updates.product_articles)
-          form.setRow(old => ({
-            ...old, data: form.row.map((set) => {
+          console.log(data.data.updates.product_articles);
+          form.setRow((old) => ({
+            ...old,
+            data: form.row.map((set) => {
               if (set.action === form.payload.row.action) {
                 set.product_title = changeData.product_title;
-                set.product_articles = data.data.updates.product_articles
+                set.product_articles = data.data.updates.product_articles;
                 set.category_name = data.data.updates.category_name;
                 set.category_id = data.data.updates.category_id;
                 set.sub_category_name = data.data.updates.sub_category_name;
@@ -3721,27 +3770,30 @@ const SideForm = () => {
                 set.seo_title = data.data.updates.seo_title;
                 set.seo_description = data.data.updates.seo_description;
                 set.seo_keyword = data.data.updates.seo_keyword;
-                return set
-              }
-              else return set;
-            })
+                return set;
+              } else return set;
+            }),
           }));
 
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -3774,38 +3826,51 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            primaryMaterial_name: data.data.response.primaryMaterial_name,
-            primaryMaterial_description: data.data.response.primaryMaterial_description,
-            primaryMaterial_image: data.data.response.primaryMaterial_image,
-            primaryMaterial_status: data.data.response.primaryMaterial_status,
-            action: data.data.response
-          }])
-          form.setCheck(old => [...old, data.data.response.primaryMaterial_status])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              primaryMaterial_name: data.data.response.primaryMaterial_name,
+              primaryMaterial_description:
+                data.data.response.primaryMaterial_description,
+              primaryMaterial_image: data.data.response.primaryMaterial_image,
+              primaryMaterial_status: data.data.response.primaryMaterial_status,
+              action: data.data.response,
+            },
+          ]);
+          form.setCheck((old) => [
+            ...old,
+            data.data.response.primaryMaterial_status,
+          ]);
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -3835,41 +3900,51 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.primaryMaterial_description = e.target.primaryMaterial_description.value;
-              set.primaryMaterial_name = e.target.primaryMaterial_name.value;
-              set.primaryMaterial_image = Image[0] !== undefined ? `${imageLink}${Image[0].path}` : console.log()
-
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.primaryMaterial_description =
+                  e.target.primaryMaterial_description.value;
+                set.primaryMaterial_name = e.target.primaryMaterial_name.value;
+                set.primaryMaterial_image =
+                  Image[0] !== undefined
+                    ? `${imageLink}${Image[0].path}`
+                    : console.log();
+              }
+              return set;
+            })
+          );
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
-
 
   const handleSupplier = (e) => {
     e.preventDefault();
@@ -3891,38 +3966,47 @@ const SideForm = () => {
         //console.log(data.status);
 
         if (data.status === 200) {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            supplier_name: data.data.response.supplier_name,
-            mobile: data.data.response.mobile,
-            gst_no: data.data.response.gst_no,
-            alt_mobile: data.data.response.alt_mobile,
-            specialization: data.data.response.specialization,
-            SID: data.data.response.SID,
-            address: data.data.response.address,
-            action: data.data.response._id
-          }])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              supplier_name: data.data.response.supplier_name,
+              mobile: data.data.response.mobile,
+              gst_no: data.data.response.gst_no,
+              alt_mobile: data.data.response.alt_mobile,
+              specialization: data.data.response.specialization,
+              SID: data.data.response.SID,
+              address: data.data.response.address,
+              action: data.data.response._id,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         } else {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -3932,7 +4016,6 @@ const SideForm = () => {
     const FD = new FormData();
     FD.append("_id", form.payload.row.action);
 
-
     FD.append("supplier_name", e.target.supplier_name.value);
     FD.append("mobile", e.target.mobile.value);
     FD.append("gst_no", e.target.gst_no.value);
@@ -3940,7 +4023,6 @@ const SideForm = () => {
     FD.append("specialization", e.target.specialization.value);
     FD.append("SID", e.target.SID.value);
     FD.append("address", e.target.address.value);
-
 
     const res = editSupplier(FD);
 
@@ -3950,44 +4032,50 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.supplier_name = e.target.supplier_name.value
-              set.mobile = e.target.mobile.value
-              set.gst_no = e.target.gst_no.value
-              set.alt_mobile = e.target.alt_mobile.value
-              set.specialization = e.target.specialization.value
-              set.SID = e.target.SID.value
-              set.address = e.target.address.value
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.supplier_name = e.target.supplier_name.value;
+                set.mobile = e.target.mobile.value;
+                set.gst_no = e.target.gst_no.value;
+                set.alt_mobile = e.target.alt_mobile.value;
+                set.specialization = e.target.specialization.value;
+                set.SID = e.target.SID.value;
+                set.address = e.target.address.value;
+              }
+              return set;
+            })
+          );
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
-
-
 
   const handleInward = (e) => {
     e.preventDefault();
@@ -4000,67 +4088,78 @@ const SideForm = () => {
     let Hardware_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map(SKU => ({ [SKU]: changeData[SKU] || 0 }));
+      Product_SKU = changeData.product_articles.map((SKU) => ({
+        [SKU]: changeData[SKU] || 0,
+      }));
 
     if (changeData.hardware_articles.length > 0)
-      Hardware_SKU = changeData.hardware_articles.map(SKU => ({ [SKU]: changeData[SKU] || 0 }));
+      Hardware_SKU = changeData.hardware_articles.map((SKU) => ({
+        [SKU]: changeData[SKU] || 0,
+      }));
 
-    FD.append('product_articles', JSON.stringify(Product_SKU));
-    FD.append('hardware_articles', JSON.stringify(Hardware_SKU));
-    FD.append('warehouse', changeData.warehouse);
-    FD.append('supplier', changeData.supplier)
-    FD.append('vehicle_no', (e.target.vehicle_no.value).toUpperCase())
-    FD.append('driver_name', e.target.driver_name.value);
-    FD.append('driver_no', e.target.driver_no.value);
-
+    FD.append("product_articles", JSON.stringify(Product_SKU));
+    FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
+    FD.append("warehouse", changeData.warehouse);
+    FD.append("supplier", changeData.supplier);
+    FD.append("vehicle_no", e.target.vehicle_no.value.toUpperCase());
+    FD.append("driver_name", e.target.driver_name.value);
+    FD.append("driver_no", e.target.driver_no.value);
 
     const res = addInward(FD);
 
     res
       .then((data) => {
-
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
           setProductSKU({
             P_SKU: [],
             H_SKU: [],
-            supplier: []
-          })
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            inward_id: data.data.response.inward_id,
-            order_no: data.data.response.order_no,
-            driver_name: data.data.response.driver_name,
-            driver_no: data.data.response.driver_no,
-            vehicle_no: data.data.response.vehicle_no,
-            supplier: data.data.response.supplier,
-            product_articles: data.data.response.product_articles,
-            hardware_articles: data.data.response.hardware_articles,
-            warehouse: data.data.response.warehouse,
-            date: data.data.response.date,
-          }])
+            supplier: [],
+          });
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              inward_id: data.data.response.inward_id,
+              order_no: data.data.response.order_no,
+              driver_name: data.data.response.driver_name,
+              driver_no: data.data.response.driver_no,
+              vehicle_no: data.data.response.vehicle_no,
+              supplier: data.data.response.supplier,
+              product_articles: data.data.response.product_articles,
+              hardware_articles: data.data.response.hardware_articles,
+              warehouse: data.data.response.warehouse,
+              date: data.data.response.date,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleOutward = (e) => {
@@ -4068,28 +4167,30 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-
     // merge the Quantities with product SKU number
 
     let Product_SKU = [];
     let Hardware_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map(SKU => ({ [SKU.split('Stock')[0]]: changeData[SKU] || 0 }));
+      Product_SKU = changeData.product_articles.map((SKU) => ({
+        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
+      }));
 
     if (changeData.hardware_articles.length > 0)
-      Hardware_SKU = changeData.hardware_articles.map(SKU => ({ [SKU.split('Stock')[0]]: changeData[SKU] || 0 }));
+      Hardware_SKU = changeData.hardware_articles.map((SKU) => ({
+        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
+      }));
 
-    FD.append('product_articles', JSON.stringify(Product_SKU));
-    FD.append('hardware_articles', JSON.stringify(Hardware_SKU));
-    FD.append('warehouse', changeData.warehouse);
-    FD.append('supplier', changeData.supplier)
-    FD.append('purpose', changeData.purpose)
-    FD.append('reason', e.target.reason.value)
-    FD.append('vehicle_no', e.target.vehicle_no.value.toUpperCase())
-    FD.append('driver_name', e.target.driver_name.value)
-    FD.append('driver_no', e.target.driver_no.value)
-
+    FD.append("product_articles", JSON.stringify(Product_SKU));
+    FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
+    FD.append("warehouse", changeData.warehouse);
+    FD.append("supplier", changeData.supplier);
+    FD.append("purpose", changeData.purpose);
+    FD.append("reason", e.target.reason.value);
+    FD.append("vehicle_no", e.target.vehicle_no.value.toUpperCase());
+    FD.append("driver_name", e.target.driver_name.value);
+    FD.append("driver_no", e.target.driver_no.value);
 
     const res = addOutward(FD);
 
@@ -4099,48 +4200,56 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
           setProductSKU({
             P_SKU: [],
             H_SKU: [],
-            supplier: []
-          })
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            outward_id: data.data.response.outward_id,
-            order_no: data.data.response.order_no,
-            driver_name: data.data.response.driver_name,
-            driver_no: data.data.response.driver_no,
-            vehicle_no: data.data.response.vehicle_no,
-            supplier: data.data.response.supplier,
-            product_articles: data.data.response.product_articles,
-            hardware_articles: data.data.response.hardware_articles,
-            warehouse: data.data.response.warehouse,
-            purpose: data.data.response.purpose,
-            reason: data.data.response.reason,
-            date: data.data.response.date,
-
-          }])
+            supplier: [],
+          });
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              outward_id: data.data.response.outward_id,
+              order_no: data.data.response.order_no,
+              driver_name: data.data.response.driver_name,
+              driver_no: data.data.response.driver_no,
+              vehicle_no: data.data.response.vehicle_no,
+              supplier: data.data.response.supplier,
+              product_articles: data.data.response.product_articles,
+              hardware_articles: data.data.response.hardware_articles,
+              warehouse: data.data.response.warehouse,
+              purpose: data.data.response.purpose,
+              reason: data.data.response.reason,
+              date: data.data.response.date,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleTransfer = (e) => {
@@ -4154,18 +4263,21 @@ const SideForm = () => {
     let Hardware_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map(SKU => ({ [SKU.split('Stock')[0]]: changeData[SKU] || 0 }));
+      Product_SKU = changeData.product_articles.map((SKU) => ({
+        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
+      }));
 
     if (changeData.hardware_articles.length > 0)
-      Hardware_SKU = changeData.hardware_articles.map(SKU => ({ [SKU.split('Stock')[0]]: changeData[SKU] || 0 }));
+      Hardware_SKU = changeData.hardware_articles.map((SKU) => ({
+        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
+      }));
 
-    FD.append('product_articles', JSON.stringify(Product_SKU));
-    FD.append('hardware_articles', JSON.stringify(Hardware_SKU));
-    FD.append('purpose', changeData.purpose)
-    FD.append('reason', e.target.reason.value)
-    FD.append('warehouse', changeData.warehouse)
-    FD.append('warehouse_to', changeData.warehouse_to)
-
+    FD.append("product_articles", JSON.stringify(Product_SKU));
+    FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
+    FD.append("purpose", changeData.purpose);
+    FD.append("reason", e.target.reason.value);
+    FD.append("warehouse", changeData.warehouse);
+    FD.append("warehouse_to", changeData.warehouse_to);
 
     const res = addTransfer(FD);
 
@@ -4175,47 +4287,55 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
           setProductSKU({
             P_SKU: [],
             H_SKU: [],
-            supplier: []
-          })
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            transfer_id: data.data.response.transfer_id,
-            order_no: data.data.response.order_no,
-            warehouse: data.data.response.warehouse,
-            product_articles: data.data.response.product_articles,
-            hardware_articles: data.data.response.hardware_articles,
-            quantity: data.data.response.quantity,
-            purpose: data.data.response.purpose,
-            reason: data.data.response.reason,
-            date: data.data.response.date,
-          }])
+            supplier: [],
+          });
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              transfer_id: data.data.response.transfer_id,
+              order_no: data.data.response.order_no,
+              warehouse: data.data.response.warehouse,
+              product_articles: data.data.response.product_articles,
+              hardware_articles: data.data.response.hardware_articles,
+              quantity: data.data.response.quantity,
+              purpose: data.data.response.purpose,
+              reason: data.data.response.reason,
+              date: data.data.response.date,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
-
 
   const handleSubCategories = (e) => {
     e.preventDefault();
@@ -4246,49 +4366,62 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            category_id: data.data.response.category_id,
-            category_name: data.data.response.category_name,
-            sub_category_name: data.data.response.sub_category_name,
-            sub_category_status: data.data.response.sub_category_status,
-            seo_title: data.data.response.seo_title,
-            seo_description: data.data.response.seo_description,
-            seo_keyword: data.data.response.seo_keyword,
-            product_description: data.data.response.product_description,
-            action: data.data.response
-          }])
-          form.setCheck(old => [...old, data.data.response.sub_category_status])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              category_id: data.data.response.category_id,
+              category_name: data.data.response.category_name,
+              sub_category_image: data.data.response.sub_category_image,
+              sub_category_name: data.data.response.sub_category_name,
+              sub_category_status: data.data.response.sub_category_status,
+              seo_title: data.data.response.seo_title,
+              seo_description: data.data.response.seo_description,
+              seo_keyword: data.data.response.seo_keyword,
+              product_description: data.data.response.product_description,
+              action: data.data.response,
+            },
+          ]);
+          form.setCheck((old) => [
+            ...old,
+            data.data.response.sub_category_status,
+          ]);
           setImages([]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleUpdateSubCategories = (e) => {
     e.preventDefault();
 
     const FD = new FormData();
-    let catName = ''
+    let catName = "";
 
     // //console.log(form.payload);
     Image[0] !== undefined && FD.append("sub_category_image", Image[0]);
@@ -4296,9 +4429,10 @@ const SideForm = () => {
     FD.append("_id", form.payload.row.action);
 
     category.map((item) => {
-      if (item._id === e.target.category_id.value) catName = item.category_name
+      if (item._id === e.target.category_id.value) catName = item.category_name;
       return (
-        item._id === e.target.category_id.value && FD.append("category_name", catName)
+        item._id === e.target.category_id.value &&
+        FD.append("category_name", catName)
       );
     });
 
@@ -4312,7 +4446,6 @@ const SideForm = () => {
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("product_description", changeData.product_description);
 
-
     const res = editSubCatagories(FD);
 
     res
@@ -4321,43 +4454,54 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.sub_category_name = e.target.sub_category_name.value;
-              set.category_name = catName;
-              set.seo_title = changeData.seo_title;
-              set.seo_description = changeData.seo_description;
-              set.seo_keyword = changeData.seo_keyword;
-              set.product_description = changeData.product_description;
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.sub_category_name = e.target.sub_category_name.value;
+                set.category_name = catName;
+                Image[0] !== undefined
+                  ? (set.sub_category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
+                  : console.log();
+                set.seo_title = changeData.seo_title;
+                set.seo_description = changeData.seo_description;
+                set.seo_keyword = changeData.seo_keyword;
+                set.product_description = changeData.product_description;
+              }
+              return set;
+            })
+          );
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
 
   const handleUpload = (e) => {
     e.preventDefault();
@@ -4376,29 +4520,35 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
           setImages([]);
           setUrl(data.data.url);
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4424,41 +4574,50 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            uuid: data.data.response.uuid,
-            seo_title: data.data.response.seo_title,
-            seo_description: data.data.response.seo_description,
-            title: data.data.response.title,
-            card_image: data.data.response.card_image,
-            card_description: data.data.response.card_description,
-            description: data.data.response.description,
-            action: data.data.response
-          }])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              uuid: data.data.response.uuid,
+              seo_title: data.data.response.seo_title,
+              seo_description: data.data.response.seo_description,
+              title: data.data.response.title,
+              card_image: data.data.response.card_image,
+              card_description: data.data.response.card_description,
+              description: data.data.response.description,
+              action: data.data.response,
+            },
+          ]);
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4487,41 +4646,53 @@ const SideForm = () => {
 
         if (data.status === 203) {
           setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-            if (set.action === form.payload.row.action) {
-              set.seo_title = e.target.seo_title.value
-              set.seo_description = e.target.seo_description.value
-              set.title = e.target.title.value
-              set.card_image = featured[0] !== undefined ? `${imageLink}${Image[0].path}` : changeData.card_image
-              set.card_description = e.target.card_description.value
-              set.description = editorRef.current.getContent() || set.description
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.seo_title = e.target.seo_title.value;
+                set.seo_description = e.target.seo_description.value;
+                set.title = e.target.title.value;
+                set.card_image =
+                  featured[0] !== undefined
+                    ? `${imageLink}${Image[0].path}`
+                    : changeData.card_image;
+                set.card_description = e.target.card_description.value;
+                set.description =
+                  editorRef.current.getContent() || set.description;
+              }
+              return set;
+            })
+          );
           setImages([]);
           setUrl(data.data.url);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4552,30 +4723,36 @@ const SideForm = () => {
       .then((data) => {
         if (data.status !== 200) {
           // setImages([]);
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message || "Something Went Wrong !!!",
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message || "Something Went Wrong !!!",
+            })
+          );
         } else {
           // setImages([]);
           // setUrl(data.data.url);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
         setImages([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4587,7 +4764,6 @@ const SideForm = () => {
   //   FD.append("product_id", changeData.product_id);
   //   FD.append("stock", changeData.stock);
   //   FD.append("warehouse", changeData.warehouse);
-
 
   //   const res = addInward(FD);
 
@@ -4643,7 +4819,6 @@ const SideForm = () => {
   //   FD.append("stock", changeData.stock);
   //   FD.append("warehouse", changeData.warehouse);
 
-
   //   const res = updateStock(FD);
 
   //   res
@@ -4689,17 +4864,20 @@ const SideForm = () => {
 
   const handleAddress = (e) => {
     e.preventDefault();
-    setAddress([...address, {
-      name: e.target.customer_name.value,
-      mobile: e.target.mobile.value,
-      pincode: e.target.pincode.value,
-      city: e.target.city.value,
-      state: e.target.state.value,
-      shipping: e.target.address.value,
-      type: e.target.type.value,
-    }])
-    console.log(address)
-  }
+    setAddress([
+      ...address,
+      {
+        name: e.target.customer_name.value,
+        mobile: e.target.mobile.value,
+        pincode: e.target.pincode.value,
+        city: e.target.city.value,
+        state: e.target.state.value,
+        shipping: e.target.address.value,
+        type: e.target.type.value,
+      },
+    ]);
+    console.log(address);
+  };
 
   const handleHardware = (e) => {
     e.preventDefault();
@@ -4710,7 +4888,7 @@ const SideForm = () => {
       return FD.append("hardware_image", element);
     });
 
-    FD.append("status", changeData.status === 'on' ? true : false);
+    FD.append("status", changeData.status === "on" ? true : false);
 
     category.map((item) => {
       return (
@@ -4738,11 +4916,9 @@ const SideForm = () => {
       changeData.continue_selling ? changeData.continue_selling : true
     );
 
-
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
     FD.append("returnable", changeData.returnable);
     FD.append("COD", changeData.COD);
-
 
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
@@ -4759,23 +4935,27 @@ const SideForm = () => {
     FD.append("selling_price", changeData.selling_price);
     FD.append("warehouse", changeData.warehouse);
 
-
     FD.append("unit", changeData.unit);
     FD.append("quantity", changeData.quantity);
 
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
-
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
 
     if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
       FD.append("jodhpur_stock", changeData.jodhpur_stock);
 
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
-
-
-
 
     const res = addHardware(FD);
 
@@ -4784,52 +4964,61 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            SKU: data.data.response.SKU,
-            title: data.data.response.title,
-            category_name: data.data.response.category_name,
-            category_id: data.data.response.category_id,
-            sub_category_name: data.data.response.sub_category_name,
-            sub_category_id: data.data.response.sub_category_id,
-            hardware_image: data.data.response.hardware_image,
-            warehouse: data.data.response.warehouse,
-            bangalore_stock: data.data.response.bangalore_stock,
-            jodhpur_stock: data.data.response.jodhpur_stock,
-            manufacturing_time: data.data.response.manufacturing_time,
-            status: data.data.response.status,
-            returnDays: data.data.response.returnDays,
-            COD: data.data.response.COD,
-            returnable: data.data.response.returnable,
-            quantity: data.data.response.quantity,
-            package_length: data.data.response.package_length,
-            package_height: data.data.response.package_height,
-            package_breadth: data.data.response.package_breadth,
-            unit: data.data.response.unit,
-            range: data.data.response.range,
-            action: data.data.response._id
-          }])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              SKU: data.data.response.SKU,
+              title: data.data.response.title,
+              category_name: data.data.response.category_name,
+              category_id: data.data.response.category_id,
+              sub_category_name: data.data.response.sub_category_name,
+              sub_category_id: data.data.response.sub_category_id,
+              hardware_image: data.data.response.hardware_image,
+              warehouse: data.data.response.warehouse,
+              bangalore_stock: data.data.response.bangalore_stock,
+              jodhpur_stock: data.data.response.jodhpur_stock,
+              manufacturing_time: data.data.response.manufacturing_time,
+              status: data.data.response.status,
+              returnDays: data.data.response.returnDays,
+              COD: data.data.response.COD,
+              returnable: data.data.response.returnable,
+              quantity: data.data.response.quantity,
+              package_length: data.data.response.package_length,
+              package_height: data.data.response.package_height,
+              package_breadth: data.data.response.package_breadth,
+              unit: data.data.response.unit,
+              range: data.data.response.range,
+              action: data.data.response._id,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4838,15 +5027,16 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    console.log(form.payload.row.action)
+    console.log(form.payload.row.action);
     FD.append("_id", form.payload.row.action);
 
-    FD.append("status", changeData.status === 'on' ? true : false);
+    FD.append("status", changeData.status === "on" ? true : false);
 
-    let multiOBJ = {}
+    let multiOBJ = {};
 
     category.map((item) => {
-      if (item._id === changeData.category_name) multiOBJ = { ...multiOBJ, category_name: item.category_name }
+      if (item._id === changeData.category_name)
+        multiOBJ = { ...multiOBJ, category_name: item.category_name };
 
       return (
         item._id === changeData.category_name &&
@@ -4855,7 +5045,8 @@ const SideForm = () => {
     });
 
     subCategory.map((item) => {
-      if (item._id === changeData.sub_category_name) multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name }
+      if (item._id === changeData.sub_category_name)
+        multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name };
 
       return (
         item._id === changeData.sub_category_name &&
@@ -4875,11 +5066,9 @@ const SideForm = () => {
       changeData.continue_selling ? changeData.continue_selling : true
     );
 
-
     FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
     FD.append("returnable", changeData.returnable);
     FD.append("COD", changeData.COD);
-
 
     FD.append("category_id", changeData.category_name);
     FD.append("sub_category_id", changeData.sub_category_name);
@@ -4896,14 +5085,21 @@ const SideForm = () => {
     FD.append("selling_price", changeData.selling_price);
     FD.append("warehouse", changeData.warehouse);
 
-
     FD.append("unit", changeData.unit);
     FD.append("quantity", changeData.quantity);
 
-    FD.append("package_length", changeData.package_length ? changeData.package_length : 0);
-    FD.append("package_height", changeData.package_height ? changeData.package_height : 0);
-    FD.append("package_breadth", changeData.package_breadth ? changeData.package_breadth : 0);
-
+    FD.append(
+      "package_length",
+      changeData.package_length ? changeData.package_length : 0
+    );
+    FD.append(
+      "package_height",
+      changeData.package_height ? changeData.package_height : 0
+    );
+    FD.append(
+      "package_breadth",
+      changeData.package_breadth ? changeData.package_breadth : 0
+    );
 
     if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
       FD.append("jodhpur_stock", changeData.jodhpur_stock);
@@ -4918,53 +5114,60 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-
-            if (set.action === form.payload.row.action) {
-              set.title = changeData.title;
-              set.category_name = multiOBJ.category_name;
-              set.category_id = changeData.category_id;
-              set.sub_category_name = multiOBJ.sub_category_name;
-              set.sub_category_id = changeData.sub_category_id;
-              set.hardware_image = changeData.hardware_image;
-              set.warehouse = changeData.warehouse.join(',');
-              set.bangalore_stock = changeData.bangalore_stock;
-              set.jodhpur_stock = changeData.jodhpur_stock;
-              set.manufacturing_time = changeData.manufacturing_time;
-              set.status = changeData.status;
-              set.returnDays = changeData.returnDays;
-              set.COD = changeData.COD;
-              set.returnable = changeData.returnable;
-              set.quantity = changeData.quantity;
-              set.package_length = changeData.package_length;
-              set.package_height = changeData.package_height;
-              set.package_breadth = changeData.package_breadth;
-              set.unit = changeData.unit;
-              set.range = changeData.range;
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.title = changeData.title;
+                set.category_name = multiOBJ.category_name;
+                set.category_id = changeData.category_id;
+                set.sub_category_name = multiOBJ.sub_category_name;
+                set.sub_category_id = changeData.sub_category_id;
+                set.hardware_image = changeData.hardware_image;
+                set.warehouse = changeData.warehouse.join(",");
+                set.bangalore_stock = changeData.bangalore_stock;
+                set.jodhpur_stock = changeData.jodhpur_stock;
+                set.manufacturing_time = changeData.manufacturing_time;
+                set.status = changeData.status;
+                set.returnDays = changeData.returnDays;
+                set.COD = changeData.COD;
+                set.returnable = changeData.returnable;
+                set.quantity = changeData.quantity;
+                set.package_length = changeData.package_length;
+                set.package_height = changeData.package_height;
+                set.package_breadth = changeData.package_breadth;
+                set.unit = changeData.unit;
+                set.range = changeData.range;
+              }
+              return set;
+            })
+          );
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         // //console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -4980,14 +5183,12 @@ const SideForm = () => {
     FD.append("lock", e.target.lock.checked);
     FD.append("price", e.target.price.value);
 
-
     files.map((element) => {
       if (element.validate) return FD.append("outDoor_image", element);
     });
     Indoor.map((element) => {
       if (element.validate) return FD.append("inDoor_image", element);
     });
-
 
     const res = addPolish(FD);
 
@@ -4996,38 +5197,46 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow([...form.row, {
-            id: form.row.length + 1,
-            polish_name: data.data.response.polish_name,
-            polish_type: data.data.response.polish_type,
-            polish_finish: data.data.response.polish_finish,
-            outDoor_image: data.data.response.outDoor_image,
-            inDoor_image: data.data.response.inDoor_image,
-            lock: data.data.response.lock,
-            price: data.data.response.price,
-            action: data.data.response
-          }])
+          form.setRow([
+            ...form.row,
+            {
+              id: form.row.length + 1,
+              polish_name: data.data.response.polish_name,
+              polish_type: data.data.response.polish_type,
+              polish_finish: data.data.response.polish_finish,
+              outDoor_image: data.data.response.outDoor_image,
+              inDoor_image: data.data.response.inDoor_image,
+              lock: data.data.response.lock,
+              price: data.data.response.price,
+              action: data.data.response,
+            },
+          ]);
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
-
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
   const handleUpdatePolish = (e) => {
@@ -5035,7 +5244,7 @@ const SideForm = () => {
 
     const FD = new FormData();
 
-    FD.append('_id', changeData._id);
+    FD.append("_id", changeData._id);
 
     FD.append("polish_type", changeData.polish_type);
     FD.append("polish_finish", changeData.polish_finish);
@@ -5046,14 +5255,12 @@ const SideForm = () => {
     FD.append("savedOutDoor", JSON.stringify(changeData.savedImages));
     FD.append("savedIndoor", JSON.stringify(changeData.indoorSavedImage));
 
-
     files.map((element) => {
       if (element.validate) return FD.append("outDoor_image", element);
     });
     Indoor.map((element) => {
       if (element.validate) return FD.append("inDoor_image", element);
     });
-
 
     const res = editPolish(FD);
 
@@ -5062,43 +5269,50 @@ const SideForm = () => {
         // //console.log(data.status);
 
         if (data.status === 203) {
-          dispatch(setAlert({
-            open: true,
-            variant: "error",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
         } else {
-          form.setRow(form.row.map((set) => {
-
-            if (set.action === form.payload.row.action) {
-              set.polish_name = changeData.polish_name
-              set.polish_type = changeData.polish_type
-              set.polish_finish = changeData.polish_finish
-              set.level = changeData.level
-              set.outDoor_image = changeData.outDoor_image
-              set.inDoor_image = changeData.inDoor_image
-              set.lock = changeData.lock
-              set.price = changeData.price
-            }
-            return set;
-          }))
+          form.setRow(
+            form.row.map((set) => {
+              if (set.action === form.payload.row.action) {
+                set.polish_name = changeData.polish_name;
+                set.polish_type = changeData.polish_type;
+                set.polish_finish = changeData.polish_finish;
+                set.level = changeData.level;
+                set.outDoor_image = changeData.outDoor_image;
+                set.inDoor_image = changeData.inDoor_image;
+                set.lock = changeData.lock;
+                set.price = changeData.price;
+              }
+              return set;
+            })
+          );
           handleClose();
-          dispatch(setAlert({
-            open: true,
-            variant: "success",
-            message: data.data.message,
-          }));
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
         }
       })
       .catch((err) => {
         //console.log(err);
         setImages([]);
         setIndoor([]);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
@@ -5107,74 +5321,64 @@ const SideForm = () => {
     const delayDebounceFn = setTimeout(() => {
       getSupplierDropdown(e.target.value)
         .then((res) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
-            supplier: res.data.Suppliers
+            supplier: res.data.Suppliers,
           }));
         })
         .catch((err) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
-            supplier: []
+            supplier: [],
           }));
-        })
-    }, 1000)
-    return () => clearTimeout(delayDebounceFn)
-
-  }
+        });
+    }, 1000);
+    return () => clearTimeout(delayDebounceFn);
+  };
   async function handleSearchStockSKU(e) {
     const delayDebounceFn = setTimeout(() => {
       getStockSKU({ search: e.target.value, warehouse: changeData.warehouse })
         .then((res) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
             P_SKU: res.data.P_SKU,
-            H_SKU: res.data.H_SKU
+            H_SKU: res.data.H_SKU,
           }));
         })
         .catch((err) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
             P_SKU: [],
-            H_SKU: []
+            H_SKU: [],
           }));
-        })
-    }, 1000)
-    return () => clearTimeout(delayDebounceFn)
-
+        });
+    }, 1000);
+    return () => clearTimeout(delayDebounceFn);
   }
   async function handleSearch(e) {
     const delayDebounceFn = setTimeout(() => {
       getArticlesId(e.target.value)
         .then((res) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
             P_SKU: res.data.P_SKU,
-            H_SKU: res.data.H_SKU
+            H_SKU: res.data.H_SKU,
           }));
         })
         .catch((err) => {
-          setProductSKU(old => ({
+          setProductSKU((old) => ({
             ...old,
             P_SKU: [],
-            H_SKU: []
+            H_SKU: [],
           }));
-        })
-    }, 1000)
-    return () => clearTimeout(delayDebounceFn)
-
+        });
+    }, 1000);
+    return () => clearTimeout(delayDebounceFn);
   }
-
-
 
   return (
     <>
-      <Slide
-        direction="left"
-        in={form.state}
-        mountOnEnter
-        unmountOnExit
-      >
+      <Slide direction="left" in={form.state} mountOnEnter unmountOnExit>
         <Backdrop
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={form.state}
@@ -5184,8 +5388,7 @@ const SideForm = () => {
               mode.type === true ? "mainDarkContainer" : "mainContainer"
             }
             sx={
-              form.formType === "product" ||
-                form.formType === "update_product"
+              form.formType === "product" || form.formType === "update_product"
                 ? { width: "100vw !important", padding: "0 5% !important" }
                 : {}
             }
@@ -5203,9 +5406,10 @@ const SideForm = () => {
             {form.formType === "product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Product
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -5218,7 +5422,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleProduct) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleProduct);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -5229,7 +5435,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -5250,8 +5461,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -5265,7 +5475,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="SKU"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5294,7 +5503,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5311,7 +5519,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -5324,7 +5532,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5338,7 +5545,6 @@ const SideForm = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5359,7 +5565,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5383,7 +5588,6 @@ const SideForm = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5413,7 +5617,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5434,7 +5637,6 @@ const SideForm = () => {
                               name="length_main"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5455,7 +5657,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5476,7 +5677,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
                             </InputLabel>
@@ -5487,7 +5687,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -5507,8 +5707,6 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -5533,7 +5731,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -5544,25 +5741,26 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
-                                <MenuItem
-                                  key={option.polish_name}
-                                  value={option.polish_name}
-                                >
-                                  <Checkbox
-                                    checked={
-                                      changeData.polish.indexOf(
-                                        option.polish_name
-                                      ) > -1
-                                    }
-                                  />
-                                  <ListItemText
-                                    primary={option.polish_name}
-                                  />
-                                </MenuItem>
-                              ))}
+                              {catalog.polish.length > 0 &&
+                                catalog.polish.map((option, index) => (
+                                  <MenuItem
+                                    key={option.polish_name}
+                                    value={option.polish_name}
+                                  >
+                                    <Checkbox
+                                      checked={
+                                        changeData.polish.indexOf(
+                                          option.polish_name
+                                        ) > -1
+                                      }
+                                    />
+                                    <ListItemText
+                                      primary={option.polish_name}
+                                    />
+                                  </MenuItem>
+                                ))}
                             </Select>
                             {/* 
                             <TextField sx={{ mb : 1 }}
@@ -5592,8 +5790,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField> */}
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Assembly
@@ -5623,7 +5819,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.assembly_required === "shipping" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -5641,15 +5836,20 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
+                                  value={
+                                    changeData.assembly_part > -1 &&
+                                    changeData.assembly_part < 3
+                                      ? changeData.assembly_part
+                                      : 0
+                                  }
                                   onChange={handleProductFelids}
                                 />
                               </>
                             )}
                             {changeData.assembly_required === "yes" && (
                               <>
-
-                                <TextField sx={{ mt: 1, mb: 1 }}
+                                <TextField
+                                  sx={{ mt: 1, mb: 1 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -5702,13 +5902,9 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Availability
                             </FormLabel>
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -5742,8 +5938,6 @@ const SideForm = () => {
                               }
                               label="Continue Selling"
                             />
-
-
                             {/*                            
                              <TextField sx = {{mb : 2}}
                               size="small"
@@ -5765,12 +5959,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               value={changeData.MRP}
                             /> */}
-
-
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5795,7 +5984,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Images
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -5816,36 +6010,48 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
                             <ProductsPreviews
-                              text={"Make Sure the picture ratio should be in 1:1."}
-                            ></ProductsPreviews>
-
-                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              {
-                                files.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = files;
-                                        console.log(">>>>>>", temp, files);
-                                        temp.splice(index, 1);
-                                        setFiles([...temp])
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                                    </Grid>
-                                  </>
-                                })
+                              text={
+                                "Make Sure the picture ratio should be in 1:1."
                               }
-                            </Grid>
-                            }
-
+                            ></ProductsPreviews>
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
                             {/* // featured images */}
                             <TextField
                               size="small"
@@ -5863,12 +6069,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -5895,12 +6108,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -5927,12 +6147,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -5942,8 +6169,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             {/* 
                           <FormLabel id="demo-radio-buttons-group-label">
                             Featured Images
@@ -5963,7 +6188,7 @@ const SideForm = () => {
                           <MannequinPreviews
                             text={"Please Drag and Drop mannequin images"}
                           ></MannequinPreviews> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -5986,10 +6211,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Features */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Features
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6010,8 +6239,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormControlLabel
                                 control={
@@ -6128,42 +6356,48 @@ const SideForm = () => {
                                 label="Ceramic Drawers"
                               />
 
-                              {changeData.ceramic_drawer_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                                size="small"
-                                fullWidth
-                                id="outlined-select"
-                                select
-                                name="ceramic_drawer"
-                                label="Ceramic Drawer"
-                                multiple
-                                value={changeData.ceramic_drawer}
-                                onChange={handleProductFelids}
-                                helperText="Please select your Ceramic Tiles."
-                              >
-                                {catalog.ceramic_drawer.map(
-                                  (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
+                              {changeData.ceramic_drawer_included && (
+                                <>
+                                  <TextField
+                                    sx={{ mt: 2, mb: 1 }}
+                                    size="small"
+                                    fullWidth
+                                    id="outlined-select"
+                                    select
+                                    name="ceramic_drawer"
+                                    label="Ceramic Drawer"
+                                    multiple
+                                    value={changeData.ceramic_drawer}
+                                    onChange={handleProductFelids}
+                                    helperText="Please select your Ceramic Tiles."
                                   >
-                                    {option.title}
-                                  </MenuItem>
-                                )}
-                                <MenuItem key={"none"} value="None">
-                                  {"None"}
-                                </MenuItem>
-                              </TextField>
-                                <TextField
-
-                                  value={changeData.ceramic_drawer_qty}
-                                  onChange={handleProductFelids}
-                                  size={'small'}
-                                  fullWidth
-                                  label='Ceramic Drawer Quantity'
-                                  type='number'
-                                  helperText='Enter the number of ceramic drawer included.'
-                                  name='ceramic_drawer_qty' />
-                              </>}
-
+                                    {catalog.ceramic_drawer.map(
+                                      (option) =>
+                                        option.status && (
+                                          <MenuItem
+                                            key={option.SKU}
+                                            value={option.SKU}
+                                          >
+                                            {option.title}
+                                          </MenuItem>
+                                        )
+                                    )}
+                                    <MenuItem key={"none"} value="None">
+                                      {"None"}
+                                    </MenuItem>
+                                  </TextField>
+                                  <TextField
+                                    value={changeData.ceramic_drawer_qty}
+                                    onChange={handleProductFelids}
+                                    size={"small"}
+                                    fullWidth
+                                    label="Ceramic Drawer Quantity"
+                                    type="number"
+                                    helperText="Enter the number of ceramic drawer included."
+                                    name="ceramic_drawer_qty"
+                                  />
+                                </>
+                              )}
 
                               <FormControlLabel
                                 control={
@@ -6176,42 +6410,49 @@ const SideForm = () => {
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
-                            {changeData.ceramic_tiles_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="ceramic_tiles"
-                              label="Ceramic Tiles"
-                              multiple
-                              value={changeData.ceramic_tiles}
-                              onChange={handleProductFelids}
-                              helperText="Please select your Ceramic Tiles."
-                            >
-                              {catalog.ceramic_tiles.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.ceramic_tiles_included && (
+                              <>
+                                <TextField
+                                  sx={{ mt: 2, mb: 1 }}
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="ceramic_tiles"
+                                  label="Ceramic Tiles"
+                                  multiple
+                                  value={changeData.ceramic_tiles}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your Ceramic Tiles."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.ceramic_tiles_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Ceramic Tiles Quantity'
-                                type='number'
-                                helperText='Enter the number of ceramic tiles included.'
-                                name='ceramic_tiles_qty' />
-                            </>}
-                          </Box >
+                                  {catalog.ceramic_tiles.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.ceramic_tiles_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Ceramic Tiles Quantity"
+                                  type="number"
+                                  helperText="Enter the number of ceramic tiles included."
+                                  name="ceramic_tiles_qty"
+                                />
+                              </>
+                            )}
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -6236,7 +6477,12 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          Miscellaneous
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6258,9 +6504,6 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6285,7 +6528,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6310,8 +6552,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Drawer
@@ -6339,25 +6579,19 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFelids}
-                                />
-                              )}
-
-
-
-
-
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFelids}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -6381,8 +6615,7 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -6407,7 +6640,12 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(4)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6428,8 +6666,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -6457,7 +6694,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -6473,8 +6713,7 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -6488,8 +6727,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -6506,43 +6744,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -6563,7 +6810,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6584,7 +6830,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6605,13 +6850,10 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '90%' }}
+                                sx={{ width: "90%" }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -6621,25 +6863,27 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
-                                sx={{ ml: 1, width: '10%' }}
-                                size='small'
+                                sx={{ ml: 1, width: "10%" }}
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
                             </Box>
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -6664,7 +6908,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(5)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6685,8 +6934,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -6700,7 +6948,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6714,7 +6961,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6728,73 +6974,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -6815,9 +7105,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-
                             {/* selling points  */}
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
@@ -6831,7 +7119,6 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your selling points."
                             /> */}
-
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
@@ -6842,7 +7129,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -6865,10 +7152,14 @@ const SideForm = () => {
                       </Step>
                       {/* SEO End */}
 
-
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(6)}
+                        >
+                          Extra-Details
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -6889,21 +7180,17 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
-
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
-                              type='number'
+                              type="number"
                               name="CVW"
                               label="CVW Number"
-                              value={changeData.CVW || ''}
+                              value={changeData.CVW || ""}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6923,7 +7210,6 @@ const SideForm = () => {
                               value={changeData.wood_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6943,7 +7229,6 @@ const SideForm = () => {
                               value={changeData.metal_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6963,9 +7248,6 @@ const SideForm = () => {
                               value={changeData.package_weight}
                               onChange={handleProductFelids}
                             />
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -6998,14 +7280,11 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Silver
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
                                 onChange={handleProductFelids}
@@ -7044,8 +7323,6 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
                             )}
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7059,30 +7336,32 @@ const SideForm = () => {
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.hinge !== 'None' && <TextField
-
-                              value={changeData.hinge_qty}
-                              size={'small'}
-                              helperText="Enter the number of hinges pieces ."
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Hinge Quantity'
-                              type='number'
-                              name='hinge_qty' />}
-
-
+                            {changeData.hinge !== "None" && (
+                              <TextField
+                                value={changeData.hinge_qty}
+                                size={"small"}
+                                helperText="Enter the number of hinges pieces ."
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Hinge Quantity"
+                                type="number"
+                                name="hinge_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -7097,29 +7376,32 @@ const SideForm = () => {
                             >
                               {console.log(catalog)}
                               {catalog.knob.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.knob !== 'None' && <TextField
-
-                              size={'small'}
-                              fullWidth
-                              helperText="Enter the number of knob pieces ."
-                              value={changeData.knob_qty}
-                              onChange={handleProductFelids}
-                              label='Knob Quantity'
-                              type='number'
-                              name='knob_qty' />}
-
+                            {changeData.knob !== "None" && (
+                              <TextField
+                                size={"small"}
+                                fullWidth
+                                helperText="Enter the number of knob pieces ."
+                                value={changeData.knob_qty}
+                                onChange={handleProductFelids}
+                                label="Knob Quantity"
+                                type="number"
+                                name="knob_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -7133,30 +7415,32 @@ const SideForm = () => {
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.door !== 'None' && <TextField
-
-                              value={changeData.door_qty}
-                              helperText="Enter the number of doors."
-                              size={'small'}
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Door Quantity'
-                              type='number'
-                              name='door_qty' />}
-
-
+                            {changeData.door !== "None" && (
+                              <TextField
+                                value={changeData.door_qty}
+                                helperText="Enter the number of doors."
+                                size={"small"}
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Door Quantity"
+                                type="number"
+                                name="door_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -7170,30 +7454,32 @@ const SideForm = () => {
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.handle !== 'None' && <TextField
-
-                              value={changeData.handle_qty}
-                              helperText="Enter the number of handles."
-                              onChange={handleProductFelids}
-                              size={'small'}
-                              fullWidth
-                              label='Handle Quantity'
-                              type='number'
-                              name='handle_qty' />}
-
-
+                            {changeData.handle !== "None" && (
+                              <TextField
+                                value={changeData.handle_qty}
+                                helperText="Enter the number of handles."
+                                onChange={handleProductFelids}
+                                size={"small"}
+                                fullWidth
+                                label="Handle Quantity"
+                                type="number"
+                                name="handle_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -7207,26 +7493,25 @@ const SideForm = () => {
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mirror
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
@@ -7244,10 +7529,8 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {changeData.mirror === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -7267,7 +7550,6 @@ const SideForm = () => {
                                   onChange={handleProductFelids}
                                   name="mirror_length"
                                 />
-
 
                                 <TextField
                                   size="small"
@@ -7290,9 +7572,6 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7331,9 +7610,6 @@ const SideForm = () => {
                               value={changeData.top_size_breadth}
                               onChange={handleProductFelids}
                             />
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7353,14 +7629,11 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               name="dial_size"
                             />
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Wheel Included
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
@@ -7378,51 +7651,52 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
-                            {changeData.wheel_included === "yes" && <><TextField
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="wheel"
-                              label="Wheel"
-                              multiple
-                              value={changeData.wheel}
-                              onChange={handleProductFelids}
-                              helperText="Please select your wheel."
-                            >
-                              {catalog.wheel.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.wheel_included === "yes" && (
+                              <>
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="wheel"
+                                  label="Wheel"
+                                  multiple
+                                  value={changeData.wheel}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your wheel."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.wheel_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Wheel Quantity'
-                                type='number'
-                                helperText='Enter the number of wheel included.'
-                                name='wheel_qty' />
-                            </>}
-
+                                  {catalog.wheel.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.wheel_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Wheel Quantity"
+                                  type="number"
+                                  helperText="Enter the number of wheel included."
+                                  name="wheel_qty"
+                                />
+                              </>
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Trolley
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
@@ -7442,7 +7716,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.trolley === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -7466,9 +7739,6 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7488,8 +7758,6 @@ const SideForm = () => {
                               value={changeData.seating_size_width}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7509,8 +7777,6 @@ const SideForm = () => {
                               value={changeData.seating_size_depth}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7530,14 +7796,11 @@ const SideForm = () => {
                               value={changeData.seating_size_height}
                               onChange={handleProductFelids}
                             />
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Plywood Included
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
                                 onChange={handleProductFelids}
@@ -7555,15 +7818,11 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mattress
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
                                 onChange={handleProductFelids}
@@ -7581,14 +7840,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.mattress === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="mattress_length"
                                   label="Mattress Length"
@@ -7597,7 +7854,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="mattress_breadth"
@@ -7607,16 +7864,11 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Cradle Bed
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
                                 onChange={handleProductFelids}
@@ -7634,14 +7886,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.cradle_bed === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
@@ -7650,7 +7900,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_width"
@@ -7660,19 +7910,16 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
                                   onChange={handleProductFelids}
-                                /></>
+                                />
+                              </>
                             )}
-
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Upholstery
@@ -7683,7 +7930,6 @@ const SideForm = () => {
                                 // onChange={(e) => {
                                 //   setShowFabric(e.target.value);
                                 // }}
-
 
                                 value={changeData.upholstery || "no"}
                                 onChange={handleProductFelids}
@@ -7703,7 +7949,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.upholstery === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -7717,12 +7962,15 @@ const SideForm = () => {
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
-                                    (option) => option.status && <MenuItem
-                                      key={option.SKU}
-                                      value={option.SKU}
-                                    >
-                                      {option.title}
-                                    </MenuItem>
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
                                   )}
                                   <MenuItem key={"none"} value="None">
                                     {"None"}
@@ -7730,65 +7978,55 @@ const SideForm = () => {
                                 </TextField>
 
                                 <TextField
-
                                   value={changeData.fabric_qty}
                                   onChange={handleProductFelids}
-                                  size={'small'}
+                                  size={"small"}
                                   fullWidth
-                                  label='Fabric Quantity'
-                                  type='number'
-                                  helperText='Enter the fabric quantity in meter.'
-                                  name='fabric_qty' />
+                                  label="Fabric Quantity"
+                                  type="number"
+                                  helperText="Enter the fabric quantity in meter."
+                                  name="fabric_qty"
+                                />
                               </>
                             )}
-
-
-                            <FormControl  >
+                            <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Vendor URLs
                               </FormLabel>
                             </FormControl>
-
                             <TextField
-                              type='url'
+                              type="url"
                               fullWidth
-
-                              size='small'
-                              name='amazon_url'
-                              label='Amazon'
+                              size="small"
+                              name="amazon_url"
+                              label="Amazon"
                               onChange={handleProductFelids}
                               value={changeData.amazon_url}
                               placeholder="https://example.com"
                               pattern="https://.*"
-
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='flipkart_url'
-                              label='Flipkart'
+                              name="flipkart_url"
+                              label="Flipkart"
                               onChange={handleProductFelids}
                               value={changeData.flipkart_url}
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='jiomart_url'
-                              label='Jio Mart'
+                              name="jiomart_url"
+                              label="Jio Mart"
                               onChange={handleProductFelids}
                               value={changeData.jiomart_url}
                             />
-
-
-
                             <Box className="stepAction">
                               <Button
                                 variant="outlined"
@@ -7811,8 +8049,6 @@ const SideForm = () => {
                         </StepContent>
                       </Step>
                       {/* Extra-details End */}
-
-
                     </Stepper>
 
                     <Button
@@ -7834,9 +8070,10 @@ const SideForm = () => {
             {form.formType === "update_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Product
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -7849,7 +8086,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateProduct) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateProduct);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -7860,7 +8099,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -7881,8 +8125,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -7891,12 +8134,11 @@ const SideForm = () => {
                               // // required
                               label="SKU"
                               type="text"
-                              value={changeData.SKU || ''}
+                              value={changeData.SKU || ""}
                               disabled
                               variant="outlined"
                               name="SKU"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7905,7 +8147,7 @@ const SideForm = () => {
                               select
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name || ''}
+                              value={changeData.category_name || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -7925,7 +8167,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7935,14 +8176,14 @@ const SideForm = () => {
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
-                              value={changeData.sub_category_name || ''}
+                              value={changeData.sub_category_name || ""}
                               onChange={handleProductFelids}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -7955,7 +8196,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7969,7 +8209,6 @@ const SideForm = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -7990,7 +8229,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8014,7 +8252,6 @@ const SideForm = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8044,7 +8281,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8065,7 +8301,6 @@ const SideForm = () => {
                               name="length_main"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8086,7 +8321,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8107,7 +8341,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
                             </InputLabel>
@@ -8118,7 +8351,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -8138,9 +8371,6 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8165,7 +8395,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -8176,27 +8405,27 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
-                                <MenuItem
-                                  key={option.polish_name}
-                                  value={option.polish_name}
-                                >
-                                  <Checkbox
-                                    checked={
-                                      changeData.polish.indexOf(
-                                        option.polish_name
-                                      ) > -1
-                                    }
-                                  />
-                                  <ListItemText
-                                    primary={option.polish_name}
-                                  />
-                                </MenuItem>
-                              ))}
+                              {catalog.polish.length > 0 &&
+                                catalog.polish.map((option, index) => (
+                                  <MenuItem
+                                    key={option.polish_name}
+                                    value={option.polish_name}
+                                  >
+                                    <Checkbox
+                                      checked={
+                                        changeData.polish.indexOf(
+                                          option.polish_name
+                                        ) > -1
+                                      }
+                                    />
+                                    <ListItemText
+                                      primary={option.polish_name}
+                                    />
+                                  </MenuItem>
+                                ))}
                             </Select>
-
                             {/* <TextField sx={{ mb : 1 }}
                               size="small"
                               fullWidth
@@ -8224,8 +8453,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField> */}
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Assembly
@@ -8255,7 +8482,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.assembly_required === "shipping" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -8273,15 +8499,20 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
+                                  value={
+                                    changeData.assembly_part > -1 &&
+                                    changeData.assembly_part < 3
+                                      ? changeData.assembly_part
+                                      : 0
+                                  }
                                   onChange={handleProductFelids}
                                 />
                               </>
                             )}
                             {changeData.assembly_required === "yes" && (
                               <>
-
-                                <TextField sx={{ mt: 1, mb: 1 }}
+                                <TextField
+                                  sx={{ mt: 1, mb: 1 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -8334,13 +8565,9 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Availability
                             </FormLabel>
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -8374,8 +8601,6 @@ const SideForm = () => {
                               }
                               label="Continue Selling"
                             />
-
-
                             {/*                            
                              <TextField sx = {{mb : 2}}
                               size="small"
@@ -8397,12 +8622,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               value={changeData.MRP}
                             /> */}
-
-
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -8427,7 +8647,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Images
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8448,60 +8673,83 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
-
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
-
-                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              {
-                                files.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = files;
-                                        console.log(">>>>>>", temp, files);
-                                        temp.splice(index, 1);
-                                        setFiles([...temp])
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
-                            {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              <FormLabel id="demo-radio-buttons-group-label">
-                                Saved Images
-                              </FormLabel>
-                              {
-                                changeData.savedImages.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = changeData.savedImages;
-                                        temp.splice(index, 1);
-                                        setData({ ...changeData, savedImages: temp })
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={img} alt='productImage' />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {changeData.savedImages.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                <FormLabel id="demo-radio-buttons-group-label">
+                                  Saved Images
+                                </FormLabel>
+                                {changeData.savedImages.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = changeData.savedImages;
+                                            temp.splice(index, 1);
+                                            setData({
+                                              ...changeData,
+                                              savedImages: temp,
+                                            });
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={img}
+                                          alt="productImage"
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
                             {/* // featured images */}
                             <TextField
                               size="small"
@@ -8519,35 +8767,47 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
                               {/* {console.log(changeData.savedImages)} */}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             {/* // specification images */}
                             <TextField
                               size="small"
@@ -8565,30 +8825,43 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
 
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -8610,36 +8883,46 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                             Featured Images
                           </FormLabel>
@@ -8658,7 +8941,7 @@ const SideForm = () => {
                           <MannequinPreviews
                             text={"Please Drag and Drop mannequin images"}
                           ></MannequinPreviews> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -8681,10 +8964,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Features */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Features
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8705,8 +8992,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormControlLabel
                                 control={
@@ -8823,42 +9109,48 @@ const SideForm = () => {
                                 label="Ceramic Drawers"
                               />
 
-                              {changeData.ceramic_drawer_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                                size="small"
-                                fullWidth
-                                id="outlined-select"
-                                select
-                                name="ceramic_drawer"
-                                label="Ceramic Drawer"
-                                multiple
-                                value={changeData.ceramic_drawer}
-                                onChange={handleProductFelids}
-                                helperText="Please select your Ceramic Tiles."
-                              >
-                                {catalog.ceramic_drawer.map(
-                                  (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
+                              {changeData.ceramic_drawer_included && (
+                                <>
+                                  <TextField
+                                    sx={{ mt: 2, mb: 1 }}
+                                    size="small"
+                                    fullWidth
+                                    id="outlined-select"
+                                    select
+                                    name="ceramic_drawer"
+                                    label="Ceramic Drawer"
+                                    multiple
+                                    value={changeData.ceramic_drawer}
+                                    onChange={handleProductFelids}
+                                    helperText="Please select your Ceramic Tiles."
                                   >
-                                    {option.title}
-                                  </MenuItem>
-                                )}
-                                <MenuItem key={"none"} value="None">
-                                  {"None"}
-                                </MenuItem>
-                              </TextField>
-                                <TextField
-
-                                  value={changeData.ceramic_drawer_qty}
-                                  onChange={handleProductFelids}
-                                  size={'small'}
-                                  fullWidth
-                                  label='Ceramic Drawer Quantity'
-                                  type='number'
-                                  helperText='Enter the number of ceramic drawer included.'
-                                  name='ceramic_drawer_qty' />
-                              </>}
-
+                                    {catalog.ceramic_drawer.map(
+                                      (option) =>
+                                        option.status && (
+                                          <MenuItem
+                                            key={option.SKU}
+                                            value={option.SKU}
+                                          >
+                                            {option.title}
+                                          </MenuItem>
+                                        )
+                                    )}
+                                    <MenuItem key={"none"} value="None">
+                                      {"None"}
+                                    </MenuItem>
+                                  </TextField>
+                                  <TextField
+                                    value={changeData.ceramic_drawer_qty}
+                                    onChange={handleProductFelids}
+                                    size={"small"}
+                                    fullWidth
+                                    label="Ceramic Drawer Quantity"
+                                    type="number"
+                                    helperText="Enter the number of ceramic drawer included."
+                                    name="ceramic_drawer_qty"
+                                  />
+                                </>
+                              )}
 
                               <FormControlLabel
                                 control={
@@ -8871,42 +9163,49 @@ const SideForm = () => {
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
-                            {changeData.ceramic_tiles_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="ceramic_tiles"
-                              label="Ceramic Tiles"
-                              multiple
-                              value={changeData.ceramic_tiles}
-                              onChange={handleProductFelids}
-                              helperText="Please select your Ceramic Tiles."
-                            >
-                              {catalog.ceramic_tiles.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.ceramic_tiles_included && (
+                              <>
+                                <TextField
+                                  sx={{ mt: 2, mb: 1 }}
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="ceramic_tiles"
+                                  label="Ceramic Tiles"
+                                  multiple
+                                  value={changeData.ceramic_tiles}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your Ceramic Tiles."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.ceramic_tiles_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Ceramic Tiles Quantity'
-                                type='number'
-                                helperText='Enter the number of ceramic tiles included.'
-                                name='ceramic_tiles_qty' />
-                            </>}
-                          </Box >
+                                  {catalog.ceramic_tiles.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.ceramic_tiles_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Ceramic Tiles Quantity"
+                                  type="number"
+                                  helperText="Enter the number of ceramic tiles included."
+                                  name="ceramic_tiles_qty"
+                                />
+                              </>
+                            )}
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -8931,7 +9230,12 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          Miscellaneous
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -8953,9 +9257,6 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -8980,7 +9281,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9005,8 +9305,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Drawer
@@ -9034,25 +9332,19 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFelids}
-                                />
-                              )}
-
-
-
-
-
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFelids}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -9076,8 +9368,7 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -9102,7 +9393,12 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(4)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -9123,8 +9419,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -9152,7 +9447,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -9168,8 +9466,7 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -9183,8 +9480,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -9201,43 +9497,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -9258,7 +9563,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9279,7 +9583,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9300,13 +9603,10 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '90%' }}
+                                sx={{ width: "90%" }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -9316,25 +9616,27 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
-                                sx={{ ml: 1, width: '10%' }}
-                                size='small'
+                                sx={{ ml: 1, width: "10%" }}
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
                             </Box>
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -9359,7 +9661,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(5)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -9380,8 +9687,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -9395,7 +9701,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9409,7 +9714,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9423,73 +9727,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -9510,9 +9858,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-
                             {/* selling points  */}
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
@@ -9526,7 +9872,6 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your selling points."
                             /> */}
-
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
@@ -9537,7 +9882,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -9560,10 +9905,14 @@ const SideForm = () => {
                       </Step>
                       {/* SEO End */}
 
-
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(6)}
+                        >
+                          Extra-Details
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -9584,21 +9933,17 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
-
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
-                              type='number'
+                              type="number"
                               name="CVW"
                               label="CVW Number"
-                              value={changeData.CVW || ''}
+                              value={changeData.CVW || ""}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9618,7 +9963,6 @@ const SideForm = () => {
                               value={changeData.wood_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9638,7 +9982,6 @@ const SideForm = () => {
                               value={changeData.metal_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9658,10 +10001,6 @@ const SideForm = () => {
                               value={changeData.package_weight}
                               onChange={handleProductFelids}
                             />
-
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9694,14 +10033,11 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Silver
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
                                 onChange={handleProductFelids}
@@ -9740,8 +10076,6 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
                             )}
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -9755,30 +10089,32 @@ const SideForm = () => {
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.hinge !== 'None' && <TextField
-
-                              value={changeData.hinge_qty}
-                              size={'small'}
-                              helperText="Enter the number of hinges pieces ."
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Hinge Quantity'
-                              type='number'
-                              name='hinge_qty' />}
-
-
+                            {changeData.hinge !== "None" && (
+                              <TextField
+                                value={changeData.hinge_qty}
+                                size={"small"}
+                                helperText="Enter the number of hinges pieces ."
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Hinge Quantity"
+                                type="number"
+                                name="hinge_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -9793,29 +10129,32 @@ const SideForm = () => {
                             >
                               {console.log(catalog)}
                               {catalog.knob.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.knob !== 'None' && <TextField
-
-                              size={'small'}
-                              fullWidth
-                              helperText="Enter the number of knob pieces ."
-                              value={changeData.knob_qty}
-                              onChange={handleProductFelids}
-                              label='Knob Quantity'
-                              type='number'
-                              name='knob_qty' />}
-
+                            {changeData.knob !== "None" && (
+                              <TextField
+                                size={"small"}
+                                fullWidth
+                                helperText="Enter the number of knob pieces ."
+                                value={changeData.knob_qty}
+                                onChange={handleProductFelids}
+                                label="Knob Quantity"
+                                type="number"
+                                name="knob_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -9829,30 +10168,32 @@ const SideForm = () => {
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.door !== 'None' && <TextField
-
-                              value={changeData.door_qty}
-                              helperText="Enter the number of doors."
-                              size={'small'}
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Door Quantity'
-                              type='number'
-                              name='door_qty' />}
-
-
+                            {changeData.door !== "None" && (
+                              <TextField
+                                value={changeData.door_qty}
+                                helperText="Enter the number of doors."
+                                size={"small"}
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Door Quantity"
+                                type="number"
+                                name="door_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -9866,30 +10207,32 @@ const SideForm = () => {
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.handle !== 'None' && <TextField
-
-                              value={changeData.handle_qty}
-                              helperText="Enter the number of handles."
-                              onChange={handleProductFelids}
-                              size={'small'}
-                              fullWidth
-                              label='Handle Quantity'
-                              type='number'
-                              name='handle_qty' />}
-
-
+                            {changeData.handle !== "None" && (
+                              <TextField
+                                value={changeData.handle_qty}
+                                helperText="Enter the number of handles."
+                                onChange={handleProductFelids}
+                                size={"small"}
+                                fullWidth
+                                label="Handle Quantity"
+                                type="number"
+                                name="handle_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -9903,26 +10246,25 @@ const SideForm = () => {
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mirror
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
@@ -9940,10 +10282,8 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {changeData.mirror === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -9963,7 +10303,6 @@ const SideForm = () => {
                                   onChange={handleProductFelids}
                                   name="mirror_length"
                                 />
-
 
                                 <TextField
                                   size="small"
@@ -9986,9 +10325,6 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10027,9 +10363,6 @@ const SideForm = () => {
                               value={changeData.top_size_breadth}
                               onChange={handleProductFelids}
                             />
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10049,14 +10382,11 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               name="dial_size"
                             />
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Wheel Included
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
@@ -10074,51 +10404,52 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
-                            {changeData.wheel_included === "yes" && <><TextField
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="wheel"
-                              label="Wheel"
-                              multiple
-                              value={changeData.wheel}
-                              onChange={handleProductFelids}
-                              helperText="Please select your wheel."
-                            >
-                              {catalog.wheel.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.wheel_included === "yes" && (
+                              <>
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="wheel"
+                                  label="Wheel"
+                                  multiple
+                                  value={changeData.wheel}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your wheel."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.wheel_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Wheel Quantity'
-                                type='number'
-                                helperText='Enter the number of wheel included.'
-                                name='wheel_qty' />
-                            </>}
-
+                                  {catalog.wheel.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.wheel_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Wheel Quantity"
+                                  type="number"
+                                  helperText="Enter the number of wheel included."
+                                  name="wheel_qty"
+                                />
+                              </>
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Trolley
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
@@ -10138,7 +10469,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.trolley === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -10162,9 +10492,6 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10184,8 +10511,6 @@ const SideForm = () => {
                               value={changeData.seating_size_width}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10205,8 +10530,6 @@ const SideForm = () => {
                               value={changeData.seating_size_depth}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10281,15 +10604,11 @@ const SideForm = () => {
                           )}
 
                             */}
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Plywood Included
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
                                 onChange={handleProductFelids}
@@ -10307,15 +10626,11 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mattress
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
                                 onChange={handleProductFelids}
@@ -10333,14 +10648,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.mattress === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="mattress_length"
                                   label="Mattress Length"
@@ -10349,7 +10662,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="mattress_breadth"
@@ -10359,16 +10672,11 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Cradle Bed
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
                                 onChange={handleProductFelids}
@@ -10386,14 +10694,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.cradle_bed === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
@@ -10402,7 +10708,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_width"
@@ -10412,19 +10718,16 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
                                   onChange={handleProductFelids}
-                                /></>
+                                />
+                              </>
                             )}
-
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Upholstery
@@ -10435,7 +10738,6 @@ const SideForm = () => {
                                 // onChange={(e) => {
                                 //   setShowFabric(e.target.value);
                                 // }}
-
 
                                 value={changeData.upholstery || "no"}
                                 onChange={handleProductFelids}
@@ -10455,7 +10757,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.upholstery === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -10469,12 +10770,15 @@ const SideForm = () => {
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
-                                    (option) => option.status && <MenuItem
-                                      key={option.SKU}
-                                      value={option.SKU}
-                                    >
-                                      {option.title}
-                                    </MenuItem>
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
                                   )}
                                   <MenuItem key={"none"} value="None">
                                     {"None"}
@@ -10482,64 +10786,55 @@ const SideForm = () => {
                                 </TextField>
 
                                 <TextField
-
                                   value={changeData.fabric_qty}
                                   onChange={handleProductFelids}
-                                  size={'small'}
+                                  size={"small"}
                                   fullWidth
-                                  label='Fabric Quantity'
-                                  type='number'
-                                  helperText='Enter the fabric quantity in meter.'
-                                  name='fabric_qty' />
+                                  label="Fabric Quantity"
+                                  type="number"
+                                  helperText="Enter the fabric quantity in meter."
+                                  name="fabric_qty"
+                                />
                               </>
                             )}
-
-
-                            <FormControl  >
+                            <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Vendor URLs
                               </FormLabel>
                             </FormControl>
                             <TextField
-                              type='url'
+                              type="url"
                               fullWidth
-
-                              size='small'
-                              name='amazon_url'
-                              label='Amazon'
+                              size="small"
+                              name="amazon_url"
+                              label="Amazon"
                               onChange={handleProductFelids}
-                              value={changeData.amazon_url || ''}
+                              value={changeData.amazon_url || ""}
                               placeholder="https://example.com"
                               pattern="https://.*"
-
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='flipkart_url'
-                              label='Flipkart'
+                              name="flipkart_url"
+                              label="Flipkart"
                               onChange={handleProductFelids}
-                              value={changeData.flipkart_url || ''}
+                              value={changeData.flipkart_url || ""}
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='jiomart_url'
-                              label='Jio Mart'
+                              name="jiomart_url"
+                              label="Jio Mart"
                               onChange={handleProductFelids}
-                              value={changeData.jiomart_url || ''}
+                              value={changeData.jiomart_url || ""}
                             />
-
-
-
                             <Box className="stepAction">
                               <Button
                                 variant="outlined"
@@ -10558,12 +10853,10 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-                          </Box >
+                          </Box>
                         </StepContent>
                       </Step>
                       {/* Extra-details End */}
-
-
                     </Stepper>
                     <Button
                       color="primary"
@@ -10584,13 +10877,15 @@ const SideForm = () => {
             {form.formType === "variation" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Create Variation
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Add variation of product and necessary information from here
+                      Add variation of product and necessary information from
+                      here
                     </Typography>
                   </Typography>
                 </Grid>
@@ -10599,7 +10894,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleVariation) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleVariation);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -10610,7 +10907,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -10631,8 +10933,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -10646,8 +10947,6 @@ const SideForm = () => {
                               value={changeData.ACIN}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10661,7 +10960,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="SKU"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10670,7 +10968,7 @@ const SideForm = () => {
                               select
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name || ''}
+                              value={changeData.category_name || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -10690,7 +10988,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10700,14 +10997,14 @@ const SideForm = () => {
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
-                              value={changeData.sub_category_name || ''}
+                              value={changeData.sub_category_name || ""}
                               onChange={handleProductFelids}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -10720,7 +11017,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10734,7 +11030,6 @@ const SideForm = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10755,7 +11050,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10779,7 +11073,6 @@ const SideForm = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10809,7 +11102,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10830,7 +11122,6 @@ const SideForm = () => {
                               name="length_main"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10851,7 +11142,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10872,7 +11162,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
                             </InputLabel>
@@ -10883,7 +11172,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -10903,8 +11192,6 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -10929,7 +11216,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -10940,27 +11226,27 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFelids}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
-                              {catalog.polish.length > 0 && catalog.polish.map((option, index) => (
-                                <MenuItem
-                                  key={option.polish_name}
-                                  value={option.polish_name}
-                                >
-                                  <Checkbox
-                                    checked={
-                                      changeData.polish.indexOf(
-                                        option.polish_name
-                                      ) > -1
-                                    }
-                                  />
-                                  <ListItemText
-                                    primary={option.polish_name}
-                                  />
-                                </MenuItem>
-                              ))}
+                              {catalog.polish.length > 0 &&
+                                catalog.polish.map((option, index) => (
+                                  <MenuItem
+                                    key={option.polish_name}
+                                    value={option.polish_name}
+                                  >
+                                    <Checkbox
+                                      checked={
+                                        changeData.polish.indexOf(
+                                          option.polish_name
+                                        ) > -1
+                                      }
+                                    />
+                                    <ListItemText
+                                      primary={option.polish_name}
+                                    />
+                                  </MenuItem>
+                                ))}
                             </Select>
-
                             {/* <TextField sx={{ mb : 1 }}
                               size="small"
                               fullWidth
@@ -10988,8 +11274,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField> */}
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Assembly
@@ -11019,7 +11303,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.assembly_required === "shipping" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -11037,15 +11320,20 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   name="assembly_part"
-                                  value={changeData.assembly_part > -1 && changeData.assembly_part < 3 ? changeData.assembly_part : 0}
+                                  value={
+                                    changeData.assembly_part > -1 &&
+                                    changeData.assembly_part < 3
+                                      ? changeData.assembly_part
+                                      : 0
+                                  }
                                   onChange={handleProductFelids}
                                 />
                               </>
                             )}
                             {changeData.assembly_required === "yes" && (
                               <>
-
-                                <TextField sx={{ mt: 1, mb: 1 }}
+                                <TextField
+                                  sx={{ mt: 1, mb: 1 }}
                                   size="small"
                                   fullWidth
                                   // required
@@ -11098,13 +11386,9 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Availability
                             </FormLabel>
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -11138,8 +11422,6 @@ const SideForm = () => {
                               }
                               label="Continue Selling"
                             />
-
-
                             {/*                            
                              <TextField sx = {{mb : 2}}
                               size="small"
@@ -11161,12 +11443,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               value={changeData.MRP}
                             /> */}
-
-
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -11191,7 +11468,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Images
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11212,60 +11494,83 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
-
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
-
-                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              {
-                                files.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = files;
-                                        console.log(">>>>>>", temp, files);
-                                        temp.splice(index, 1);
-                                        setFiles([...temp])
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
-                            {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              <FormLabel id="demo-radio-buttons-group-label">
-                                Saved Images
-                              </FormLabel>
-                              {
-                                changeData.savedImages.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = changeData.savedImages;
-                                        temp.splice(index, 1);
-                                        setData({ ...changeData, savedImages: temp })
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={img} alt='productImage' />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {changeData.savedImages.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                <FormLabel id="demo-radio-buttons-group-label">
+                                  Saved Images
+                                </FormLabel>
+                                {changeData.savedImages.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = changeData.savedImages;
+                                            temp.splice(index, 1);
+                                            setData({
+                                              ...changeData,
+                                              savedImages: temp,
+                                            });
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={img}
+                                          alt="productImage"
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
                             {/* // featured images */}
                             <TextField
                               size="small"
@@ -11283,35 +11588,47 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
                               {/* {console.log(changeData.savedImages)} */}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             {/* // specification images */}
                             <TextField
                               size="small"
@@ -11329,30 +11646,43 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
 
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -11374,36 +11704,46 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                             Featured Images
                           </FormLabel>
@@ -11422,7 +11762,7 @@ const SideForm = () => {
                           <MannequinPreviews
                             text={"Please Drag and Drop mannequin images"}
                           ></MannequinPreviews> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -11445,10 +11785,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Features */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Features</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Features
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11469,8 +11813,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormControlLabel
                                 control={
@@ -11587,42 +11930,48 @@ const SideForm = () => {
                                 label="Ceramic Drawers"
                               />
 
-                              {changeData.ceramic_drawer_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                                size="small"
-                                fullWidth
-                                id="outlined-select"
-                                select
-                                name="ceramic_drawer"
-                                label="Ceramic Drawer"
-                                multiple
-                                value={changeData.ceramic_drawer}
-                                onChange={handleProductFelids}
-                                helperText="Please select your Ceramic Tiles."
-                              >
-                                {catalog.ceramic_drawer.map(
-                                  (option) => option.status && <MenuItem
-                                    key={option.SKU}
-                                    value={option.SKU}
+                              {changeData.ceramic_drawer_included && (
+                                <>
+                                  <TextField
+                                    sx={{ mt: 2, mb: 1 }}
+                                    size="small"
+                                    fullWidth
+                                    id="outlined-select"
+                                    select
+                                    name="ceramic_drawer"
+                                    label="Ceramic Drawer"
+                                    multiple
+                                    value={changeData.ceramic_drawer}
+                                    onChange={handleProductFelids}
+                                    helperText="Please select your Ceramic Tiles."
                                   >
-                                    {option.title}
-                                  </MenuItem>
-                                )}
-                                <MenuItem key={"none"} value="None">
-                                  {"None"}
-                                </MenuItem>
-                              </TextField>
-                                <TextField
-
-                                  value={changeData.ceramic_drawer_qty}
-                                  onChange={handleProductFelids}
-                                  size={'small'}
-                                  fullWidth
-                                  label='Ceramic Drawer Quantity'
-                                  type='number'
-                                  helperText='Enter the number of ceramic drawer included.'
-                                  name='ceramic_drawer_qty' />
-                              </>}
-
+                                    {catalog.ceramic_drawer.map(
+                                      (option) =>
+                                        option.status && (
+                                          <MenuItem
+                                            key={option.SKU}
+                                            value={option.SKU}
+                                          >
+                                            {option.title}
+                                          </MenuItem>
+                                        )
+                                    )}
+                                    <MenuItem key={"none"} value="None">
+                                      {"None"}
+                                    </MenuItem>
+                                  </TextField>
+                                  <TextField
+                                    value={changeData.ceramic_drawer_qty}
+                                    onChange={handleProductFelids}
+                                    size={"small"}
+                                    fullWidth
+                                    label="Ceramic Drawer Quantity"
+                                    type="number"
+                                    helperText="Enter the number of ceramic drawer included."
+                                    name="ceramic_drawer_qty"
+                                  />
+                                </>
+                              )}
 
                               <FormControlLabel
                                 control={
@@ -11635,42 +11984,49 @@ const SideForm = () => {
                                 label="Ceramic Tiles"
                               />
                             </FormGroup>
-                            {changeData.ceramic_tiles_included && <><TextField sx={{ mt: 2, mb: 1 }}
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="ceramic_tiles"
-                              label="Ceramic Tiles"
-                              multiple
-                              value={changeData.ceramic_tiles}
-                              onChange={handleProductFelids}
-                              helperText="Please select your Ceramic Tiles."
-                            >
-                              {catalog.ceramic_tiles.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.ceramic_tiles_included && (
+                              <>
+                                <TextField
+                                  sx={{ mt: 2, mb: 1 }}
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="ceramic_tiles"
+                                  label="Ceramic Tiles"
+                                  multiple
+                                  value={changeData.ceramic_tiles}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your Ceramic Tiles."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.ceramic_tiles_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Ceramic Tiles Quantity'
-                                type='number'
-                                helperText='Enter the number of ceramic tiles included.'
-                                name='ceramic_tiles_qty' />
-                            </>}
-                          </Box >
+                                  {catalog.ceramic_tiles.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.ceramic_tiles_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Ceramic Tiles Quantity"
+                                  type="number"
+                                  helperText="Enter the number of ceramic tiles included."
+                                  name="ceramic_tiles_qty"
+                                />
+                              </>
+                            )}
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -11695,7 +12051,12 @@ const SideForm = () => {
 
                       {/* Miscellaneous */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>Miscellaneous</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          Miscellaneous
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11717,9 +12078,6 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -11744,7 +12102,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -11769,8 +12126,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Drawer
@@ -11798,25 +12153,19 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFelids}
-                                />
-                              )}
-
-
-
-
-
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFelids}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -11840,8 +12189,7 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -11866,7 +12214,12 @@ const SideForm = () => {
 
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(4)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -11887,8 +12240,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -11916,7 +12268,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -11932,8 +12287,7 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -11947,8 +12301,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -11965,43 +12318,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -12022,7 +12384,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12043,7 +12404,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12064,13 +12424,10 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '90%' }}
+                                sx={{ width: "90%" }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -12080,25 +12437,27 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
-                                sx={{ ml: 1, width: '10%' }}
-                                size='small'
+                                sx={{ ml: 1, width: "10%" }}
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
                             </Box>
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -12123,7 +12482,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(5)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(5)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -12144,8 +12508,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -12159,7 +12522,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12173,7 +12535,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12187,73 +12548,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -12274,9 +12679,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-
                             {/* selling points  */}
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
@@ -12290,7 +12693,6 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your selling points."
                             /> */}
-
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
@@ -12301,7 +12703,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -12324,10 +12726,14 @@ const SideForm = () => {
                       </Step>
                       {/* SEO End */}
 
-
                       {/* Extra-details */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(6)}>Extra-Details</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(6)}
+                        >
+                          Extra-Details
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -12348,21 +12754,17 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
-
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
-                              type='number'
+                              type="number"
                               name="CVW"
                               label="CVW Number"
-                              value={changeData.CVW || ''}
+                              value={changeData.CVW || ""}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12382,7 +12784,6 @@ const SideForm = () => {
                               value={changeData.wood_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12402,7 +12803,6 @@ const SideForm = () => {
                               value={changeData.metal_weight}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12422,9 +12822,6 @@ const SideForm = () => {
                               value={changeData.package_weight}
                               onChange={handleProductFelids}
                             />
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12457,14 +12854,11 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Silver
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
                                 onChange={handleProductFelids}
@@ -12503,8 +12897,6 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
                             )}
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12518,30 +12910,32 @@ const SideForm = () => {
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.hinge !== 'None' && <TextField
-
-                              value={changeData.hinge_qty}
-                              size={'small'}
-                              helperText="Enter the number of hinges pieces ."
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Hinge Quantity'
-                              type='number'
-                              name='hinge_qty' />}
-
-
+                            {changeData.hinge !== "None" && (
+                              <TextField
+                                value={changeData.hinge_qty}
+                                size={"small"}
+                                helperText="Enter the number of hinges pieces ."
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Hinge Quantity"
+                                type="number"
+                                name="hinge_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -12556,29 +12950,32 @@ const SideForm = () => {
                             >
                               {console.log(catalog)}
                               {catalog.knob.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.knob !== 'None' && <TextField
-
-                              size={'small'}
-                              fullWidth
-                              helperText="Enter the number of knob pieces ."
-                              value={changeData.knob_qty}
-                              onChange={handleProductFelids}
-                              label='Knob Quantity'
-                              type='number'
-                              name='knob_qty' />}
-
+                            {changeData.knob !== "None" && (
+                              <TextField
+                                size={"small"}
+                                fullWidth
+                                helperText="Enter the number of knob pieces ."
+                                value={changeData.knob_qty}
+                                onChange={handleProductFelids}
+                                label="Knob Quantity"
+                                type="number"
+                                name="knob_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -12592,30 +12989,32 @@ const SideForm = () => {
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.door !== 'None' && <TextField
-
-                              value={changeData.door_qty}
-                              helperText="Enter the number of doors."
-                              size={'small'}
-                              fullWidth
-                              onChange={handleProductFelids}
-                              label='Door Quantity'
-                              type='number'
-                              name='door_qty' />}
-
-
+                            {changeData.door !== "None" && (
+                              <TextField
+                                value={changeData.door_qty}
+                                helperText="Enter the number of doors."
+                                size={"small"}
+                                fullWidth
+                                onChange={handleProductFelids}
+                                label="Door Quantity"
+                                type="number"
+                                name="door_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -12629,30 +13028,32 @@ const SideForm = () => {
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-                            {changeData.handle !== 'None' && <TextField
-
-                              value={changeData.handle_qty}
-                              helperText="Enter the number of handles."
-                              onChange={handleProductFelids}
-                              size={'small'}
-                              fullWidth
-                              label='Handle Quantity'
-                              type='number'
-                              name='handle_qty' />}
-
-
+                            {changeData.handle !== "None" && (
+                              <TextField
+                                value={changeData.handle_qty}
+                                helperText="Enter the number of handles."
+                                onChange={handleProductFelids}
+                                size={"small"}
+                                fullWidth
+                                label="Handle Quantity"
+                                type="number"
+                                name="handle_qty"
+                              />
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -12666,26 +13067,25 @@ const SideForm = () => {
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
-                                >
-                                  {option.title}
-                                </MenuItem>
+                                (option) =>
+                                  option.status && (
+                                    <MenuItem
+                                      key={option.SKU}
+                                      value={option.SKU}
+                                    >
+                                      {option.title}
+                                    </MenuItem>
+                                  )
                               )}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mirror
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
@@ -12703,10 +13103,8 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
                             {changeData.mirror === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -12726,7 +13124,6 @@ const SideForm = () => {
                                   onChange={handleProductFelids}
                                   name="mirror_length"
                                 />
-
 
                                 <TextField
                                   size="small"
@@ -12749,9 +13146,6 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12790,9 +13184,6 @@ const SideForm = () => {
                               value={changeData.top_size_breadth}
                               onChange={handleProductFelids}
                             />
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12812,14 +13203,11 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               name="dial_size"
                             />
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Wheel Included
                               </FormLabel>
                               <RadioGroup
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
@@ -12837,51 +13225,52 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
-                            {changeData.wheel_included === "yes" && <><TextField
-                              size="small"
-                              fullWidth
-                              id="outlined-select"
-                              select
-                              name="wheel"
-                              label="Wheel"
-                              multiple
-                              value={changeData.wheel}
-                              onChange={handleProductFelids}
-                              helperText="Please select your wheel."
-                            >
-                              {catalog.wheel.map(
-                                (option) => option.status && <MenuItem
-                                  key={option.SKU}
-                                  value={option.SKU}
+                            {changeData.wheel_included === "yes" && (
+                              <>
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  id="outlined-select"
+                                  select
+                                  name="wheel"
+                                  label="Wheel"
+                                  multiple
+                                  value={changeData.wheel}
+                                  onChange={handleProductFelids}
+                                  helperText="Please select your wheel."
                                 >
-                                  {option.title}
-                                </MenuItem>
-                              )}
-                              <MenuItem key={"none"} value="None">
-                                {"None"}
-                              </MenuItem>
-                            </TextField>
-                              <TextField
-
-                                value={changeData.wheel_qty}
-                                onChange={handleProductFelids}
-                                size={'small'}
-                                fullWidth
-                                label='Wheel Quantity'
-                                type='number'
-                                helperText='Enter the number of wheel included.'
-                                name='wheel_qty' />
-                            </>}
-
+                                  {catalog.wheel.map(
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                  <MenuItem key={"none"} value="None">
+                                    {"None"}
+                                  </MenuItem>
+                                </TextField>
+                                <TextField
+                                  value={changeData.wheel_qty}
+                                  onChange={handleProductFelids}
+                                  size={"small"}
+                                  fullWidth
+                                  label="Wheel Quantity"
+                                  type="number"
+                                  helperText="Enter the number of wheel included."
+                                  name="wheel_qty"
+                                />
+                              </>
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Trolley
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
@@ -12901,7 +13290,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.trolley === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -12925,9 +13313,6 @@ const SideForm = () => {
                                 </TextField>
                               </>
                             )}
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12947,8 +13332,6 @@ const SideForm = () => {
                               value={changeData.seating_size_width}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -12968,8 +13351,6 @@ const SideForm = () => {
                               value={changeData.seating_size_depth}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13044,15 +13425,11 @@ const SideForm = () => {
                           )}
 
                             */}
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Plywood Included
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
                                 onChange={handleProductFelids}
@@ -13070,15 +13447,11 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Mattress
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
                                 onChange={handleProductFelids}
@@ -13096,14 +13469,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.mattress === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="mattress_length"
                                   label="Mattress Length"
@@ -13112,7 +13483,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="mattress_breadth"
@@ -13122,16 +13493,11 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Cradle Bed
                               </FormLabel>
                               <RadioGroup
-
-
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
                                 onChange={handleProductFelids}
@@ -13149,14 +13515,12 @@ const SideForm = () => {
                                 />
                               </RadioGroup>
                             </FormControl>
-
-
                             {changeData.cradle_bed === "yes" && (
                               <>
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  type='number'
+                                  type="number"
                                   id="outlined-select"
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
@@ -13165,7 +13529,7 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_width"
@@ -13175,19 +13539,16 @@ const SideForm = () => {
                                 />
                                 <TextField
                                   size="small"
-                                  type='number'
+                                  type="number"
                                   fullWidth
                                   id="outlined-select"
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
                                   onChange={handleProductFelids}
-                                /></>
+                                />
+                              </>
                             )}
-
-
-
-
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Upholstery
@@ -13198,7 +13559,6 @@ const SideForm = () => {
                                 // onChange={(e) => {
                                 //   setShowFabric(e.target.value);
                                 // }}
-
 
                                 value={changeData.upholstery || "no"}
                                 onChange={handleProductFelids}
@@ -13218,7 +13578,6 @@ const SideForm = () => {
                             </FormControl>
                             {changeData.upholstery === "yes" && (
                               <>
-
                                 <TextField
                                   size="small"
                                   fullWidth
@@ -13232,12 +13591,15 @@ const SideForm = () => {
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
-                                    (option) => option.status && <MenuItem
-                                      key={option.SKU}
-                                      value={option.SKU}
-                                    >
-                                      {option.title}
-                                    </MenuItem>
+                                    (option) =>
+                                      option.status && (
+                                        <MenuItem
+                                          key={option.SKU}
+                                          value={option.SKU}
+                                        >
+                                          {option.title}
+                                        </MenuItem>
+                                      )
                                   )}
                                   <MenuItem key={"none"} value="None">
                                     {"None"}
@@ -13245,65 +13607,55 @@ const SideForm = () => {
                                 </TextField>
 
                                 <TextField
-
                                   value={changeData.fabric_qty}
                                   onChange={handleProductFelids}
-                                  size={'small'}
+                                  size={"small"}
                                   fullWidth
-                                  label='Fabric Quantity'
-                                  type='number'
-                                  helperText='Enter the fabric quantity in meter.'
-                                  name='fabric_qty' />
+                                  label="Fabric Quantity"
+                                  type="number"
+                                  helperText="Enter the fabric quantity in meter."
+                                  name="fabric_qty"
+                                />
                               </>
                             )}
-
-
-                            <FormControl  >
+                            <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Vendor URLs
                               </FormLabel>
                             </FormControl>
-
                             <TextField
-                              type='url'
+                              type="url"
                               fullWidth
-
-                              size='small'
-                              name='amazon_url'
-                              label='Amazon'
+                              size="small"
+                              name="amazon_url"
+                              label="Amazon"
                               onChange={handleProductFelids}
                               value={changeData.amazon_url}
                               placeholder="https://example.com"
                               pattern="https://.*"
-
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='flipkart_url'
-                              label='Flipkart'
+                              name="flipkart_url"
+                              label="Flipkart"
                               onChange={handleProductFelids}
                               value={changeData.flipkart_url}
                             />
                             <TextField
-                              type='url'
-
-                              size='small'
+                              type="url"
+                              size="small"
                               fullWidth
                               placeholder="https://example.com"
                               pattern="https://.*"
-                              name='jiomart_url'
-                              label='Jio Mart'
+                              name="jiomart_url"
+                              label="Jio Mart"
                               onChange={handleProductFelids}
                               value={changeData.jiomart_url}
                             />
-
-
-
                             <Box className="stepAction">
                               <Button
                                 variant="outlined"
@@ -13322,13 +13674,10 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-                          </Box >
-
+                          </Box>
                         </StepContent>
                       </Step>
                       {/* Extra-details End */}
-
-
                     </Stepper>
                     <Button
                       color="primary"
@@ -13350,9 +13699,10 @@ const SideForm = () => {
             {form.formType === "merge_product" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Merge Product
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -13365,7 +13715,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleMergeProduct) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleMergeProduct);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -13374,10 +13726,14 @@ const SideForm = () => {
                       activeStep={activeStep}
                       orientation="vertical"
                     >
-
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13398,8 +13754,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -13413,53 +13768,67 @@ const SideForm = () => {
                               variant="outlined"
                               name="SKU"
                             />
-
                             <Autocomplete
                               disablePortal
-
-                              size='small'
+                              size="small"
                               fullWidth
                               multiple
                               autoHighlight
                               id="combo-box-demo"
-                              options={productSKU.P_SKU.map((row) => { return row.SKU })}
-                              renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
-                                value={changeData.product_articles || ''}
-                                {...params}
-                                label="Product SKU" />}
-                              onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                              options={productSKU.P_SKU.map((row) => {
+                                return row.SKU;
+                              })}
+                              renderInput={(params) => (
+                                <TextField
+                                  onKeyUpCapture={handleSearch}
+                                  value={changeData.product_articles || ""}
+                                  {...params}
+                                  label="Product SKU"
+                                />
+                              )}
+                              onChange={(e, newMember) =>
+                                setData((old) => ({
+                                  ...old,
+                                  product_articles: newMember,
+                                }))
+                              }
                             />
-
-                            {
-                              changeData.product_articles.length > 0 && <Box mt={1} >
-
-                                <Typography component={'span'} variant="body1">Product Quantities</Typography>
-                                <Box p={1} sx={{
-                                  display: 'flex',
-                                  gap: '5px',
-                                  flexDirection: 'column',
-                                  maxHeight: 150,
-                                  overflow: 'scroll'
-                                }}>
-                                  {changeData.product_articles.map((item) => <TextField
-                                    name={item}
-                                    fullWidth
-                                    size='small'
-                                    type='number'
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">{item}</InputAdornment>
-                                      ),
-                                    }}
-                                    placeholder={item}
-                                    onChange={handleProductFelids}
-                                    value={changeData[item] || 0}
-                                  />)}
+                            {changeData.product_articles.length > 0 && (
+                              <Box mt={1}>
+                                <Typography component={"span"} variant="body1">
+                                  Product Quantities
+                                </Typography>
+                                <Box
+                                  p={1}
+                                  sx={{
+                                    display: "flex",
+                                    gap: "5px",
+                                    flexDirection: "column",
+                                    maxHeight: 150,
+                                    overflow: "scroll",
+                                  }}
+                                >
+                                  {changeData.product_articles.map((item) => (
+                                    <TextField
+                                      name={item}
+                                      fullWidth
+                                      size="small"
+                                      type="number"
+                                      InputProps={{
+                                        startAdornment: (
+                                          <InputAdornment position="start">
+                                            {item}
+                                          </InputAdornment>
+                                        ),
+                                      }}
+                                      placeholder={item}
+                                      onChange={handleProductFelids}
+                                      value={changeData[item] || 0}
+                                    />
+                                  ))}
                                 </Box>
                               </Box>
-                            }
-
-
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -13488,7 +13857,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13505,7 +13873,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -13518,7 +13886,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13532,7 +13899,6 @@ const SideForm = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13553,7 +13919,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13577,7 +13942,6 @@ const SideForm = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -13607,11 +13971,9 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Availability
                             </FormLabel>
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -13645,8 +14007,7 @@ const SideForm = () => {
                               }
                               label="Continue Selling"
                             />
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -13671,7 +14032,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Images
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13692,36 +14058,48 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
                             <ProductsPreviews
-                              text={"Make Sure the picture ratio should be in 1:1."}
-                            ></ProductsPreviews>
-
-                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              {
-                                files.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = files;
-                                        console.log(">>>>>>", temp, files);
-                                        temp.splice(index, 1);
-                                        setFiles([...temp])
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                                    </Grid>
-                                  </>
-                                })
+                              text={
+                                "Make Sure the picture ratio should be in 1:1."
                               }
-                            </Grid>
-                            }
-
+                            ></ProductsPreviews>
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
                             {/* // featured images */}
                             <TextField
                               size="small"
@@ -13739,12 +14117,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -13771,12 +14156,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -13803,12 +14195,19 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
@@ -13818,10 +14217,7 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -13844,10 +14240,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -13868,8 +14268,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -13897,7 +14296,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -13913,8 +14315,7 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -13928,8 +14329,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -13946,43 +14346,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -14003,7 +14412,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14024,7 +14432,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14045,10 +14452,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -14073,7 +14477,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14094,8 +14503,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -14109,7 +14517,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14123,7 +14530,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14137,73 +14543,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -14214,8 +14664,7 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your product description"
                             />
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -14237,7 +14686,6 @@ const SideForm = () => {
                         </StepContent>
                       </Step>
                       {/* SEO End */}
-
                     </Stepper>
                     <Button
                       color="primary"
@@ -14259,9 +14707,10 @@ const SideForm = () => {
             {form.formType === "update_merge" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Merge Product
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -14275,10 +14724,12 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateMergeProduct) }} encType="multipart/form-data"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateMergeProduct);
+                    }}
+                    encType="multipart/form-data"
                     method="post"
                   >
-
                     <Stepper
                       className="stepper"
                       activeStep={activeStep}
@@ -14286,7 +14737,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14307,8 +14763,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -14319,62 +14774,77 @@ const SideForm = () => {
                               label="SKU"
                               type="text"
                               value={changeData.M}
-
                               variant="outlined"
                               name="SKU"
                             />
-
                             <Autocomplete
                               disablePortal
-
-                              size='small'
+                              size="small"
                               fullWidth
                               multiple
                               autoHighlight
                               id="combo-box-demo"
-                              options={productSKU.P_SKU.map((row) => { return row.SKU })}
+                              options={productSKU.P_SKU.map((row) => {
+                                return row.SKU;
+                              })}
                               isOptionEqualToValue={(option, value) => {
                                 console.log(value);
-                                return typeof (value) === 'Array' ? value.isInclude(option) : value === option;
+                                return typeof value === "Array"
+                                  ? value.isInclude(option)
+                                  : value === option;
                               }}
                               value={changeData.product_articles}
-                              renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
-                                value={changeData.product_articles}
-                                {...params}
-                                label="Product SKU" />}
-                              onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                              renderInput={(params) => (
+                                <TextField
+                                  onKeyUpCapture={handleSearch}
+                                  value={changeData.product_articles}
+                                  {...params}
+                                  label="Product SKU"
+                                />
+                              )}
+                              onChange={(e, newMember) =>
+                                setData((old) => ({
+                                  ...old,
+                                  product_articles: newMember,
+                                }))
+                              }
                             />
-
-                            {
-                              changeData.product_articles.length > 0 && <Box mt={1} >
-
-                                <Typography component={'span'} variant="body1">Product Quantities</Typography>
-                                <Box p={1} sx={{
-                                  display: 'flex',
-                                  gap: '5px',
-                                  flexDirection: 'column',
-                                  maxHeight: 150,
-                                  overflow: 'scroll'
-                                }}>
-                                  {changeData.product_articles.map((item) => <TextField
-                                    name={item}
-                                    fullWidth
-                                    size='small'
-                                    type='number'
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">{item}</InputAdornment>
-                                      ),
-                                    }}
-                                    placeholder={item}
-                                    onChange={handleProductFelids}
-                                    value={changeData[item] || 0}
-                                  />)}
+                            {changeData.product_articles.length > 0 && (
+                              <Box mt={1}>
+                                <Typography component={"span"} variant="body1">
+                                  Product Quantities
+                                </Typography>
+                                <Box
+                                  p={1}
+                                  sx={{
+                                    display: "flex",
+                                    gap: "5px",
+                                    flexDirection: "column",
+                                    maxHeight: 150,
+                                    overflow: "scroll",
+                                  }}
+                                >
+                                  {changeData.product_articles.map((item) => (
+                                    <TextField
+                                      name={item}
+                                      fullWidth
+                                      size="small"
+                                      type="number"
+                                      InputProps={{
+                                        startAdornment: (
+                                          <InputAdornment position="start">
+                                            {item}
+                                          </InputAdornment>
+                                        ),
+                                      }}
+                                      placeholder={item}
+                                      onChange={handleProductFelids}
+                                      value={changeData[item] || 0}
+                                    />
+                                  ))}
                                 </Box>
                               </Box>
-                            }
-
-
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -14403,7 +14873,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14420,7 +14889,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -14433,7 +14902,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14447,7 +14915,6 @@ const SideForm = () => {
                               value={changeData.product_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14468,7 +14935,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14492,7 +14958,6 @@ const SideForm = () => {
                               name="discount_limit"
                               value={changeData.discount_limit}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -14522,11 +14987,9 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Availability
                             </FormLabel>
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -14560,8 +15023,7 @@ const SideForm = () => {
                               }
                               label="Continue Selling"
                             />
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -14586,7 +15048,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Images</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Images
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14607,60 +15074,83 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Images
                             </FormLabel>
-
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
-
-                            {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              {
-                                files.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = files;
-                                        console.log(">>>>>>", temp, files);
-                                        temp.splice(index, 1);
-                                        setFiles([...temp])
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
-                            {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                              <FormLabel id="demo-radio-buttons-group-label">
-                                Saved Images
-                              </FormLabel>
-                              {
-                                changeData.savedImages.map((img, index) => {
-                                  return <>
-                                    <Grid item xs={2} sx={{ position: 'relative' }} >
-                                      <CancelIcon onClick={() => {
-                                        // this function is for removing the image from savedImage array 
-                                        let temp = changeData.savedImages;
-                                        temp.splice(index, 1);
-                                        setData({ ...changeData, savedImages: temp })
-                                      }} className='imageCross' color='primary' />
-                                      <img style={{ width: '100%' }} src={img} alt='productImage' />
-                                    </Grid>
-                                  </>
-                                })
-                              }
-                            </Grid>
-                            }
-
-
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {changeData.savedImages.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                <FormLabel id="demo-radio-buttons-group-label">
+                                  Saved Images
+                                </FormLabel>
+                                {changeData.savedImages.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = changeData.savedImages;
+                                            temp.splice(index, 1);
+                                            setData({
+                                              ...changeData,
+                                              savedImages: temp,
+                                            });
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={img}
+                                          alt="productImage"
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
                             {/* // featured images */}
                             <TextField
                               size="small"
@@ -14678,35 +15168,47 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
                               {/* {console.log(changeData.savedImages)} */}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             {/* // specification images */}
                             <TextField
                               size="small"
@@ -14724,30 +15226,43 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
 
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -14769,36 +15284,46 @@ const SideForm = () => {
                               {files.map(
                                 (option) =>
                                   option.validate && (
-                                    <MenuItem
-                                      key={option}
-                                      value={option}
-                                    >
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <img style={{ width: '60px' }} src={URL.createObjectURL(option)} alt={"product"} />
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
                                         <h6>{option.name}</h6>
                                       </Box>
                                     </MenuItem>
                                   )
                               )}
-                              {changeData.savedImages.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <img style={{ width: '60px' }} src={option} alt={"product"} />
-                                      {/* <h6>{option.name}</h6> */}
-                                    </Box>
-                                  </MenuItem>
-                              )}
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                             Featured Images
                           </FormLabel>
@@ -14817,7 +15342,7 @@ const SideForm = () => {
                           <MannequinPreviews
                             text={"Please Drag and Drop mannequin images"}
                           ></MannequinPreviews> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -14840,10 +15365,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -14864,8 +15393,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -14893,7 +15421,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -14909,8 +15440,7 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Polish in {changeData.polish_time} Days
                             </Typography>
@@ -14924,8 +15454,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your polish time"
                             />
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
                               Manufactured in {
                                 changeData.manufacturing_time
@@ -14942,43 +15471,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -14999,7 +15537,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -15020,7 +15557,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -15041,10 +15577,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -15069,7 +15602,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -15090,8 +15628,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -15105,7 +15642,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -15119,7 +15655,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -15133,73 +15668,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -15210,8 +15789,7 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your product description"
                             />
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -15254,9 +15832,10 @@ const SideForm = () => {
             {form.formType === "category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Category
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -15268,7 +15847,10 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleCategory) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleCategory);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -15348,15 +15930,12 @@ const SideForm = () => {
                       helperText="Please enter your product description"
                     />
 
-
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="category_status" />}
                         label="Status (On/Off)"
                       />
                     </FormGroup>
-
-
 
                     <Button
                       color="primary"
@@ -15377,9 +15956,10 @@ const SideForm = () => {
             {form.formType === "update_category" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Category
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -15392,7 +15972,10 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdateCategory) }}
+                    id="myForm"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateCategory);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -15412,7 +15995,6 @@ const SideForm = () => {
                       label="Category"
                       helperText="Please enter the update"
                     />
-
 
                     <TextField
                       size="small"
@@ -15492,21 +16074,24 @@ const SideForm = () => {
             {form.formType === "primaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Material
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Add your Material and necessary information from
-                      here
+                      Add your Material and necessary information from here
                     </Typography>
                   </Typography>
                 </Grid>
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handlePrimaryMaterial) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handlePrimaryMaterial);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -15528,7 +16113,6 @@ const SideForm = () => {
                       helperText="Please enter your primary material"
                     />
 
-
                     <TextareaAutosize
                       fullWidth
                       minRows={5}
@@ -15539,15 +16123,12 @@ const SideForm = () => {
                       helperText="Please enter your primary material description"
                     />
 
-
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="primaryMaterial_status" />}
                         label="Status (On/Off)"
                       />
                     </FormGroup>
-
-
 
                     <Button
                       color="primary"
@@ -15568,14 +16149,14 @@ const SideForm = () => {
             {form.formType === "update_PrimaryMaterial" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Material
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
-                      Update your Material and necessary information
-                      from here
+                      Update your Material and necessary information from here
                     </Typography>
                   </Typography>
                 </Grid>
@@ -15583,7 +16164,10 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdatePrimaryMaterial) }}
+                    id="myForm"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdatePrimaryMaterial);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -15615,7 +16199,6 @@ const SideForm = () => {
                       helperText="Please enter your primary material description"
                     />
 
-
                     <Button
                       color="primary"
                       type="submit"
@@ -15635,9 +16218,10 @@ const SideForm = () => {
             {form.formType === "add_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Supplier
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -15649,7 +16233,9 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={(e) => { confirmBox(e, handleSupplier) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleSupplier);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -15660,7 +16246,7 @@ const SideForm = () => {
                       id="outlined-select"
                       name="SID"
                       disabled
-                      value={SKU || ''}
+                      value={SKU || ""}
                       onChange={handleChangeData}
                       label="Supplier ID"
                       type="text"
@@ -15753,9 +16339,10 @@ const SideForm = () => {
             {form.formType === "update_supplier" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Supplier
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -15767,7 +16354,9 @@ const SideForm = () => {
                 <Grid item xs={12} mt={5}>
                   <form
                     className="form"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateSupplier) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateSupplier);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -15778,7 +16367,7 @@ const SideForm = () => {
                       disabled
                       id="outlined-select"
                       name="SID"
-                      value={changeData.SID || ''}
+                      value={changeData.SID || ""}
                       onChange={handleChangeData}
                       label="Supplier ID"
                       type="text"
@@ -15787,7 +16376,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       // required
-                      value={changeData.supplier_name || ''}
+                      value={changeData.supplier_name || ""}
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="supplier_name"
@@ -15797,7 +16386,7 @@ const SideForm = () => {
                     <TextField
                       size="small"
                       fullWidth
-                      value={changeData.mobile || ''}
+                      value={changeData.mobile || ""}
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="mobile"
@@ -15808,7 +16397,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       // required
-                      value={changeData.alt_mobile || ''}
+                      value={changeData.alt_mobile || ""}
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="alt_mobile"
@@ -15820,7 +16409,7 @@ const SideForm = () => {
                       fullWidth
                       // required
                       id="outlined-select"
-                      value={changeData.specialization || ''}
+                      value={changeData.specialization || ""}
                       onChange={handleChangeData}
                       name="specialization"
                       label="Specialization"
@@ -15830,7 +16419,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       // required
-                      value={changeData.gst_no || ''}
+                      value={changeData.gst_no || ""}
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="gst_no"
@@ -15844,7 +16433,7 @@ const SideForm = () => {
                       placeholder="Address"
                       minRows={5}
                       maxRows={5}
-                      value={changeData.address || ''}
+                      value={changeData.address || ""}
                       onChange={handleChangeData}
                       id="outlined-select"
                       name="address"
@@ -15866,15 +16455,15 @@ const SideForm = () => {
             )}
             {/* update suppliers Ends */}
 
-
             {/*  update blog  */}
 
             {form.formType === "update_blog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Blog
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -15901,7 +16490,10 @@ const SideForm = () => {
                       <Box sx={style}>
                         <form
                           className="form"
-                          id="myForm" onSubmit={(e) => { confirmBox(e, handleUpload) }}
+                          id="myForm"
+                          onSubmit={(e) => {
+                            confirmBox(e, handleUpload);
+                          }}
                           encType="multipart/form-data"
                           method="post"
                         >
@@ -15938,7 +16530,10 @@ const SideForm = () => {
 
                   <form
                     className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleUpdateBlog) }}
+                    id="myForm"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateBlog);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -16042,9 +16637,10 @@ const SideForm = () => {
             {form.formType === "addBlog" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Blog
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16071,7 +16667,10 @@ const SideForm = () => {
                       <Box sx={style}>
                         <form
                           className="form"
-                          id="myForm" onSubmit={(e) => { confirmBox(e, handleUpload) }}
+                          id="myForm"
+                          onSubmit={(e) => {
+                            confirmBox(e, handleUpload);
+                          }}
                           encType="multipart/form-data"
                           method="post"
                         >
@@ -16108,7 +16707,10 @@ const SideForm = () => {
 
                   <form
                     className="form"
-                    id="myForm" onSubmit={(e) => { confirmBox(e, handleAddBlog) }}
+                    id="myForm"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleAddBlog);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -16202,15 +16804,15 @@ const SideForm = () => {
 
             {/* Add Blog Ends */}
 
-
             {/*  add subCategory */}
 
             {form.formType === "subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Sub Category
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16221,12 +16823,21 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleSubCategories) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleSubCategories);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
                   >
-                    <ImagePreviews text={'Please Drag and Drop a image for sub Category image'}> </ImagePreviews>
+                    <ImagePreviews
+                      text={
+                        "Please Drag and Drop a image for sub Category image"
+                      }
+                    >
+                      {" "}
+                    </ImagePreviews>
 
                     <TextField
                       size="small"
@@ -16320,15 +16931,12 @@ const SideForm = () => {
                       helperText="Please enter your product description"
                     />
 
-
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="sub_category_status" />}
                         label="Status (On/Off)"
                       />
                     </FormGroup>
-
-
 
                     <Button
                       color="primary"
@@ -16349,9 +16957,10 @@ const SideForm = () => {
             {form.formType === "update_Subcategory" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Sub Category
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16363,12 +16972,19 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdateSubCategories) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateSubCategories);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
                   >
-                    <ImagePreviews text={'Please Drag and Drop a image for Sub Category.'}> </ImagePreviews>
+                    <ImagePreviews
+                      text={"Please Drag and Drop a image for Sub Category."}
+                    >
+                      {" "}
+                    </ImagePreviews>
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Category
@@ -16402,7 +17018,7 @@ const SideForm = () => {
                       id="outlined-select"
                       name="sub_category_name"
                       label="Sub Category"
-                      value={changeData.sub_category_name || ''}
+                      value={changeData.sub_category_name || ""}
                       onChange={handleProductFelids}
                       type="text"
                       helperText="Please enter your sub category"
@@ -16466,7 +17082,6 @@ const SideForm = () => {
                       helperText="Please enter your product description"
                     />
 
-
                     <Button
                       color="primary"
                       type="submit"
@@ -16486,9 +17101,10 @@ const SideForm = () => {
             {form.formType === "add_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Customer
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16513,17 +17129,20 @@ const SideForm = () => {
                   >
                     <Fade in={open}>
                       <Box sx={style}>
-                        <Typography sx={{ pb: 1 }} variant='h6'>
+                        <Typography sx={{ pb: 1 }} variant="h6">
                           Address
                         </Typography>
                         <form
                           className="form"
-                          id="myForm" onSubmit={(e) => { confirmBox(e, handleAddress) }}
+                          id="myForm"
+                          onSubmit={(e) => {
+                            confirmBox(e, handleAddress);
+                          }}
                           encType="multipart/form-data"
                           method="post"
                         >
-
-                          <TextField size="small"
+                          <TextField
+                            size="small"
                             fullWidth
                             // required
                             id="outlined-select"
@@ -16531,7 +17150,8 @@ const SideForm = () => {
                             label="Name"
                             type="text"
                           />
-                          <TextField size="small"
+                          <TextField
+                            size="small"
                             fullWidth
                             // required
                             id="outlined-select"
@@ -16539,7 +17159,8 @@ const SideForm = () => {
                             label="Mobile"
                             type="number"
                           />
-                          <TextField size="small"
+                          <TextField
+                            size="small"
                             fullWidth
                             // required
                             id="outlined-select"
@@ -16548,7 +17169,8 @@ const SideForm = () => {
                             type="number"
                           />
 
-                          <TextField size="small"
+                          <TextField
+                            size="small"
                             fullWidth
                             // required
                             id="outlined-select"
@@ -16596,13 +17218,13 @@ const SideForm = () => {
                             onChange={handleChange}
                             helperText="Please select your address type"
                           >
-                            <MenuItem key={'home'} value={'home'}>
+                            <MenuItem key={"home"} value={"home"}>
                               Home
                             </MenuItem>
-                            <MenuItem key={'office'} value={'office'}>
+                            <MenuItem key={"office"} value={"office"}>
                               Office
                             </MenuItem>
-                            <MenuItem key={'none'} value={'none'}>
+                            <MenuItem key={"none"} value={"none"}>
                               None
                             </MenuItem>
                           </TextField>
@@ -16620,7 +17242,10 @@ const SideForm = () => {
                   </Modal>
 
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleCustomer) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleCustomer);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -16672,31 +17297,43 @@ const SideForm = () => {
                     <FormLabel id="demo-radio-buttons-group-label">
                       Shipping Address
                     </FormLabel>
-                    <Grid container >
-                      {
-                        address && address.map((item) => {
-                          return <Grid item xs={3}>
-                            <Box sx={{
-                              overflowWrap: 'break-word',
-                              border: '2px solid #a52a2a80',
-                              borderStyle: 'dashed',
-                              p: 1,
-                              ml: 1,
-                              mr: 1,
-                              width: '130px',
-                              height: '150px',
-                              overflow: 'hidden'
-                            }}>
-                              <Typography variant='caption'>{item.shipping}</Typography></Box>
-                          </Grid>
-                        })
-                      }
+                    <Grid container>
+                      {address &&
+                        address.map((item) => {
+                          return (
+                            <Grid item xs={3}>
+                              <Box
+                                sx={{
+                                  overflowWrap: "break-word",
+                                  border: "2px solid #a52a2a80",
+                                  borderStyle: "dashed",
+                                  p: 1,
+                                  ml: 1,
+                                  mr: 1,
+                                  width: "130px",
+                                  height: "150px",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <Typography variant="caption">
+                                  {item.shipping}
+                                </Typography>
+                              </Box>
+                            </Grid>
+                          );
+                        })}
                       <Grid item xs={3}>
-                        <Button variant='outlined' sx={{ width: '20%' }} onClick={() => { setOpen(true) }}><AddIcon /></Button>
+                        <Button
+                          variant="outlined"
+                          sx={{ width: "20%" }}
+                          onClick={() => {
+                            setOpen(true);
+                          }}
+                        >
+                          <AddIcon />
+                        </Button>
                       </Grid>
                     </Grid>
-
-
 
                     <Button
                       color="primary"
@@ -16716,9 +17353,10 @@ const SideForm = () => {
             {form.formType === "update_customer" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Customer
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16730,7 +17368,10 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdateCustomer) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateCustomer);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -16827,8 +17468,6 @@ const SideForm = () => {
                       helperText="Please enter your primary material description"
                     />
 
-
-
                     <Button
                       color="primary"
                       type="submit"
@@ -16848,9 +17487,10 @@ const SideForm = () => {
             {form.formType === "add_order" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Order
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -16861,7 +17501,10 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleOrder) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleOrder);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
@@ -16925,7 +17568,7 @@ const SideForm = () => {
                           width: "88%",
                           display:
                             changeData.searchCustomer !== "" &&
-                              changeData.searchCustomer !== changeData.display
+                            changeData.searchCustomer !== changeData.display
                               ? "block"
                               : "none",
                         }}
@@ -16953,7 +17596,8 @@ const SideForm = () => {
                               >
                                 {row.username} ({row.mobile})
                               </MenuItem>
-                            ) : (console.log()
+                            ) : (
+                              console.log()
                             );
                           })}
                       </Box>
@@ -17041,8 +17685,6 @@ const SideForm = () => {
                       </>
                     )}
 
-
-
                     <Button
                       color="primary"
                       type="submit"
@@ -17056,17 +17698,15 @@ const SideForm = () => {
               </Grid>
             )}
 
-
-
-
             {/* add Hardware */}
 
             {form.formType === "hardware" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Hardware
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -17079,7 +17719,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleHardware) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleHardware);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -17090,7 +17732,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17111,8 +17758,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -17122,9 +17768,8 @@ const SideForm = () => {
                               type="text"
                               variant="outlined"
                               name="SKU"
-                              value={SKU || ''}
+                              value={SKU || ""}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17138,8 +17783,6 @@ const SideForm = () => {
                               value={changeData.title}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17149,7 +17792,7 @@ const SideForm = () => {
                               disabled
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name || ''}
+                              value={changeData.category_name || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -17169,7 +17812,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17186,7 +17828,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -17199,8 +17841,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17221,10 +17861,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17254,7 +17890,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -17266,9 +17901,7 @@ const SideForm = () => {
                               }
                               label="Show On Website"
                             />
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -17293,7 +17926,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Features
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17314,8 +17952,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Hardware Images
@@ -17323,8 +17960,7 @@ const SideForm = () => {
                             <ProductsPreviews
                               text={"Please Drag and Drop the hardware images"}
                             ></ProductsPreviews>
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -17347,10 +17983,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17371,8 +18011,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -17400,7 +18039,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -17416,15 +18058,9 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
-                              Restocking in {
-                                changeData.restocking_time
-                              }{" "}
-                              Days
+                              Restocking in {changeData.restocking_time} Days
                             </Typography>
                             <Slider
                               aria-label="restocking time"
@@ -17436,43 +18072,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your restocking time."
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock; row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -17493,7 +18138,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17514,7 +18158,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17535,12 +18178,10 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '85%' }}
+                                sx={{ width: "85%" }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -17550,30 +18191,30 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
                                 sx={{ ml: 1 }}
-                                size='small'
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
-
                             </Box>
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '85%' }}
+                                sx={{ width: "85%" }}
                                 id="fullWidth"
                                 label="Minimum Quantity For Sell"
                                 type="Number"
@@ -17583,24 +18224,25 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
                                 sx={{ ml: 1 }}
-                                size='small'
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
-
                             </Box>
                             <FormGroup>
                               <FormControlLabel
@@ -17614,7 +18256,7 @@ const SideForm = () => {
                                 label="Continue Selling"
                               />
                             </FormGroup>
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -17639,7 +18281,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17660,8 +18307,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -17675,7 +18321,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17689,7 +18334,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -17703,73 +18347,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -17790,9 +18478,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-
                             {/* selling points  */}
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
@@ -17806,7 +18492,6 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your selling points."
                             /> */}
-
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
@@ -17817,7 +18502,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -17842,7 +18527,12 @@ const SideForm = () => {
 
                       {/* Extra details */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Extra Details</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(4)}
+                        >
+                          Extra Details
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17863,8 +18553,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -17873,28 +18562,21 @@ const SideForm = () => {
                               select
                               name="hardware_polish"
                               label="Hardware Polish"
-                              value={changeData.hardware_polish || ''}
+                              value={changeData.hardware_polish || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your Hardware Polish"
                             >
-                              {hardware_polish.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
-                                  >
-                                    {option}
-                                  </MenuItem>
-                              )}
+                              {hardware_polish.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  {option}
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -17916,8 +18598,6 @@ const SideForm = () => {
                         </StepContent>
                       </Step>
                       {/* Extra details */}
-
-
                     </Stepper>
 
                     <Button
@@ -17939,9 +18619,10 @@ const SideForm = () => {
             {form.formType === "update_hardware" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Hardware
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -17954,7 +18635,9 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleUpdateHardware) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateHardware);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
@@ -17965,7 +18648,12 @@ const SideForm = () => {
                     >
                       {/* // Specification */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(0)}>Specifications</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(0)}
+                        >
+                          Specifications
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -17986,8 +18674,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -17997,9 +18684,8 @@ const SideForm = () => {
                               type="text"
                               variant="outlined"
                               name="SKU"
-                              value={SKU || ''}
+                              value={SKU || ""}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18013,8 +18699,6 @@ const SideForm = () => {
                               value={changeData.title}
                               onChange={handleProductFelids}
                             />
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18024,7 +18708,7 @@ const SideForm = () => {
                               disabled
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name || ''}
+                              value={changeData.category_name || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -18044,7 +18728,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18061,7 +18744,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -18074,8 +18757,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18096,10 +18777,6 @@ const SideForm = () => {
                               value={changeData.showroom_price}
                               onChange={handleProductFelids}
                             />
-
-
-
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18129,7 +18806,6 @@ const SideForm = () => {
                               variant="outlined"
                               name="selling_price"
                             />
-
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -18141,9 +18817,7 @@ const SideForm = () => {
                               }
                               label="Show On Website"
                             />
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -18168,7 +18842,12 @@ const SideForm = () => {
 
                       {/* Images */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(1)}>Features</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(1)}
+                        >
+                          Features
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18189,8 +18868,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Hardware Images
@@ -18198,8 +18876,7 @@ const SideForm = () => {
                             <ProductsPreviews
                               text={"Please Drag and Drop the hardware images"}
                             ></ProductsPreviews>
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -18222,10 +18899,14 @@ const SideForm = () => {
                       </Step>
                       {/* Images End */}
 
-
                       {/* Inventory & Shipping */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(2)}>Inventory & Shipping</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(2)}
+                        >
+                          Inventory & Shipping
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18246,8 +18927,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <FormGroup>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Return & Payment Policy
@@ -18275,7 +18955,10 @@ const SideForm = () => {
                             </FormGroup>
                             {changeData.returnable && (
                               <>
-                                <Typography component={'span'} variant="Caption">
+                                <Typography
+                                  component={"span"}
+                                  variant="Caption"
+                                >
                                   {" "}
                                   Return in {changeData.returnDays} Days
                                 </Typography>
@@ -18291,15 +18974,9 @@ const SideForm = () => {
                                 />
                               </>
                             )}
-
-
-
-                            <Typography component={'span'} variant="Caption">
+                            <Typography component={"span"} variant="Caption">
                               {" "}
-                              Restocking in {
-                                changeData.restocking_time
-                              }{" "}
-                              Days
+                              Restocking in {changeData.restocking_time} Days
                             </Typography>
                             <Slider
                               aria-label="restocking time"
@@ -18311,44 +18988,52 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your restocking time."
                             />
-
-                            <InputLabel id="demo-multiple-checkbox-label">Stock Warehouse</InputLabel>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Stock Warehouse
+                            </InputLabel>
                             <Select
                               multiple
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
                               onChange={handleProductFelids}
-                              renderValue={(selected) => selected.join(', ')}
+                              renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
-                                <MenuItem key={option.label} value={option.value}>
-                                  <Checkbox checked={changeData.warehouse.indexOf(option.value) > -1} />
+                                <MenuItem
+                                  key={option.label}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.warehouse.indexOf(
+                                        option.value
+                                      ) > -1
+                                    }
+                                  />
                                   <ListItemText primary={option.value} />
                                 </MenuItem>
                               ))}
                             </Select>
-
-                            {
-
-                              changeData.warehouse.map((row) => {
-                                let stock;
-                                row === 'Jodhpur (Rajasthan)' ? stock = 'jodhpur_stock' : stock = 'bangalore_stock';
-                                return <>
-
+                            {changeData.warehouse.map((row) => {
+                              let stock;
+                              row === "Jodhpur (Rajasthan)"
+                                ? (stock = "jodhpur_stock")
+                                : (stock = "bangalore_stock");
+                              return (
+                                <>
                                   <TextField
                                     size="small"
                                     fullWidth
                                     name={stock}
-                                    label={row + ' Stock'}
-                                    type='number'
+                                    label={row + " Stock"}
+                                    type="number"
                                     value={changeData[stock] || ""}
                                     onChange={handleProductFelids}
                                   />
                                 </>
-                              })
-                            }
-
+                              );
+                            })}
                             <TextField
                               size="small"
                               fullWidth
@@ -18369,7 +19054,6 @@ const SideForm = () => {
                               name="package_length"
                               helperText="From left to right"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18390,7 +19074,6 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From front to back"
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18411,12 +19094,10 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="From bottom to top"
                             />
-
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '85%' }}
+                                sx={{ width: "85%" }}
                                 id="fullWidth"
                                 label="Quantity"
                                 type="Number"
@@ -18426,30 +19107,30 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
                                 sx={{ ml: 1 }}
-                                size='small'
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
-
                             </Box>
-                            <Box sx={{ display: 'flex', mb: 1 }}>
-
+                            <Box sx={{ display: "flex", mb: 1 }}>
                               <TextField
                                 size="small"
-                                sx={{ width: '85%' }}
+                                sx={{ width: "85%" }}
                                 id="fullWidth"
                                 label="Minimum Quantity For Sell"
                                 type="Number"
@@ -18459,24 +19140,25 @@ const SideForm = () => {
                                 onChange={handleProductFelids}
                               />
 
-
                               <TextField
                                 id="outlined-select-currency"
                                 select
                                 sx={{ ml: 1 }}
-                                size='small'
+                                size="small"
                                 label="Unit"
-                                name='unit'
-                                value={changeData.unit || ''}
+                                name="unit"
+                                value={changeData.unit || ""}
                                 onChange={handleProductFelids}
                               >
                                 {unitCatalog.map((option) => (
-                                  <MenuItem key={option.value} value={option.value}>
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
                                     {option.label}
                                   </MenuItem>
                                 ))}
                               </TextField>
-
                             </Box>
                             <FormGroup>
                               <FormControlLabel
@@ -18490,7 +19172,7 @@ const SideForm = () => {
                                 label="Continue Selling"
                               />
                             </FormGroup>
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -18515,7 +19197,12 @@ const SideForm = () => {
 
                       {/* SEO */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(3)}>SEO</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(3)}
+                        >
+                          SEO
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18536,8 +19223,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -18551,7 +19237,6 @@ const SideForm = () => {
                               value={changeData.seo_title}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18565,7 +19250,6 @@ const SideForm = () => {
                               value={changeData.seo_description}
                               onChange={handleProductFelids}
                             />
-
                             <TextField
                               size="small"
                               fullWidth
@@ -18579,73 +19263,117 @@ const SideForm = () => {
                               value={changeData.seo_keyword}
                               onChange={handleProductFelids}
                             />
-
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
-
                             <Grid container sx={{ mt: 1 }}>
-                              <Grid item xs={12}   >
-                                <Grid container sx={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }} >
-                                  <Grid item xs={11}><TextField fullWidth value={changeData.item || ''} size={'small'} type='text' name='item'
-                                    onChange={handleProductFelids}
-                                    label='Write a point...' /></Grid>
-                                  <Grid item xs={0.8}>
-                                    {changeData.select === undefined ? <Button
+                              <Grid item xs={12}>
+                                <Grid
+                                  container
+                                  sx={{
+                                    display: "flex",
+                                    alignItem: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Grid item xs={11}>
+                                    <TextField
                                       fullWidth
-                                      onClick={() => {
-                                        changeData.item !== '' && setData({
-                                          ...changeData,
-                                          selling_points: [...changeData.selling_points, changeData.item],
-                                          item: ''
-                                        });
-                                      }}
-                                      variant='outlined'>Add</Button> : <Button onClick={() => {
-                                        setData({
-                                          ...changeData,
-                                          selling_points: changeData.selling_points.filter((row, i) => {
-                                            return i !== changeData.select;
-                                          }),
-                                          select: undefined
-
-                                        })
-
-
-                                      }}
-                                        variant='outlined'>Remove</Button>}
+                                      value={changeData.item || ""}
+                                      size={"small"}
+                                      type="text"
+                                      name="item"
+                                      onChange={handleProductFelids}
+                                      label="Write a point..."
+                                    />
                                   </Grid>
-                                </Grid>
-                              </Grid>
-                              {changeData.selling_points.length > 0 && <Grid sx={{
-                                maxHeight: '100px', overflowY: 'scroll', mb: 1,
-                                border: '2px solid #91441f',
-                                padding: '7px'
-                              }} item xs={12}>
-                                <ul style={{ listStyleType: 'square' }}>
-                                  {
-                                    changeData.selling_points && changeData.selling_points.map((item, index) => {
-                                      return <li><Typography sx={{ cursor: 'pointer' }}
+                                  <Grid item xs={0.8}>
+                                    {changeData.select === undefined ? (
+                                      <Button
+                                        fullWidth
+                                        onClick={() => {
+                                          changeData.item !== "" &&
+                                            setData({
+                                              ...changeData,
+                                              selling_points: [
+                                                ...changeData.selling_points,
+                                                changeData.item,
+                                              ],
+                                              item: "",
+                                            });
+                                        }}
+                                        variant="outlined"
+                                      >
+                                        Add
+                                      </Button>
+                                    ) : (
+                                      <Button
                                         onClick={() => {
                                           setData({
                                             ...changeData,
-                                            select: index,
-                                            item: item
-                                          })
+                                            selling_points:
+                                              changeData.selling_points.filter(
+                                                (row, i) => {
+                                                  return (
+                                                    i !== changeData.select
+                                                  );
+                                                }
+                                              ),
+                                            select: undefined,
+                                          });
                                         }}
-                                        variant='body'>{index + 1 + ". "}{item}</Typography>
-                                      </li>
-                                    })
-                                  }
-                                </ul>
-                              </Grid>}
+                                        variant="outlined"
+                                      >
+                                        Remove
+                                      </Button>
+                                    )}
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                              {changeData.selling_points.length > 0 && (
+                                <Grid
+                                  sx={{
+                                    maxHeight: "100px",
+                                    overflowY: "scroll",
+                                    mb: 1,
+                                    border: "2px solid #91441f",
+                                    padding: "7px",
+                                  }}
+                                  item
+                                  xs={12}
+                                >
+                                  <ul style={{ listStyleType: "square" }}>
+                                    {changeData.selling_points &&
+                                      changeData.selling_points.map(
+                                        (item, index) => {
+                                          return (
+                                            <li>
+                                              <Typography
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => {
+                                                  setData({
+                                                    ...changeData,
+                                                    select: index,
+                                                    item: item,
+                                                  });
+                                                }}
+                                                variant="body"
+                                              >
+                                                {index + 1 + ". "}
+                                                {item}
+                                              </Typography>
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                  </ul>
+                                </Grid>
+                              )}
                             </Grid>
-
-
                             {/* product description  */}
                             <FormLabel id="demo-radio-buttons-group-label">
                               Product Description
                             </FormLabel>
-
                             <TextareaAutosize
                               fullWidth
                               minRows={5}
@@ -18666,9 +19394,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-
                             {/* selling points  */}
-
                             {/* <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
                             </FormLabel>
@@ -18682,7 +19408,6 @@ const SideForm = () => {
                               type="text"
                               helperText="Please enter your selling points."
                             /> */}
-
                             {/* <Editor
                               apiKey="nrxcqobhboeugucjonpg61xo1m65hn8qjxwayuhvqfjzb6j4"
                               onInit={(event, editor) =>
@@ -18693,7 +19418,7 @@ const SideForm = () => {
                                 menubar: true,
                               }}
                             /> */}
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -18718,7 +19443,12 @@ const SideForm = () => {
 
                       {/* Extra details */}
                       <Step>
-                        <StepLabel sx={{ cursor: 'pointer !important' }} onClick={() => setActiveStep(4)}>Extra Details</StepLabel>
+                        <StepLabel
+                          sx={{ cursor: "pointer !important" }}
+                          onClick={() => setActiveStep(4)}
+                        >
+                          Extra Details
+                        </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
                             {" "}
@@ -18739,8 +19469,7 @@ const SideForm = () => {
                               >
                                 Continue
                               </Button>
-                            </Box >
-
+                            </Box>
                             <TextField
                               size="small"
                               fullWidth
@@ -18749,28 +19478,21 @@ const SideForm = () => {
                               select
                               name="hardware_polish"
                               label="Hardware Polish"
-                              value={changeData.hardware_polish || ''}
+                              value={changeData.hardware_polish || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your Hardware Polish"
                             >
-                              {hardware_polish.map(
-                                (option) =>
-                                  <MenuItem
-                                    key={option}
-                                    value={option}
-                                  >
-                                    {option}
-                                  </MenuItem>
-                              )}
+                              {hardware_polish.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  {option}
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
                             </TextField>
-
-
-
-                          </Box >
+                          </Box>
                           <Box className="stepAction">
                             <Button
                               variant="outlined"
@@ -18792,9 +19514,6 @@ const SideForm = () => {
                         </StepContent>
                       </Step>
                       {/* Extra details */}
-
-
-
                     </Stepper>
 
                     <Button
@@ -18812,15 +19531,15 @@ const SideForm = () => {
 
             {/* update Hardware Ends */}
 
-
             {/* add inward */}
 
             {form.formType === "inward" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Inward
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -18833,33 +19552,30 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleInward) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleInward);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
-
                     <TextField
                       fullWidth
                       id="outlined-select"
                       required
                       select
-                      size={'small'}
+                      size={"small"}
                       helperText="Please select the wearhouse for this operation."
                       name="warehouse"
                       label="Select Warehouse..."
-                      value={changeData.warehouse || ''}
+                      value={changeData.warehouse || ""}
                       onChange={handleProductFelids}
                       multiple
                     >
-                      {warehouse.map(
-                        (option) =>
-                          <MenuItem
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.value}
-                          </MenuItem>
-                      )}
+                      {warehouse.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
                       {/* <MenuItem key={"none"} value="None">
                         {"None"}
                       </MenuItem> */}
@@ -18867,107 +19583,157 @@ const SideForm = () => {
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
+                      noOptionsText={"ex : P-01001"}
                       multiple
                       autoHighlight
                       id="combo-box-demo"
-                      options={productSKU.P_SKU.map((row) => { return row.SKU })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
-                        value={changeData.product_articles || ''}
-                        {...params}
-                        label="Product SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                      options={productSKU.P_SKU.map((row) => {
+                        return row.SKU;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearch}
+                          value={changeData.product_articles || ""}
+                          {...params}
+                          label="Product SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          product_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {
-                      changeData.product_articles.length > 0 && <Box mt={1} >
-
-                        <Typography component={'span'} variant="body1">Product Quantities</Typography>
-                        <Box p={1} sx={{
-                          display: 'flex',
-                          gap: '5px',
-                          flexDirection: 'column',
-                          maxHeight: 150,
-                          overflow: 'scroll'
-                        }}>
-                          {changeData.product_articles.map((item) => <TextField
-                            name={item}
-                            fullWidth
-                            size='small'
-                            type='number'
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">{item}</InputAdornment>
-                              ),
-                            }}
-                            placeholder={item}
-                            onChange={handleProductFelids}
-                            value={changeData[item] || 0}
-                          />)}
+                    {changeData.product_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Product Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
+                          }}
+                        >
+                          {changeData.product_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={changeData[item] || 0}
+                            />
+                          ))}
                         </Box>
                       </Box>
-                    }
+                    )}
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
                       multiple
                       autoHighlight
+                      noOptionsText={"ex : H-01001"}
                       id="combo-box-demo"
-                      options={productSKU.H_SKU.map((row) => { return row.SKU })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearch}
-                        value={changeData.hardware_articles || ''}
-                        {...params}
-                        label="Hardware SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                      options={productSKU.H_SKU.map((row) => {
+                        return row.SKU;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearch}
+                          value={changeData.hardware_articles || ""}
+                          {...params}
+                          label="Hardware SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          hardware_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {changeData.hardware_articles.length > 0 && <Box mt={1} >
-                      <Typography component={'span'} variant="body1">Hardware Quantities</Typography>
-                      <Box p={1} sx={{
-                        display: 'flex',
-                        gap: '5px',
-                        flexDirection: 'column',
-                        maxHeight: 150,
-                        overflow: 'scroll'
-                      }}>
-                        {changeData.hardware_articles.map((item) => <TextField
-                          name={item}
-                          fullWidth
-                          size='small'
-                          type='number'
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">{item}</InputAdornment>
-                            ),
+                    {changeData.hardware_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Hardware Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
                           }}
-                          placeholder={item}
-                          onChange={handleProductFelids}
-                          value={changeData[item] || 0}
-                        />)}
+                        >
+                          {changeData.hardware_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={changeData[item] || 0}
+                            />
+                          ))}
+                        </Box>
                       </Box>
-                    </Box>
-                    }
+                    )}
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
                       required
+                      noOptionsText={"ex : S-01001"}
                       autoHighlight
                       clearOnEscape
                       id="combo-box-demo"
-                      options={productSKU.supplier.map((row) => { return row.SID })}
-                      onChange={(e, newMember) => setData(old => ({ ...old, supplier: newMember }))}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList}
-                        value={changeData.supplier || ''}
-                        name='supplier'
-                        {...params}
-                        label="Supplier" />}
+                      options={productSKU.supplier.map((row) => {
+                        return row.SID;
+                      })}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({ ...old, supplier: newMember }))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSupplierList}
+                          value={changeData.supplier || ""}
+                          name="supplier"
+                          {...params}
+                          label="Supplier"
+                        />
+                      )}
                     />
-
 
                     <TextField
                       size="small"
@@ -19018,9 +19784,10 @@ const SideForm = () => {
             {form.formType === "outward" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Outward
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -19033,33 +19800,30 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleOutward) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleOutward);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
-
                     <TextField
                       fullWidth
                       id="outlined-select"
                       required
                       select
-                      size={'small'}
+                      size={"small"}
                       helperText="Please select the wearhouse for this operation."
                       name="warehouse"
                       label="Select Warehouse..."
-                      value={changeData.warehouse || ''}
+                      value={changeData.warehouse || ""}
                       onChange={handleProductFelids}
                       multiple
                     >
-                      {warehouse.map(
-                        (option) =>
-                          <MenuItem
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.value}
-                          </MenuItem>
-                      )}
+                      {warehouse.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
                       {/* <MenuItem key={"none"} value="None">
                         {"None"}
                       </MenuItem> */}
@@ -19067,111 +19831,170 @@ const SideForm = () => {
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
                       multiple
                       autoHighlight
+                      noOptionsText={"ex : P-01001"}
                       id="combo-box-demo"
-                      options={productSKU.P_SKU.map((row) => { return row.product_id + " Stock :" + (row.stock) })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearchStockSKU}
-                        value={changeData.product_articles || ''}
-                        {...params}
-                        label="Product SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                      options={productSKU.P_SKU.map((row) => {
+                        return row.product_id + " Stock :" + row.stock;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearchStockSKU}
+                          value={changeData.product_articles || ""}
+                          {...params}
+                          label="Product SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          product_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {
-                      changeData.product_articles.length > 0 && <Box mt={1} >
-
-                        <Typography component={'span'} variant="body1">Product Quantities</Typography>
-                        <Box p={1} sx={{
-                          display: 'flex',
-                          gap: '5px',
-                          flexDirection: 'column',
-                          maxHeight: 150,
-                          overflow: 'scroll'
-                        }}>
-                          {changeData.product_articles.map((item) => <TextField
-                            name={item}
-                            fullWidth
-                            size='small'
-                            type='number'
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">{item.split('Stock')[0]}</InputAdornment>
-                              ),
-                            }}
-                            placeholder={item}
-                            onChange={handleProductFelids}
-                            value={changeData[item] <= parseInt(item.split(':')[1]) ? changeData[item] : parseInt(item.split(':')[1])}
-                          />)}
+                    {changeData.product_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Product Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
+                          }}
+                        >
+                          {changeData.product_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item.split("Stock")[0]}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={
+                                changeData[item] <= parseInt(item.split(":")[1])
+                                  ? changeData[item]
+                                  : parseInt(item.split(":")[1])
+                              }
+                            />
+                          ))}
                         </Box>
                       </Box>
-                    }
+                    )}
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
+                      noOptionsText={"ex : H-01001"}
                       multiple
                       autoHighlight
                       id="combo-box-demo"
-                      options={productSKU.H_SKU.map((row) => { return row.product_id + " Stock :" + (row.stock) })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearchStockSKU}
-                        value={changeData.hardware_articles || ''}
-                        {...params}
-                        label="Hardware SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                      options={productSKU.H_SKU.map((row) => {
+                        return row.product_id + " Stock :" + row.stock;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearchStockSKU}
+                          value={changeData.hardware_articles || ""}
+                          {...params}
+                          label="Hardware SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          hardware_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {changeData.hardware_articles.length > 0 && <Box mt={1} >
-                      <Typography component={'span'} variant="body1">Hardware Quantities</Typography>
-                      <Box p={1} sx={{
-                        display: 'flex',
-                        gap: '5px',
-                        flexDirection: 'column',
-                        maxHeight: 150,
-                        overflow: 'scroll'
-                      }}>
-                        {changeData.hardware_articles.map((item) => <TextField
-                          name={item}
-                          fullWidth
-                          size='small'
-                          type='number'
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">{item.split('Stock')[0]}</InputAdornment>
-                            )
+                    {changeData.hardware_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Hardware Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
                           }}
-                          placeholder={item}
-                          onChange={handleProductFelids}
-                          value={changeData[item] <= parseInt(item.split(':')[1]) ? changeData[item] : parseInt(item.split(':')[1])}
-                        />)}
+                        >
+                          {changeData.hardware_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item.split("Stock")[0]}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={
+                                changeData[item] <= parseInt(item.split(":")[1])
+                                  ? changeData[item]
+                                  : parseInt(item.split(":")[1])
+                              }
+                            />
+                          ))}
+                        </Box>
                       </Box>
-                    </Box>
-                    }
+                    )}
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
                       required
                       autoHighlight
                       clearOnEscape
+                      noOptionsText={"ex : S-01001"}
                       id="combo-box-demo"
-                      options={productSKU.supplier.map((row) => { return row.SID })}
-                      onChange={(e, newMember) => setData(old => ({ ...old, supplier: newMember }))}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSupplierList}
-                        value={changeData.supplier || ''}
-                        name='supplier'
-                        {...params}
-                        label="Supplier" />}
+                      options={productSKU.supplier.map((row) => {
+                        return row.SID;
+                      })}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({ ...old, supplier: newMember }))
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSupplierList}
+                          value={changeData.supplier || ""}
+                          name="supplier"
+                          {...params}
+                          label="Supplier"
+                        />
+                      )}
                     />
 
                     <TextField
                       size="small"
                       fullWidth
-                      name='driver_name'
+                      name="driver_name"
                       id="fullWidth"
                       label="Driver Name"
                       type="text"
@@ -19193,12 +20016,10 @@ const SideForm = () => {
                       id="fullWidth"
                       label="Vehicle No."
                       inputProps={{ style: { textTransform: "uppercase" } }}
-
                       type="text"
                       variant="outlined"
                       name="vehicle_no"
                     />
-
 
                     {/* <TextField  
                       size="small"
@@ -19218,7 +20039,7 @@ const SideForm = () => {
                       select
                       name="purpose"
                       label="Purpose"
-                      value={changeData.purpose || ''}
+                      value={changeData.purpose || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your purpose"
@@ -19227,10 +20048,7 @@ const SideForm = () => {
                       {purpose.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
@@ -19243,14 +20061,13 @@ const SideForm = () => {
                       minRows={3}
                       maxRows={3}
                       required
-                      resize={'none'}
+                      resize={"none"}
                       id="fullWidth"
                       placeholder="Please eloburate the reson here..."
                       type="text"
                       variant="outlined"
                       name="reason"
                     />
-
 
                     <Button
                       color="primary"
@@ -19272,9 +20089,10 @@ const SideForm = () => {
             {form.formType === "transfer" && (
               <Grid container p={5} className="productPadding">
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Transfer
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -19287,32 +20105,29 @@ const SideForm = () => {
                   <form
                     className="form"
                     id="myForm"
-                    onSubmit={(e) => { confirmBox(e, handleTransfer) }}
+                    onSubmit={(e) => {
+                      confirmBox(e, handleTransfer);
+                    }}
                     encType="multipart/form-data"
                     method="post"
                   >
-
                     <TextField
                       fullWidth
                       id="outlined-select"
                       select
                       name="warehouse"
-                      size='small'
+                      size="small"
                       required
                       label="From Warehouse"
-                      value={changeData.warehouse || ''}
+                      value={changeData.warehouse || ""}
                       onChange={handleProductFelids}
                       multiple
                     >
-                      {warehouse.map(
-                        (option) => <MenuItem
-                          key={option.value}
-                          value={option.value}
-                        >
+                      {warehouse.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
                           {option.value}
                         </MenuItem>
-                      )}
-
+                      ))}
                     </TextField>
 
                     <TextField
@@ -19320,112 +20135,158 @@ const SideForm = () => {
                       id="outlined-select"
                       select
                       required
-                      size='small'
+                      size="small"
                       name="warehouse_to"
                       label="To Warehouse"
-                      value={changeData.warehouse_to || ''}
+                      value={changeData.warehouse_to || ""}
                       onChange={handleProductFelids}
                       multiple
                     >
                       {warehouse.map(
-                        (option) => changeData.warehouse !== option.value && <MenuItem
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.value}
-                        </MenuItem>
+                        (option) =>
+                          changeData.warehouse !== option.value && (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.value}
+                            </MenuItem>
+                          )
                       )}
-
                     </TextField>
 
-
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
                       multiple
                       autoHighlight
+                      noOptionsText={"ex : P-01001"}
                       id="combo-box-demo"
-                      options={productSKU.P_SKU.map((row) => { return row.product_id + " Stock :" + (row.stock) })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearchStockSKU}
-                        value={changeData.product_articles || ''}
-                        {...params}
-                        label="Product SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, product_articles: newMember }))}
+                      options={productSKU.P_SKU.map((row) => {
+                        return row.product_id + " Stock :" + row.stock;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearchStockSKU}
+                          value={changeData.product_articles || ""}
+                          {...params}
+                          label="Product SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          product_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {
-                      changeData.product_articles.length > 0 && <Box mt={1} >
-
-                        <Typography component={'span'} variant="body1">Product Quantities</Typography>
-                        <Box p={1} sx={{
-                          display: 'flex',
-                          gap: '5px',
-                          flexDirection: 'column',
-                          maxHeight: 150,
-                          overflow: 'scroll'
-                        }}>
-                          {changeData.product_articles.map((item) => <TextField
-                            name={item}
-                            fullWidth
-                            size='small'
-                            type='number'
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">{item.split('Stock')[0]}</InputAdornment>
-                              ),
-                            }}
-                            placeholder={item}
-                            onChange={handleProductFelids}
-                            value={changeData[item] <= parseInt(item.split(':')[1]) ? changeData[item] : parseInt(item.split(':')[1])}
-                          />)}
+                    {changeData.product_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Product Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
+                          }}
+                        >
+                          {changeData.product_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item.split("Stock")[0]}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={
+                                changeData[item] <= parseInt(item.split(":")[1])
+                                  ? changeData[item]
+                                  : parseInt(item.split(":")[1])
+                              }
+                            />
+                          ))}
                         </Box>
                       </Box>
-                    }
+                    )}
 
                     <Autocomplete
                       disablePortal
-                      size='small'
+                      size="small"
                       fullWidth
+                      noOptionsText={"ex : H-01001"}
                       multiple
                       autoHighlight
                       id="combo-box-demo"
-                      options={productSKU.H_SKU.map((row) => { return row.product_id + " Stock :" + (row.stock) })}
-                      renderInput={(params) => <TextField onKeyUpCapture={handleSearchStockSKU}
-                        value={changeData.hardware_articles || ''}
-                        {...params}
-                        label="Hardware SKU" />}
-                      onChange={(e, newMember) => setData(old => ({ ...old, hardware_articles: newMember }))}
+                      options={productSKU.H_SKU.map((row) => {
+                        return row.product_id + " Stock :" + row.stock;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearchStockSKU}
+                          value={changeData.hardware_articles || ""}
+                          {...params}
+                          label="Hardware SKU"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          hardware_articles: newMember,
+                        }))
+                      }
                     />
 
-                    {changeData.hardware_articles.length > 0 && <Box mt={1} >
-                      <Typography component={'span'} variant="body1">Hardware Quantities</Typography>
-                      <Box p={1} sx={{
-                        display: 'flex',
-                        gap: '5px',
-                        flexDirection: 'column',
-                        maxHeight: 150,
-                        overflow: 'scroll'
-                      }}>
-                        {changeData.hardware_articles.map((item) => <TextField
-                          name={item}
-                          fullWidth
-                          size='small'
-                          type='number'
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">{item.split('Stock')[0]}</InputAdornment>
-                            )
+                    {changeData.hardware_articles.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Hardware Quantities
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
                           }}
-                          placeholder={item}
-                          onChange={handleProductFelids}
-                          value={changeData[item] <= parseInt(item.split(':')[1]) ? changeData[item] : parseInt(item.split(':')[1])}
-                        />)}
+                        >
+                          {changeData.hardware_articles.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item.split("Stock")[0]}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={
+                                changeData[item] <= parseInt(item.split(":")[1])
+                                  ? changeData[item]
+                                  : parseInt(item.split(":")[1])
+                              }
+                            />
+                          ))}
+                        </Box>
                       </Box>
-                    </Box>
-                    }
-
-
+                    )}
 
                     <TextField
                       size="small"
@@ -19435,7 +20296,7 @@ const SideForm = () => {
                       select
                       name="purpose"
                       label="Purpose"
-                      value={changeData.purpose || ''}
+                      value={changeData.purpose || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your purpose"
@@ -19444,10 +20305,7 @@ const SideForm = () => {
                       {purpose.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
@@ -19460,15 +20318,13 @@ const SideForm = () => {
                       minRows={3}
                       maxRows={3}
                       required
-                      resize={'none'}
+                      resize={"none"}
                       id="fullWidth"
                       placeholder="Please eloburate the reson here..."
                       type="text"
                       variant="outlined"
                       name="reason"
                     />
-
-
 
                     <Button
                       color="primary"
@@ -19490,9 +20346,10 @@ const SideForm = () => {
             {form.formType === "addPolish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Add Polish
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -19503,15 +20360,16 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handlePolish) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handlePolish);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
                   >
-
-
-
-                    <TextField sx={{ mb: 2 }}
+                    <TextField
+                      sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -19522,56 +20380,81 @@ const SideForm = () => {
                       helperText="Please enter your primary material"
                     />
 
-
                     <FormLabel id="demo-radio-buttons-group-label">
                       Outdoor Images
                     </FormLabel>
-                    <ProductsPreviews text={'Please Drag and Drop the outdoor image'}> </ProductsPreviews>
+                    <ProductsPreviews
+                      text={"Please Drag and Drop the outdoor image"}
+                    >
+                      {" "}
+                    </ProductsPreviews>
 
-                    {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      {
-                        files.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = files;
-                                console.log(">>>>>>", temp, files);
-                                temp.splice(index, 1);
-                                setFiles([...temp])
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {files.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        {files.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = files;
+                                    console.log(">>>>>>", temp, files);
+                                    temp.splice(index, 1);
+                                    setFiles([...temp]);
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={URL.createObjectURL(img)}
+                                  alt={img.name}
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Indoor Images
                     </FormLabel>
-                    <IndoorPreviews text={'Please Drag and Drop the indoor image'}> </IndoorPreviews>
+                    <IndoorPreviews
+                      text={"Please Drag and Drop the indoor image"}
+                    >
+                      {" "}
+                    </IndoorPreviews>
 
-                    {Indoor.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      {
-                        Indoor.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = Indoor;
-                                console.log(">>>>>>", temp, Indoor);
-                                temp.splice(index, 1);
-                                setIndoor([...temp])
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {Indoor.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        {Indoor.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = Indoor;
+                                    console.log(">>>>>>", temp, Indoor);
+                                    temp.splice(index, 1);
+                                    setIndoor([...temp]);
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={URL.createObjectURL(img)}
+                                  alt={img.name}
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
                     <TextField
                       size="small"
@@ -19581,7 +20464,7 @@ const SideForm = () => {
                       select
                       name="polish_type"
                       label="Polish Type"
-                      value={changeData.polish_type || ''}
+                      value={changeData.polish_type || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your polish type."
@@ -19590,19 +20473,13 @@ const SideForm = () => {
                       {polishCatalog.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
                       )}
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
                     </TextField>
 
@@ -19614,35 +20491,23 @@ const SideForm = () => {
                       select
                       name="polish_finish"
                       label="Polish Finish"
-                      value={changeData.polish_finish || ''}
+                      value={changeData.polish_finish || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your polish finish."
                       required
                     >
-
-                      <MenuItem
-                        key={'Glossy'}
-                        value={'Glossy'}
-                      >
-                        {'Glossy'}
+                      <MenuItem key={"Glossy"} value={"Glossy"}>
+                        {"Glossy"}
                       </MenuItem>
 
-                      <MenuItem
-                        key={'Matt'}
-                        value={'Matt'}
-                      >
-                        {'Matt'}
+                      <MenuItem key={"Matt"} value={"Matt"}>
+                        {"Matt"}
                       </MenuItem>
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
-
                     </TextField>
-
 
                     <TextField
                       size="small"
@@ -19652,7 +20517,7 @@ const SideForm = () => {
                       select
                       name="level"
                       label="Polish Level"
-                      value={changeData.level || ''}
+                      value={changeData.level || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your polish level."
@@ -19661,23 +20526,18 @@ const SideForm = () => {
                       {level.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
                       )}
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
                     </TextField>
 
-                    <TextField sx={{ mb: 2 }}
+                    <TextField
+                      sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -19686,7 +20546,6 @@ const SideForm = () => {
                       label="Price (per Inch)"
                       type="number"
                     />
-
 
                     <FormControlLabel
                       control={
@@ -19698,7 +20557,6 @@ const SideForm = () => {
                       }
                       label="Lock Polish"
                     />
-
 
                     <Button
                       color="primary"
@@ -19719,9 +20577,10 @@ const SideForm = () => {
             {form.formType === "update_polish" && (
               <Grid container p={5}>
                 <Grid item xs={12}>
-                  <Typography component={'span'} variant="h5">
+                  <Typography component={"span"} variant="h5">
                     Update Polish
-                    <Typography component={'span'}
+                    <Typography
+                      component={"span"}
                       sx={{ display: "block !important" }}
                       variant="caption"
                     >
@@ -19732,128 +20591,178 @@ const SideForm = () => {
 
                 <Grid item xs={12} mt={5}>
                   <form
-                    className="form" onSubmit={(e) => { confirmBox(e, handleUpdatePolish) }}
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdatePolish);
+                    }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
                   >
-
-                    <TextField sx={{ mb: 2 }}
+                    <TextField
+                      sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
                       id="outlined-select"
                       name="polish_name"
-                      value={changeData.polish_name || ''}
+                      value={changeData.polish_name || ""}
                       onChange={handleProductFelids}
                       label="Polish Name"
                       type="text"
                       helperText="Please enter your primary material"
                     />
 
-
                     <FormLabel id="demo-radio-buttons-group-label">
                       Outdoor Images
                     </FormLabel>
-                    <ProductsPreviews text={'Please Drag and Drop the outdoor image'}> </ProductsPreviews>
+                    <ProductsPreviews
+                      text={"Please Drag and Drop the outdoor image"}
+                    >
+                      {" "}
+                    </ProductsPreviews>
 
-                    {files.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      {
-                        files.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = files;
-                                console.log(">>>>>>", temp, files);
-                                temp.splice(index, 1);
-                                setFiles([...temp])
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {files.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        {files.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = files;
+                                    console.log(">>>>>>", temp, files);
+                                    temp.splice(index, 1);
+                                    setFiles([...temp]);
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={URL.createObjectURL(img)}
+                                  alt={img.name}
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
-
-                    {changeData.savedImages.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      <FormLabel id="demo-radio-buttons-group-label">
-                        Saved Images
-                      </FormLabel>
-                      {
-                        changeData.savedImages.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = changeData.savedImages;
-                                temp.splice(index, 1);
-                                setData({ ...changeData, savedImages: temp })
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={img} alt='productImage' />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {changeData.savedImages.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Saved Images
+                        </FormLabel>
+                        {changeData.savedImages.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = changeData.savedImages;
+                                    temp.splice(index, 1);
+                                    setData({
+                                      ...changeData,
+                                      savedImages: temp,
+                                    });
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={img}
+                                  alt="productImage"
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
                     <FormLabel id="demo-radio-buttons-group-label">
                       Indoor Images
                     </FormLabel>
-                    <IndoorPreviews text={'Please Drag and Drop the indoor image'}> </IndoorPreviews>
+                    <IndoorPreviews
+                      text={"Please Drag and Drop the indoor image"}
+                    >
+                      {" "}
+                    </IndoorPreviews>
 
                     {/* {console.log(Indoor)} */}
-                    {Indoor.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      {
-                        Indoor.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = Indoor;
-                                console.log(">>>>>>", temp, Indoor);
-                                temp.splice(index, 1);
-                                setIndoor([...temp])
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={URL.createObjectURL(img)} alt={img.name} />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {Indoor.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        {Indoor.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = Indoor;
+                                    console.log(">>>>>>", temp, Indoor);
+                                    temp.splice(index, 1);
+                                    setIndoor([...temp]);
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={URL.createObjectURL(img)}
+                                  alt={img.name}
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
-
-                    {changeData.indoorSavedImage.length > 0 && <Grid sx={{ p: 2 }} spacing={2} container>
-                      <FormLabel id="demo-radio-buttons-group-label">
-                        Saved Images
-                      </FormLabel>
-                      {
-                        changeData.indoorSavedImage.map((img, index) => {
-                          return <>
-                            <Grid item xs={2} sx={{ position: 'relative' }} >
-                              <CancelIcon onClick={() => {
-                                // this function is for removing the image from savedImage array 
-                                let temp = changeData.indoorSavedImage;
-                                temp.splice(index, 1);
-                                setData({ ...changeData, indoorSavedImage: temp })
-                              }} className='imageCross' color='primary' />
-                              <img style={{ width: '100%' }} src={img} alt='productImage' />
-                            </Grid>
-                          </>
-                        })
-                      }
-                    </Grid>
-                    }
+                    {changeData.indoorSavedImage.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Saved Images
+                        </FormLabel>
+                        {changeData.indoorSavedImage.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = changeData.indoorSavedImage;
+                                    temp.splice(index, 1);
+                                    setData({
+                                      ...changeData,
+                                      indoorSavedImage: temp,
+                                    });
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={img}
+                                  alt="productImage"
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
 
                     <TextField
                       size="small"
                       fullWidth
                       id="outlined-select"
-                      value={changeData.polish_type || ''}
+                      value={changeData.polish_type || ""}
                       onChange={handleProductFelids}
                       select
                       name="polish_type"
@@ -19865,19 +20774,13 @@ const SideForm = () => {
                       {polishCatalog.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
                       )}
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
                     </TextField>
 
@@ -19888,36 +20791,24 @@ const SideForm = () => {
                       id="outlined-select"
                       select
                       name="polish_finish"
-                      value={changeData.polish_finish || ''}
+                      value={changeData.polish_finish || ""}
                       onChange={handleProductFelids}
                       label="Polish Finish"
                       multiple
                       helperText="Please select your polish finish."
                       required
                     >
-
-                      <MenuItem
-                        key={'Glossy'}
-                        value={'Glossy'}
-                      >
-                        {'Glossy'}
+                      <MenuItem key={"Glossy"} value={"Glossy"}>
+                        {"Glossy"}
                       </MenuItem>
 
-                      <MenuItem
-                        key={'Matt'}
-                        value={'Matt'}
-                      >
-                        {'Matt'}
+                      <MenuItem key={"Matt"} value={"Matt"}>
+                        {"Matt"}
                       </MenuItem>
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
-
                     </TextField>
-
 
                     <TextField
                       size="small"
@@ -19927,7 +20818,7 @@ const SideForm = () => {
                       select
                       name="level"
                       label="Polish Level"
-                      value={changeData.level || ''}
+                      value={changeData.level || ""}
                       multiple
                       onChange={handleProductFelids}
                       helperText="Please select your polish level."
@@ -19936,23 +20827,18 @@ const SideForm = () => {
                       {level.map(
                         (option) =>
                           option && (
-                            <MenuItem
-                              key={option}
-                              value={option}
-                            >
+                            <MenuItem key={option} value={option}>
                               {option}
                             </MenuItem>
                           )
                       )}
-                      <MenuItem
-                        key={'None'}
-                        value={'None'}
-                      >
-                        {'None'}
+                      <MenuItem key={"None"} value={"None"}>
+                        {"None"}
                       </MenuItem>
                     </TextField>
 
-                    <TextField sx={{ mb: 2 }}
+                    <TextField
+                      sx={{ mb: 2 }}
                       size="small"
                       fullWidth
                       // required
@@ -19964,7 +20850,6 @@ const SideForm = () => {
                       type="number"
                     />
 
-
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -19975,7 +20860,6 @@ const SideForm = () => {
                       }
                       label="Lock Polish"
                     />
-
 
                     <Button
                       color="primary"
@@ -19990,7 +20874,6 @@ const SideForm = () => {
               </Grid>
             )}
             {/* update addPolish  Ends */}
-
           </Box>
         </Backdrop>
       </Slide>
