@@ -77,6 +77,8 @@ import {
   getStockSKU,
   addPolish,
   editPolish,
+  getCategoryList,
+  applyDiscount
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -678,6 +680,7 @@ const SideForm = () => {
     P_SKU: [],
     H_SKU: [],
     supplier: [],
+    category: [],
   });
 
   const [catalog, setCatalog] = useState({
@@ -703,6 +706,7 @@ const SideForm = () => {
     primary_material: [],
     product_articles: [],
     hardware_articles: [],
+    category_discount: [],
     supplier: "",
     range: "None",
     product_array: [],
@@ -1700,7 +1704,6 @@ const SideForm = () => {
         });
         break;
       case "inward":
-        console.log(e.target);
         setData({
           ...changeData,
           [e.target.name]: e.target.value,
@@ -2060,6 +2063,7 @@ const SideForm = () => {
       P_SKU: [],
       H_SKU: [],
       supplier: [],
+      category: [],
     });
     setImages([]);
     setFeatured([]);
@@ -2072,6 +2076,7 @@ const SideForm = () => {
       primary_material: [],
       product_articles: [],
       hardware_articles: [],
+      category_discount : [],
       supplier: "",
       range: "None",
       product_array: [],
@@ -4077,6 +4082,73 @@ const SideForm = () => {
       });
   };
 
+  const handleApplyDiscount = async (e) => {
+    e.preventDefault();
+
+    try{
+    const FD = new FormData();
+
+    console.log(changeData.category_discount)
+    // merge the discount with category name
+
+    let discount_array = [];
+
+    if (changeData.category_discount.length > 0)
+      discount_array = changeData.category_discount.map((name) => ({
+        name: name ,
+        discount: changeData[name] || 0,
+      }));
+
+    FD.append("discount_array", JSON.stringify(discount_array));
+
+    const res = await applyDiscount(FD);
+
+    
+        if (res.status === 203) {
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: res.data.message,
+            })
+          );
+        } else {
+          setProductSKU({
+            P_SKU: [],
+            H_SKU: [],
+            supplier: [],
+            category : [],
+          });
+
+          form.setRow(
+              form.row.map((set) => {
+                let response  =changeData.category_discount.filter((name) => { return name === set.category_name }); 
+                console.log(response)
+                if(response.length > 0) set.discount_limit = changeData[set.category_name]
+                return set
+              })
+            );
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: res.data.message,
+            })
+          );
+        }
+      }
+      catch(err) {
+        console.log(err);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
+      };
+  };
   const handleInward = (e) => {
     e.preventDefault();
 
@@ -4110,7 +4182,6 @@ const SideForm = () => {
     res
       .then((data) => {
         if (data.status === 203) {
-          setImages([]);
           dispatch(
             setAlert({
               open: true,
@@ -4123,6 +4194,7 @@ const SideForm = () => {
             P_SKU: [],
             H_SKU: [],
             supplier: [],
+            category : []
           });
           form.setRow([
             ...form.row,
@@ -4152,7 +4224,6 @@ const SideForm = () => {
       })
       .catch((err) => {
         console.log(err);
-        setImages([]);
         dispatch(
           setAlert({
             open: true,
@@ -4756,111 +4827,6 @@ const SideForm = () => {
       });
   };
 
-  // const handleAddStock = (e) => {
-  //   e.preventDefault();
-
-  //   const FD = new FormData();
-
-  //   FD.append("product_id", changeData.product_id);
-  //   FD.append("stock", changeData.stock);
-  //   FD.append("warehouse", changeData.warehouse);
-
-  //   const res = addInward(FD);
-
-  //   res
-  //     .then((data) => {
-  //       if (data.status !== 200) {
-  //         setImages([]);
-  //         dispatch({
-  //           type: Notify, payload: {
-  //             open: true,
-  //             variant: "error",
-  //             message: data.data.message || "Something Went Wrong !!!",
-  //           }
-  //         });
-  //       } else {
-  //         form.setRow([...form.row, {
-  //           id: form.row.length + 1,
-  //           product_id: changeData.product_id,
-  //           stock: changeData.stock,
-  //           warehouse: changeData.warehouse,
-  //           action: data.data.response
-  //         }])
-  //         setImages([]);
-  //         setUrl(data.data.url);
-  //         handleClose();
-  //         dispatch({
-  //           type: Notify, payload: {
-  //             open: true,
-  //             variant: "success",
-  //             message: data.data.message,
-  //           }
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // //console.log(err);
-  //       setImages([]);
-  //       dispatch({
-  //         type: Notify, payload: {
-  //           open: true,
-  //           variant: "error",
-  //           message: "Something Went Wrong !!!",
-  //         }
-  //       });
-  //     });
-  // };
-  // const handleUpdateStock = (e) => {
-  //   e.preventDefault();
-
-  //   const FD = new FormData();
-
-  //   FD.append("product_id", changeData.product_id);
-  //   FD.append("stock", changeData.stock);
-  //   FD.append("warehouse", changeData.warehouse);
-
-  //   const res = updateStock(FD);
-
-  //   res
-  //     .then((data) => {
-  //       if (data.status !== 200) {
-  //         dispatch({
-  //           type: Notify, payload: {
-  //             open: true,
-  //             variant: "error",
-  //             message: data.data.message || "Something Went Wrong !!!",
-  //           }
-  //         });
-  //       } else {
-  //         form.setRow(form.row.map((set) => {
-
-  //           if (set.action === form.payload.row.action) {
-  //             set.stock = changeData.stock;
-  //           }
-  //           return set;
-  //         }))
-  //         setUrl(data.data.url);
-  //         handleClose();
-  //         dispatch({
-  //           type: Notify, payload: {
-  //             open: true,
-  //             variant: "success",
-  //             message: data.data.message,
-  //           }
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       dispatch({
-  //         type: Notify, payload: {
-  //           open: true,
-  //           variant: "error",
-  //           message: "Something Went Wrong !!!",
-  //         }
-  //       });
-  //     });
-  // };
 
   const handleAddress = (e) => {
     e.preventDefault();
@@ -5375,6 +5341,26 @@ const SideForm = () => {
     }, 1000);
     return () => clearTimeout(delayDebounceFn);
   }
+  async function handleSearchCategory(e) {
+    const delayDebounceFn = setTimeout(() => {
+      getCategoryList(e.target.value)
+        .then((res) => {
+          setProductSKU((old) => ({
+            ...old,
+            category: res.data,
+          }));
+        })
+        .catch((err) => {
+          setProductSKU((old) => ({
+            ...old,
+            category : []
+          }));
+        });
+    }, 1000);
+    return () => clearTimeout(delayDebounceFn);
+  }
+
+  
 
   return (
     <>
@@ -13774,6 +13760,8 @@ const SideForm = () => {
                               fullWidth
                               multiple
                               autoHighlight
+                              noOptionsText={"ex : P-01001"}
+
                               id="combo-box-demo"
                               options={productSKU.P_SKU.map((row) => {
                                 return row.SKU;
@@ -13793,7 +13781,7 @@ const SideForm = () => {
                                 }))
                               }
                             />
-                            {changeData.product_articles.length > 0 && (
+                            {/* {changeData.product_articles.length > 0 && (
                               <Box mt={1}>
                                 <Typography component={"span"} variant="body1">
                                   Product Quantities
@@ -13828,7 +13816,7 @@ const SideForm = () => {
                                   ))}
                                 </Box>
                               </Box>
-                            )}
+                            )} */}
                             <TextField
                               size="small"
                               fullWidth
@@ -14782,6 +14770,7 @@ const SideForm = () => {
                               size="small"
                               fullWidth
                               multiple
+                              noOptionsText={"ex : P-01001"}
                               autoHighlight
                               id="combo-box-demo"
                               options={productSKU.P_SKU.map((row) => {
@@ -14809,7 +14798,7 @@ const SideForm = () => {
                                 }))
                               }
                             />
-                            {changeData.product_articles.length > 0 && (
+                            {/* {changeData.product_articles.length > 0 && (
                               <Box mt={1}>
                                 <Typography component={"span"} variant="body1">
                                   Product Quantities
@@ -14844,7 +14833,7 @@ const SideForm = () => {
                                   ))}
                                 </Box>
                               </Box>
-                            )}
+                            )} */}
                             <TextField
                               size="small"
                               fullWidth
@@ -16068,6 +16057,113 @@ const SideForm = () => {
             )}
 
             {/* update Category Ends */}
+
+            {/*  discount Category */}
+
+            {form.formType === "discount_category" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Discount
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add discount on product category from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    id="myForm"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleApplyDiscount);
+                    }}
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+
+                    <Autocomplete
+                      disablePortal
+                      size="small"
+                      fullWidth
+                      noOptionsText={"ex : Chair"}
+                      multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.category.map((row) => {
+                        return row.category_name;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearchCategory}
+                          value={changeData.category_discount || ""}
+                          {...params}
+                          label="Select Category"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          category_discount: newMember,
+                        }))
+                      }
+                    />
+
+                    {changeData.category_discount.length > 0 && (
+                      <Box mt={1}>
+                        <Typography component={"span"} variant="body1">
+                          Discount Limit
+                        </Typography>
+                        <Box
+                          p={1}
+                          sx={{
+                            display: "flex",
+                            gap: "5px",
+                            flexDirection: "column",
+                            maxHeight: 150,
+                            overflow: "scroll",
+                          }}
+                        >
+                          {changeData.category_discount.map((item) => (
+                            <TextField
+                              name={item}
+                              fullWidth
+                              size="small"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    {item}
+                                  </InputAdornment>
+                                ),
+                              }}
+                              placeholder={item}
+                              onChange={handleProductFelids}
+                              value={changeData[item] < 100 && changeData[item]  ? changeData[item] : 0}
+                            />
+                          ))}
+                        </Box>
+                      </Box>
+                    )}
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Apply Discount 
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+
+            {/* discount Category Ends */}
 
             {/*  add primaryMateriel */}
 

@@ -57,13 +57,15 @@ function MyRoutes() {
     if (auth.isAuth) {
       const time = Date.now()
       const { exp } = decode(auth.token)
-      console.log(exp === time)
       // refresh the token from 1 minute prior 
       if ((exp * 1000 - 60000) <= time) {
         dispatch(setRefreshBox({
           state: true
         }))
       }
+    }
+    else {
+      history("/");
     }
   }, [location, form.state, alert.open])
 

@@ -40,6 +40,23 @@ export const editCategory = async (data) => {
   });
 };
 
+// for list the category
+export const getCategoryList = async (data) => {
+  return await axios.get(`${API}/getCategoryList/?search=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+// for list the category
+export const applyDiscount = async (data) => {
+  return await axios.post(`${API}/applyDiscount/`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
 // // for delete the category
 // export const deleteCategory = async (data) => {
 //   console.log(data);

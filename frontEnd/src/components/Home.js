@@ -68,12 +68,6 @@ const Home = (props) => {
   const [anchor, setAnchor] = useState(null);
 
 
-  useEffect(() => {
-    if (auth.isAuth === false)
-      history("/");
-  }, [auth.isAuth]);
-
-
 
   const handleMenuClose = () => {
     setAnchor(null);

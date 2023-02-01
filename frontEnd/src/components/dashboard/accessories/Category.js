@@ -9,7 +9,7 @@ import {
 // import DeleteIcon from '@mui/icons-material/Delete';
 import question from "../../../assets/img/question.svg";
 
-
+import DiscountIcon from '@mui/icons-material/Discount';
 import CreateIcon from '@mui/icons-material/Create';
 import AddIcon from "@mui/icons-material/Add";
 import { categoryList, statusCategory } from '../../../services/service'
@@ -56,6 +56,7 @@ export default function Category() {
             seo_description: row.seo_description,
             seo_keyword: row.seo_keyword,
             product_description: row.product_description,
+            discount_limit: row.discount_limit,
             action: row._id
           })
         }))
@@ -92,9 +93,15 @@ export default function Category() {
 
     },
     {
+      field: "discount_limit",
+      headerName: "Discount Limit (%)",
+      width: 150,
+      align : 'center',
+    },
+    {
       field: "action",
       headerName: "Actions",
-      width: 200,
+      width: 100,
       renderCell: (params) =>
         <div className="categoryImage" >
           <IconButton onClick={() => {
@@ -207,7 +214,7 @@ export default function Category() {
 
       <Grid
         container
-        p={3}
+        p={2}
         sx={{
           boxShadow: 1,
           borderRadius: 2,
@@ -216,19 +223,32 @@ export default function Category() {
           gap: "15px",
         }}
       >
-        <Grid xs={12} md={9}>
+        <Grid xs={12} md={3.7}>
           <TextField
             fullWidth
             // autoComplete={false}
+            size = 'small'
             id="demo-helper-text-aligned-no-helper"
             label="Search by category type"
             type="text"
             onChange={handelSearch}
           />
         </Grid>
+        <Grid xs={12} md={3.7}>
+          <TextField
+            fullWidth
+            // autoComplete={false}
+            size = 'small'
+            id="demo-helper-text-aligned-no-helper"
+            label="Search by discount limit"
+            type="number"
+            onChange={handelSearch}
+          />
+        </Grid>
 
+{/* // button */}
 
-        <Grid xs={12} md={2.8}>
+        <Grid xs={12} md={2}>
           <Button
             onClick={() => {
               dispatch(setForm({ state: true, formType: "category", row: Row, setRow: setRows, setCheck }));
@@ -239,6 +259,19 @@ export default function Category() {
             variant="contained"
           >
             Add Category
+          </Button>
+        </Grid>
+        <Grid xs={12} md={2}>
+          <Button
+            onClick={() => {
+              dispatch(setForm({ state: true, formType: "discount_category", row: Row, setRow: setRows, setCheck }));
+            }}
+            sx={{ width: "100%" }}
+            color="primary"
+            startIcon={<DiscountIcon />}
+            variant="contained"
+          >
+            Apply Discount
           </Button>
         </Grid>
       </Grid>

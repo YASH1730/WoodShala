@@ -174,7 +174,7 @@ const Dashboard = () => {
       {/* Dashboard Overview */}
 
       <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-        Dasboard Overview
+        Dashboard Overview
       </Typography>
 
       <br></br>
