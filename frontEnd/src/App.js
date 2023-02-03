@@ -15,8 +15,8 @@ import decode from 'jwt-decode'
 // component 
 const EntryPoints = lazy(() => import("./components/EntryPoints"))
 const Home = lazy(() => import("./components/Home"))
-const Blog = lazy(() => import("./components/Blog"))
-const BlogContent = lazy(() => import("./components/BlogContent"))
+// const Blog = lazy(() => import("./components/Blog")) // these bog pages is shifted to the woodshala.in
+// const BlogContent = lazy(() => import("./components/BlogContent"))
 const SideForm = lazy(() => import("./components/dashboard/form/SideForm"))
 const SnackBar = lazy(() => import("./components/Utility/SnackBar"))
 const NotFound = lazy(() => import("./components/Utility/NotFound"))
@@ -33,12 +33,13 @@ const Banner = lazy(() => import('./components/dashboard/other/Banner'))
 const Action = lazy(() => import('./components/dashboard/inventory/Action'))
 const Accessories = lazy(() => import('./components/Accessories'))
 const Hardware = lazy(() => import('./components/dashboard/hardware/Hardware'))
-const BlogModule = lazy(() => import('./components/dashboard/other/Blog'))
+const BlogModule = lazy(() => import('./components/dashboard/blog/Blog'))
 const Merge = lazy(() => import('./components/dashboard/product/Merge'))
 const ProductDetails = lazy(() => import('./components/Utility/ProductDetails'))
 const Variation = lazy(() => import('./components/dashboard/product/Variation'))
 const Suppliers = lazy(() => import('./components/dashboard/admin/Suppliers'))
 const Security = lazy(() => import('./components/dashboard/admin/Security'))
+const Policy = lazy(() => import('./components/dashboard/admin/Policy'))
 
 
 global.Buffer = Buffer;
@@ -79,9 +80,9 @@ function MyRoutes() {
         <Route exact path="/" element={<EntryPoints history={history} />} />
         <Route exact path="/settings" element={<Setting history={history} />} />
         <Route exact path="/accessories" element={<Accessories history={history} />} />
-        <Route exact path="/blogs" element={<BlogModule history={history} />} />
-        <Route exact path="/blog" element={<Blog />} />
-        <Route exact path="/blogContent" element={<BlogContent />} />
+        <Route exact path="/blog" element={<BlogModule history={history} />} />
+        {/* <Route exact path="/blog" element={<Blog />} /> */}
+        {/* <Route exact path="/blogContent" element={<BlogContent />} /> */}
         <Route exact path="/banner" element={<Banner history={history} />} />
         <Route exact path="/customer" element={<Customers history={history} />} />
         <Route exact path="/create_order" element={<CreateOrder history={history} />} />
@@ -96,6 +97,7 @@ function MyRoutes() {
         <Route exact path="/productDetails/:SKU" element={<ProductDetails history={history} />} />
         <Route exact path="/reward" element={<Coupons history={history} />} />
         <Route exact path="/security" element={<Security history={history} />} />
+        <Route exact path="/policy" element={<Policy history={history} />} />
         <Route exact path="/variation" element={<Variation history={history} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

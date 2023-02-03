@@ -18,10 +18,11 @@ import { useDispatch } from 'react-redux'
 import { setAlert } from '../../../store/action/action'
 import {
   getDraft,
-
+  getLastHardware,
   getLastProduct,
   deleteDraft,
   getProductDetails,
+  getHardwareDetails,
   dropDraft,
   getMetaDraft
 } from "../../../services/service";
@@ -48,7 +49,7 @@ export default function Action() {
   const dispatch = useDispatch();
 
   const [display, setDisplay] = useState({});
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [Row, setRows] = useState([]);
   const [pageSize, setPageSize] = useState(50);
   const [SKU, setSKU] = useState('');
@@ -205,6 +206,8 @@ export default function Action() {
     }
   ]
 
+  // function for generating product  ID
+
   const getSKU = () => {
     getLastProduct()
       .then((res) => {
@@ -222,8 +225,29 @@ export default function Action() {
       });
   };
 
+  // function for generating hardware  ID
+
+  const getHKU = async () => {
+    try {
+      let res = await getLastHardware()
+      if (res) {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
+
+          setSKU(`H-0${index}`);
+        } else {
+          setSKU("H-01001");
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    };
+  };
+
   const handleClose = () => setDisplay({ status: false });
 
+
+  // Permission Box
   function SpringModal() {
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -299,7 +323,74 @@ export default function Action() {
               setDisplay({ status: false })
             }
             break;
-          default:
+          case 'insertHardware':
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            display.data.SKU = SKU;
+            display.data.AID = SKU;
+
+            console.log(display.data)
+
+            response = await dropDraft(display.data)
+            if (response.status === 200) {
+
+              setRows(Row.map(item => {
+                if (item.DID === display.data.DID) {
+                  item.status = 'Approved';
+                  item.AID = SKU;
+                }
+                return item
+              }))
+              dispatch(setAlert({
+                open: true,
+                variant: "success",
+                message: response.data.message,
+
+              }));
+              setDisplay({ status: false })
+
+            }
+            else {
+              dispatch(setAlert({
+                open: true,
+                variant: "error",
+                message: 'Something Went Wrong !!!',
+
+              }));
+              setDisplay({ status: false })
+            }
+            break;
+          case 'updateHardware':
+              display.data.draftStatus = e.target.action.value;
+              display.data.status = true;
+              response = await dropDraft(display.data)
+              if (response.status === 200) {
+                setRows(Row.map(item => {
+                  if (item.DID === display.data.DID) {
+                    item.status = 'Approved';
+                  }
+                  return item
+                }))
+                dispatch(setAlert({
+                  open: true,
+                  variant: "success",
+                  message: response.data.message,
+  
+                }));
+                setDisplay({ status: false })
+  
+              }
+              else {
+                dispatch(setAlert({
+                  open: true,
+                  variant: "error",
+                  message: 'Something Went Wrong !!!',
+  
+                }));
+                setDisplay({ status: false })
+              }
+              break;
+            default:
             console.log('no operation found')
             break;
         }
@@ -307,6 +398,7 @@ export default function Action() {
       else setDisplay({ status: false })
     }
 
+    // Section for comparison table 
     function Content() {
       const [peer, setPeer] = useState([]);
 
@@ -323,6 +415,20 @@ export default function Action() {
                 res.data = JSON.stringify(res.data)
                 res.data = JSON.parse(res.data)
                 console.log(res.data)
+                if (res.data) setPeer(res.data)
+              })
+              .catch((err) => { console.log(err) })
+            break;
+          case 'insertHardware':
+            setPeer([])
+            getHKU();
+            break;
+          case 'updateHardware':
+            getHardwareDetails(display.data.AID)
+              .then((res) => {
+                res.data = JSON.stringify(res.data)
+                res.data = JSON.parse(res.data)
+                // console.log(res.data)
                 if (res.data) setPeer(res.data)
               })
               .catch((err) => { console.log(err) })
@@ -370,7 +476,60 @@ export default function Action() {
                         return <>
                           <Divider />
                           <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                          {peer[key] != display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
+                          {peer[key] !== display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
+                            <Typography variant='button'>{display.data[key]}</Typography>}
+                        </>
+                      })
+                      :
+                      Object.keys(display.data).map(function (key) {
+                        return <>
+                          <Divider />
+                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
+                          <Typography variant='button'>{display.data[key]}</Typography>
+                        </>
+                      })
+                  }
+                </Box>
+              </Grid>
+              {/* After and product details ends */}
+
+            </Grid>
+          </>)
+        case 'Hardware':
+          return (<>
+            <Grid container>
+              <Grid item xs={12}> <Typography variant='h5' sx={{ textAlign: 'center', mb: 1 }}>Data View</Typography></Grid>
+
+              {/* // Before */}
+              {display.operation === 'updateHardware' && <Grid item xs={6} p={1}>
+                <Typography variant='h6' sx={{ textAlign: 'center' }} >Before</Typography>
+                <Box sx={{ height: '300px', overflow: 'scroll' }}>
+                  {
+                    Object.keys(peer).map(function (key) {
+                      return <>
+                        <Divider />
+                        <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
+                        {peer[key] !== display.data[key] ? <Typography sx={{ color: 'red !important' }} variant='button'>{peer[key]}</Typography> :
+                          <Typography variant='button'>{peer[key]}</Typography>}
+                      </>
+                    })
+                  }
+                </Box>
+              </Grid>}
+              {/* // Before Ends */}
+
+              {/* After and product details */}
+
+              <Grid item p={1} xs={display.operation === 'updateHardware' ? 6 : 12}>
+                <Typography variant='h6' sx={{ textAlign: 'center' }} >{display.operation === 'updateHardware' ? 'After' : 'Hardware Details'}</Typography>
+                <Box sx={{ height: '300px', overflow: 'scroll', p: 2 }}>
+                  {
+                    display.operation === 'updateHardware' ?
+                      Object.keys(display.data).map(function (key) {
+                        return <>
+                          <Divider />
+                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
+                          {peer[key] !== display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
                             <Typography variant='button'>{display.data[key]}</Typography>}
                         </>
                       })
@@ -397,6 +556,7 @@ export default function Action() {
 
     }
 
+    // Action like approve here
     function ActionForm() {
 
       const [status, setStatus] = useState(display.draftStatus)
@@ -460,24 +620,24 @@ export default function Action() {
       </div>
     );
   }
+  // Permission Box Ends
 
+  // Data Grid 
   function DataGridView() {
     return (
       <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
         <DataGrid
           rows={Row}
           columns={columns}
-
-
-          filterModel={{
-            items: [
-              {
-                columnField: "SKU",
-                operatorValue: "contains",
-                value: `${search}`,
-              },
-            ],
-          }}
+          // filterModel={{
+          //   items: [
+          //     {
+          //       columnField: "SKU",
+          //       operatorValue: "contains",
+          //       value: `${search}`,
+          //     },
+          //   ],
+          // }}
           pagination
           pageSize={pageSize}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -486,12 +646,14 @@ export default function Action() {
       </div>
     );
   }
+  // Data Grid Ends 
 
-  const handleSearch = (e) => {
-    // //console.log(e.target.value)
-    setSearch(e.target.value);
-  };
+  // const handleSearch = (e) => {
+  //   // //console.log(e.target.value)
+  //   setSearch(e.target.value);
+  // };
 
+  // main container
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
       <Typography sx={{ display: "block" }} variant="h5">

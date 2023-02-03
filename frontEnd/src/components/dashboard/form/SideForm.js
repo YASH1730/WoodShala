@@ -949,6 +949,7 @@ const SideForm = () => {
     switch (form.formType) {
       case "hardware":
         getHKU();
+        getDID();
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -973,7 +974,8 @@ const SideForm = () => {
 
         break;
       case "update_hardware":
-        getHKU();
+        // getHKU();
+        getDID();
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -4845,10 +4847,17 @@ const SideForm = () => {
     console.log(address);
   };
 
-  const handleHardware = (e) => {
+  async function handleHardware (e) {
+
+    try{
     e.preventDefault();
 
     const FD = new FormData();
+
+    FD.append("DID", SKU);
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Hardware");
+    FD.append("operation", "insertHardware");
 
     files.map((element) => {
       return FD.append("hardware_image", element);
@@ -4923,61 +4932,57 @@ const SideForm = () => {
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
 
-    const res = addHardware(FD);
+    const res = await addDraft(FD);
 
-    res
-      .then((data) => {
-        // //console.log(data.status);
 
-        if (data.status === 203) {
+        if (res.status === 203) {
           dispatch(
             setAlert({
               open: true,
               variant: "error",
-              message: data.data.message,
+              message: res.data.message,
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              SKU: data.data.response.SKU,
-              title: data.data.response.title,
-              category_name: data.data.response.category_name,
-              category_id: data.data.response.category_id,
-              sub_category_name: data.data.response.sub_category_name,
-              sub_category_id: data.data.response.sub_category_id,
-              hardware_image: data.data.response.hardware_image,
-              warehouse: data.data.response.warehouse,
-              bangalore_stock: data.data.response.bangalore_stock,
-              jodhpur_stock: data.data.response.jodhpur_stock,
-              manufacturing_time: data.data.response.manufacturing_time,
-              status: data.data.response.status,
-              returnDays: data.data.response.returnDays,
-              COD: data.data.response.COD,
-              returnable: data.data.response.returnable,
-              quantity: data.data.response.quantity,
-              package_length: data.data.response.package_length,
-              package_height: data.data.response.package_height,
-              package_breadth: data.data.response.package_breadth,
-              unit: data.data.response.unit,
-              range: data.data.response.range,
-              action: data.data.response._id,
-            },
-          ]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     SKU: data.data.response.SKU,
+          //     title: data.data.response.title,
+          //     category_name: data.data.response.category_name,
+          //     category_id: data.data.response.category_id,
+          //     sub_category_name: data.data.response.sub_category_name,
+          //     sub_category_id: data.data.response.sub_category_id,
+          //     hardware_image: data.data.response.hardware_image,
+          //     warehouse: data.data.response.warehouse,
+          //     bangalore_stock: data.data.response.bangalore_stock,
+          //     jodhpur_stock: data.data.response.jodhpur_stock,
+          //     manufacturing_time: data.data.response.manufacturing_time,
+          //     status: data.data.response.status,
+          //     returnDays: data.data.response.returnDays,
+          //     COD: data.data.response.COD,
+          //     returnable: data.data.response.returnable,
+          //     quantity: data.data.response.quantity,
+          //     package_length: data.data.response.package_length,
+          //     package_height: data.data.response.package_height,
+          //     package_breadth: data.data.response.package_breadth,
+          //     unit: data.data.response.unit,
+          //     range: data.data.response.range,
+          //     action: data.data.response._id,
+          //   },
+          // ]);
           handleClose();
           dispatch(
             setAlert({
               open: true,
               variant: "success",
-              message: data.data.message,
+              message: res.data.message,
             })
           );
         }
-      })
-      .catch((err) => {
-        // //console.log(err);
+    }catch(err) {
+        console.log(err);
         dispatch(
           setAlert({
             open: true,
@@ -4985,15 +4990,28 @@ const SideForm = () => {
             message: "Something Went Wrong !!!",
           })
         );
-      });
+      };
   };
 
-  const handleUpdateHardware = (e) => {
+  async function handleUpdateHardware  (e)  {
+    try{
     e.preventDefault();
+
 
     const FD = new FormData();
 
-    console.log(form.payload.row.action);
+    FD.append("DID", SKU);
+    FD.append("AID", changeData.SKU);
+    FD.append("type", "Hardware");
+    FD.append("operation", "updateHardware");
+
+    // console.log(form.payload.row.action);
+
+
+    if(files.length > 0) files.map((element) => {
+      return FD.append("hardware_image", element);
+    });
+
     FD.append("_id", form.payload.row.action);
 
     FD.append("status", changeData.status === "on" ? true : false);
@@ -5073,68 +5091,66 @@ const SideForm = () => {
     if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
       FD.append("bangalore_stock", changeData.bangalore_stock);
 
-    const res = editHardware(FD);
+    const res = await  addDraft(FD);
 
-    res
-      .then((data) => {
-        // //console.log(data.status);
-
-        if (data.status === 203) {
+    if(res){
+        if (res.status === 203) {
           dispatch(
             setAlert({
               open: true,
               variant: "error",
-              message: data.data.message,
+              message: res.data.message,
             })
           );
         } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.title = changeData.title;
-                set.category_name = multiOBJ.category_name;
-                set.category_id = changeData.category_id;
-                set.sub_category_name = multiOBJ.sub_category_name;
-                set.sub_category_id = changeData.sub_category_id;
-                set.hardware_image = changeData.hardware_image;
-                set.warehouse = changeData.warehouse.join(",");
-                set.bangalore_stock = changeData.bangalore_stock;
-                set.jodhpur_stock = changeData.jodhpur_stock;
-                set.manufacturing_time = changeData.manufacturing_time;
-                set.status = changeData.status;
-                set.returnDays = changeData.returnDays;
-                set.COD = changeData.COD;
-                set.returnable = changeData.returnable;
-                set.quantity = changeData.quantity;
-                set.package_length = changeData.package_length;
-                set.package_height = changeData.package_height;
-                set.package_breadth = changeData.package_breadth;
-                set.unit = changeData.unit;
-                set.range = changeData.range;
-              }
-              return set;
-            })
-          );
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.title = changeData.title;
+          //       set.category_name = multiOBJ.category_name;
+          //       set.category_id = changeData.category_id;
+          //       set.sub_category_name = multiOBJ.sub_category_name;
+          //       set.sub_category_id = changeData.sub_category_id;
+          //       set.hardware_image = changeData.hardware_image;
+          //       set.warehouse = changeData.warehouse.join(",");
+          //       set.bangalore_stock = changeData.bangalore_stock;
+          //       set.jodhpur_stock = changeData.jodhpur_stock;
+          //       set.manufacturing_time = changeData.manufacturing_time;
+          //       set.status = changeData.status;
+          //       set.returnDays = changeData.returnDays;
+          //       set.COD = changeData.COD;
+          //       set.returnable = changeData.returnable;
+          //       set.quantity = changeData.quantity;
+          //       set.package_length = changeData.package_length;
+          //       set.package_height = changeData.package_height;
+          //       set.package_breadth = changeData.package_breadth;
+          //       set.unit = changeData.unit;
+          //       set.range = changeData.range;
+          //     }
+          //     return set;
+          //   })
+          // );
           handleClose();
           dispatch(
             setAlert({
               open: true,
               variant: "success",
-              message: data.data.message,
+              message: res.data.message,
             })
           );
         }
-      })
-      .catch((err) => {
-        // //console.log(err);
-        dispatch(
-          setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          })
-        );
-      });
+      }
+    }
+    catch(err) {
+      console.log('error>>',err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    };
   };
 
   const handlePolish = (e) => {

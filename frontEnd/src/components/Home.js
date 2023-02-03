@@ -47,6 +47,8 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import MergeIcon from '@mui/icons-material/Merge';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import SecurityIcon from '@mui/icons-material/Security';
+import PolicyIcon from '@mui/icons-material/Policy';
 // import AccountTreeIcon from '@mui/icons-material/AccountTree';
 
 // import redux 
@@ -376,6 +378,22 @@ const Home = (props) => {
                 <Collapse in={type.admin} timeout="auto" unmountOnExit>
                   <List dense={true} component="div" disablePadding>
 
+                  <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/policy'); }}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: '30px',
+                            height: '30px',
+                            svg: {
+                              fontSize: '1rem'
+                            }
+                          }}>
+                          <PolicyIcon color={window.location.pathname === '/policy' ? 'primary' : ''} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Policy" />
+                    </ListItem >
+
                     <ListItem sx={{ pl: 4 }} onClick={() => { handleClose('/security'); }}>
                       <ListItemAvatar>
                         <Avatar
@@ -386,7 +404,7 @@ const Home = (props) => {
                               fontSize: '1rem'
                             }
                           }}>
-                          <AssignmentIndIcon color={window.location.pathname === '/security' ? 'primary' : ''} />
+                          <SecurityIcon color={window.location.pathname === '/security' ? 'primary' : ''} />
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText primary="Security" />
@@ -424,6 +442,8 @@ const Home = (props) => {
                       </ListItemAvatar>
                       <ListItemText primary="Settings" />
                     </ListItem >
+
+                    
                   </List>
                 </Collapse>
 
@@ -550,7 +570,7 @@ const Home = (props) => {
   return (
     <Box sx={{
       mb: 3,
-      display: window.location.pathname === '/blog' || window.location.pathname === '/blogContent' || window.location.pathname === '/' ? "none" : 'block'
+      display:  window.location.pathname === '/' ? "none" : 'block'
     }}>
       {/* refresh modal  */}
       <RefreshToken />

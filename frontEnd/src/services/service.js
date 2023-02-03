@@ -1153,6 +1153,15 @@ export const getLastHardware = async () => {
   });
 };
 
+// get product details for display  
+export const getHardwareDetails = async (data) => {
+  return await axios.get(`${API}/getHardwareDetails?SKU=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+}
+
 export const refreshToken = async (data) => {
   return await axios.post(`${API}/refreshToken`, data, {
     headers: {
@@ -1166,3 +1175,39 @@ export const listLogs = async () => {
   return await axios.get(`${API}/listLogs`)
 }
 
+// =============== policy 
+
+export const uploadPincodeCSV =  async (data) => {
+  return await axios.post(`${API}/uploadPincodeCSV`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+}
+
+export const listPincode =  async (data) => {
+  return await axios.get(`${API}/listPincode?filter=${JSON.stringify(data)}`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+}
+
+// for status the category
+export const statusDelivery = async (data) => {
+  return await axios.post(`${API}/statusDelivery`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+
+// for delete the delivery
+export const deleteDelivery = async (data) => {
+  return await axios.delete(`${API}/deleteDelivery/?ID=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
