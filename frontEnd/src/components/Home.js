@@ -308,7 +308,7 @@ const Home = (props) => {
                   <ListItemText primary="Reward" />
                 </ListItem>
 
-                <ListItem onClick={() => { handleClose('/blogs'); }}>
+                <ListItem onClick={() => { handleClose('/blog'); }}>
                   <ListItemAvatar>
                     <Avatar
                       sx={{
@@ -318,7 +318,7 @@ const Home = (props) => {
                           fontSize: '1.1rem'
                         }
                       }}>
-                      <ArticleIcon color={window.location.pathname === '/dashboard' ? 'blogs' : ''} />
+                      <ArticleIcon color={window.location.pathname === '/dashboard' ? 'blog' : ''} />
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText primary="Blog" />
