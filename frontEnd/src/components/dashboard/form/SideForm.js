@@ -78,7 +78,7 @@ import {
   addPolish,
   editPolish,
   getCategoryList,
-  applyDiscount
+  applyDiscount,
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -1052,6 +1052,12 @@ const SideForm = () => {
 
           return setMaterialCatalog(data.data);
         });
+
+        console.log(form);
+
+        if (form.payload) {
+          setData((old) => ({ ...old, ...form.payload }));
+        }
 
         break;
       case "variation":
@@ -2078,7 +2084,7 @@ const SideForm = () => {
       primary_material: [],
       product_articles: [],
       hardware_articles: [],
-      category_discount : [],
+      category_discount: [],
       supplier: "",
       range: "None",
       product_array: [],
@@ -4087,69 +4093,70 @@ const SideForm = () => {
   const handleApplyDiscount = async (e) => {
     e.preventDefault();
 
-    try{
-    const FD = new FormData();
+    try {
+      const FD = new FormData();
 
-    console.log(changeData.category_discount)
-    // merge the discount with category name
+      console.log(changeData.category_discount);
+      // merge the discount with category name
 
-    let discount_array = [];
+      let discount_array = [];
 
-    if (changeData.category_discount.length > 0)
-      discount_array = changeData.category_discount.map((name) => ({
-        name: name ,
-        discount: changeData[name] || 0,
-      }));
+      if (changeData.category_discount.length > 0)
+        discount_array = changeData.category_discount.map((name) => ({
+          name: name,
+          discount: changeData[name] || 0,
+        }));
 
-    FD.append("discount_array", JSON.stringify(discount_array));
+      FD.append("discount_array", JSON.stringify(discount_array));
 
-    const res = await applyDiscount(FD);
+      const res = await applyDiscount(FD);
 
-    
-        if (res.status === 203) {
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "error",
-              message: res.data.message,
-            })
-          );
-        } else {
-          setProductSKU({
-            P_SKU: [],
-            H_SKU: [],
-            supplier: [],
-            category : [],
-          });
-
-          form.setRow(
-              form.row.map((set) => {
-                let response  =changeData.category_discount.filter((name) => { return name === set.category_name }); 
-                console.log(response)
-                if(response.length > 0) set.discount_limit = changeData[set.category_name]
-                return set
-              })
-            );
-          handleClose();
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "success",
-              message: res.data.message,
-            })
-          );
-        }
-      }
-      catch(err) {
-        console.log(err);
+      if (res.status === 203) {
         dispatch(
           setAlert({
             open: true,
             variant: "error",
-            message: "Something Went Wrong !!!",
+            message: res.data.message,
           })
         );
-      };
+      } else {
+        setProductSKU({
+          P_SKU: [],
+          H_SKU: [],
+          supplier: [],
+          category: [],
+        });
+
+        form.setRow(
+          form.row.map((set) => {
+            let response = changeData.category_discount.filter((name) => {
+              return name === set.category_name;
+            });
+            console.log(response);
+            if (response.length > 0)
+              set.discount_limit = changeData[set.category_name];
+            return set;
+          })
+        );
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
   };
   const handleInward = (e) => {
     e.preventDefault();
@@ -4196,7 +4203,7 @@ const SideForm = () => {
             P_SKU: [],
             H_SKU: [],
             supplier: [],
-            category : []
+            category: [],
           });
           form.setRow([
             ...form.row,
@@ -4829,7 +4836,6 @@ const SideForm = () => {
       });
   };
 
-
   const handleAddress = (e) => {
     e.preventDefault();
     setAddress([
@@ -4847,253 +4853,256 @@ const SideForm = () => {
     console.log(address);
   };
 
-  async function handleHardware (e) {
+  async function handleHardware(e) {
+    try {
+      e.preventDefault();
 
-    try{
-    e.preventDefault();
+      const FD = new FormData();
 
-    const FD = new FormData();
+      FD.append("DID", SKU);
+      FD.append("AID", "Not Assigned " + SKU);
+      FD.append("type", "Hardware");
+      FD.append("operation", "insertHardware");
 
-    FD.append("DID", SKU);
-    FD.append("AID", "Not Assigned " + SKU);
-    FD.append("type", "Hardware");
-    FD.append("operation", "insertHardware");
+      files.map((element) => {
+        return FD.append("hardware_image", element);
+      });
 
-    files.map((element) => {
-      return FD.append("hardware_image", element);
-    });
+      FD.append("status", changeData.status === "on" ? true : false);
 
-    FD.append("status", changeData.status === "on" ? true : false);
+      category.map((item) => {
+        return (
+          item._id === changeData.category_name &&
+          FD.append("category_name", item.category_name)
+        );
+      });
 
-    category.map((item) => {
-      return (
-        item._id === changeData.category_name &&
-        FD.append("category_name", item.category_name)
+      subCategory.map((item) => {
+        return (
+          item._id === changeData.sub_category_name &&
+          FD.append("sub_category_name", item.sub_category_name)
+        );
+      });
+
+      FD.append("restocking_time", changeData.restocking_time);
+      FD.append("selling_points", JSON.stringify(changeData.selling_points));
+      FD.append("seo_title", changeData.seo_title);
+      FD.append("seo_description", changeData.seo_description);
+      FD.append("seo_keyword", changeData.seo_keyword);
+      FD.append("hardware_polish", changeData.hardware_polish);
+      FD.append("min_quantity", changeData.min_quantity);
+      FD.append(
+        "continue_selling",
+        changeData.continue_selling ? changeData.continue_selling : true
       );
-    });
 
-    subCategory.map((item) => {
-      return (
-        item._id === changeData.sub_category_name &&
-        FD.append("sub_category_name", item.sub_category_name)
+      FD.append(
+        "returnDays",
+        changeData.returnable ? changeData.returnDays : 0
       );
-    });
+      FD.append("returnable", changeData.returnable);
+      FD.append("COD", changeData.COD);
 
-    FD.append("restocking_time", changeData.restocking_time);
-    FD.append("selling_points", JSON.stringify(changeData.selling_points));
-    FD.append("seo_title", changeData.seo_title);
-    FD.append("seo_description", changeData.seo_description);
-    FD.append("seo_keyword", changeData.seo_keyword);
-    FD.append("hardware_polish", changeData.hardware_polish);
-    FD.append("min_quantity", changeData.min_quantity);
-    FD.append(
-      "continue_selling",
-      changeData.continue_selling ? changeData.continue_selling : true
-    );
+      FD.append("category_id", changeData.category_name);
+      FD.append("sub_category_id", changeData.sub_category_name);
+      FD.append("polish_time", changeData.polish_time);
+      FD.append("manufacturing_time", changeData.manufacturing_time);
+      FD.append("title", changeData.title);
 
-    FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
-    FD.append("returnable", changeData.returnable);
-    FD.append("COD", changeData.COD);
+      FD.append("SKU", SKU);
 
-    FD.append("category_id", changeData.category_name);
-    FD.append("sub_category_id", changeData.sub_category_name);
-    FD.append("polish_time", changeData.polish_time);
-    FD.append("manufacturing_time", changeData.manufacturing_time);
-    FD.append("title", changeData.title);
+      FD.append(
+        "showroom_price",
+        changeData.showroom_price ? changeData.showroom_price : 0
+      );
+      FD.append("selling_price", changeData.selling_price);
+      FD.append("warehouse", changeData.warehouse);
 
-    FD.append("SKU", SKU);
+      FD.append("unit", changeData.unit);
+      FD.append("quantity", changeData.quantity);
 
-    FD.append(
-      "showroom_price",
-      changeData.showroom_price ? changeData.showroom_price : 0
-    );
-    FD.append("selling_price", changeData.selling_price);
-    FD.append("warehouse", changeData.warehouse);
+      FD.append(
+        "package_length",
+        changeData.package_length ? changeData.package_length : 0
+      );
+      FD.append(
+        "package_height",
+        changeData.package_height ? changeData.package_height : 0
+      );
+      FD.append(
+        "package_breadth",
+        changeData.package_breadth ? changeData.package_breadth : 0
+      );
 
-    FD.append("unit", changeData.unit);
-    FD.append("quantity", changeData.quantity);
+      if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+        FD.append("jodhpur_stock", changeData.jodhpur_stock);
 
-    FD.append(
-      "package_length",
-      changeData.package_length ? changeData.package_length : 0
-    );
-    FD.append(
-      "package_height",
-      changeData.package_height ? changeData.package_height : 0
-    );
-    FD.append(
-      "package_breadth",
-      changeData.package_breadth ? changeData.package_breadth : 0
-    );
+      if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+        FD.append("bangalore_stock", changeData.bangalore_stock);
 
-    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
-      FD.append("jodhpur_stock", changeData.jodhpur_stock);
+      const res = await addDraft(FD);
 
-    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
-      FD.append("bangalore_stock", changeData.bangalore_stock);
-
-    const res = await addDraft(FD);
-
-
-        if (res.status === 203) {
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "error",
-              message: res.data.message,
-            })
-          );
-        } else {
-          // form.setRow([
-          //   ...form.row,
-          //   {
-          //     id: form.row.length + 1,
-          //     SKU: data.data.response.SKU,
-          //     title: data.data.response.title,
-          //     category_name: data.data.response.category_name,
-          //     category_id: data.data.response.category_id,
-          //     sub_category_name: data.data.response.sub_category_name,
-          //     sub_category_id: data.data.response.sub_category_id,
-          //     hardware_image: data.data.response.hardware_image,
-          //     warehouse: data.data.response.warehouse,
-          //     bangalore_stock: data.data.response.bangalore_stock,
-          //     jodhpur_stock: data.data.response.jodhpur_stock,
-          //     manufacturing_time: data.data.response.manufacturing_time,
-          //     status: data.data.response.status,
-          //     returnDays: data.data.response.returnDays,
-          //     COD: data.data.response.COD,
-          //     returnable: data.data.response.returnable,
-          //     quantity: data.data.response.quantity,
-          //     package_length: data.data.response.package_length,
-          //     package_height: data.data.response.package_height,
-          //     package_breadth: data.data.response.package_breadth,
-          //     unit: data.data.response.unit,
-          //     range: data.data.response.range,
-          //     action: data.data.response._id,
-          //   },
-          // ]);
-          handleClose();
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "success",
-              message: res.data.message,
-            })
-          );
-        }
-    }catch(err) {
-        console.log(err);
+      if (res.status === 203) {
         dispatch(
           setAlert({
             open: true,
             variant: "error",
-            message: "Something Went Wrong !!!",
+            message: res.data.message,
           })
         );
-      };
-  };
-
-  async function handleUpdateHardware  (e)  {
-    try{
-    e.preventDefault();
-
-
-    const FD = new FormData();
-
-    FD.append("DID", SKU);
-    FD.append("AID", changeData.SKU);
-    FD.append("type", "Hardware");
-    FD.append("operation", "updateHardware");
-
-    // console.log(form.payload.row.action);
-
-
-    if(files.length > 0) files.map((element) => {
-      return FD.append("hardware_image", element);
-    });
-
-    FD.append("_id", form.payload.row.action);
-
-    FD.append("status", changeData.status === "on" ? true : false);
-
-    let multiOBJ = {};
-
-    category.map((item) => {
-      if (item._id === changeData.category_name)
-        multiOBJ = { ...multiOBJ, category_name: item.category_name };
-
-      return (
-        item._id === changeData.category_name &&
-        FD.append("category_name", item.category_name)
+      } else {
+        // form.setRow([
+        //   ...form.row,
+        //   {
+        //     id: form.row.length + 1,
+        //     SKU: data.data.response.SKU,
+        //     title: data.data.response.title,
+        //     category_name: data.data.response.category_name,
+        //     category_id: data.data.response.category_id,
+        //     sub_category_name: data.data.response.sub_category_name,
+        //     sub_category_id: data.data.response.sub_category_id,
+        //     hardware_image: data.data.response.hardware_image,
+        //     warehouse: data.data.response.warehouse,
+        //     bangalore_stock: data.data.response.bangalore_stock,
+        //     jodhpur_stock: data.data.response.jodhpur_stock,
+        //     manufacturing_time: data.data.response.manufacturing_time,
+        //     status: data.data.response.status,
+        //     returnDays: data.data.response.returnDays,
+        //     COD: data.data.response.COD,
+        //     returnable: data.data.response.returnable,
+        //     quantity: data.data.response.quantity,
+        //     package_length: data.data.response.package_length,
+        //     package_height: data.data.response.package_height,
+        //     package_breadth: data.data.response.package_breadth,
+        //     unit: data.data.response.unit,
+        //     range: data.data.response.range,
+        //     action: data.data.response._id,
+        //   },
+        // ]);
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
       );
-    });
+    }
+  }
 
-    subCategory.map((item) => {
-      if (item._id === changeData.sub_category_name)
-        multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name };
+  async function handleUpdateHardware(e) {
+    try {
+      e.preventDefault();
 
-      return (
-        item._id === changeData.sub_category_name &&
-        FD.append("sub_category_name", item.sub_category_name)
+      const FD = new FormData();
+
+      FD.append("DID", SKU);
+      FD.append("AID", changeData.SKU);
+      FD.append("type", "Hardware");
+      FD.append("operation", "updateHardware");
+
+      // console.log(form.payload.row.action);
+
+      if (files.length > 0)
+        files.map((element) => {
+          return FD.append("hardware_image", element);
+        });
+
+      FD.append("_id", form.payload.row.action);
+
+      FD.append("status", changeData.status === "on" ? true : false);
+
+      let multiOBJ = {};
+
+      category.map((item) => {
+        if (item._id === changeData.category_name)
+          multiOBJ = { ...multiOBJ, category_name: item.category_name };
+
+        return (
+          item._id === changeData.category_name &&
+          FD.append("category_name", item.category_name)
+        );
+      });
+
+      subCategory.map((item) => {
+        if (item._id === changeData.sub_category_name)
+          multiOBJ = { ...multiOBJ, sub_category_name: item.sub_category_name };
+
+        return (
+          item._id === changeData.sub_category_name &&
+          FD.append("sub_category_name", item.sub_category_name)
+        );
+      });
+
+      FD.append("restocking_time", changeData.restocking_time || 0);
+      FD.append("selling_points", JSON.stringify(changeData.selling_points));
+      FD.append("seo_title", changeData.seo_title);
+      FD.append("seo_description", changeData.seo_description);
+      FD.append("seo_keyword", changeData.seo_keyword);
+      FD.append("hardware_polish", changeData.hardware_polish);
+      FD.append("min_quantity", changeData.min_quantity);
+      FD.append(
+        "continue_selling",
+        changeData.continue_selling ? changeData.continue_selling : true
       );
-    });
 
-    FD.append("restocking_time", changeData.restocking_time || 0);
-    FD.append("selling_points", JSON.stringify(changeData.selling_points));
-    FD.append("seo_title", changeData.seo_title);
-    FD.append("seo_description", changeData.seo_description);
-    FD.append("seo_keyword", changeData.seo_keyword);
-    FD.append("hardware_polish", changeData.hardware_polish);
-    FD.append("min_quantity", changeData.min_quantity);
-    FD.append(
-      "continue_selling",
-      changeData.continue_selling ? changeData.continue_selling : true
-    );
+      FD.append(
+        "returnDays",
+        changeData.returnable ? changeData.returnDays : 0
+      );
+      FD.append("returnable", changeData.returnable);
+      FD.append("COD", changeData.COD);
 
-    FD.append("returnDays", changeData.returnable ? changeData.returnDays : 0);
-    FD.append("returnable", changeData.returnable);
-    FD.append("COD", changeData.COD);
+      FD.append("category_id", changeData.category_name);
+      FD.append("sub_category_id", changeData.sub_category_name);
+      FD.append("polish_time", changeData.polish_time);
+      FD.append("manufacturing_time", changeData.manufacturing_time);
+      FD.append("title", changeData.title);
 
-    FD.append("category_id", changeData.category_name);
-    FD.append("sub_category_id", changeData.sub_category_name);
-    FD.append("polish_time", changeData.polish_time);
-    FD.append("manufacturing_time", changeData.manufacturing_time);
-    FD.append("title", changeData.title);
+      FD.append("SKU", changeData.SKU);
 
-    FD.append("SKU", changeData.SKU);
+      FD.append(
+        "showroom_price",
+        changeData.showroom_price ? changeData.showroom_price : 0
+      );
+      FD.append("selling_price", changeData.selling_price);
+      FD.append("warehouse", changeData.warehouse);
 
-    FD.append(
-      "showroom_price",
-      changeData.showroom_price ? changeData.showroom_price : 0
-    );
-    FD.append("selling_price", changeData.selling_price);
-    FD.append("warehouse", changeData.warehouse);
+      FD.append("unit", changeData.unit);
+      FD.append("quantity", changeData.quantity);
 
-    FD.append("unit", changeData.unit);
-    FD.append("quantity", changeData.quantity);
+      FD.append(
+        "package_length",
+        changeData.package_length ? changeData.package_length : 0
+      );
+      FD.append(
+        "package_height",
+        changeData.package_height ? changeData.package_height : 0
+      );
+      FD.append(
+        "package_breadth",
+        changeData.package_breadth ? changeData.package_breadth : 0
+      );
 
-    FD.append(
-      "package_length",
-      changeData.package_length ? changeData.package_length : 0
-    );
-    FD.append(
-      "package_height",
-      changeData.package_height ? changeData.package_height : 0
-    );
-    FD.append(
-      "package_breadth",
-      changeData.package_breadth ? changeData.package_breadth : 0
-    );
+      if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
+        FD.append("jodhpur_stock", changeData.jodhpur_stock);
 
-    if (changeData.jodhpur_stock && changeData.jodhpur_stock > 0)
-      FD.append("jodhpur_stock", changeData.jodhpur_stock);
+      if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
+        FD.append("bangalore_stock", changeData.bangalore_stock);
 
-    if (changeData.bangalore_stock && changeData.bangalore_stock > 0)
-      FD.append("bangalore_stock", changeData.bangalore_stock);
+      const res = await addDraft(FD);
 
-    const res = await  addDraft(FD);
-
-    if(res){
+      if (res) {
         if (res.status === 203) {
           dispatch(
             setAlert({
@@ -5140,9 +5149,8 @@ const SideForm = () => {
           );
         }
       }
-    }
-    catch(err) {
-      console.log('error>>',err);
+    } catch (err) {
+      console.log("error>>", err);
       dispatch(
         setAlert({
           open: true,
@@ -5150,8 +5158,8 @@ const SideForm = () => {
           message: "Something Went Wrong !!!",
         })
       );
-    };
-  };
+    }
+  }
 
   const handlePolish = (e) => {
     e.preventDefault();
@@ -5369,14 +5377,12 @@ const SideForm = () => {
         .catch((err) => {
           setProductSKU((old) => ({
             ...old,
-            category : []
+            category: [],
           }));
         });
     }, 1000);
     return () => clearTimeout(delayDebounceFn);
   }
-
-  
 
   return (
     <>
@@ -5485,7 +5491,7 @@ const SideForm = () => {
                               select
                               name="category_name"
                               label="Category"
-                              value={changeData.category_name}
+                              value={changeData.category_name || ""}
                               multiple
                               onChange={handleProductFelids}
                               helperText="Please select your category"
@@ -5514,7 +5520,7 @@ const SideForm = () => {
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
-                              value={changeData.sub_category_name}
+                              value={changeData.sub_category_name || ""}
                               onChange={handleProductFelids}
                               helperText="Please select your sub category"
                             >
@@ -13777,7 +13783,6 @@ const SideForm = () => {
                               multiple
                               autoHighlight
                               noOptionsText={"ex : P-01001"}
-
                               id="combo-box-demo"
                               options={productSKU.P_SKU.map((row) => {
                                 return row.SKU;
@@ -16101,7 +16106,6 @@ const SideForm = () => {
                     encType="multipart/form-data"
                     method="post"
                   >
-
                     <Autocomplete
                       disablePortal
                       size="small"
@@ -16159,7 +16163,11 @@ const SideForm = () => {
                               }}
                               placeholder={item}
                               onChange={handleProductFelids}
-                              value={changeData[item] < 100 && changeData[item]  ? changeData[item] : 0}
+                              value={
+                                changeData[item] < 100 && changeData[item]
+                                  ? changeData[item]
+                                  : 0
+                              }
                             />
                           ))}
                         </Box>
@@ -16172,7 +16180,7 @@ const SideForm = () => {
                       fullWidth
                       variant="contained"
                     >
-                      Apply Discount 
+                      Apply Discount
                     </Button>
                   </form>
                 </Grid>
