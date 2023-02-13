@@ -10,12 +10,12 @@ import {
   Modal,
   Backdrop,
   Fade,
-  Box
+  Box,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
-import { useDispatch } from 'react-redux'
-import { setAlert } from '../../../store/action/action'
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../../store/action/action";
 import {
   getDraft,
   getLastHardware,
@@ -24,7 +24,7 @@ import {
   getProductDetails,
   getHardwareDetails,
   dropDraft,
-  getMetaDraft
+  getMetaDraft,
 } from "../../../services/service";
 
 import {
@@ -36,12 +36,12 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from "@mui/material/Pagination";
 
-import '../../../assets/custom/css/action.css'
+import "../../../assets/custom/css/action.css";
 
-// icon 
-import PendingIcon from '@mui/icons-material/Pending';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
+// icon
+import PendingIcon from "@mui/icons-material/Pending";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PlaylistAddCheckCircleIcon from "@mui/icons-material/PlaylistAddCheckCircle";
 
 export default function Action() {
   // useContext
@@ -52,14 +52,12 @@ export default function Action() {
   // const [search, setSearch] = useState("");
   const [Row, setRows] = useState([]);
   const [pageSize, setPageSize] = useState(50);
-  const [SKU, setSKU] = useState('');
-  const [meta, setMeta] = useState(
-    {
-      total: 0,
-      pending: 0,
-      resolved: 0
-    }
-  );
+  const [SKU, setSKU] = useState("");
+  const [meta, setMeta] = useState({
+    total: 0,
+    pending: 0,
+    resolved: 0,
+  });
 
   const style = {
     position: "absolute",
@@ -70,21 +68,17 @@ export default function Action() {
     height: "content-fit",
     bgcolor: "background.paper",
     boxShadow: 24,
-    padding: "1%"
+    padding: "1%",
   };
 
   useMemo(() => {
-    getMetaDraft()
-      .then((data) => {
-        console.log(data)
-        setMeta(
-          { ...data.data }
-        )
-      })
-  }, [Row])
+    getMetaDraft().then((data) => {
+      // console.log(data);
+      setMeta({ ...data.data });
+    });
+  }, [Row]);
 
   useMemo(() => {
-
     getDraft()
       .then((data) => {
         //console.log(data.data);
@@ -107,44 +101,47 @@ export default function Action() {
       .catch((err) => {
         //console.log(err);
       });
-
   }, []);
 
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
     {
-      field: "DID", headerName: "DID (Draft Id)", width: 150,
+      field: "DID",
+      headerName: "DID (Draft Id)",
+      width: 150,
       align: "center",
     },
     {
-      field: "AID", headerName: "AID (Article Id)", width: 200,
+      field: "AID",
+      headerName: "AID (Article Id)",
+      width: 200,
       align: "center",
     },
     {
       field: "type",
       headerName: "Type",
-      width: 100
+      width: 100,
     },
     {
       field: "operation",
       headerName: "Operation",
-      width: 100
+      width: 100,
     },
     {
       field: "message",
       headerName: "Message (Action Information)",
       width: 400,
       renderCell: (params) => (
-        <Typography variant='button'>{params.formattedValue}</Typography>
-      )
+        <Typography variant="button">{params.formattedValue}</Typography>
+      ),
     },
     {
       field: "status",
       headerName: "Status",
       width: 100,
       renderCell: (params) => (
-        <Typography variant='button'>{params.formattedValue}</Typography>
-      )
+        <Typography variant="button">{params.formattedValue}</Typography>
+      ),
     },
     {
       field: "action",
@@ -153,6 +150,7 @@ export default function Action() {
       renderCell: (params) => (
         <div>
           <IconButton
+            disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={() => {
               // console.log(params)
               setDisplay({
@@ -160,8 +158,8 @@ export default function Action() {
                 type: params.formattedValue.type,
                 status: true,
                 draftStatus: params.formattedValue.draftStatus,
-                operation: params.formattedValue.operation
-              })
+                operation: params.formattedValue.operation,
+              });
             }}
             aria-label="update"
           >
@@ -169,17 +167,21 @@ export default function Action() {
           </IconButton>
 
           <IconButton
+            disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={() => {
               deleteDraft(params.formattedValue._id).then((res) => {
-                setRows(Row.filter((set) => {
-                  return set.action._id !== params.formattedValue._id;
-                }))
-                dispatch(setAlert({
-                  open: true,
-                  variant: "success",
-                  message: "Notification deleted successfully !!!",
-
-                }));
+                setRows(
+                  Row.filter((set) => {
+                    return set.action._id !== params.formattedValue._id;
+                  })
+                );
+                dispatch(
+                  setAlert({
+                    open: true,
+                    variant: "success",
+                    message: "Notification deleted successfully !!!",
+                  })
+                );
               });
             }}
             aria-label="delete"
@@ -193,18 +195,18 @@ export default function Action() {
 
   const Status = [
     {
-      key: 'Pending',
-      value: 'Pending'
+      key: "Pending",
+      value: "Pending",
     },
     {
-      key: 'Approved',
-      value: 'Approved'
+      key: "Approved",
+      value: "Approved",
     },
     {
-      key: 'Hold',
-      value: 'Hold'
-    }
-  ]
+      key: "Hold",
+      value: "Hold",
+    },
+  ];
 
   // function for generating product  ID
 
@@ -212,7 +214,6 @@ export default function Action() {
     getLastProduct()
       .then((res) => {
         if (res.data.length > 0) {
-
           let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
 
           setSKU(`P-0${index}`);
@@ -229,7 +230,7 @@ export default function Action() {
 
   const getHKU = async () => {
     try {
-      let res = await getLastHardware()
+      let res = await getLastHardware();
       if (res) {
         if (res.data.length > 0) {
           let index = parseInt(res.data[0].SKU.split("-")[1]) + 1;
@@ -241,359 +242,491 @@ export default function Action() {
       }
     } catch (err) {
       console.log(err);
-    };
+    }
   };
 
   const handleClose = () => setDisplay({ status: false });
-
 
   // Permission Box
   function SpringModal() {
     const handleSubmit = async (e) => {
       e.preventDefault();
-      let response = '';
-      if (e.target.action.value === 'Approved') {
+      let response = "";
+      if (e.target.action.value === "Approved") {
         // console.log(typeof (display.operation))
         switch (display.operation) {
-          case 'insertProduct':
-
+          case "insertProduct":
             display.data.draftStatus = e.target.action.value;
             display.data.status = true;
             display.data.SKU = SKU;
             display.data.AID = SKU;
 
-            console.log(display.data)
+            console.log(display.data);
 
-            response = await dropDraft(display.data)
+            response = await dropDraft(display.data);
             if (response.status === 200) {
-
-              setRows(Row.map(item => {
-                if (item.DID === display.data.DID) {
-                  item.status = 'Approved';
-                  item.AID = SKU;
-                }
-                return item
-              }))
-              dispatch(setAlert({
-                open: true,
-                variant: "success",
-                message: response.data.message,
-
-              }));
-              setDisplay({ status: false })
-
-            }
-            else {
-              dispatch(setAlert({
-                open: true,
-                variant: "error",
-                message: 'Something Went Wrong !!!',
-
-              }));
-              setDisplay({ status: false })
-            }
-            break;
-          case 'updateProduct':
-            display.data.draftStatus = e.target.action.value;
-            display.data.status = true;
-            response = await dropDraft(display.data)
-            if (response.status === 200) {
-              setRows(Row.map(item => {
-                if (item.DID === display.data.DID) {
-                  item.status = 'Approved';
-                }
-                return item
-              }))
-              dispatch(setAlert({
-                open: true,
-                variant: "success",
-                message: response.data.message,
-
-              }));
-              setDisplay({ status: false })
-
-            }
-            else {
-              dispatch(setAlert({
-                open: true,
-                variant: "error",
-                message: 'Something Went Wrong !!!',
-
-              }));
-              setDisplay({ status: false })
-            }
-            break;
-          case 'insertHardware':
-            display.data.draftStatus = e.target.action.value;
-            display.data.status = true;
-            display.data.SKU = SKU;
-            display.data.AID = SKU;
-
-            console.log(display.data)
-
-            response = await dropDraft(display.data)
-            if (response.status === 200) {
-
-              setRows(Row.map(item => {
-                if (item.DID === display.data.DID) {
-                  item.status = 'Approved';
-                  item.AID = SKU;
-                }
-                return item
-              }))
-              dispatch(setAlert({
-                open: true,
-                variant: "success",
-                message: response.data.message,
-
-              }));
-              setDisplay({ status: false })
-
-            }
-            else {
-              dispatch(setAlert({
-                open: true,
-                variant: "error",
-                message: 'Something Went Wrong !!!',
-
-              }));
-              setDisplay({ status: false })
-            }
-            break;
-          case 'updateHardware':
-              display.data.draftStatus = e.target.action.value;
-              display.data.status = true;
-              response = await dropDraft(display.data)
-              if (response.status === 200) {
-                setRows(Row.map(item => {
+              setRows(
+                Row.map((item) => {
                   if (item.DID === display.data.DID) {
-                    item.status = 'Approved';
+                    item.status = "Approved";
+                    item.AID = SKU;
                   }
-                  return item
-                }))
-                dispatch(setAlert({
+                  return item;
+                })
+              );
+              dispatch(
+                setAlert({
                   open: true,
                   variant: "success",
                   message: response.data.message,
-  
-                }));
-                setDisplay({ status: false })
-  
-              }
-              else {
-                dispatch(setAlert({
+                })
+              );
+              setDisplay({ status: false });
+            } else {
+              dispatch(
+                setAlert({
                   open: true,
                   variant: "error",
-                  message: 'Something Went Wrong !!!',
-  
-                }));
-                setDisplay({ status: false })
-              }
-              break;
-            default:
-            console.log('no operation found')
+                  message: "Something Went Wrong !!!",
+                })
+              );
+              setDisplay({ status: false });
+            }
+            break;
+          case "updateProduct":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            response = await dropDraft(display.data);
+            if (response.status === 200) {
+              setRows(
+                Row.map((item) => {
+                  if (item.DID === display.data.DID) {
+                    item.status = "Approved";
+                  }
+                  return item;
+                })
+              );
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "success",
+                  message: response.data.message,
+                })
+              );
+              setDisplay({ status: false });
+            } else {
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "error",
+                  message: "Something Went Wrong !!!",
+                })
+              );
+              setDisplay({ status: false });
+            }
+            break;
+          case "insertHardware":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            display.data.SKU = SKU;
+            display.data.AID = SKU;
+
+            console.log(display.data);
+
+            response = await dropDraft(display.data);
+            if (response.status === 200) {
+              setRows(
+                Row.map((item) => {
+                  if (item.DID === display.data.DID) {
+                    item.status = "Approved";
+                    item.AID = SKU;
+                  }
+                  return item;
+                })
+              );
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "success",
+                  message: response.data.message,
+                })
+              );
+              setDisplay({ status: false });
+            } else {
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "error",
+                  message: "Something Went Wrong !!!",
+                })
+              );
+              setDisplay({ status: false });
+            }
+            break;
+          case "updateHardware":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            response = await dropDraft(display.data);
+            if (response.status === 200) {
+              setRows(
+                Row.map((item) => {
+                  if (item.DID === display.data.DID) {
+                    item.status = "Approved";
+                  }
+                  return item;
+                })
+              );
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "success",
+                  message: response.data.message,
+                })
+              );
+              setDisplay({ status: false });
+            } else {
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "error",
+                  message: "Something Went Wrong !!!",
+                })
+              );
+              setDisplay({ status: false });
+            }
+            break;
+          default:
+            console.log("no operation found");
             break;
         }
-      }
-      else setDisplay({ status: false })
-    }
+      } else setDisplay({ status: false });
+    };
 
-    // Section for comparison table 
+    // Section for comparison table
     function Content() {
       const [peer, setPeer] = useState([]);
 
       useEffect(() => {
-
         switch (display.operation) {
-          case 'insertProduct':
-            setPeer([])
+          case "insertProduct":
+            setPeer([]);
             getSKU();
             break;
-          case 'updateProduct':
+          case "updateProduct":
             getProductDetails(display.data.AID)
               .then((res) => {
-                res.data = JSON.stringify(res.data)
-                res.data = JSON.parse(res.data)
-                console.log(res.data)
-                if (res.data) setPeer(res.data)
+                res.data = JSON.stringify(res.data);
+                res.data = JSON.parse(res.data);
+                console.log(res.data);
+                if (res.data) setPeer(res.data);
               })
-              .catch((err) => { console.log(err) })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
-          case 'insertHardware':
-            setPeer([])
+          case "insertHardware":
+            setPeer([]);
             getHKU();
             break;
-          case 'updateHardware':
+          case "updateHardware":
             getHardwareDetails(display.data.AID)
               .then((res) => {
-                res.data = JSON.stringify(res.data)
-                res.data = JSON.parse(res.data)
+                res.data = JSON.stringify(res.data);
+                res.data = JSON.parse(res.data);
                 // console.log(res.data)
-                if (res.data) setPeer(res.data)
+                if (res.data) setPeer(res.data);
               })
-              .catch((err) => { console.log(err) })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
           default:
-            setPeer([])
+            setPeer([]);
             break;
         }
-
-      }, [])
-
+      }, []);
 
       switch (display.type) {
-        case 'Product':
-          return (<>
-            <Grid container>
-              <Grid item xs={12}> <Typography variant='h5' sx={{ textAlign: 'center', mb: 1 }}>Data View</Typography></Grid>
-
-              {/* // Before */}
-              {display.operation === 'updateProduct' && <Grid item xs={6} p={1}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }} >Before</Typography>
-                <Box sx={{ height: '300px', overflow: 'scroll' }}>
-                  {
-                    Object.keys(peer).map(function (key) {
-                      return <>
-                        <Divider />
-                        <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                        {peer[key] != display.data[key] ? <Typography sx={{ color: 'red !important' }} variant='button'>{peer[key]}</Typography> :
-                          <Typography variant='button'>{peer[key]}</Typography>}
-                      </>
-                    })
-                  }
-                </Box>
-              </Grid>}
-              {/* // Before Ends */}
-
-              {/* After and product details */}
-
-              <Grid item p={1} xs={display.operation === 'updateProduct' ? 6 : 12}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }} >{display.operation === 'updateProduct' ? 'After' : 'Product Details'}</Typography>
-                <Box sx={{ height: '300px', overflow: 'scroll', p: 2 }}>
-                  {
-                    display.operation === 'updateProduct' ?
-                      Object.keys(display.data).map(function (key) {
-                        return <>
-                          <Divider />
-                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                          {peer[key] !== display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
-                            <Typography variant='button'>{display.data[key]}</Typography>}
-                        </>
-                      })
-                      :
-                      Object.keys(display.data).map(function (key) {
-                        return <>
-                          <Divider />
-                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                          <Typography variant='button'>{display.data[key]}</Typography>
-                        </>
-                      })
-                  }
-                </Box>
-              </Grid>
-              {/* After and product details ends */}
-
-            </Grid>
-          </>)
-        case 'Hardware':
-          return (<>
-            <Grid container>
-              <Grid item xs={12}> <Typography variant='h5' sx={{ textAlign: 'center', mb: 1 }}>Data View</Typography></Grid>
-
-              {/* // Before */}
-              {display.operation === 'updateHardware' && <Grid item xs={6} p={1}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }} >Before</Typography>
-                <Box sx={{ height: '300px', overflow: 'scroll' }}>
-                  {
-                    Object.keys(peer).map(function (key) {
-                      return <>
-                        <Divider />
-                        <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                        {peer[key] !== display.data[key] ? <Typography sx={{ color: 'red !important' }} variant='button'>{peer[key]}</Typography> :
-                          <Typography variant='button'>{peer[key]}</Typography>}
-                      </>
-                    })
-                  }
-                </Box>
-              </Grid>}
-              {/* // Before Ends */}
-
-              {/* After and product details */}
-
-              <Grid item p={1} xs={display.operation === 'updateHardware' ? 6 : 12}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }} >{display.operation === 'updateHardware' ? 'After' : 'Hardware Details'}</Typography>
-                <Box sx={{ height: '300px', overflow: 'scroll', p: 2 }}>
-                  {
-                    display.operation === 'updateHardware' ?
-                      Object.keys(display.data).map(function (key) {
-                        return <>
-                          <Divider />
-                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                          {peer[key] !== display.data[key] ? <Typography sx={{ color: 'green !important' }} variant='button'>{display.data[key]}</Typography> :
-                            <Typography variant='button'>{display.data[key]}</Typography>}
-                        </>
-                      })
-                      :
-                      Object.keys(display.data).map(function (key) {
-                        return <>
-                          <Divider />
-                          <Typography sx={{ fontWeight: 'bold !important' }} variant='button'>{key + ' :: '}</Typography>
-                          <Typography variant='button'>{display.data[key]}</Typography>
-                        </>
-                      })
-                  }
-                </Box>
-              </Grid>
-              {/* After and product details ends */}
-
-            </Grid>
-          </>)
-        default:
+        case "Product":
           return (
-            <Typography variant='h6'>No type matched !!!</Typography>
-          )
-      }
+            <>
+              <Grid container>
+                <Grid item xs={12}>
+                  {" "}
+                  <Typography variant="h5" sx={{ textAlign: "center", mb: 1 }}>
+                    Data View
+                  </Typography>
+                </Grid>
 
+                {/* // Before */}
+                {display.operation === "updateProduct" && (
+                  <Grid item xs={6} p={1}>
+                    <Typography variant="h6" sx={{ textAlign: "center" }}>
+                      Before
+                    </Typography>
+                    <Box sx={{ height: "300px", overflow: "scroll" }}>
+                      {Object.keys(peer).map(function (key) {
+                        return (
+                          <>
+                            <Divider />
+                            <Typography
+                              sx={{ fontWeight: "bold !important" }}
+                              variant="button"
+                            >
+                              {key + " :: "}
+                            </Typography>
+                            {peer[key] != display.data[key] ? (
+                              <Typography
+                                sx={{ color: "red !important" }}
+                                variant="button"
+                              >
+                                {peer[key]}
+                              </Typography>
+                            ) : (
+                              <Typography variant="button">
+                                {peer[key]}
+                              </Typography>
+                            )}
+                          </>
+                        );
+                      })}
+                    </Box>
+                  </Grid>
+                )}
+                {/* // Before Ends */}
+
+                {/* After and product details */}
+
+                <Grid
+                  item
+                  p={1}
+                  xs={display.operation === "updateProduct" ? 6 : 12}
+                >
+                  <Typography variant="h6" sx={{ textAlign: "center" }}>
+                    {display.operation === "updateProduct"
+                      ? "After"
+                      : "Product Details"}
+                  </Typography>
+                  <Box sx={{ height: "300px", overflow: "scroll", p: 2 }}>
+                    {display.operation === "updateProduct"
+                      ? Object.keys(display.data).map(function (key) {
+                          return (
+                            <>
+                              <Divider />
+                              <Typography
+                                sx={{ fontWeight: "bold !important" }}
+                                variant="button"
+                              >
+                                {key + " :: "}
+                              </Typography>
+                              {peer[key] !== display.data[key] ? (
+                                <Typography
+                                  sx={{ color: "green !important" }}
+                                  variant="button"
+                                >
+                                  {display.data[key]}
+                                </Typography>
+                              ) : (
+                                <Typography variant="button">
+                                  {display.data[key]}
+                                </Typography>
+                              )}
+                            </>
+                          );
+                        })
+                      : Object.keys(display.data).map(function (key) {
+                          return (
+                            <>
+                              <Divider />
+                              <Typography
+                                sx={{ fontWeight: "bold !important" }}
+                                variant="button"
+                              >
+                                {key + " :: "}
+                              </Typography>
+                              <Typography variant="button">
+                                {display.data[key]}
+                              </Typography>
+                            </>
+                          );
+                        })}
+                  </Box>
+                </Grid>
+                {/* After and product details ends */}
+              </Grid>
+            </>
+          );
+        case "Hardware":
+          return (
+            <>
+              <Grid container>
+                <Grid item xs={12}>
+                  {" "}
+                  <Typography variant="h5" sx={{ textAlign: "center", mb: 1 }}>
+                    Data View
+                  </Typography>
+                </Grid>
+
+                {/* // Before */}
+                {display.operation === "updateHardware" && (
+                  <Grid item xs={6} p={1}>
+                    <Typography variant="h6" sx={{ textAlign: "center" }}>
+                      Before
+                    </Typography>
+                    <Box sx={{ height: "300px", overflow: "scroll" }}>
+                      {Object.keys(peer).map(function (key) {
+                        return (
+                          <>
+                            <Divider />
+                            <Typography
+                              sx={{ fontWeight: "bold !important" }}
+                              variant="button"
+                            >
+                              {key + " :: "}
+                            </Typography>
+                            {peer[key] !== display.data[key] ? (
+                              <Typography
+                                sx={{ color: "red !important" }}
+                                variant="button"
+                              >
+                                {peer[key]}
+                              </Typography>
+                            ) : (
+                              <Typography variant="button">
+                                {peer[key]}
+                              </Typography>
+                            )}
+                          </>
+                        );
+                      })}
+                    </Box>
+                  </Grid>
+                )}
+                {/* // Before Ends */}
+
+                {/* After and product details */}
+
+                <Grid
+                  item
+                  p={1}
+                  xs={display.operation === "updateHardware" ? 6 : 12}
+                >
+                  <Typography variant="h6" sx={{ textAlign: "center" }}>
+                    {display.operation === "updateHardware"
+                      ? "After"
+                      : "Hardware Details"}
+                  </Typography>
+                  <Box sx={{ height: "300px", overflow: "scroll", p: 2 }}>
+                    {display.operation === "updateHardware"
+                      ? Object.keys(display.data).map(function (key) {
+                          return (
+                            <>
+                              <Divider />
+                              <Typography
+                                sx={{ fontWeight: "bold !important" }}
+                                variant="button"
+                              >
+                                {key + " :: "}
+                              </Typography>
+                              {peer[key] !== display.data[key] ? (
+                                <Typography
+                                  sx={{ color: "green !important" }}
+                                  variant="button"
+                                >
+                                  {display.data[key]}
+                                </Typography>
+                              ) : (
+                                <Typography variant="button">
+                                  {display.data[key]}
+                                </Typography>
+                              )}
+                            </>
+                          );
+                        })
+                      : Object.keys(display.data).map(function (key) {
+                          return (
+                            <>
+                              <Divider />
+                              <Typography
+                                sx={{ fontWeight: "bold !important" }}
+                                variant="button"
+                              >
+                                {key + " :: "}
+                              </Typography>
+                              <Typography variant="button">
+                                {display.data[key]}
+                              </Typography>
+                            </>
+                          );
+                        })}
+                  </Box>
+                </Grid>
+                {/* After and product details ends */}
+              </Grid>
+            </>
+          );
+        default:
+          return <Typography variant="h6">No type matched !!!</Typography>;
+      }
     }
 
     // Action like approve here
     function ActionForm() {
-
-      const [status, setStatus] = useState(display.draftStatus)
-      return (<Grid container sx={{ p: 1 }}>
-        <Grid item xs={12} >
-          <form encType="multipart/form-data"
-            method="post" onSubmit={handleSubmit} >
-            <TextField sx={{ mb: 2 }}
-              size="small"
-              fullWidth
-              // required
-              id="outlined-select"
-              select
-              disabled={status === 'Approved'}
-              name="action"
-              label="Action"
-              value={status}
-              onChange={(e) => { setStatus(e.target.value) }}
-              helperText="Please select your action"
+      const [status, setStatus] = useState(display.draftStatus);
+      return (
+        <Grid container sx={{ p: 1 }}>
+          <Grid item xs={12}>
+            <form
+              encType="multipart/form-data"
+              method="post"
+              onSubmit={handleSubmit}
             >
-              {Status.map(
-                (option) => <MenuItem
-                  key={option.key}
-                  value={option.value}
+              <TextField
+                sx={{ mb: 2 }}
+                size="small"
+                fullWidth
+                // required
+                id="outlined-select"
+                select
+                // disabled={status === "Approved"}
+                name="action"
+                label="Action"
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value);
+                }}
+                helperText="Please select your action"
+              >
+                {Status.map((option) => (
+                  <MenuItem key={option.key} value={option.value}>
+                    {option.value}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Button size="small" type="submit" variant="contained">
+                  Save Action
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    setDisplay({ status: false });
+                  }}
+                  variant="outlined"
                 >
-                  {option.value}
-                </MenuItem>
-              )}
-            </TextField>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Button size='small' type='submit' variant='contained'>Save Action</Button>
-              <Button size='small' onClick={() => { setDisplay({ status: false }) }} variant='outlined'>Cancel</Button>
-            </Box>
-          </form>
+                  Cancel
+                </Button>
+              </Box>
+            </form>
+          </Grid>
         </Grid>
-      </Grid>)
-
+      );
     }
 
     return (
@@ -622,10 +755,10 @@ export default function Action() {
   }
   // Permission Box Ends
 
-  // Data Grid 
+  // Data Grid
   function DataGridView() {
     return (
-      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: "2%", height: 400, width: "100%" }}>
         <DataGrid
           rows={Row}
           columns={columns}
@@ -646,7 +779,7 @@ export default function Action() {
       </div>
     );
   }
-  // Data Grid Ends 
+  // Data Grid Ends
 
   // const handleSearch = (e) => {
   //   // //console.log(e.target.value)
@@ -662,23 +795,39 @@ export default function Action() {
 
       <br></br>
 
-      <Grid className='actionDash' container>
-        <Grid sx={{ backgroundColor: '#0000ff8c' }} item xs={12} className='card' md={3.8}>
-          <PlaylistAddCheckCircleIcon fontSize={'large'} />
-          <Typography variant='h6'>Total Request</Typography>
-          <Typography variant='h4'>{meta.total}</Typography>
+      <Grid className="actionDash" container>
+        <Grid
+          sx={{ backgroundColor: "#0000ff8c" }}
+          item
+          xs={12}
+          className="card"
+          md={3.8}
+        >
+          <PlaylistAddCheckCircleIcon fontSize={"large"} />
+          <Typography variant="h6">Total Request</Typography>
+          <Typography variant="h4">{meta.total}</Typography>
         </Grid>
-        <Grid sx={{ backgroundColor: '#ffbd29' }} className='card' item xs={12} md={3.8}>
-          <PendingIcon fontSize={'large'} />
-          <Typography variant='h6'>Pending Request</Typography>
-          <Typography variant='h4'>{meta.pending}</Typography>
-
+        <Grid
+          sx={{ backgroundColor: "#ffbd29" }}
+          className="card"
+          item
+          xs={12}
+          md={3.8}
+        >
+          <PendingIcon fontSize={"large"} />
+          <Typography variant="h6">Pending Request</Typography>
+          <Typography variant="h4">{meta.pending}</Typography>
         </Grid>
-        <Grid sx={{ backgroundColor: '#40b13e' }} item xs={12} className='card' md={3.8}>
-          <CheckCircleIcon fontSize={'large'} />
-          <Typography variant='h6'>Resolved Request</Typography>
-          <Typography variant='h4'>{meta.resolved}</Typography>
-
+        <Grid
+          sx={{ backgroundColor: "#40b13e" }}
+          item
+          xs={12}
+          className="card"
+          md={3.8}
+        >
+          <CheckCircleIcon fontSize={"large"} />
+          <Typography variant="h6">Resolved Request</Typography>
+          <Typography variant="h4">{meta.resolved}</Typography>
         </Grid>
       </Grid>
 
