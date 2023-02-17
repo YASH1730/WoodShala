@@ -14355,7 +14355,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-                            <InputLabel id="demo-multiple-checkbox-label">
+                            {/* <InputLabel id="demo-multiple-checkbox-label">
                               Stock Warehouse
                             </InputLabel>
                             <Select
@@ -14400,7 +14400,7 @@ const SideForm = () => {
                                   />
                                 </>
                               );
-                            })}
+                            })} */}
                             <TextField
                               size="small"
                               fullWidth
@@ -15481,7 +15481,7 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your manufacturing time"
                             />
-                            <InputLabel id="demo-multiple-checkbox-label">
+                            {/* <InputLabel id="demo-multiple-checkbox-label">
                               Stock Warehouse
                             </InputLabel>
                             <Select
@@ -15526,7 +15526,7 @@ const SideForm = () => {
                                   />
                                 </>
                               );
-                            })}
+                            })} */}
                             <TextField
                               size="small"
                               fullWidth
@@ -18687,11 +18687,15 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your Hardware Polish"
                             >
-                              {hardware_polish.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                  {option}
-                                </MenuItem>
-                              ))}
+                              {catalog.polish.length > 0 &&
+                                catalog.polish.map((option) => (
+                                  <MenuItem
+                                    key={option.polish_name}
+                                    value={option.polish_name}
+                                  >
+                                    {option.polish_name}
+                                  </MenuItem>
+                                ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -19603,11 +19607,15 @@ const SideForm = () => {
                               onChange={handleProductFelids}
                               helperText="Please select your Hardware Polish"
                             >
-                              {hardware_polish.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                  {option}
-                                </MenuItem>
-                              ))}
+                              {catalog.polish.length > 0 &&
+                                catalog.polish.map((option) => (
+                                  <MenuItem
+                                    key={option.polish_name}
+                                    value={option.polish_name}
+                                  >
+                                    {option.polish_name}
+                                  </MenuItem>
+                                ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>

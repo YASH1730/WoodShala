@@ -51,12 +51,25 @@ export default function Action() {
   const [display, setDisplay] = useState({});
   // const [search, setSearch] = useState("");
   const [Row, setRows] = useState([]);
-  const [pageSize, setPageSize] = useState(50);
   const [SKU, setSKU] = useState("");
   const [meta, setMeta] = useState({
     total: 0,
     pending: 0,
     resolved: 0,
+  });
+
+  // page state to controlling the pagination on server side
+  const [pageState, setPageState] = useState({
+    data: [],
+    isLoading: false,
+    page: 1,
+    limit: 100,
+    total: 0,
+    title: "",
+    category: undefined,
+    SKU: undefined,
+    subCategory: undefined,
+    filter: false,
   });
 
   const style = {
@@ -73,18 +86,26 @@ export default function Action() {
 
   useMemo(() => {
     getMetaDraft().then((data) => {
-      // console.log(data);
+      console.log(data);
       setMeta({ ...data.data });
     });
-  }, [Row]);
+    fetchData();
+  }, [pageState.page, pageState.limit, pageState.filter]);
 
-  useMemo(() => {
-    getDraft()
+  function fetchData() {
+    setPageState((lastState) => ({
+      ...lastState,
+      isLoading: true,
+    }));
+    getDraft({
+      page: pageState.page,
+      limit: pageState.limit,
+      total: pageState.total,
+    })
       .then((data) => {
-        //console.log(data.data);
-
-        setRows(
-          data.data.map((row, index) => {
+        setPageState((lastState) => ({
+          ...lastState,
+          data: data.data.data.map((row, index) => {
             return {
               id: index + 1,
               DID: row.DID,
@@ -92,16 +113,17 @@ export default function Action() {
               type: row.type,
               operation: row.operation,
               message: row.message,
-              status: row.draftStatus,
+              status: row.status,
               action: row,
             };
-          })
-        );
+          }),
+          isLoading: false,
+          total: data.data.total,
+          filter: false,
+        }));
       })
-      .catch((err) => {
-        //console.log(err);
-      });
-  }, []);
+      .catch((err) => {});
+  }
 
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -152,9 +174,10 @@ export default function Action() {
           <IconButton
             disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={() => {
-              // console.log(params)
+              console.log(params);
               setDisplay({
                 data: params.formattedValue.payload,
+                DID: params.formattedValue.DID,
                 type: params.formattedValue.type,
                 status: true,
                 draftStatus: params.formattedValue.draftStatus,
@@ -168,13 +191,15 @@ export default function Action() {
 
           <IconButton
             disabled={params.formattedValue.draftStatus === "Approved" && true}
-            onClick={() => {
-              deleteDraft(params.formattedValue._id).then((res) => {
-                setRows(
-                  Row.filter((set) => {
+            onClick={async () => {
+              let response = await deleteDraft(params.formattedValue._id);
+              if (response) {
+                setPageState((old) => ({
+                  ...old,
+                  data: pageState.data.filter((set) => {
                     return set.action._id !== params.formattedValue._id;
-                  })
-                );
+                  }),
+                }));
                 dispatch(
                   setAlert({
                     open: true,
@@ -182,7 +207,7 @@ export default function Action() {
                     message: "Notification deleted successfully !!!",
                   })
                 );
-              });
+              }
             }}
             aria-label="delete"
           >
@@ -395,6 +420,41 @@ export default function Action() {
               setDisplay({ status: false });
             }
             break;
+          case "deleteHardware":
+            display.data.operation = display.operation;
+            display.data.DID = display.DID;
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            response = await dropDraft(display.data);
+
+            if (response.status === 200) {
+              setRows(
+                Row.map((item) => {
+                  if (item.DID === display.data.DID) {
+                    item.status = "Approved";
+                  }
+                  return item;
+                })
+              );
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "success",
+                  message: response.data.message,
+                })
+              );
+              setDisplay({ status: false });
+            } else {
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "error",
+                  message: "Something Went Wrong !!!",
+                })
+              );
+              setDisplay({ status: false });
+            }
+            break;
           default:
             console.log("no operation found");
             break;
@@ -439,6 +499,9 @@ export default function Action() {
               .catch((err) => {
                 console.log(err);
               });
+            break;
+          case "deleteHardware":
+            console.log("i am in");
             break;
           default:
             setPeer([]);
@@ -760,21 +823,30 @@ export default function Action() {
     return (
       <div style={{ marginTop: "2%", height: 400, width: "100%" }}>
         <DataGrid
-          rows={Row}
-          columns={columns}
-          // filterModel={{
-          //   items: [
-          //     {
-          //       columnField: "SKU",
-          //       operatorValue: "contains",
-          //       value: `${search}`,
-          //     },
-          //   ],
-          // }}
+          rows={pageState.data}
+          rowCount={pageState.total}
+          loading={pageState.isLoading}
+          rowsPerPageOptions={[10, 30, 50, 100]}
+          filterModel={{
+            items: [
+              {
+                columnField: "product_title",
+                operatorValue: "contains",
+                value: `${pageState.title}`,
+              },
+            ],
+          }}
           pagination
-          pageSize={pageSize}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25, 50, 100]}
+          page={pageState.page - 1}
+          limit={pageState.limit}
+          paginationMode="server"
+          onPageChange={(newPage) => {
+            setPageState((old) => ({ ...old, page: newPage + 1 }));
+          }}
+          onPageSizeChange={(newPageSize) =>
+            setPageState((old) => ({ ...old, limit: newPageSize }))
+          }
+          columns={columns}
         />
       </div>
     );

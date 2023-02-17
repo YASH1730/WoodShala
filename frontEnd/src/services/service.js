@@ -1,6 +1,5 @@
-
 import axios from "axios";
-import config from '../config.json'
+import config from "../config.json";
 
 const API = config.Official_API;
 
@@ -87,7 +86,7 @@ export const addProduct = async (data) => {
     },
   });
 };
-// for  adding variation to the product 
+// for  adding variation to the product
 
 export const variation = async (data) => {
   return await axios.post(`${API}/variation`, data, {
@@ -100,11 +99,14 @@ export const variation = async (data) => {
 // for listing the products
 
 export const getListProduct = async (data) => {
-  return await axios.get(`${API}/getListProduct?filter=${JSON.stringify(data)}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  return await axios.get(
+    `${API}/getListProduct?filter=${JSON.stringify(data)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 };
 
 // for deleting the product
@@ -157,15 +159,14 @@ export const getPresentSKUs = async (data) => {
   });
 };
 
-// get product details for display  
+// get product details for display
 export const getProductDetails = async (data) => {
   return await axios.get(`${API}/getProductDetails?SKU=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
-}
-
+};
 
 //  =========================== CURD For Bannner ========================
 
@@ -654,7 +655,7 @@ export const getBlog = async (data) => {
 // deleteBLog
 
 export const deleteBLog = async (data) => {
-  console.log(data)
+  console.log(data);
   return await axios.delete(`${API}/deleteBLog?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -674,8 +675,8 @@ export const updateBlog = async (data) => {
 
 // ================== CURD for Draft ==========================
 
-export const getDraft = async () => {
-  return await axios.get(`${API}/getDraft`, {
+export const getDraft = async (data) => {
+  return await axios.get(`${API}/getDraft?filter=${JSON.stringify(data)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -737,14 +738,13 @@ export const changeProductStatus = async (data) => {
 };
 
 export const updateBulk = async (data) => {
-  console.log(data)
+  console.log(data);
   return await axios.post(`${API}/updateBulk`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
-
 
 export const dropDraft = async (data) => {
   return await axios.post(`${API}/dropDraft`, data, {
@@ -853,11 +853,14 @@ export const addMergeProduct = async (data) => {
 // for listing the MergeProducts
 
 export const getListMergeProduct = async (data) => {
-  return await axios.get(`${API}/getListMergeProduct?filter=${JSON.stringify(data)}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  return await axios.get(
+    `${API}/getListMergeProduct?filter=${JSON.stringify(data)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 };
 
 // for deleting the MergeProduct
@@ -921,7 +924,7 @@ export const customOrderList = async () => {
   });
 };
 
-// change status 
+// change status
 export const changeOrderStatus = async (data) => {
   return await axios.post(`${API}/changeOrderStatus`, data, {
     headers: {
@@ -948,7 +951,7 @@ export const getLastCp = async () => {
   });
 };
 
-// add custom product 
+// add custom product
 export const addCustomProduct = async (data) => {
   return await axios.post(`${API}/addCustomProduct`, data, {
     headers: {
@@ -956,7 +959,7 @@ export const addCustomProduct = async (data) => {
     },
   });
 };
-// add delete product 
+// add delete product
 export const deleteOrder = async (data) => {
   return await axios.delete(`${API}/deleteOrder?_id=${data}`, {
     headers: {
@@ -987,7 +990,7 @@ export const deleteCustomer = async () => {
   });
 };
 
-// change add Customer 
+// change add Customer
 export const addCustomer = async (data) => {
   return await axios.post(`${API}/addCustomer`, data, {
     headers: {
@@ -995,7 +998,7 @@ export const addCustomer = async (data) => {
     },
   });
 };
-//  add Customer 
+//  add Customer
 export const updateCustomer = async (data) => {
   return await axios.patch(`${API}/updateCustomer`, data, {
     headers: {
@@ -1003,7 +1006,7 @@ export const updateCustomer = async (data) => {
     },
   });
 };
-// Catalog Customer 
+// Catalog Customer
 export const customerCatalog = async () => {
   return await axios.get(`${API}/customerCatalog`, {
     headers: {
@@ -1037,16 +1040,17 @@ export const addTransfer = async (data) => {
   });
 };
 
-
-
 // for listing the products
 
 export const listEntires = async (data) => {
-  return await axios.get(`${API}/listEntires?page=${data.page}&limit=${data.pageSize}&type=${data.entires}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  return await axios.get(
+    `${API}/listEntires?page=${data.page}&limit=${data.pageSize}&type=${data.entires}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 };
 // for totalEntries
 
@@ -1058,7 +1062,7 @@ export const totalEntries = async (data) => {
   });
 };
 
-// update stock 
+// update stock
 export const updateStock = async (data) => {
   return await axios.patch(`${API}/updateStock`, data, {
     headers: {
@@ -1067,7 +1071,7 @@ export const updateStock = async (data) => {
   });
 };
 
-// list stock 
+// list stock
 export const listStock = async () => {
   return await axios.get(`${API}/listStock`, {
     headers: {
@@ -1076,7 +1080,7 @@ export const listStock = async () => {
   });
 };
 
-// list stock 
+// list stock
 export const preview = async (data) => {
   return await axios.get(`${API}/preview?SKU=${data}`, {
     headers: {
@@ -1085,7 +1089,7 @@ export const preview = async (data) => {
   });
 };
 
-// delete stock 
+// delete stock
 export const deleteStock = async (data) => {
   return await axios.delete(`${API}/deleteStock?_id=${data}`, {
     headers: {
@@ -1096,11 +1100,14 @@ export const deleteStock = async (data) => {
 
 //  getStockSKU getting stocked SKUs
 export const getStockSKU = async (data) => {
-  return await axios.get(`${API}/getStockSKU?search=${data.search}&warehouse=${data.warehouse}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  return await axios.get(
+    `${API}/getStockSKU?search=${data.search}&warehouse=${data.warehouse}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 };
 
 // ================== CURD for Hardware ==========================
@@ -1153,45 +1160,49 @@ export const getLastHardware = async () => {
   });
 };
 
-// get product details for display  
+// get product details for display
 export const getHardwareDetails = async (data) => {
   return await axios.get(`${API}/getHardwareDetails?SKU=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
-}
+};
 
 export const refreshToken = async (data) => {
   return await axios.post(`${API}/refreshToken`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-  })
-}
-// ============== securuty log 
+  });
+};
+// ============== securuty log
 
 export const listLogs = async () => {
-  return await axios.get(`${API}/listLogs`)
-}
+  return await axios.get(`${API}/listLogs`);
+};
 
-// =============== policy 
+// =============== policy
 
-export const uploadPincodeCSV =  async (data) => {
+export const uploadPincodeCSV = async (data) => {
   return await axios.post(`${API}/uploadPincodeCSV`, data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-  })
-}
+  });
+};
 
-export const listPincode =  async (data) => {
-  return await axios.get(`${API}/listPincode?filter=${JSON.stringify(data)}`, data, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-}
+export const listPincode = async (data) => {
+  return await axios.get(
+    `${API}/listPincode?filter=${JSON.stringify(data)}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+};
 
 // for status the category
 export const statusDelivery = async (data) => {
@@ -1201,7 +1212,6 @@ export const statusDelivery = async (data) => {
     },
   });
 };
-
 
 // for delete the delivery
 export const deleteDelivery = async (data) => {
