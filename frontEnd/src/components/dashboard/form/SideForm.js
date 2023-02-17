@@ -18422,7 +18422,7 @@ const SideForm = () => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 4}
+                                disabled={activeStep === 3}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -18635,7 +18635,7 @@ const SideForm = () => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 4}
+                              disabled={activeStep === 3}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -18646,7 +18646,7 @@ const SideForm = () => {
                       {/* SEO End */}
 
                       {/* Extra details */}
-                      <Step>
+                      {/* <Step>
                         <StepLabel
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(4)}
@@ -18720,7 +18720,7 @@ const SideForm = () => {
                             </Button>
                           </Box>
                         </StepContent>
-                      </Step>
+                      </Step> */}
                       {/* Extra details */}
                     </Stepper>
 
@@ -19342,7 +19342,7 @@ const SideForm = () => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 4}
+                                disabled={activeStep === 3}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -19555,7 +19555,7 @@ const SideForm = () => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 4}
+                              disabled={activeStep === 3}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -19566,7 +19566,7 @@ const SideForm = () => {
                       {/* SEO End */}
 
                       {/* Extra details */}
-                      <Step>
+                      {/* <Step>
                         <StepLabel
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(4)}
@@ -19640,7 +19640,7 @@ const SideForm = () => {
                             </Button>
                           </Box>
                         </StepContent>
-                      </Step>
+                      </Step> */}
                       {/* Extra details */}
                     </Stepper>
 
