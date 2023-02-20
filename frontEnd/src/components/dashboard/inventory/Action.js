@@ -400,6 +400,14 @@ export default function Action() {
       async function getContent() {
         let res = "";
         switch (display.operation) {
+          case "insertProduct":
+            setPeer([]);
+            getSKU();
+            break;
+          case "insertHardware":
+            setPeer([]);
+            getHKU();
+            break;
           case "updateProduct":
             res = await getProductDetails(display.data.AID);
             if (res) {
