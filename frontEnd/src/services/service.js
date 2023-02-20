@@ -55,6 +55,22 @@ export const applyDiscount = async (data) => {
     },
   });
 };
+// for list the category
+export const getCategoryDetails = async (data) => {
+  return await axios.get(`${API}/getCategoryDetails/?ID=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+// for list the category
+export const getSubCategoryDetails = async (data) => {
+  return await axios.get(`${API}/getSubCategoryDetails/?ID=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
 
 // // for delete the category
 // export const deleteCategory = async (data) => {

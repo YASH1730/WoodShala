@@ -1274,13 +1274,18 @@ const SideForm = () => {
         });
 
         break;
+      case "category":
+        getDID();
+        break;
       case "update_category":
+        getDID();
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
           return setCategory(data.data);
         });
         setData({
+          _id: form.payload.row.action,
           category: form.payload.row.category_name,
           seo_title: form.payload.row.seo_title,
           seo_description: form.payload.row.seo_description,
@@ -1298,20 +1303,22 @@ const SideForm = () => {
         });
         break;
       case "subcategory":
+        getDID();
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
-
           return setCategory(data.data);
         });
         // setCat(form.payload.row.category_id);
         break;
       case "update_Subcategory":
+        getDID();
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
           return setCategory(data.data);
         });
         setCat(form.payload.row.category_id);
         setData({
+          _id: form.payload.row.action,
           sub_category_name: form.payload.row.sub_category_name,
           seo_title: form.payload.row.seo_title,
           seo_description: form.payload.row.seo_description,
@@ -1817,6 +1824,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Category");
+    FD.append("operation", "insertCategory");
+
     FD.append("category_image", Image[0]);
     FD.append("category_name", e.target.category_name.value);
     FD.append("seo_title", changeData.seo_title);
@@ -1827,7 +1839,7 @@ const SideForm = () => {
 
     // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
-    const res = addCategory(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -1843,21 +1855,21 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              category_name: data.data.response.category_name,
-              category_status: data.data.response.category_status,
-              category_image: data.data.response.category_image,
-              seo_title: data.data.response.seo_title,
-              seo_description: data.data.response.seo_description,
-              seo_keyword: data.data.response.seo_keyword,
-              product_description: data.data.response.product_description,
-              action: data.data.response,
-            },
-          ]);
-          form.setCheck((old) => [...old, data.data.response.category_status]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     category_name: data.data.response.category_name,
+          //     category_status: data.data.response.category_status,
+          //     category_image: data.data.response.category_image,
+          //     seo_title: data.data.response.seo_title,
+          //     seo_description: data.data.response.seo_description,
+          //     seo_keyword: data.data.response.seo_keyword,
+          //     product_description: data.data.response.product_description,
+          //     action: data.data.response,
+          //   },
+          // ]);
+          // form.setCheck((old) => [...old, data.data.response.category_status]);
           setImages([]);
           handleClose();
           dispatch(
@@ -1881,6 +1893,84 @@ const SideForm = () => {
         );
       });
   };
+
+  // function for handling update category
+  const handleUpdateCategory = (e) => {
+    e.preventDefault();
+
+    const FD = new FormData();
+
+    FD.append("DID", SKU);
+    FD.append("AID", changeData._id);
+    FD.append("type", "Category");
+    FD.append("operation", "updateCategory");
+
+    FD.append("_id", changeData._id);
+
+    Image[0] !== undefined && FD.append("category_image", Image[0]);
+    // console.log(Image[0])
+
+    FD.append("seo_title", changeData.seo_title);
+    FD.append("seo_description", changeData.seo_description);
+    FD.append("seo_keyword", changeData.seo_keyword);
+    FD.append("product_description", changeData.product_description);
+
+    e.target.category_name.value !== undefined
+      ? FD.append("category_name", e.target.category_name.value)
+      : console.log();
+
+    const res = addDraft(FD);
+    res
+      .then((data) => {
+        if (data.status === 203) {
+          setImages([]);
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: data.data.message,
+            })
+          );
+        } else {
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.category_name = e.target.category_name.value;
+          //       Image[0] !== undefined
+          //         ? (set.category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
+          //         : console.log();
+          //       set.seo_title = changeData.seo_title;
+          //       set.seo_description = changeData.seo_description;
+          //       set.seo_keyword = changeData.seo_keyword;
+          //       set.product_description = changeData.product_description;
+          //     }
+          //     return set;
+          //   })
+          // );
+          setImages([]);
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: data.data.message,
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+        setImages([]);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
+      });
+  };
+
   // function for handling Customer
   const handleCustomer = (e) => {
     e.preventDefault();
@@ -2019,78 +2109,6 @@ const SideForm = () => {
       })
       .catch((err) => {
         console.log(err);
-        setImages([]);
-        dispatch(
-          setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          })
-        );
-      });
-  };
-
-  // function for handling update category
-  const handleUpdateCategory = (e) => {
-    e.preventDefault();
-
-    const FD = new FormData();
-
-    FD.append("_id", form.payload.row.action);
-
-    Image[0] !== undefined && FD.append("category_image", Image[0]);
-    // console.log(Image[0])
-
-    FD.append("seo_title", changeData.seo_title);
-    FD.append("seo_description", changeData.seo_description);
-    FD.append("seo_keyword", changeData.seo_keyword);
-    FD.append("product_description", changeData.product_description);
-
-    e.target.category_name.value !== undefined
-      ? FD.append("category_name", e.target.category_name.value)
-      : console.log();
-
-    const res = editCategory(FD);
-    res
-      .then((data) => {
-        if (data.status === 203) {
-          setImages([]);
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message,
-            })
-          );
-        } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.category_name = e.target.category_name.value;
-                Image[0] !== undefined
-                  ? (set.category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
-                  : console.log();
-                set.seo_title = changeData.seo_title;
-                set.seo_description = changeData.seo_description;
-                set.seo_keyword = changeData.seo_keyword;
-                set.product_description = changeData.product_description;
-              }
-              return set;
-            })
-          );
-          setImages([]);
-          handleClose();
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            })
-          );
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
         setImages([]);
         dispatch(
           setAlert({
@@ -4470,6 +4488,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", changeData._id);
+    FD.append("type", "Sub Category");
+    FD.append("operation", "insertSubCategory");
+
     category.map((item) => {
       item._id === e.target.category_id.value &&
         FD.append("category_name", item.category_name);
@@ -4486,7 +4509,7 @@ const SideForm = () => {
 
     // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
-    const res = addSubCategories(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -4502,26 +4525,26 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              category_id: data.data.response.category_id,
-              category_name: data.data.response.category_name,
-              sub_category_image: data.data.response.sub_category_image,
-              sub_category_name: data.data.response.sub_category_name,
-              sub_category_status: data.data.response.sub_category_status,
-              seo_title: data.data.response.seo_title,
-              seo_description: data.data.response.seo_description,
-              seo_keyword: data.data.response.seo_keyword,
-              product_description: data.data.response.product_description,
-              action: data.data.response,
-            },
-          ]);
-          form.setCheck((old) => [
-            ...old,
-            data.data.response.sub_category_status,
-          ]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     category_id: data.data.response.category_id,
+          //     category_name: data.data.response.category_name,
+          //     sub_category_image: data.data.response.sub_category_image,
+          //     sub_category_name: data.data.response.sub_category_name,
+          //     sub_category_status: data.data.response.sub_category_status,
+          //     seo_title: data.data.response.seo_title,
+          //     seo_description: data.data.response.seo_description,
+          //     seo_keyword: data.data.response.seo_keyword,
+          //     product_description: data.data.response.product_description,
+          //     action: data.data.response,
+          //   },
+          // ]);
+          // form.setCheck((old) => [
+          //   ...old,
+          //   data.data.response.sub_category_status,
+          // ]);
           setImages([]);
           handleClose();
           dispatch(
@@ -4551,10 +4574,15 @@ const SideForm = () => {
     const FD = new FormData();
     let catName = "";
 
+    FD.append("DID", SKU);
+    FD.append("AID", changeData._id);
+    FD.append("type", "Sub Category");
+    FD.append("operation", "updateSubCategory");
+
     // //console.log(form.payload);
     Image[0] !== undefined && FD.append("sub_category_image", Image[0]);
 
-    FD.append("_id", form.payload.row.action);
+    FD.append("_id", changeData._id);
 
     category.map((item) => {
       if (item._id === e.target.category_id.value) catName = item.category_name;
@@ -4574,7 +4602,7 @@ const SideForm = () => {
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("product_description", changeData.product_description);
 
-    const res = editSubCatagories(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -4590,22 +4618,22 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.sub_category_name = e.target.sub_category_name.value;
-                set.category_name = catName;
-                Image[0] !== undefined
-                  ? (set.sub_category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
-                  : console.log();
-                set.seo_title = changeData.seo_title;
-                set.seo_description = changeData.seo_description;
-                set.seo_keyword = changeData.seo_keyword;
-                set.product_description = changeData.product_description;
-              }
-              return set;
-            })
-          );
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.sub_category_name = e.target.sub_category_name.value;
+          //       set.category_name = catName;
+          //       Image[0] !== undefined
+          //         ? (set.sub_category_image = `https://admin.woodshala.in/upload/${Image[0].path}`)
+          //         : console.log();
+          //       set.seo_title = changeData.seo_title;
+          //       set.seo_description = changeData.seo_description;
+          //       set.seo_keyword = changeData.seo_keyword;
+          //       set.product_description = changeData.product_description;
+          //     }
+          //     return set;
+          //   })
+          // );
           handleClose();
           dispatch(
             setAlert({
@@ -18183,7 +18211,7 @@ const SideForm = () => {
                                   name="online_store"
                                 />
                               }
-                              label="Oline Store"
+                              label="Online Store"
                             />
                             <FormControlLabel
                               control={
@@ -19374,7 +19402,7 @@ const SideForm = () => {
                                   name="online_store"
                                 />
                               }
-                              label="Oline Store"
+                              label="Online Store"
                             />
                             <FormControlLabel
                               control={

@@ -18,7 +18,6 @@ import {
   changeHardwareStatus,
   deleteHardware,
   addDraft,
-  getDraftID,
 } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
@@ -31,29 +30,10 @@ export default function Hardware() {
   const [search, setSearch] = useState("");
   const [check, setCheck] = useState([]);
   const dispatch = useDispatch();
-  const [SKU, setSKU] = useState("");
+  const [SKU] = useState("");
   const [pageSize, setPageSize] = useState(50);
 
   const [Row, setRows] = useState([]);
-
-  // function for generating product DID ID
-
-  const getDID = async () => {
-    let res = await getDraftID();
-    console.log(res);
-    if (res.status === 200) {
-      if (res.data.length > 0) {
-        let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
-
-        setSKU(`DID-0${index}`);
-      } else {
-        setSKU("DID-01001");
-      }
-
-      return 1;
-    }
-    return 0;
-  };
 
   // function for get  list
 
