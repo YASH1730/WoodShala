@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import {
-  Typography,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 // import { OpenBox, Notify } from "../App"
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-import '../assets/custom/css/admin.css'
-// icons 
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import "../assets/custom/css/admin.css";
+// icons
 import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
 // import PolicyIcon from '@mui/icons-material/Policy';
 import ForestIcon from "@mui/icons-material/Forest";
@@ -35,12 +33,20 @@ import Polish from "./dashboard/accessories/Polish";
 // import Fabric from "./dashboard/Fabric";
 // import Textile from "./dashboard/Textile";
 // import Policy from "./dashboard/Policy";
-
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import SecurityIcon from "@mui/icons-material/Security";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import Suppliers from "./dashboard/accessories/Suppliers";
+import Security from "./dashboard/accessories/Security";
+import Pincode from "./dashboard/accessories/Pincode";
 const components = [
   Category,
   SubCategory,
   PrimaryMaterial,
   Polish,
+  Pincode,
+  Security,
+  Suppliers,
   // Fitting,
   // Hinge,
   // Knob,
@@ -49,7 +55,7 @@ const components = [
   // Fabric,
   // Textile,
   // Policy
-]
+];
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -64,7 +70,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography component={'span'}>{children}</Typography>
+          <Typography component={"span"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -80,31 +86,35 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
-
-
-
-
 export default function Admin() {
-
-  const [value, setValue] = useState(localStorage.getItem('tab') !== null ? parseInt(localStorage.getItem('tab')) : 0);
+  const [value, setValue] = useState(
+    localStorage.getItem("tab") !== null
+      ? parseInt(localStorage.getItem("tab"))
+      : 0
+  );
 
   const handleChange = (event, newValue) => {
-    localStorage.setItem('tab', newValue)
+    localStorage.setItem("tab", newValue);
     setValue(newValue);
   };
 
   function BasicTabs() {
-
-
     return (
-      <Box sx={{ width: '100%' }} >
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }} className='tabContainer'>
-
-          <Tabs variant="scrollable" value={value} onChange={handleChange} aria-label="basic tabs example">
+      <Box sx={{ width: "100%" }}>
+        <Box
+          sx={{ borderBottom: 1, borderColor: "divider" }}
+          className="tabContainer"
+        >
+          <Tabs
+            variant="scrollable"
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
             <Tab
               wrapped
               icon={<FormatListBulletedOutlinedIcon />}
@@ -129,25 +139,25 @@ export default function Admin() {
               label="Polish"
               {...a11yProps(3)}
             />
+            <Tab
+              wrapped
+              icon={<LocalShippingIcon />}
+              label="Pin Code"
+              {...a11yProps(4)}
+            />
+            <Tab
+              wrapped
+              icon={<SecurityIcon />}
+              label="Security"
+              {...a11yProps(5)}
+            />
+            <Tab
+              wrapped
+              icon={<AssignmentIndIcon />}
+              label="Supplier"
+              {...a11yProps(6)}
+            />
             {/* <Tab
-                  wrapped
-                  icon={<ConstructionIcon />}
-                  label="Fitting"
-                  {...a11yProps(4)}
-                /> */}
-            {/* <Tab
-                  wrapped
-                  icon={<InsertLinkIcon />}
-                  label="Hinge"
-                  {...a11yProps(5)}
-                />
-                <Tab
-                  wrapped
-                  icon={<AdjustIcon />}
-                  label="Knob"
-                  {...a11yProps(6)}
-                />
-                <Tab
                   wrapped
                   icon={<DoorSlidingIcon />}
                   label="Door"
@@ -181,27 +191,24 @@ export default function Admin() {
         </Box>
 
         {components.map((Component, index) => {
-
-          return <TabPanel value={value} index={index}>
-            <Component />
-          </TabPanel>
-
+          return (
+            <TabPanel value={value} index={index}>
+              <Component />
+            </TabPanel>
+          );
         })}
-
       </Box>
     );
   }
 
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
-
-      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
-        Accessories
+      <Typography component={"span"} sx={{ display: "block" }} variant="h5">
+        Settings
       </Typography>
 
       <br />
       {BasicTabs()}
-
     </Box>
   );
 }

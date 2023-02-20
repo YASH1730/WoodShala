@@ -106,9 +106,6 @@ const dispatch = useDispatch();
                             Please select CSV formate file.
                             </li>
                             <li>
-                            Please ensure the column name must be like (pincode,city/district,state).
-                            </li>
-                            <li>
                             Ensure that CSV file has all the required fields in it.
                             </li>
                             <li>

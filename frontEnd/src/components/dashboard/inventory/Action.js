@@ -190,7 +190,7 @@ export default function Action() {
           </IconButton>
 
           <IconButton
-            disabled={params.formattedValue.draftStatus === "Approved" && true}
+            // disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={async () => {
               let response = await deleteDraft(params.formattedValue._id);
               if (response) {

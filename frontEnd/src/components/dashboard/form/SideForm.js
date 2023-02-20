@@ -451,16 +451,32 @@ const SideForm = () => {
 
   const taxRateCatalog = [
     {
-      value: "18",
-      label: "18",
+      value: 28,
+      label: 28,
     },
     {
-      value: "5",
-      label: "5",
+      value: 18,
+      label: 18,
     },
     {
-      value: "2",
-      label: "2",
+      value: 12,
+      label: 12,
+    },
+    {
+      value: 5,
+      label: 5,
+    },
+    {
+      value: 3,
+      label: 3,
+    },
+    {
+      value: 2,
+      label: 2,
+    },
+    {
+      value: 0,
+      label: 0,
     },
   ];
   const backStyleCatalog = [
@@ -653,7 +669,6 @@ const SideForm = () => {
     "Level 9",
     "Level 10",
   ];
-  const hardware_polish = ["Matt", "Glossy", "Semi Glossy"];
 
   // redux
   const { form, mode } = useSelector((state) => state);
@@ -742,9 +757,10 @@ const SideForm = () => {
     wall_hanging: "",
     assembly_required: "",
     assembly_leg: "",
-    assembly_parts: 0,
+    assembly_part: 2,
     fitting: "None",
     silver: "",
+    weight: 0,
     selling_point: "",
     mirror: "",
     joints: "",
@@ -808,7 +824,6 @@ const SideForm = () => {
     showroom_price: 0,
     discount_limit: 0,
     length_main: 0,
-    weight: 0,
     ceramic_drawer_qty: 0,
     ceramic_tiles_qty: 0,
     back_style: "None",
@@ -838,6 +853,8 @@ const SideForm = () => {
     lock: false,
     price: 0,
     indoorSavedImage: [],
+    status: true,
+    marketing: false,
   });
 
   // function for generating Merged product  ID
@@ -950,6 +967,12 @@ const SideForm = () => {
       case "hardware":
         getHKU();
         getDID();
+        getPrimaryMaterial().then((data) => {
+          if (data.data === null) return setMaterialCatalog([]);
+
+          return setMaterialCatalog(data.data);
+        });
+
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -976,6 +999,11 @@ const SideForm = () => {
       case "update_hardware":
         // getHKU();
         getDID();
+        getPrimaryMaterial().then((data) => {
+          if (data.data === null) return setMaterialCatalog([]);
+
+          return setMaterialCatalog(data.data);
+        });
         categoryList().then((data) => {
           if (data.data === null) return setCategory([]);
 
@@ -1000,11 +1028,19 @@ const SideForm = () => {
           sub_category_name: row.sub_category_id,
           sub_category_id: row.sub_category_id,
           hardware_image: row.hardware_image,
+          savedImages: row.hardware_image,
+          featured_image: row.featured_image,
+          mannequin_image: row.mannequin_image,
           warehouse: row.warehouse || [],
           bangalore_stock: row.bangalore_stock,
+          discount_limit: row.discount_limit,
           jodhpur_stock: row.jodhpur_stock,
           manufacturing_time: row.manufacturing_time,
-          status: row.status === true ? "on" : "off",
+          online_store: row.online_store,
+          mobile_store: row.mobile_store,
+          primary_material: row.primary_material,
+          primary_material_name: row.primary_material_name,
+          status: row.status,
           returnDays: row.returnDays,
           COD: row.COD,
           returnable: row.returnable,
@@ -1024,6 +1060,9 @@ const SideForm = () => {
           hardware_polish: row.hardware_polish,
           min_quantity: row.min_quantity,
           continue_selling: row.continue_selling,
+          tax_rate: row.tax_rate,
+          weight: row.weight,
+          package_weight: row.package_weight,
         });
         break;
       case "product":
@@ -1250,15 +1289,12 @@ const SideForm = () => {
         });
         break;
       case "update_PrimaryMaterial":
-        getPrimaryMaterial().then((data) => {
-          if (data.data === null) return setMaterialCatalog([]);
-
-          return setMaterialCatalog(data.data);
-        });
+        console.log(form.payload.row);
         setData({
           primaryMaterial_name: form.payload.row.primaryMaterial_name,
           primaryMaterial_description:
             form.payload.row.primaryMaterial_description,
+          customizations: form.payload.row.customizations,
         });
         break;
       case "subcategory":
@@ -1745,11 +1781,12 @@ const SideForm = () => {
     "ceramic_tiles_included",
     "status",
     "lock",
+    "customizations",
+    "marketing",
   ];
 
   //  for product felids
-  const handleProductFelids = (e) => {
-    //console.log(e);
+  const handleProductFields = (e) => {
     if (feature.includes(e.target.name)) {
       setData({
         ...changeData,
@@ -1857,6 +1894,7 @@ const SideForm = () => {
     FD.append("email", e.target.email.value);
     FD.append("password", e.target.password.value);
     FD.append("shipping", JSON.stringify(address));
+    FD.append("marketing", changeData.marketing);
 
     const res = addCustomer(FD);
 
@@ -2081,6 +2119,7 @@ const SideForm = () => {
       CVW: 0,
       ACIN: "",
       warehouse_to: "",
+      marketing: false,
       primary_material: [],
       product_articles: [],
       hardware_articles: [],
@@ -2094,6 +2133,7 @@ const SideForm = () => {
       shipping: "",
       product_title: "",
       amazon_url: "",
+      status: true,
       flipkart_url: "",
       jiomart_url: "",
       seo_title: "",
@@ -2123,7 +2163,7 @@ const SideForm = () => {
       wall_hanging: "",
       assembly_required: "",
       assembly_leg: "",
-      assembly_parts: 0,
+      assembly_part: 2,
       fitting: "None",
       silver: "",
       selling_point: "",
@@ -2247,6 +2287,7 @@ const SideForm = () => {
       "primary_material_name",
       JSON.stringify(changeData.primary_material)
     );
+    FD.append("primary_material", changeData.primary_material);
 
     FD.append("warehouse_name", JSON.stringify(changeData.warehouse));
     FD.append("polish_name", JSON.stringify(changeData.polish));
@@ -2401,7 +2442,6 @@ const SideForm = () => {
     FD.append("seo_keyword", changeData.seo_keyword);
     FD.append("discount_limit", changeData.discount_limit || 0);
     FD.append("selling_price", changeData.selling_price);
-    FD.append("primary_material", changeData.primary_material);
     FD.append("warehouse", changeData.warehouse);
     // FD.append("polish", changeData.polish);
     FD.append("fabric", changeData.fabric);
@@ -3828,6 +3868,7 @@ const SideForm = () => {
       "primaryMaterial_status",
       e.target.primaryMaterial_status.checked
     );
+    FD.append("customizations", e.target.customizations.checked);
 
     // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
@@ -3905,6 +3946,8 @@ const SideForm = () => {
     e.target.primaryMaterial_name.value !== "" &&
       FD.append("primaryMaterial_name", e.target.primaryMaterial_name.value);
 
+    FD.append("customizations", e.target.customizations.checked);
+
     const res = editPrimaryMaterial(FD);
 
     res
@@ -3927,10 +3970,11 @@ const SideForm = () => {
                 set.primaryMaterial_description =
                   e.target.primaryMaterial_description.value;
                 set.primaryMaterial_name = e.target.primaryMaterial_name.value;
+                set.customizations = changeData.customizations;
                 set.primaryMaterial_image =
                   Image[0] !== undefined
                     ? `${imageLink}${Image[0].path}`
-                    : console.log();
+                    : changeData.primaryMaterial_image;
               }
               return set;
             })
@@ -4248,19 +4292,22 @@ const SideForm = () => {
     const FD = new FormData();
 
     // merge the Quantities with product SKU number
+    console.log(changeData);
 
     let Product_SKU = [];
     let Hardware_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map((SKU) => ({
-        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
-      }));
+      Product_SKU = changeData.product_articles.map((SKU) => {
+        let cred = SKU.split("Stock :");
+        return { [cred[0].trim()]: changeData[SKU] || parseInt(cred[1]) };
+      });
 
     if (changeData.hardware_articles.length > 0)
-      Hardware_SKU = changeData.hardware_articles.map((SKU) => ({
-        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
-      }));
+      Hardware_SKU = changeData.hardware_articles.map((SKU) => {
+        let cred = SKU.split("Stock :");
+        return { [cred[0].trim()]: changeData[SKU] || parseInt(cred[1]) };
+      });
 
     FD.append("product_articles", JSON.stringify(Product_SKU));
     FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
@@ -4343,14 +4390,15 @@ const SideForm = () => {
     let Hardware_SKU = [];
 
     if (changeData.product_articles.length > 0)
-      Product_SKU = changeData.product_articles.map((SKU) => ({
-        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
-      }));
-
+      Product_SKU = changeData.product_articles.map((SKU) => {
+        let cred = SKU.split("Stock :");
+        return { [cred[0].trim()]: changeData[SKU] || parseInt(cred[1]) };
+      });
     if (changeData.hardware_articles.length > 0)
-      Hardware_SKU = changeData.hardware_articles.map((SKU) => ({
-        [SKU.split("Stock")[0]]: changeData[SKU] || 0,
-      }));
+      Hardware_SKU = changeData.hardware_articles.map((SKU) => {
+        let cred = SKU.split("Stock :");
+        return { [cred[0].trim()]: changeData[SKU] || parseInt(cred[1]) };
+      });
 
     FD.append("product_articles", JSON.stringify(Product_SKU));
     FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
@@ -4865,10 +4913,15 @@ const SideForm = () => {
       FD.append("operation", "insertHardware");
 
       files.map((element) => {
-        return FD.append("hardware_image", element);
+        if (element.validate) return FD.append("hardware_image", element);
       });
 
-      FD.append("status", changeData.status === "on" ? true : false);
+      FD.append("specification_image", changeData.specification_image || "");
+      FD.append("featured_image", changeData.featured_image || "");
+
+      FD.append("status", changeData.status);
+      FD.append("online_store", changeData.online_store);
+      FD.append("mobile_store", changeData.mobile_store);
 
       category.map((item) => {
         return (
@@ -4884,6 +4937,13 @@ const SideForm = () => {
         );
       });
 
+      FD.append(
+        "primary_material_name",
+        JSON.stringify(changeData.primary_material)
+      );
+      FD.append("primary_material", changeData.primary_material);
+      FD.append("discount_limit", changeData.discount_limit || 0);
+      FD.append("tax_rate", changeData.tax_rate);
       FD.append("restocking_time", changeData.restocking_time);
       FD.append("selling_points", JSON.stringify(changeData.selling_points));
       FD.append("seo_title", changeData.seo_title);
@@ -4921,6 +4981,12 @@ const SideForm = () => {
       FD.append("unit", changeData.unit);
       FD.append("quantity", changeData.quantity);
 
+      FD.append("weight", changeData.weight ? changeData.weight : 0);
+
+      FD.append(
+        "package_weight",
+        changeData.package_weight ? changeData.package_weight : 0
+      );
       FD.append(
         "package_length",
         changeData.package_length ? changeData.package_length : 0
@@ -5013,14 +5079,25 @@ const SideForm = () => {
 
       // console.log(form.payload.row.action);
 
-      if (files.length > 0)
-        files.map((element) => {
-          return FD.append("hardware_image", element);
-        });
-
       FD.append("_id", form.payload.row.action);
 
-      FD.append("status", changeData.status === "on" ? true : false);
+      files.map((element) => {
+        if (element.validate) return FD.append("hardware_image", element);
+      });
+      FD.append("savedImages", JSON.stringify(changeData.savedImages));
+
+      FD.append("specification_image", changeData.specification_image);
+      FD.append("featured_image", changeData.featured_image);
+
+      FD.append("status", changeData.status);
+      FD.append("online_store", changeData.online_store);
+      FD.append("mobile_store", changeData.mobile_store);
+
+      FD.append(
+        "primary_material_name",
+        JSON.stringify(changeData.primary_material)
+      );
+      FD.append("primary_material", changeData.primary_material);
 
       let multiOBJ = {};
 
@@ -5043,7 +5120,8 @@ const SideForm = () => {
           FD.append("sub_category_name", item.sub_category_name)
         );
       });
-
+      FD.append("discount_limit", changeData.discount_limit || 0);
+      FD.append("tax_rate", changeData.tax_rate);
       FD.append("restocking_time", changeData.restocking_time || 0);
       FD.append("selling_points", JSON.stringify(changeData.selling_points));
       FD.append("seo_title", changeData.seo_title);
@@ -5081,6 +5159,12 @@ const SideForm = () => {
       FD.append("unit", changeData.unit);
       FD.append("quantity", changeData.quantity);
 
+      FD.append("weight", changeData.weight ? changeData.weight : 0);
+
+      FD.append(
+        "package_weight",
+        changeData.package_weight ? changeData.package_weight : 0
+      );
       FD.append(
         "package_length",
         changeData.package_length ? changeData.package_length : 0
@@ -5486,14 +5570,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="category_name"
                               label="Category"
                               value={changeData.category_name || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -5521,7 +5605,7 @@ const SideForm = () => {
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -5551,7 +5635,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -5571,7 +5655,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -5581,7 +5665,7 @@ const SideForm = () => {
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
-                                handleProductFelids(e);
+                                handleProductFields(e);
                               }}
                               label="Discount Limit"
                               type="number"
@@ -5621,7 +5705,7 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
                             />
@@ -5633,7 +5717,7 @@ const SideForm = () => {
                               label="Length"
                               type="number"
                               value={changeData.length_main}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -5662,7 +5746,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="breadth"
                               value={changeData.breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -5682,7 +5766,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="height"
                               value={changeData.height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -5693,7 +5777,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.primary_material}
                               name="primary_material"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -5724,7 +5808,7 @@ const SideForm = () => {
                               label="Range"
                               multiple
                               value={changeData.range || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select the range."
                             >
                               {rangeCatalog.map((option) => (
@@ -5747,7 +5831,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.polish}
                               name="polish"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -5779,7 +5863,7 @@ const SideForm = () => {
                               name="polish"
                               label="Polish"
                               value={changeData.polish || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               multiple
                               helperText="Please select your Polish."
                             >
@@ -5806,7 +5890,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="assembly_required"
                                 value={changeData.assembly_required || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="shipping"
@@ -5830,8 +5914,6 @@ const SideForm = () => {
                                 <TextField
                                   size="small"
                                   fullWidth
-                                  // required
-                                  // autoComplete={false}
                                   id="fullWidth"
                                   label="Assemble Part"
                                   type="number"
@@ -5850,7 +5932,7 @@ const SideForm = () => {
                                       ? changeData.assembly_part
                                       : 0
                                   }
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -5866,7 +5948,7 @@ const SideForm = () => {
                                   name="legs"
                                   label="Table Legs"
                                   value={changeData.legs || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your leg "
                                 >
@@ -5892,7 +5974,7 @@ const SideForm = () => {
                                   name="assembly_level"
                                   label="Assembly Level"
                                   value={changeData.assembly_level || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your assembly level "
                                 >
@@ -5917,7 +5999,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.mobile_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mobile_store"
                                   helperText="Check it if want it on mobile."
                                 />
@@ -5928,7 +6010,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.online_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
@@ -5939,7 +6021,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.continue_selling}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="continue_selling"
                                   helperText="Check it if want it to sell when out of Inventory."
                                 />
@@ -5964,7 +6046,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               name="MRP"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.MRP}
                             /> */}
                           </Box>
@@ -6071,7 +6153,7 @@ const SideForm = () => {
                               label="Feature Image"
                               value={changeData.featured_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Featured Image"
                             >
                               {files.map(
@@ -6110,7 +6192,7 @@ const SideForm = () => {
                               label="Specification Image"
                               value={changeData.specificaiton_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your specification image."
                             >
                               {files.map(
@@ -6149,7 +6231,7 @@ const SideForm = () => {
                               label="Mannequin Image"
                               value={changeData.mannequin_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Mannequin Image."
                             >
                               {files.map(
@@ -6253,7 +6335,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.rotating_seats}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="rotating_seats"
                                   />
                                 }
@@ -6263,7 +6345,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.eatable_oil_polish}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="eatable_oil_polish"
                                   />
                                 }
@@ -6273,7 +6355,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.no_chemical}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="no_chemical"
                                   />
                                 }
@@ -6284,7 +6366,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.weaving}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="weaving"
                                   />
                                 }
@@ -6296,7 +6378,7 @@ const SideForm = () => {
                                     checked={
                                       changeData.not_suitable_for_Micro_Dish
                                     }
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="not_suitable_for_Micro_Dish"
                                   />
                                 }
@@ -6306,7 +6388,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.tilt_top}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="tilt_top"
                                   />
                                 }
@@ -6316,7 +6398,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.inside_compartments}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="inside_compartments"
                                   />
                                 }
@@ -6326,7 +6408,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.stackable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="stackable"
                                   />
                                 }
@@ -6336,7 +6418,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.knife}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="knife"
                                   />
                                 }
@@ -6346,7 +6428,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.wall_hanging}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="wall_hanging"
                                   />
                                 }
@@ -6357,7 +6439,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_drawer_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_drawer_included"
                                   />
                                 }
@@ -6376,7 +6458,7 @@ const SideForm = () => {
                                     label="Ceramic Drawer"
                                     multiple
                                     value={changeData.ceramic_drawer}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     helperText="Please select your Ceramic Tiles."
                                   >
                                     {catalog.ceramic_drawer.map(
@@ -6396,7 +6478,7 @@ const SideForm = () => {
                                   </TextField>
                                   <TextField
                                     value={changeData.ceramic_drawer_qty}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     size={"small"}
                                     fullWidth
                                     label="Ceramic Drawer Quantity"
@@ -6411,7 +6493,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_tiles_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_tiles_included"
                                   />
                                 }
@@ -6430,7 +6512,7 @@ const SideForm = () => {
                                   label="Ceramic Tiles"
                                   multiple
                                   value={changeData.ceramic_tiles}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Ceramic Tiles."
                                 >
                                   {catalog.ceramic_tiles.map(
@@ -6450,7 +6532,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.ceramic_tiles_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Ceramic Tiles Quantity"
@@ -6521,7 +6603,7 @@ const SideForm = () => {
                               label="Back Style"
                               multiple
                               value={changeData.back_style || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Back Style."
                             >
                               {backStyleCatalog.map((option) => (
@@ -6545,7 +6627,7 @@ const SideForm = () => {
                               label="Weight Capacity"
                               multiple
                               value={changeData.weight_capacity}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Weight Capacity."
                             >
                               {weightCapCatalog.map((option) => (
@@ -6567,7 +6649,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.drawer || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="drawer"
                               >
                                 <FormControlLabel
@@ -6597,7 +6679,7 @@ const SideForm = () => {
                                 name="drawer_count"
                                 label="Drawer Count"
                                 value={changeData.drawer_count}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <FormControl>
@@ -6609,7 +6691,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="joints"
                                 value={changeData.joints}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="single"
@@ -6683,7 +6765,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -6693,7 +6775,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -6715,7 +6797,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -6732,7 +6814,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="polish_time"
                               value={changeData.polish_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your polish time"
                             />
                             <Typography component={"span"} variant="Caption">
@@ -6749,7 +6831,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="manufacturing_time"
                               value={changeData.manufacturing_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your manufacturing time"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -6760,7 +6842,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -6793,7 +6875,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -6806,7 +6888,7 @@ const SideForm = () => {
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -6835,7 +6917,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -6855,7 +6937,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <Box sx={{ display: "flex", mb: 1 }}>
@@ -6868,7 +6950,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="quantity"
                                 value={changeData.quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -6879,7 +6961,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -6954,7 +7036,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -6967,7 +7049,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -6980,7 +7062,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -7002,7 +7084,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -7098,7 +7180,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -7197,7 +7279,7 @@ const SideForm = () => {
                               name="CVW"
                               label="CVW Number"
                               value={changeData.CVW || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7216,7 +7298,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="wood_weight"
                               value={changeData.wood_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7235,7 +7317,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="metal_weight"
                               value={changeData.metal_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7254,7 +7336,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_weight"
                               value={changeData.package_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7265,8 +7347,7 @@ const SideForm = () => {
                               name="tax_rate"
                               label="Tax Rate"
                               value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
+                              onChange={handleProductFields}
                               helperText="Please select your tax rate."
                               InputProps={{
                                 startAdornment: (
@@ -7295,7 +7376,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="silver"
                               >
                                 <FormControlLabel
@@ -7328,7 +7409,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="silver_weight"
                                 value={changeData.silver_weight}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <TextField
@@ -7340,7 +7421,7 @@ const SideForm = () => {
                               label="Hinge"
                               multiple
                               value={changeData.hinge}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
@@ -7364,7 +7445,7 @@ const SideForm = () => {
                                 size={"small"}
                                 helperText="Enter the number of hinges pieces ."
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Hinge Quantity"
                                 type="number"
                                 name="hinge_qty"
@@ -7379,7 +7460,7 @@ const SideForm = () => {
                               label="Knob"
                               multiple
                               value={changeData.knob}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your knob."
                             >
                               {console.log(catalog)}
@@ -7404,7 +7485,7 @@ const SideForm = () => {
                                 fullWidth
                                 helperText="Enter the number of knob pieces ."
                                 value={changeData.knob_qty}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Knob Quantity"
                                 type="number"
                                 name="knob_qty"
@@ -7419,7 +7500,7 @@ const SideForm = () => {
                               label="Door"
                               multiple
                               value={changeData.door}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
@@ -7443,7 +7524,7 @@ const SideForm = () => {
                                 helperText="Enter the number of doors."
                                 size={"small"}
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Door Quantity"
                                 type="number"
                                 name="door_qty"
@@ -7458,7 +7539,7 @@ const SideForm = () => {
                               label="Handle"
                               multiple
                               value={changeData.handle}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
@@ -7480,7 +7561,7 @@ const SideForm = () => {
                               <TextField
                                 value={changeData.handle_qty}
                                 helperText="Enter the number of handles."
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 size={"small"}
                                 fullWidth
                                 label="Handle Quantity"
@@ -7497,7 +7578,7 @@ const SideForm = () => {
                               name="fitting"
                               multiple
                               value={changeData.fitting}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
@@ -7523,7 +7604,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -7555,7 +7636,7 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   value={changeData.mirror_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mirror_length"
                                 />
 
@@ -7576,7 +7657,7 @@ const SideForm = () => {
                                   variant="outlined"
                                   name="mirror_width"
                                   value={changeData.mirror_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -7597,7 +7678,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_length"
                               value={changeData.top_size_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7616,7 +7697,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_breadth"
                               value={changeData.top_size_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7634,7 +7715,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               value={changeData.dial_size}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               name="dial_size"
                             />
                             <FormControl>
@@ -7645,7 +7726,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -7670,7 +7751,7 @@ const SideForm = () => {
                                   label="Wheel"
                                   multiple
                                   value={changeData.wheel}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your wheel."
                                 >
                                   {catalog.wheel.map(
@@ -7690,7 +7771,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.wheel_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Wheel Quantity"
@@ -7708,7 +7789,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -7733,7 +7814,7 @@ const SideForm = () => {
                                   label="Trolly Material"
                                   multiple
                                   value={changeData.trolley_material}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Trolly Material "
                                 >
                                   {trollyMaterial.map((option) => (
@@ -7764,7 +7845,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_width"
                               value={changeData.seating_size_width}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7783,7 +7864,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_depth"
                               value={changeData.seating_size_depth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -7802,7 +7883,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_height"
                               value={changeData.seating_size_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
@@ -7811,7 +7892,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="plywood"
                               >
                                 <FormControlLabel
@@ -7833,7 +7914,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="mattress"
                               >
                                 <FormControlLabel
@@ -7858,7 +7939,7 @@ const SideForm = () => {
                                   name="mattress_length"
                                   label="Mattress Length"
                                   value={changeData.mattress_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -7868,7 +7949,7 @@ const SideForm = () => {
                                   name="mattress_breadth"
                                   label="Mattress Breadth"
                                   value={changeData.mattress_breadth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -7879,7 +7960,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="cradle_bed"
                               >
                                 <FormControlLabel
@@ -7904,7 +7985,7 @@ const SideForm = () => {
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
                                   value={changeData.cradle_bed_height}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -7914,7 +7995,7 @@ const SideForm = () => {
                                   name="cradle_bed_width"
                                   label="Cradle Bed Width"
                                   value={changeData.cradle_bed_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -7924,7 +8005,7 @@ const SideForm = () => {
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -7940,7 +8021,7 @@ const SideForm = () => {
                                 // }}
 
                                 value={changeData.upholstery || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="upholstery"
                               >
                                 <FormControlLabel
@@ -7966,7 +8047,7 @@ const SideForm = () => {
                                   label="Fabric"
                                   multiple
                                   value={changeData.fabric}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
@@ -7987,7 +8068,7 @@ const SideForm = () => {
 
                                 <TextField
                                   value={changeData.fabric_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Fabric Quantity"
@@ -8008,7 +8089,7 @@ const SideForm = () => {
                               size="small"
                               name="amazon_url"
                               label="Amazon"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.amazon_url}
                               placeholder="https://example.com"
                               pattern="https://.*"
@@ -8021,7 +8102,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="flipkart_url"
                               label="Flipkart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.flipkart_url}
                             />
                             <TextField
@@ -8032,7 +8113,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="jiomart_url"
                               label="Jio Mart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.jiomart_url}
                             />
                             <Box className="stepAction">
@@ -8139,7 +8220,7 @@ const SideForm = () => {
                               fullWidth
                               // autoComplete={false}
                               id="fullWidth"
-                              // // required
+                              // required
                               label="SKU"
                               type="text"
                               value={changeData.SKU || ""}
@@ -8150,14 +8231,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="category_name"
                               label="Category"
                               value={changeData.category_name || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -8185,7 +8266,7 @@ const SideForm = () => {
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -8215,7 +8296,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -8235,7 +8316,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -8245,7 +8326,7 @@ const SideForm = () => {
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
-                                handleProductFelids(e);
+                                handleProductFields(e);
                               }}
                               label="Discount Limit"
                               type="number"
@@ -8285,7 +8366,7 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
                             />
@@ -8297,7 +8378,7 @@ const SideForm = () => {
                               label="Length"
                               type="number"
                               value={changeData.length_main}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -8326,7 +8407,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="breadth"
                               value={changeData.breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -8346,7 +8427,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="height"
                               value={changeData.height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -8357,7 +8438,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.primary_material || []}
                               name="primary_material"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -8388,7 +8469,7 @@ const SideForm = () => {
                               label="Range"
                               multiple
                               value={changeData.range || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select the range."
                             >
                               {rangeCatalog.map((option) => (
@@ -8411,7 +8492,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.polish || []}
                               name="polish"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -8442,7 +8523,7 @@ const SideForm = () => {
                               name="polish"
                               label="Polish"
                               value={changeData.polish || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               multiple
                               helperText="Please select your Polish."
                             >
@@ -8469,7 +8550,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="assembly_required"
                                 value={changeData.assembly_required || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="shipping"
@@ -8513,7 +8594,7 @@ const SideForm = () => {
                                       ? changeData.assembly_part
                                       : 0
                                   }
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -8529,7 +8610,7 @@ const SideForm = () => {
                                   name="legs"
                                   label="Table Legs"
                                   value={changeData.legs || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your leg "
                                 >
@@ -8555,7 +8636,7 @@ const SideForm = () => {
                                   name="assembly_level"
                                   label="Assembly Level"
                                   value={changeData.assembly_level || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your assembly level "
                                 >
@@ -8580,7 +8661,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.mobile_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mobile_store"
                                   helperText="Check it if want it on mobile."
                                 />
@@ -8591,7 +8672,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.online_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
@@ -8602,7 +8683,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.continue_selling}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="continue_selling"
                                   helperText="Check it if want it to sell when out of Inventory."
                                 />
@@ -8627,7 +8708,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               name="MRP"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.MRP}
                             /> */}
                           </Box>
@@ -8769,7 +8850,7 @@ const SideForm = () => {
                               label="Feature Image"
                               value={changeData.featured_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Featured Image"
                             >
                               {files.map(
@@ -8827,7 +8908,7 @@ const SideForm = () => {
                               label="Specification Image"
                               value={changeData.specificaiton_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your specification image."
                             >
                               {files.map(
@@ -8885,7 +8966,7 @@ const SideForm = () => {
                               label="Mannequin Image"
                               value={changeData.mannequin_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Mannequin Image."
                             >
                               {files.map(
@@ -9006,7 +9087,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.rotating_seats}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="rotating_seats"
                                   />
                                 }
@@ -9016,7 +9097,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.eatable_oil_polish}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="eatable_oil_polish"
                                   />
                                 }
@@ -9026,7 +9107,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.no_chemical}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="no_chemical"
                                   />
                                 }
@@ -9037,7 +9118,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.weaving}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="weaving"
                                   />
                                 }
@@ -9049,7 +9130,7 @@ const SideForm = () => {
                                     checked={
                                       changeData.not_suitable_for_Micro_Dish
                                     }
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="not_suitable_for_Micro_Dish"
                                   />
                                 }
@@ -9059,7 +9140,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.tilt_top}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="tilt_top"
                                   />
                                 }
@@ -9069,7 +9150,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.inside_compartments}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="inside_compartments"
                                   />
                                 }
@@ -9079,7 +9160,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.stackable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="stackable"
                                   />
                                 }
@@ -9089,7 +9170,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.knife}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="knife"
                                   />
                                 }
@@ -9099,7 +9180,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.wall_hanging}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="wall_hanging"
                                   />
                                 }
@@ -9110,7 +9191,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_drawer_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_drawer_included"
                                   />
                                 }
@@ -9129,7 +9210,7 @@ const SideForm = () => {
                                     label="Ceramic Drawer"
                                     multiple
                                     value={changeData.ceramic_drawer}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     helperText="Please select your Ceramic Tiles."
                                   >
                                     {catalog.ceramic_drawer.map(
@@ -9149,7 +9230,7 @@ const SideForm = () => {
                                   </TextField>
                                   <TextField
                                     value={changeData.ceramic_drawer_qty}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     size={"small"}
                                     fullWidth
                                     label="Ceramic Drawer Quantity"
@@ -9164,7 +9245,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_tiles_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_tiles_included"
                                   />
                                 }
@@ -9183,7 +9264,7 @@ const SideForm = () => {
                                   label="Ceramic Tiles"
                                   multiple
                                   value={changeData.ceramic_tiles}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Ceramic Tiles."
                                 >
                                   {catalog.ceramic_tiles.map(
@@ -9203,7 +9284,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.ceramic_tiles_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Ceramic Tiles Quantity"
@@ -9274,7 +9355,7 @@ const SideForm = () => {
                               label="Back Style"
                               multiple
                               value={changeData.back_style || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Back Style."
                             >
                               {backStyleCatalog.map((option) => (
@@ -9298,7 +9379,7 @@ const SideForm = () => {
                               label="Weight Capacity"
                               multiple
                               value={changeData.weight_capacity}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Weight Capacity."
                             >
                               {weightCapCatalog.map((option) => (
@@ -9320,7 +9401,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.drawer || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="drawer"
                               >
                                 <FormControlLabel
@@ -9350,7 +9431,7 @@ const SideForm = () => {
                                 name="drawer_count"
                                 label="Drawer Count"
                                 value={changeData.drawer_count}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <FormControl>
@@ -9362,7 +9443,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="joints"
                                 value={changeData.joints}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="single"
@@ -9436,7 +9517,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -9446,7 +9527,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -9468,7 +9549,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -9485,7 +9566,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="polish_time"
                               value={changeData.polish_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your polish time"
                             />
                             <Typography component={"span"} variant="Caption">
@@ -9502,7 +9583,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="manufacturing_time"
                               value={changeData.manufacturing_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your manufacturing time"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -9513,7 +9594,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -9546,7 +9627,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -9559,7 +9640,7 @@ const SideForm = () => {
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -9588,7 +9669,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -9608,7 +9689,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <Box sx={{ display: "flex", mb: 1 }}>
@@ -9621,7 +9702,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="quantity"
                                 value={changeData.quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -9632,7 +9713,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -9707,7 +9788,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -9720,7 +9801,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -9733,7 +9814,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -9755,7 +9836,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -9851,7 +9932,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -9950,7 +10031,7 @@ const SideForm = () => {
                               name="CVW"
                               label="CVW Number"
                               value={changeData.CVW || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -9969,7 +10050,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="wood_weight"
                               value={changeData.wood_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -9988,7 +10069,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="metal_weight"
                               value={changeData.metal_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10007,7 +10088,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_weight"
                               value={changeData.package_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10018,8 +10099,7 @@ const SideForm = () => {
                               name="tax_rate"
                               label="Tax Rate"
                               value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
+                              onChange={handleProductFields}
                               helperText="Please select your tax rate."
                               InputProps={{
                                 startAdornment: (
@@ -10048,7 +10128,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="silver"
                               >
                                 <FormControlLabel
@@ -10081,7 +10161,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="silver_weight"
                                 value={changeData.silver_weight}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <TextField
@@ -10093,7 +10173,7 @@ const SideForm = () => {
                               label="Hinge"
                               multiple
                               value={changeData.hinge}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
@@ -10117,7 +10197,7 @@ const SideForm = () => {
                                 size={"small"}
                                 helperText="Enter the number of hinges pieces ."
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Hinge Quantity"
                                 type="number"
                                 name="hinge_qty"
@@ -10132,7 +10212,7 @@ const SideForm = () => {
                               label="Knob"
                               multiple
                               value={changeData.knob}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your knob."
                             >
                               {console.log(catalog)}
@@ -10157,7 +10237,7 @@ const SideForm = () => {
                                 fullWidth
                                 helperText="Enter the number of knob pieces ."
                                 value={changeData.knob_qty}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Knob Quantity"
                                 type="number"
                                 name="knob_qty"
@@ -10172,7 +10252,7 @@ const SideForm = () => {
                               label="Door"
                               multiple
                               value={changeData.door}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
@@ -10196,7 +10276,7 @@ const SideForm = () => {
                                 helperText="Enter the number of doors."
                                 size={"small"}
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Door Quantity"
                                 type="number"
                                 name="door_qty"
@@ -10211,7 +10291,7 @@ const SideForm = () => {
                               label="Handle"
                               multiple
                               value={changeData.handle}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
@@ -10233,7 +10313,7 @@ const SideForm = () => {
                               <TextField
                                 value={changeData.handle_qty}
                                 helperText="Enter the number of handles."
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 size={"small"}
                                 fullWidth
                                 label="Handle Quantity"
@@ -10250,7 +10330,7 @@ const SideForm = () => {
                               name="fitting"
                               multiple
                               value={changeData.fitting}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
@@ -10276,7 +10356,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -10308,7 +10388,7 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   value={changeData.mirror_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mirror_length"
                                 />
 
@@ -10329,7 +10409,7 @@ const SideForm = () => {
                                   variant="outlined"
                                   name="mirror_width"
                                   value={changeData.mirror_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -10350,7 +10430,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_length"
                               value={changeData.top_size_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10369,7 +10449,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_breadth"
                               value={changeData.top_size_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10387,7 +10467,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               value={changeData.dial_size}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               name="dial_size"
                             />
                             <FormControl>
@@ -10398,7 +10478,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -10423,7 +10503,7 @@ const SideForm = () => {
                                   label="Wheel"
                                   multiple
                                   value={changeData.wheel}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your wheel."
                                 >
                                   {catalog.wheel.map(
@@ -10443,7 +10523,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.wheel_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Wheel Quantity"
@@ -10461,7 +10541,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -10486,7 +10566,7 @@ const SideForm = () => {
                                   label="Trolly Material"
                                   multiple
                                   value={changeData.trolley_material}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Trolly Material "
                                 >
                                   {trollyMaterial.map((option) => (
@@ -10517,7 +10597,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_width"
                               value={changeData.seating_size_width}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10536,7 +10616,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_depth"
                               value={changeData.seating_size_depth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10555,7 +10635,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_height"
                               value={changeData.seating_size_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             {/* 
                           <FormControl>
@@ -10567,7 +10647,7 @@ const SideForm = () => {
 
                               aria-labelledby="demo-radio-buttons-group-label"
                               value={changeData.textile || "no"}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               name="textile"
                             >
                               <FormControlLabel
@@ -10593,7 +10673,7 @@ const SideForm = () => {
                               name="textile_type"
                               label="Textile"
                               value={changeData.textile_type}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               multiple
                               helperText="Please select your textile."
                             >
@@ -10619,7 +10699,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="plywood"
                               >
                                 <FormControlLabel
@@ -10641,7 +10721,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="mattress"
                               >
                                 <FormControlLabel
@@ -10666,7 +10746,7 @@ const SideForm = () => {
                                   name="mattress_length"
                                   label="Mattress Length"
                                   value={changeData.mattress_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -10676,7 +10756,7 @@ const SideForm = () => {
                                   name="mattress_breadth"
                                   label="Mattress Breadth"
                                   value={changeData.mattress_breadth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -10687,7 +10767,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="cradle_bed"
                               >
                                 <FormControlLabel
@@ -10712,7 +10792,7 @@ const SideForm = () => {
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
                                   value={changeData.cradle_bed_height}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -10722,7 +10802,7 @@ const SideForm = () => {
                                   name="cradle_bed_width"
                                   label="Cradle Bed Width"
                                   value={changeData.cradle_bed_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -10732,7 +10812,7 @@ const SideForm = () => {
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -10748,7 +10828,7 @@ const SideForm = () => {
                                 // }}
 
                                 value={changeData.upholstery || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="upholstery"
                               >
                                 <FormControlLabel
@@ -10774,7 +10854,7 @@ const SideForm = () => {
                                   label="Fabric"
                                   multiple
                                   value={changeData.fabric}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
@@ -10795,7 +10875,7 @@ const SideForm = () => {
 
                                 <TextField
                                   value={changeData.fabric_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Fabric Quantity"
@@ -10816,7 +10896,7 @@ const SideForm = () => {
                               size="small"
                               name="amazon_url"
                               label="Amazon"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.amazon_url || ""}
                               placeholder="https://example.com"
                               pattern="https://.*"
@@ -10829,7 +10909,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="flipkart_url"
                               label="Flipkart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.flipkart_url || ""}
                             />
                             <TextField
@@ -10840,7 +10920,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="jiomart_url"
                               label="Jio Mart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.jiomart_url || ""}
                             />
                             <Box className="stepAction">
@@ -10953,7 +11033,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="ACIN"
                               value={changeData.ACIN}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -10971,14 +11051,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="category_name"
                               label="Category"
                               value={changeData.category_name || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -11006,7 +11086,7 @@ const SideForm = () => {
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -11036,7 +11116,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -11056,7 +11136,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -11066,7 +11146,7 @@ const SideForm = () => {
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
-                                handleProductFelids(e);
+                                handleProductFields(e);
                               }}
                               label="Discount Limit"
                               type="number"
@@ -11106,7 +11186,7 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
                             />
@@ -11118,7 +11198,7 @@ const SideForm = () => {
                               label="Length"
                               type="number"
                               value={changeData.length_main}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -11147,7 +11227,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="breadth"
                               value={changeData.breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -11167,7 +11247,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="height"
                               value={changeData.height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -11178,7 +11258,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.primary_material || []}
                               name="primary_material"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -11209,7 +11289,7 @@ const SideForm = () => {
                               label="Range"
                               multiple
                               value={changeData.range || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select the range."
                             >
                               {rangeCatalog.map((option) => (
@@ -11232,7 +11312,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.polish || []}
                               name="polish"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                               // MenuProps={MenuProps}
                             >
@@ -11263,7 +11343,7 @@ const SideForm = () => {
                               name="polish"
                               label="Polish"
                               value={changeData.polish || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               multiple
                               helperText="Please select your Polish."
                             >
@@ -11290,7 +11370,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="assembly_required"
                                 value={changeData.assembly_required || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="shipping"
@@ -11334,7 +11414,7 @@ const SideForm = () => {
                                       ? changeData.assembly_part
                                       : 0
                                   }
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -11350,7 +11430,7 @@ const SideForm = () => {
                                   name="legs"
                                   label="Table Legs"
                                   value={changeData.legs || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your leg "
                                 >
@@ -11376,7 +11456,7 @@ const SideForm = () => {
                                   name="assembly_level"
                                   label="Assembly Level"
                                   value={changeData.assembly_level || ""}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   multiple
                                   helperText="Please select your assembly level "
                                 >
@@ -11401,7 +11481,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.mobile_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mobile_store"
                                   helperText="Check it if want it on mobile."
                                 />
@@ -11412,7 +11492,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.online_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
@@ -11423,7 +11503,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.continue_selling}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="continue_selling"
                                   helperText="Check it if want it to sell when out of Inventory."
                                 />
@@ -11448,7 +11528,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               name="MRP"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.MRP}
                             /> */}
                           </Box>
@@ -11590,7 +11670,7 @@ const SideForm = () => {
                               label="Feature Image"
                               value={changeData.featured_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Featured Image"
                             >
                               {files.map(
@@ -11648,7 +11728,7 @@ const SideForm = () => {
                               label="Specification Image"
                               value={changeData.specificaiton_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your specification image."
                             >
                               {files.map(
@@ -11706,7 +11786,7 @@ const SideForm = () => {
                               label="Mannequin Image"
                               value={changeData.mannequin_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Mannequin Image."
                             >
                               {files.map(
@@ -11827,7 +11907,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.rotating_seats}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="rotating_seats"
                                   />
                                 }
@@ -11837,7 +11917,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.eatable_oil_polish}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="eatable_oil_polish"
                                   />
                                 }
@@ -11847,7 +11927,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.no_chemical}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="no_chemical"
                                   />
                                 }
@@ -11858,7 +11938,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.weaving}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="weaving"
                                   />
                                 }
@@ -11870,7 +11950,7 @@ const SideForm = () => {
                                     checked={
                                       changeData.not_suitable_for_Micro_Dish
                                     }
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="not_suitable_for_Micro_Dish"
                                   />
                                 }
@@ -11880,7 +11960,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.tilt_top}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="tilt_top"
                                   />
                                 }
@@ -11890,7 +11970,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.inside_compartments}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="inside_compartments"
                                   />
                                 }
@@ -11900,7 +11980,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.stackable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="stackable"
                                   />
                                 }
@@ -11910,7 +11990,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.knife}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="knife"
                                   />
                                 }
@@ -11920,7 +12000,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.wall_hanging}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="wall_hanging"
                                   />
                                 }
@@ -11931,7 +12011,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_drawer_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_drawer_included"
                                   />
                                 }
@@ -11950,7 +12030,7 @@ const SideForm = () => {
                                     label="Ceramic Drawer"
                                     multiple
                                     value={changeData.ceramic_drawer}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     helperText="Please select your Ceramic Tiles."
                                   >
                                     {catalog.ceramic_drawer.map(
@@ -11970,7 +12050,7 @@ const SideForm = () => {
                                   </TextField>
                                   <TextField
                                     value={changeData.ceramic_drawer_qty}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     size={"small"}
                                     fullWidth
                                     label="Ceramic Drawer Quantity"
@@ -11985,7 +12065,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.ceramic_tiles_included}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="ceramic_tiles_included"
                                   />
                                 }
@@ -12004,7 +12084,7 @@ const SideForm = () => {
                                   label="Ceramic Tiles"
                                   multiple
                                   value={changeData.ceramic_tiles}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Ceramic Tiles."
                                 >
                                   {catalog.ceramic_tiles.map(
@@ -12024,7 +12104,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.ceramic_tiles_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Ceramic Tiles Quantity"
@@ -12095,7 +12175,7 @@ const SideForm = () => {
                               label="Back Style"
                               multiple
                               value={changeData.back_style || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Back Style."
                             >
                               {backStyleCatalog.map((option) => (
@@ -12119,7 +12199,7 @@ const SideForm = () => {
                               label="Weight Capacity"
                               multiple
                               value={changeData.weight_capacity}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Weight Capacity."
                             >
                               {weightCapCatalog.map((option) => (
@@ -12141,7 +12221,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.drawer || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="drawer"
                               >
                                 <FormControlLabel
@@ -12171,7 +12251,7 @@ const SideForm = () => {
                                 name="drawer_count"
                                 label="Drawer Count"
                                 value={changeData.drawer_count}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <FormControl>
@@ -12183,7 +12263,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="joints"
                                 value={changeData.joints}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="single"
@@ -12257,7 +12337,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -12267,7 +12347,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -12289,7 +12369,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -12306,7 +12386,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="polish_time"
                               value={changeData.polish_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your polish time"
                             />
                             <Typography component={"span"} variant="Caption">
@@ -12323,7 +12403,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="manufacturing_time"
                               value={changeData.manufacturing_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your manufacturing time"
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -12334,7 +12414,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -12367,7 +12447,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -12380,7 +12460,7 @@ const SideForm = () => {
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -12409,7 +12489,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -12429,7 +12509,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <Box sx={{ display: "flex", mb: 1 }}>
@@ -12442,7 +12522,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="quantity"
                                 value={changeData.quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -12453,7 +12533,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -12528,7 +12608,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12541,7 +12621,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12554,7 +12634,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -12576,7 +12656,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -12672,7 +12752,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -12771,7 +12851,7 @@ const SideForm = () => {
                               name="CVW"
                               label="CVW Number"
                               value={changeData.CVW || ""}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12790,7 +12870,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="wood_weight"
                               value={changeData.wood_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12809,7 +12889,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="metal_weight"
                               value={changeData.metal_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12828,7 +12908,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_weight"
                               value={changeData.package_weight}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -12839,8 +12919,7 @@ const SideForm = () => {
                               name="tax_rate"
                               label="Tax Rate"
                               value={changeData.tax_rate}
-                              onChange={handleProductFelids}
-                              multiple
+                              onChange={handleProductFields}
                               helperText="Please select your tax rate."
                               InputProps={{
                                 startAdornment: (
@@ -12869,7 +12948,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.silver || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="silver"
                               >
                                 <FormControlLabel
@@ -12902,7 +12981,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="silver_weight"
                                 value={changeData.silver_weight}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
                             )}
                             <TextField
@@ -12914,7 +12993,7 @@ const SideForm = () => {
                               label="Hinge"
                               multiple
                               value={changeData.hinge}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your hinge."
                             >
                               {catalog.hinge.map(
@@ -12938,7 +13017,7 @@ const SideForm = () => {
                                 size={"small"}
                                 helperText="Enter the number of hinges pieces ."
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Hinge Quantity"
                                 type="number"
                                 name="hinge_qty"
@@ -12953,7 +13032,7 @@ const SideForm = () => {
                               label="Knob"
                               multiple
                               value={changeData.knob}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your knob."
                             >
                               {console.log(catalog)}
@@ -12978,7 +13057,7 @@ const SideForm = () => {
                                 fullWidth
                                 helperText="Enter the number of knob pieces ."
                                 value={changeData.knob_qty}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Knob Quantity"
                                 type="number"
                                 name="knob_qty"
@@ -12993,7 +13072,7 @@ const SideForm = () => {
                               label="Door"
                               multiple
                               value={changeData.door}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your door."
                             >
                               {catalog.door.map(
@@ -13017,7 +13096,7 @@ const SideForm = () => {
                                 helperText="Enter the number of doors."
                                 size={"small"}
                                 fullWidth
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 label="Door Quantity"
                                 type="number"
                                 name="door_qty"
@@ -13032,7 +13111,7 @@ const SideForm = () => {
                               label="Handle"
                               multiple
                               value={changeData.handle}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your handle."
                             >
                               {catalog.handle.map(
@@ -13054,7 +13133,7 @@ const SideForm = () => {
                               <TextField
                                 value={changeData.handle_qty}
                                 helperText="Enter the number of handles."
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 size={"small"}
                                 fullWidth
                                 label="Handle Quantity"
@@ -13071,7 +13150,7 @@ const SideForm = () => {
                               name="fitting"
                               multiple
                               value={changeData.fitting}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your fitting."
                             >
                               {catalog.fitting.map(
@@ -13097,7 +13176,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="mirror"
                                 value={changeData.mirror || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -13129,7 +13208,7 @@ const SideForm = () => {
                                   }}
                                   variant="outlined"
                                   value={changeData.mirror_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mirror_length"
                                 />
 
@@ -13150,7 +13229,7 @@ const SideForm = () => {
                                   variant="outlined"
                                   name="mirror_width"
                                   value={changeData.mirror_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -13171,7 +13250,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_length"
                               value={changeData.top_size_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13190,7 +13269,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="top_size_breadth"
                               value={changeData.top_size_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13208,7 +13287,7 @@ const SideForm = () => {
                               }}
                               variant="outlined"
                               value={changeData.dial_size}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               name="dial_size"
                             />
                             <FormControl>
@@ -13219,7 +13298,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="wheel_included"
                                 value={changeData.wheel_included || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -13244,7 +13323,7 @@ const SideForm = () => {
                                   label="Wheel"
                                   multiple
                                   value={changeData.wheel}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your wheel."
                                 >
                                   {catalog.wheel.map(
@@ -13264,7 +13343,7 @@ const SideForm = () => {
                                 </TextField>
                                 <TextField
                                   value={changeData.wheel_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Wheel Quantity"
@@ -13282,7 +13361,7 @@ const SideForm = () => {
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 name="trolley"
                                 value={changeData.trolley || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 <FormControlLabel
                                   value="yes"
@@ -13307,7 +13386,7 @@ const SideForm = () => {
                                   label="Trolly Material"
                                   multiple
                                   value={changeData.trolley_material}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your Trolly Material "
                                 >
                                   {trollyMaterial.map((option) => (
@@ -13338,7 +13417,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_width"
                               value={changeData.seating_size_width}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13357,7 +13436,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_depth"
                               value={changeData.seating_size_depth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13376,7 +13455,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seating_size_height"
                               value={changeData.seating_size_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             {/* 
                           <FormControl>
@@ -13388,7 +13467,7 @@ const SideForm = () => {
 
                               aria-labelledby="demo-radio-buttons-group-label"
                               value={changeData.textile || "no"}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               name="textile"
                             >
                               <FormControlLabel
@@ -13414,7 +13493,7 @@ const SideForm = () => {
                               name="textile_type"
                               label="Textile"
                               value={changeData.textile_type}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               multiple
                               helperText="Please select your textile."
                             >
@@ -13440,7 +13519,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.plywood || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="plywood"
                               >
                                 <FormControlLabel
@@ -13462,7 +13541,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.mattress || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="mattress"
                               >
                                 <FormControlLabel
@@ -13487,7 +13566,7 @@ const SideForm = () => {
                                   name="mattress_length"
                                   label="Mattress Length"
                                   value={changeData.mattress_length}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -13497,7 +13576,7 @@ const SideForm = () => {
                                   name="mattress_breadth"
                                   label="Mattress Breadth"
                                   value={changeData.mattress_breadth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -13508,7 +13587,7 @@ const SideForm = () => {
                               <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 value={changeData.cradle_bed || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="cradle_bed"
                               >
                                 <FormControlLabel
@@ -13533,7 +13612,7 @@ const SideForm = () => {
                                   name="cradle_bed_height"
                                   label="Cradle Bed Height"
                                   value={changeData.cradle_bed_height}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -13543,7 +13622,7 @@ const SideForm = () => {
                                   name="cradle_bed_width"
                                   label="Cradle Bed Width"
                                   value={changeData.cradle_bed_width}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                                 <TextField
                                   size="small"
@@ -13553,7 +13632,7 @@ const SideForm = () => {
                                   name="cradle_bed_depth"
                                   label="Cradle Bed Depth"
                                   value={changeData.cradle_bed_depth}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                 />
                               </>
                             )}
@@ -13569,7 +13648,7 @@ const SideForm = () => {
                                 // }}
 
                                 value={changeData.upholstery || "no"}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                                 name="upholstery"
                               >
                                 <FormControlLabel
@@ -13595,7 +13674,7 @@ const SideForm = () => {
                                   label="Fabric"
                                   multiple
                                   value={changeData.fabric}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your fabric."
                                 >
                                   {catalog.fabric.map(
@@ -13616,7 +13695,7 @@ const SideForm = () => {
 
                                 <TextField
                                   value={changeData.fabric_qty}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   size={"small"}
                                   fullWidth
                                   label="Fabric Quantity"
@@ -13637,7 +13716,7 @@ const SideForm = () => {
                               size="small"
                               name="amazon_url"
                               label="Amazon"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.amazon_url}
                               placeholder="https://example.com"
                               pattern="https://.*"
@@ -13650,7 +13729,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="flipkart_url"
                               label="Flipkart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.flipkart_url}
                             />
                             <TextField
@@ -13661,7 +13740,7 @@ const SideForm = () => {
                               pattern="https://.*"
                               name="jiomart_url"
                               label="Jio Mart"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData.jiomart_url}
                             />
                             <Box className="stepAction">
@@ -13831,7 +13910,7 @@ const SideForm = () => {
                                         ),
                                       }}
                                       placeholder={item}
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       value={changeData[item] || 0}
                                     />
                                   ))}
@@ -13841,14 +13920,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="category_name"
                               label="Category"
                               value={changeData.category_name}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -13876,7 +13955,7 @@ const SideForm = () => {
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -13906,7 +13985,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13926,7 +14005,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -13936,7 +14015,7 @@ const SideForm = () => {
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
-                                handleProductFelids(e);
+                                handleProductFields(e);
                               }}
                               label="Discount Limit"
                               type="number"
@@ -13976,7 +14055,7 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
                             />
@@ -13987,7 +14066,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.mobile_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mobile_store"
                                   helperText="Check it if want it on mobile."
                                 />
@@ -13998,7 +14077,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.online_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
@@ -14009,7 +14088,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.continue_selling}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="continue_selling"
                                   helperText="Check it if want it to sell when out of Inventory."
                                 />
@@ -14120,7 +14199,7 @@ const SideForm = () => {
                               label="Feature Image"
                               value={changeData.featured_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Featured Image"
                             >
                               {files.map(
@@ -14159,7 +14238,7 @@ const SideForm = () => {
                               label="Specification Image"
                               value={changeData.specificaiton_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your specification image."
                             >
                               {files.map(
@@ -14198,7 +14277,7 @@ const SideForm = () => {
                               label="Mannequin Image"
                               value={changeData.mannequin_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Mannequin Image."
                             >
                               {files.map(
@@ -14286,7 +14365,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -14296,7 +14375,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -14318,7 +14397,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -14335,7 +14414,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="polish_time"
                               value={changeData.polish_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your polish time"
                             />
                             <Typography component={"span"} variant="Caption">
@@ -14352,7 +14431,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="manufacturing_time"
                               value={changeData.manufacturing_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your manufacturing time"
                             />
                             {/* <InputLabel id="demo-multiple-checkbox-label">
@@ -14363,7 +14442,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -14396,7 +14475,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -14409,7 +14488,7 @@ const SideForm = () => {
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -14438,7 +14517,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -14458,7 +14537,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                           </Box>
@@ -14524,7 +14603,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -14537,7 +14616,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -14550,7 +14629,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -14572,7 +14651,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -14668,7 +14747,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -14848,7 +14927,7 @@ const SideForm = () => {
                                         ),
                                       }}
                                       placeholder={item}
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       value={changeData[item] || 0}
                                     />
                                   ))}
@@ -14858,14 +14937,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="category_name"
                               label="Category"
                               value={changeData.category_name}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -14893,7 +14972,7 @@ const SideForm = () => {
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -14923,7 +15002,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="product_title"
                               value={changeData.product_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -14943,7 +15022,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -14953,7 +15032,7 @@ const SideForm = () => {
                               id="fullWidth"
                               onChange={(e) => {
                                 handleDiscount(e);
-                                handleProductFelids(e);
+                                handleProductFields(e);
                               }}
                               label="Discount Limit"
                               type="number"
@@ -14993,7 +15072,7 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
                             />
@@ -15004,7 +15083,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.mobile_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="mobile_store"
                                   helperText="Check it if want it on mobile."
                                 />
@@ -15015,7 +15094,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.online_store}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="online_store"
                                   helperText="Check it if want it on online store."
                                 />
@@ -15026,7 +15105,7 @@ const SideForm = () => {
                               control={
                                 <Checkbox
                                   checked={changeData.continue_selling}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="continue_selling"
                                   helperText="Check it if want it to sell when out of Inventory."
                                 />
@@ -15172,7 +15251,7 @@ const SideForm = () => {
                               label="Feature Image"
                               value={changeData.featured_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Featured Image"
                             >
                               {files.map(
@@ -15230,7 +15309,7 @@ const SideForm = () => {
                               label="Specification Image"
                               value={changeData.specificaiton_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your specification image."
                             >
                               {files.map(
@@ -15288,7 +15367,7 @@ const SideForm = () => {
                               label="Mannequin Image"
                               value={changeData.mannequin_image}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Mannequin Image."
                             >
                               {files.map(
@@ -15412,7 +15491,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -15422,7 +15501,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -15444,7 +15523,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -15461,7 +15540,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="polish_time"
                               value={changeData.polish_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your polish time"
                             />
                             <Typography component={"span"} variant="Caption">
@@ -15478,7 +15557,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="manufacturing_time"
                               value={changeData.manufacturing_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your manufacturing time"
                             />
                             {/* <InputLabel id="demo-multiple-checkbox-label">
@@ -15489,7 +15568,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -15522,7 +15601,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -15535,7 +15614,7 @@ const SideForm = () => {
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -15564,7 +15643,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -15584,7 +15663,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                           </Box>
@@ -15650,7 +15729,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -15663,7 +15742,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -15676,7 +15755,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -15698,7 +15777,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -15794,7 +15873,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -15893,7 +15972,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_title"
                       value={changeData.seo_title}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -15907,7 +15986,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_description"
                       value={changeData.seo_description}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -15921,7 +16000,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_keyword"
                       value={changeData.seo_keyword}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     {/* product description  */}
@@ -15934,7 +16013,7 @@ const SideForm = () => {
                       minRows={5}
                       id="outlined-select"
                       name="product_description"
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       defaultValue={changeData.product_description}
                       type="text"
                       helperText="Please enter your product description"
@@ -16017,7 +16096,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_title"
                       value={changeData.seo_title}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -16031,7 +16110,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_description"
                       value={changeData.seo_description}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -16045,7 +16124,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_keyword"
                       value={changeData.seo_keyword}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     {/* product description  */}
@@ -16058,7 +16137,7 @@ const SideForm = () => {
                       minRows={5}
                       id="outlined-select"
                       name="product_description"
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       defaultValue={changeData.product_description}
                       type="text"
                       helperText="Please enter your product description"
@@ -16162,7 +16241,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={
                                 changeData[item] < 100 && changeData[item]
                                   ? changeData[item]
@@ -16245,6 +16324,13 @@ const SideForm = () => {
 
                     <FormGroup>
                       <FormControlLabel
+                        control={<Checkbox name="customizations" />}
+                        label="Weather they accept customizations."
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <FormControlLabel
                         control={<Checkbox name="primaryMaterial_status" />}
                         label="Status (On/Off)"
                       />
@@ -16318,6 +16404,19 @@ const SideForm = () => {
                       type="text"
                       helperText="Please enter your primary material description"
                     />
+
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.customizations}
+                            name="customizations"
+                            onChange={handleProductFields}
+                          />
+                        }
+                        label="Weather they accept customizations."
+                      />
+                    </FormGroup>
 
                     <Button
                       color="primary"
@@ -17004,7 +17103,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_title"
                       value={changeData.seo_title}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -17018,7 +17117,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_description"
                       value={changeData.seo_description}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -17032,7 +17131,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_keyword"
                       value={changeData.seo_keyword}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     {/* product description  */}
@@ -17045,7 +17144,7 @@ const SideForm = () => {
                       minRows={5}
                       id="outlined-select"
                       name="product_description"
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       defaultValue={changeData.product_description}
                       type="text"
                       helperText="Please enter your product description"
@@ -17139,7 +17238,7 @@ const SideForm = () => {
                       name="sub_category_name"
                       label="Sub Category"
                       value={changeData.sub_category_name || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       type="text"
                       helperText="Please enter your sub category"
                     />
@@ -17155,7 +17254,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_title"
                       value={changeData.seo_title}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -17169,7 +17268,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_description"
                       value={changeData.seo_description}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     <TextField
@@ -17183,7 +17282,7 @@ const SideForm = () => {
                       variant="outlined"
                       name="seo_keyword"
                       value={changeData.seo_keyword}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                     />
 
                     {/* product description  */}
@@ -17196,7 +17295,7 @@ const SideForm = () => {
                       minRows={5}
                       id="outlined-select"
                       name="product_description"
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       defaultValue={changeData.product_description}
                       type="text"
                       helperText="Please enter your product description"
@@ -17455,6 +17554,19 @@ const SideForm = () => {
                       </Grid>
                     </Grid>
 
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.marketing}
+                            onChange={handleProductFields}
+                            name="marketing"
+                          />
+                        }
+                        label="Marketing"
+                      />
+                    </FormGroup>
+
                     <Button
                       color="primary"
                       type="submit"
@@ -17506,7 +17618,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       value={changeData.username}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="username"
                       label="Customer Name"
@@ -17517,7 +17629,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       value={changeData.email}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="email"
                       label="Customer Email"
@@ -17527,7 +17639,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       value={changeData.mobile}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="mobile"
                       label="Contact Number"
@@ -17536,7 +17648,7 @@ const SideForm = () => {
                     {/*  <TextField sx = {{mb : 2}} size="small"
                       fullWidth
                       value={changeData.pincode}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="pincode"
                       label="Pin-Code"
@@ -17546,7 +17658,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       value={changeData.city}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="city"
                       label="City"
@@ -17556,7 +17668,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       value={changeData.state}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="state"
                       label="state"
@@ -17565,7 +17677,7 @@ const SideForm = () => {
                     {/*  <TextField sx = {{mb : 2}} size="small"
                       fullWidth
                       value={changeData.landmark}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="landmark"
                       label="Landmark"
@@ -17581,7 +17693,7 @@ const SideForm = () => {
                       fullWidth
                       minRows={5}
                       value={changeData.shipping || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       id="outlined-select"
                       name="shipping"
                       type="text"
@@ -17649,7 +17761,7 @@ const SideForm = () => {
                       fullWidth
                       value={changeData.product_array}
                       name="product_array"
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       renderValue={(selected) => selected.join(", ")}
                     >
                       {SKUCatalog.map((option) => (
@@ -17670,7 +17782,7 @@ const SideForm = () => {
                         fullWidth
                         // required
                         id="outlined-select"
-                        onChange={handleProductFelids}
+                        onChange={handleProductFields}
                         value={changeData.searchCustomer || ""}
                         name="searchCustomer"
                         // onChange = {loadList}
@@ -17901,12 +18013,12 @@ const SideForm = () => {
                               variant="outlined"
                               name="title"
                               value={changeData.title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               disabled
@@ -17914,7 +18026,7 @@ const SideForm = () => {
                               label="Category"
                               value={changeData.category_name || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -17934,15 +18046,15 @@ const SideForm = () => {
                             </TextField>
                             <TextField
                               size="small"
-                              fullWidth
-                              // required
+                              // fullWidth
+                              required
                               id="outlined-select"
                               select
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -17961,6 +18073,36 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Material
+                            </InputLabel>
+                            <Select
+                              multiple
+                              fullWidth
+                              value={changeData.primary_material}
+                              name="primary_material"
+                              onChange={handleProductFields}
+                              renderValue={(selected) => selected.join(", ")}
+                              // MenuProps={MenuProps}
+                            >
+                              {materialCatalog.map((option) => (
+                                <MenuItem
+                                  key={option._id}
+                                  value={option.primaryMaterial_name}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.primary_material.indexOf(
+                                        option.primaryMaterial_name
+                                      ) > -1
+                                    }
+                                  />
+                                  <ListItemText
+                                    primary={option.primaryMaterial_name}
+                                  />
+                                </MenuItem>
+                              ))}
+                            </Select>
                             <TextField
                               size="small"
                               fullWidth
@@ -17979,7 +18121,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -18006,20 +18148,62 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              // autoComplete={false}
+                              id="fullWidth"
+                              onChange={(e) => {
+                                handleDiscount(e);
+                                handleProductFields(e);
+                              }}
+                              label="Discount Limit"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="discount_limit"
+                              value={changeData.discount_limit}
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.online_store}
+                                  onChange={handleProductFields}
+                                  name="online_store"
+                                />
+                              }
+                              label="Oline Store"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.mobile_store}
+                                  onChange={handleProductFields}
+                                  name="mobile_store"
+                                />
+                              }
+                              label="Mobile Store"
                             />
                             <FormControlLabel
                               control={
                                 <Checkbox
                                   checked={changeData.status}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="status"
-                                  helperText="Check it if want it on mobile."
                                 />
                               }
-                              label="Show On Website"
+                              label="Status"
                             />
                           </Box>
                           <Box className="stepAction">
@@ -18050,7 +18234,7 @@ const SideForm = () => {
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(1)}
                         >
-                          Features
+                          Images
                         </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
@@ -18067,7 +18251,7 @@ const SideForm = () => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 6}
+                                disabled={activeStep === 4}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -18075,11 +18259,142 @@ const SideForm = () => {
                             </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
-                              Hardware Images
+                              Product Images
                             </FormLabel>
                             <ProductsPreviews
-                              text={"Please Drag and Drop the hardware images"}
+                              text={
+                                "Make Sure the picture ratio should be in 1:1."
+                              }
                             ></ProductsPreviews>
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {/* // featured images */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="featured_image"
+                              label="Feature Image"
+                              value={changeData.featured_image}
+                              multiple
+                              onChange={handleProductFields}
+                              helperText="Please select your Featured Image"
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // specification images */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="specificaiton_image"
+                              label="Specification Image"
+                              value={changeData.specificaiton_image}
+                              multiple
+                              onChange={handleProductFields}
+                              helperText="Please select your specification image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* 
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Featured Images
+                          </FormLabel>
+                          <FeaturesPreviews
+                            text={"Please Drag and Drop featured images"}
+                          ></FeaturesPreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Specification Images
+                          </FormLabel>
+                          <ImagePreviews
+                            text={"Please Drag and Drop specification images"}
+                          ></ImagePreviews>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Mannequin Images
+                          </FormLabel>
+                          <MannequinPreviews
+                            text={"Please Drag and Drop mannequin images"}
+                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -18093,7 +18408,7 @@ const SideForm = () => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 6}
+                              disabled={activeStep === 4}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -18140,7 +18455,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -18150,7 +18465,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -18172,7 +18487,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -18189,7 +18504,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="restocking_time"
                               value={changeData.restocking_time}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your restocking time."
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -18200,7 +18515,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -18233,7 +18548,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -18243,10 +18558,29 @@ const SideForm = () => {
                               fullWidth
                               // autoComplete={false}
                               id="fullWidth"
+                              label="Packaging Weight"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Kg
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_weight"
+                              value={changeData.package_weight}
+                              onChange={handleProductFields}
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -18275,7 +18609,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -18295,7 +18629,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <Box sx={{ display: "flex", mb: 1 }}>
@@ -18308,7 +18642,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="quantity"
                                 value={changeData.quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -18319,7 +18653,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -18341,7 +18675,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="min_quantity"
                                 value={changeData.min_quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -18352,7 +18686,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -18369,7 +18703,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.continue_selling}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="continue_selling"
                                   />
                                 }
@@ -18422,7 +18756,7 @@ const SideForm = () => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 3}
+                                disabled={activeStep === 4}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -18439,7 +18773,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -18452,7 +18786,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -18465,7 +18799,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -18487,7 +18821,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -18583,7 +18917,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -18635,7 +18969,7 @@ const SideForm = () => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 3}
+                              disabled={activeStep === 4}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -18646,7 +18980,7 @@ const SideForm = () => {
                       {/* SEO End */}
 
                       {/* Extra details */}
-                      {/* <Step>
+                      <Step>
                         <StepLabel
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(4)}
@@ -18674,7 +19008,7 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-                            <TextField
+                            {/* <TextField
                               size="small"
                               fullWidth
                               // required
@@ -18684,7 +19018,7 @@ const SideForm = () => {
                               label="Hardware Polish"
                               value={changeData.hardware_polish || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Hardware Polish"
                             >
                               {catalog.polish.length > 0 &&
@@ -18696,6 +19030,57 @@ const SideForm = () => {
                                     {option.polish_name}
                                   </MenuItem>
                                 ))}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField> */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Wood Weight"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Kg
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="weight"
+                              value={changeData.weight}
+                              onChange={handleProductFields}
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="tax_rate"
+                              label="Tax Rate"
+                              value={changeData.tax_rate}
+                              type
+                              onChange={handleProductFields}
+                              helperText="Please select your tax rate."
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                            >
+                              {taxRateCatalog.map((option) => (
+                                <MenuItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -18720,7 +19105,7 @@ const SideForm = () => {
                             </Button>
                           </Box>
                         </StepContent>
-                      </Step> */}
+                      </Step>
                       {/* Extra details */}
                     </Stepper>
 
@@ -18821,12 +19206,12 @@ const SideForm = () => {
                               variant="outlined"
                               name="title"
                               value={changeData.title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               disabled
@@ -18834,7 +19219,7 @@ const SideForm = () => {
                               label="Category"
                               value={changeData.category_name || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your category"
                             >
                               {category.map(
@@ -18855,14 +19240,14 @@ const SideForm = () => {
                             <TextField
                               size="small"
                               fullWidth
-                              // required
+                              required
                               id="outlined-select"
                               select
                               name="sub_category_name"
                               label="Sub Category"
                               multiple
                               value={changeData.sub_category_name}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your sub category"
                             >
                               {subCategory.map(
@@ -18881,6 +19266,36 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
+                            <InputLabel id="demo-multiple-checkbox-label">
+                              Material
+                            </InputLabel>
+                            <Select
+                              multiple
+                              fullWidth
+                              value={changeData.primary_material || []}
+                              name="primary_material"
+                              onChange={handleProductFields}
+                              renderValue={(selected) => selected.join(", ")}
+                              // MenuProps={MenuProps}
+                            >
+                              {materialCatalog.map((option) => (
+                                <MenuItem
+                                  key={option._id}
+                                  value={option.primaryMaterial_name}
+                                >
+                                  <Checkbox
+                                    checked={
+                                      changeData.primary_material.indexOf(
+                                        option.primaryMaterial_name
+                                      ) > -1
+                                    }
+                                  />
+                                  <ListItemText
+                                    primary={option.primaryMaterial_name}
+                                  />
+                                </MenuItem>
+                              ))}
+                            </Select>
                             <TextField
                               size="small"
                               fullWidth
@@ -18899,7 +19314,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="showroom_price"
                               value={changeData.showroom_price}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -18926,20 +19341,60 @@ const SideForm = () => {
                                 //   : 0
                                 changeData.selling_price
                               }
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               variant="outlined"
                               name="selling_price"
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              id="fullWidth"
+                              onChange={(e) => {
+                                handleDiscount(e);
+                                handleProductFields(e);
+                              }}
+                              label="Discount Limit"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="discount_limit"
+                              value={changeData.discount_limit}
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.online_store}
+                                  onChange={handleProductFields}
+                                  name="online_store"
+                                />
+                              }
+                              label="Oline Store"
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={changeData.mobile_store}
+                                  onChange={handleProductFields}
+                                  name="mobile_store"
+                                />
+                              }
+                              label="Mobile Store"
                             />
                             <FormControlLabel
                               control={
                                 <Checkbox
                                   checked={changeData.status}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   name="status"
-                                  helperText="Check it if want it on mobile."
                                 />
                               }
-                              label="Show On Website"
+                              label="Status"
                             />
                           </Box>
                           <Box className="stepAction">
@@ -18970,7 +19425,7 @@ const SideForm = () => {
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(1)}
                         >
-                          Features
+                          Images
                         </StepLabel>
                         <StepContent className="stepContent">
                           <Box className="fields">
@@ -18995,11 +19450,196 @@ const SideForm = () => {
                             </Box>
                             {/* <AcceptMaxFiles className="dorpContainer"/> */}
                             <FormLabel id="demo-radio-buttons-group-label">
-                              Hardware Images
+                              Product Images
                             </FormLabel>
                             <ProductsPreviews
-                              text={"Please Drag and Drop the hardware images"}
+                              text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {changeData.savedImages.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                <FormLabel id="demo-radio-buttons-group-label">
+                                  Saved Images
+                                </FormLabel>
+                                {changeData.savedImages.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={2}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = changeData.savedImages;
+                                            temp.splice(index, 1);
+                                            setData({
+                                              ...changeData,
+                                              savedImages: temp,
+                                            });
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={img}
+                                          alt="productImage"
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {/* // featured images */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="featured_image"
+                              label="Feature Image"
+                              value={changeData.featured_image}
+                              multiple
+                              onChange={handleProductFields}
+                              helperText="Please select your Featured Image"
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+                              {/* {console.log(changeData.savedImages)} */}
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
+                            {/* // specification images */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // required
+                              id="outlined-select"
+                              select
+                              name="specification_image"
+                              label="Specification Image"
+                              value={changeData.specificaiton_image}
+                              multiple
+                              onChange={handleProductFields}
+                              helperText="Please select your specification image."
+                            >
+                              {files.map(
+                                (option) =>
+                                  option.validate && (
+                                    <MenuItem key={option} value={option}>
+                                      <Box
+                                        sx={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <img
+                                          style={{ width: "60px" }}
+                                          src={URL.createObjectURL(option)}
+                                          alt={"product"}
+                                        />
+                                        <h6>{option.name}</h6>
+                                      </Box>
+                                    </MenuItem>
+                                  )
+                              )}
+
+                              {changeData.savedImages.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <img
+                                      style={{ width: "60px" }}
+                                      src={option}
+                                      alt={"product"}
+                                    />
+                                    {/* <h6>{option.name}</h6> */}
+                                  </Box>
+                                </MenuItem>
+                              ))}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField>
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -19060,7 +19700,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.COD}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="COD"
                                   />
                                 }
@@ -19070,7 +19710,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.returnable}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="returnable"
                                   />
                                 }
@@ -19092,7 +19732,7 @@ const SideForm = () => {
                                   size="small"
                                   name="returnDays"
                                   value={changeData.returnDays}
-                                  onChange={handleProductFelids}
+                                  onChange={handleProductFields}
                                   helperText="Please select your return days"
                                   valueLabelDisplay="auto"
                                 />
@@ -19109,7 +19749,7 @@ const SideForm = () => {
                               valueLabelDisplay="auto"
                               name="restocking_time"
                               value={changeData.restocking_time || 0}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your restocking time."
                             />
                             <InputLabel id="demo-multiple-checkbox-label">
@@ -19120,7 +19760,7 @@ const SideForm = () => {
                               fullWidth
                               value={changeData.warehouse}
                               name="warehouse"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
                             >
                               {warehouse.map((option) => (
@@ -19153,7 +19793,7 @@ const SideForm = () => {
                                     label={row + " Stock"}
                                     type="number"
                                     value={changeData[stock] || ""}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                   />
                                 </>
                               );
@@ -19163,10 +19803,29 @@ const SideForm = () => {
                               fullWidth
                               // autoComplete={false}
                               id="fullWidth"
+                              label="Packaging Weight"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Kg
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="package_weight"
+                              value={changeData.package_weight}
+                              onChange={handleProductFields}
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
                               label="Package Length"
                               type="number"
                               value={changeData.package_length}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -19195,7 +19854,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_breadth"
                               value={changeData.package_breadth}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From front to back"
                             />
                             <TextField
@@ -19215,7 +19874,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="package_height"
                               value={changeData.package_height}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="From bottom to top"
                             />
                             <Box sx={{ display: "flex", mb: 1 }}>
@@ -19228,7 +19887,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="quantity"
                                 value={changeData.quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -19239,7 +19898,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -19261,7 +19920,7 @@ const SideForm = () => {
                                 variant="outlined"
                                 name="min_quantity"
                                 value={changeData.min_quantity}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               />
 
                               <TextField
@@ -19272,7 +19931,7 @@ const SideForm = () => {
                                 label="Unit"
                                 name="unit"
                                 value={changeData.unit || ""}
-                                onChange={handleProductFelids}
+                                onChange={handleProductFields}
                               >
                                 {unitCatalog.map((option) => (
                                   <MenuItem
@@ -19289,7 +19948,7 @@ const SideForm = () => {
                                 control={
                                   <Checkbox
                                     checked={changeData.continue_selling}
-                                    onChange={handleProductFelids}
+                                    onChange={handleProductFields}
                                     name="continue_selling"
                                   />
                                 }
@@ -19342,7 +20001,7 @@ const SideForm = () => {
                               <Button
                                 variant="contained"
                                 size="small"
-                                disabled={activeStep === 3}
+                                disabled={activeStep === 4}
                                 onClick={handleNextStep}
                               >
                                 Continue
@@ -19359,7 +20018,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_title"
                               value={changeData.seo_title}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -19372,7 +20031,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_description"
                               value={changeData.seo_description}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <TextField
                               size="small"
@@ -19385,7 +20044,7 @@ const SideForm = () => {
                               variant="outlined"
                               name="seo_keyword"
                               value={changeData.seo_keyword}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                             />
                             <FormLabel id="demo-radio-buttons-group-label">
                               Selling Points{" "}
@@ -19407,7 +20066,7 @@ const SideForm = () => {
                                       size={"small"}
                                       type="text"
                                       name="item"
-                                      onChange={handleProductFelids}
+                                      onChange={handleProductFields}
                                       label="Write a point..."
                                     />
                                   </Grid>
@@ -19503,7 +20162,7 @@ const SideForm = () => {
                               minRows={5}
                               id="outlined-select"
                               name="product_description"
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               defaultValue={changeData.product_description}
                               type="text"
                               helperText="Please enter your product description"
@@ -19555,7 +20214,7 @@ const SideForm = () => {
                             <Button
                               variant="contained"
                               size="small"
-                              disabled={activeStep === 3}
+                              disabled={activeStep === 4}
                               onClick={handleNextStep}
                             >
                               Continue
@@ -19566,7 +20225,7 @@ const SideForm = () => {
                       {/* SEO End */}
 
                       {/* Extra details */}
-                      {/* <Step>
+                      <Step>
                         <StepLabel
                           sx={{ cursor: "pointer !important" }}
                           onClick={() => setActiveStep(4)}
@@ -19594,7 +20253,7 @@ const SideForm = () => {
                                 Continue
                               </Button>
                             </Box>
-                            <TextField
+                            {/* <TextField
                               size="small"
                               fullWidth
                               // required
@@ -19604,7 +20263,7 @@ const SideForm = () => {
                               label="Hardware Polish"
                               value={changeData.hardware_polish || ""}
                               multiple
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               helperText="Please select your Hardware Polish"
                             >
                               {catalog.polish.length > 0 &&
@@ -19616,6 +20275,56 @@ const SideForm = () => {
                                     {option.polish_name}
                                   </MenuItem>
                                 ))}
+                              <MenuItem key={"none"} value="None">
+                                {"None"}
+                              </MenuItem>
+                            </TextField> */}
+                            <TextField
+                              size="small"
+                              fullWidth
+                              // autoComplete={false}
+                              id="fullWidth"
+                              label="Weight"
+                              type="number"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    Kg
+                                  </InputAdornment>
+                                ),
+                              }}
+                              variant="outlined"
+                              name="weight"
+                              value={changeData.weight}
+                              onChange={handleProductFields}
+                            />
+                            <TextField
+                              size="small"
+                              fullWidth
+                              id="outlined-select"
+                              select
+                              name="tax_rate"
+                              label="Tax Rate"
+                              value={changeData.tax_rate}
+                              type="number"
+                              onChange={handleProductFields}
+                              helperText="Please select your tax rate."
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    %
+                                  </InputAdornment>
+                                ),
+                              }}
+                            >
+                              {taxRateCatalog.map((option) => (
+                                <MenuItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </MenuItem>
+                              ))}
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
@@ -19640,7 +20349,7 @@ const SideForm = () => {
                             </Button>
                           </Box>
                         </StepContent>
-                      </Step> */}
+                      </Step>
                       {/* Extra details */}
                     </Stepper>
 
@@ -19696,7 +20405,7 @@ const SideForm = () => {
                       name="warehouse"
                       label="Select Warehouse..."
                       value={changeData.warehouse || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       multiple
                     >
                       {warehouse.map((option) => (
@@ -19765,7 +20474,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData[item] || 0}
                             />
                           ))}
@@ -19829,7 +20538,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={changeData[item] || 0}
                             />
                           ))}
@@ -19842,7 +20551,7 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       required
-                      noOptionsText={"ex : S-01001"}
+                      noOptionsText={"ex : SID-01001"}
                       autoHighlight
                       clearOnEscape
                       id="combo-box-demo"
@@ -19944,7 +20653,7 @@ const SideForm = () => {
                       name="warehouse"
                       label="Select Warehouse..."
                       value={changeData.warehouse || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       multiple
                     >
                       {warehouse.map((option) => (
@@ -20013,7 +20722,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={
                                 changeData[item] <= parseInt(item.split(":")[1])
                                   ? changeData[item]
@@ -20081,7 +20790,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={
                                 changeData[item] <= parseInt(item.split(":")[1])
                                   ? changeData[item]
@@ -20100,7 +20809,7 @@ const SideForm = () => {
                       required
                       autoHighlight
                       clearOnEscape
-                      noOptionsText={"ex : S-01001"}
+                      noOptionsText={"ex : SID-01001"}
                       id="combo-box-demo"
                       options={productSKU.supplier.map((row) => {
                         return row.SID;
@@ -20166,10 +20875,10 @@ const SideForm = () => {
                       id="outlined-select"
                       select
                       name="purpose"
-                      label="Purpose"
+                      label="Stage of Inventory"
                       value={changeData.purpose || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your purpose"
                       required
                     >
@@ -20188,7 +20897,7 @@ const SideForm = () => {
                       fullWidth
                       minRows={3}
                       maxRows={3}
-                      required
+                      // required
                       resize={"none"}
                       id="fullWidth"
                       placeholder="Please eloburate the reson here..."
@@ -20248,7 +20957,7 @@ const SideForm = () => {
                       required
                       label="From Warehouse"
                       value={changeData.warehouse || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       multiple
                     >
                       {warehouse.map((option) => (
@@ -20267,7 +20976,7 @@ const SideForm = () => {
                       name="warehouse_to"
                       label="To Warehouse"
                       value={changeData.warehouse_to || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       multiple
                     >
                       {warehouse.map(
@@ -20336,7 +21045,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={
                                 changeData[item] <= parseInt(item.split(":")[1])
                                   ? changeData[item]
@@ -20404,7 +21113,7 @@ const SideForm = () => {
                                 ),
                               }}
                               placeholder={item}
-                              onChange={handleProductFelids}
+                              onChange={handleProductFields}
                               value={
                                 changeData[item] <= parseInt(item.split(":")[1])
                                   ? changeData[item]
@@ -20423,10 +21132,10 @@ const SideForm = () => {
                       id="outlined-select"
                       select
                       name="purpose"
-                      label="Purpose"
+                      label="Stage of Inventory"
                       value={changeData.purpose || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your purpose"
                       required
                     >
@@ -20445,7 +21154,7 @@ const SideForm = () => {
                       fullWidth
                       minRows={3}
                       maxRows={3}
-                      required
+                      // required
                       resize={"none"}
                       id="fullWidth"
                       placeholder="Please eloburate the reson here..."
@@ -20594,7 +21303,7 @@ const SideForm = () => {
                       label="Polish Type"
                       value={changeData.polish_type || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your polish type."
                       required
                     >
@@ -20621,7 +21330,7 @@ const SideForm = () => {
                       label="Polish Finish"
                       value={changeData.polish_finish || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your polish finish."
                       required
                     >
@@ -20647,7 +21356,7 @@ const SideForm = () => {
                       label="Polish Level"
                       value={changeData.level || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your polish level."
                       required
                     >
@@ -20679,7 +21388,7 @@ const SideForm = () => {
                       control={
                         <Checkbox
                           checked={changeData.lock}
-                          onChange={handleProductFelids}
+                          onChange={handleProductFields}
                           name="lock"
                         />
                       }
@@ -20735,7 +21444,7 @@ const SideForm = () => {
                       id="outlined-select"
                       name="polish_name"
                       value={changeData.polish_name || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       label="Polish Name"
                       type="text"
                       helperText="Please enter your primary material"
@@ -20891,7 +21600,7 @@ const SideForm = () => {
                       fullWidth
                       id="outlined-select"
                       value={changeData.polish_type || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       select
                       name="polish_type"
                       label="Polish Type"
@@ -20920,7 +21629,7 @@ const SideForm = () => {
                       select
                       name="polish_finish"
                       value={changeData.polish_finish || ""}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       label="Polish Finish"
                       multiple
                       helperText="Please select your polish finish."
@@ -20948,7 +21657,7 @@ const SideForm = () => {
                       label="Polish Level"
                       value={changeData.level || ""}
                       multiple
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       helperText="Please select your polish level."
                       required
                     >
@@ -20973,7 +21682,7 @@ const SideForm = () => {
                       id="outlined-select"
                       name="price"
                       value={changeData.price || 0}
-                      onChange={handleProductFelids}
+                      onChange={handleProductFields}
                       label="Price (per Inch)"
                       type="number"
                     />
@@ -20982,7 +21691,7 @@ const SideForm = () => {
                       control={
                         <Checkbox
                           checked={changeData.lock}
-                          onChange={handleProductFelids}
+                          onChange={handleProductFields}
                           name="lock"
                         />
                       }

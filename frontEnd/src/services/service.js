@@ -1182,7 +1182,7 @@ export const listLogs = async () => {
   return await axios.get(`${API}/listLogs`);
 };
 
-// =============== policy
+// =============== Pincode
 
 export const uploadPincodeCSV = async (data) => {
   return await axios.post(`${API}/uploadPincodeCSV`, data, {
@@ -1216,6 +1216,15 @@ export const statusDelivery = async (data) => {
 // for delete the delivery
 export const deleteDelivery = async (data) => {
   return await axios.delete(`${API}/deleteDelivery/?ID=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// for Dwnload CSV
+export const downloadCSV = async (data) => {
+  return await axios.get(`${API}/downloadCSV`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

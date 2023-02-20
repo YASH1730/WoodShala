@@ -371,6 +371,7 @@ export default function Products(props) {
             id="demo-helper-text-aligned-no-helper"
             label="Search by SKU"
             value={pageState.SKU}
+            inputProps={{ style: { textTransform: "uppercase" } }}
             onChange={handleSearch}
             name="SKU"
             type="text"

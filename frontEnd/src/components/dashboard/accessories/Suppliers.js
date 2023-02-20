@@ -1,22 +1,17 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   TextField,
   Grid,
   Button,
   IconButton,
-  Switch,
+  Box,
 } from "@mui/material";
+// import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { useDispatch } from "react-redux";
-import { setAlert, setForm } from "../../../store/action/action";
-import {
-  getPrimaryMaterial,
-  changePrimaryMaterialStatus,
-} from "../../../services/service";
+import { getSupplier } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
-import question from "../../../assets/img/question.svg";
 
 import {
   DataGrid,
@@ -27,34 +22,31 @@ import {
 } from "@mui/x-data-grid";
 // import Pagination from '@mui/material/Pagination';
 
-export default function PrimaryMaterial() {
+import { setForm } from "../../../store/action/action";
+import { useDispatch } from "react-redux";
+
+export default function Suppliers() {
   const [search, setSearch] = useState("");
-  const [check, setCheck] = useState([]);
 
   const dispatch = useDispatch();
-  const [pageSize, setPageSize] = useState(50);
 
   const [Row, setRows] = useState([]);
-  // function for get category list
+  // function for get cetegory list
 
-  useMemo(() => {
-    getPrimaryMaterial()
+  useEffect(() => {
+    getSupplier()
       .then((data) => {
-        setCheck(
-          data.data.map((row, index) => {
-            return row.primaryMaterial_status;
-          })
-        );
-
         setRows(
           data.data.map((row, index) => {
             return {
               id: index + 1,
-              primaryMaterial_name: row.primaryMaterial_name,
-              primaryMaterial_image: row.primaryMaterial_image,
-              primaryMaterial_description: row.primaryMaterial_description,
-              primaryMaterial_status: row.primaryMaterial_status,
-              customizations: row.customizations,
+              supplier_name: row.supplier_name,
+              mobile: row.mobile,
+              gst_no: row.gst_no,
+              alt_mobile: row.alt_mobile,
+              specialization: row.specialization,
+              SID: row.SID,
+              address: row.address,
               action: row._id,
             };
           })
@@ -69,49 +61,39 @@ export default function PrimaryMaterial() {
     {
       field: "id",
       headerName: "ID",
+      width: 50,
+    },
+    {
+      field: "SID",
+      headerName: "Supplier ID",
       width: 100,
     },
     {
-      field: "primaryMaterial_name",
-      headerName: "Material Name",
+      field: "supplier_name",
+      headerName: "Supplier Name",
       width: 200,
     },
     {
-      field: "primaryMaterial_image",
-      headerName: "Material Image",
-      width: 200,
-      renderCell: (params) => (
-        <div className="categoryImage">
-          {
-            <img
-              src={
-                params.formattedValue !== undefined
-                  ? params.formattedValue
-                  : question
-              }
-              alt="category"
-            />
-          }
-        </div>
-      ),
+      field: "mobile",
+      headerName: "Mobile Number",
+      width: 150,
     },
     {
-      field: "primaryMaterial_description",
-      headerName: "Material Description",
+      field: "alt_mobile",
+      headerName: "Alternate Mobile",
+      width: 150,
+    },
+    {
+      field: "gst_no",
+      headerName: "GST Number",
       width: 200,
     },
     {
-      field: "primaryMaterial_status",
-      headerName: "Material Status",
+      field: "specialization",
+      headerName: "Specialization",
       width: 200,
-      renderCell: (params) => (
-        <Switch
-          onChange={handleSwitch}
-          name={`${params.row.action + " " + (params.row.id - 1)}`}
-          checked={check[params.row.id - 1]}
-        ></Switch>
-      ),
     },
+
     {
       field: "action",
       headerName: "Actions",
@@ -123,7 +105,7 @@ export default function PrimaryMaterial() {
               dispatch(
                 setForm({
                   state: true,
-                  formType: "update_PrimaryMaterial",
+                  formType: "update_supplier",
                   payload: params,
                   row: Row,
                   setRow: setRows,
@@ -149,45 +131,6 @@ export default function PrimaryMaterial() {
     },
   ];
 
-  const handleSwitch = (e) => {
-    const id = e.target.name.split(" ");
-
-    const FD = new FormData();
-
-    FD.append("_id", id[0]);
-    FD.append("primaryMaterial_status", e.target.checked);
-
-    const res = changePrimaryMaterialStatus(FD);
-
-    res
-      .then((data) => {
-        setCheck(
-          check.map((row, index) => {
-            // //console.log(parseInt(id[1]) === index)
-            if (parseInt(id[1]) === index) return !row;
-            else return row;
-          })
-        );
-        dispatch(
-          setAlert({
-            open: true,
-            variant: "success",
-            message: " Material Status Updated Successfully !!!",
-          })
-        );
-      })
-      .catch((err) => {
-        //console.log(err)
-        dispatch(
-          setAlert({
-            open: true,
-            variant: "error",
-            message: "Something Went Wrong !!!",
-          })
-        );
-      });
-  };
-
   const handelSearch = (e) => {
     //console.log(e.target.value)
     setSearch(e.target.value);
@@ -200,7 +143,7 @@ export default function PrimaryMaterial() {
           filterModel={{
             items: [
               {
-                columnField: "primaryMaterial_name",
+                columnField: "SID",
                 operatorValue: "contains",
                 value: `${search}`,
               },
@@ -209,10 +152,10 @@ export default function PrimaryMaterial() {
           rows={Row}
           columns={columns}
           disableSelectionOnClick
-          pagination
-          pageSize={pageSize}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[25, 50, 100]}
+
+          // components={{
+          //   Pagination: CustomPagination,
+          // }}
         />
       </div>
     );
@@ -221,7 +164,7 @@ export default function PrimaryMaterial() {
   return (
     <>
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
-        Material
+        Suppliers
       </Typography>
 
       <br></br>
@@ -243,9 +186,9 @@ export default function PrimaryMaterial() {
           <TextField
             fullWidth
             // autoComplete={false}
-            size={"small"}
+            size="small"
             id="demo-helper-text-aligned-no-helper"
-            label="Search by material name"
+            label="Search Suppliers"
             type="text"
             onChange={handelSearch}
           />
@@ -257,10 +200,9 @@ export default function PrimaryMaterial() {
               dispatch(
                 setForm({
                   state: true,
-                  formType: "primaryMaterial",
+                  formType: "add_supplier",
                   row: Row,
                   setRow: setRows,
-                  setCheck,
                 })
               );
             }}
@@ -269,7 +211,7 @@ export default function PrimaryMaterial() {
             startIcon={<AddIcon />}
             variant="contained"
           >
-            Add Material
+            Add Supplier
           </Button>
         </Grid>
       </Grid>
@@ -283,7 +225,7 @@ export default function PrimaryMaterial() {
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography component={"span"} variant="h6">
             {" "}
-            Material List{" "}
+            Suppliers List
           </Typography>
           <br></br>
           {DataGridView()}

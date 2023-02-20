@@ -78,6 +78,8 @@ export default function Hardware() {
               sub_category_name: row.sub_category_name,
               sub_category_id: row.sub_category_id,
               hardware_image: row.hardware_image,
+              featured_image: row.featured_image,
+              mannequin_image: row.mannequin_image,
               warehouse: row.warehouse,
               bangalore_stock: row.bangalore_stock,
               jodhpur_stock: row.jodhpur_stock,
@@ -102,7 +104,15 @@ export default function Hardware() {
               hardware_polish: row.hardware_polish,
               min_quantity: row.min_quantity,
               continue_selling: row.continue_selling,
+              online_store: row.online_store,
+              mobile_store: row.mobile_store,
               action: row._id,
+              primary_material: row.primary_material,
+              primary_material_name: row.primary_material_name,
+              discount_limit: row.discount_limit,
+              tax_rate: row.tax_rate,
+              weight: row.weight,
+              package_weight: row.package_weight,
             };
           })
         );

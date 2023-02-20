@@ -5,73 +5,75 @@ import {
   Grid,
   Button,
   MenuItem,
-  Box
+  Box,
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import CreateIcon from '@mui/icons-material/Create';
-import RepeatIcon from '@mui/icons-material/Repeat';
+import RepeatIcon from "@mui/icons-material/Repeat";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from '@mui/icons-material/Remove';
+import RemoveIcon from "@mui/icons-material/Remove";
 import { setForm } from "../../../store/action/action";
-import { listEntires, totalEntries, listStock } from '../../../services/service'
-import '../../../assets/custom/css/stock.css'
-import '../../../assets/custom/css/action.css'
+import {
+  listEntires,
+  totalEntries,
+  listStock,
+} from "../../../services/service";
+import "../../../assets/custom/css/stock.css";
+import "../../../assets/custom/css/action.css";
 
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch } from "react-redux";
 
-
-
 export default function Inventory() {
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
-
-  const [search, setSearch] = useState('');
-  const [columns, setColumns] = useState([])
+  const [search, setSearch] = useState("");
+  const [columns, setColumns] = useState([]);
   const [meta, setMeta] = useState({
     inward: 0,
     outward: 0,
-    transfer: 0
-  })
+    transfer: 0,
+  });
   const [pageState, setPageState] = useState({
     data: [],
     isLoading: true,
     page: 1,
     pageSize: 50,
     total: 0,
-    entires: 'Stock'
-  })
+    entires: "Stock",
+  });
 
-
-  const [Row, setRows] = useState([])
+  const [Row, setRows] = useState([]);
 
   useMemo(() => {
-    setPageState(old => ({ ...old, isLoading: true }))
-    fetchEntires()
+    setPageState((old) => ({ ...old, isLoading: true }));
+    fetchEntires();
   }, [pageState.page, pageState.pageSize, Row]);
 
   useMemo(() => {
-    setPageState(old => ({ ...old, isLoading: true, data: [] }));
+    setPageState((old) => ({ ...old, isLoading: true, data: [] }));
     fetchEntires();
   }, [pageState.entires]);
 
-  useMemo(() => { entires() }, [Row])
+  useMemo(() => {
+    entires();
+  }, [Row]);
 
   async function entires() {
-    const res = await totalEntries()
+    const res = await totalEntries();
     if (res.status === 200) {
       setMeta({
         inward: res.data.inward,
         outward: res.data.outward,
         transfer: res.data.transfer,
-      })
+      });
     }
   }
 
   async function fetchEntires() {
-    let res = ''
+    let res = "";
     switch (pageState.entires) {
-      case 'Inward':
+      case "Inward":
         setColumns([
           { field: "id", headerName: "ID", width: 50 },
           { field: "inward_id", headerName: "Inward Id", width: 100 },
@@ -84,16 +86,20 @@ export default function Inventory() {
           { field: "product_articles", headerName: "Product", width: 200 },
           { field: "hardware_articles", headerName: "Hardware", width: 200 },
           { field: "date", headerName: "Time", width: 150 },
-        ])
-        res = await listEntires(pageState)
+        ]);
+        res = await listEntires(pageState);
         if (res.status === 200) {
-          setPageState(lastState => ({
+          setPageState((lastState) => ({
             ...lastState,
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
-                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
+                product_articles: row.product_articles
+                  ? JSON.stringify(row.product_articles)
+                  : "",
+                hardware_articles: row.hardware_articles
+                  ? JSON.stringify(row.hardware_articles)
+                  : "",
                 supplier: row.supplier,
                 vehicle_no: row.vehicle_no,
                 driver_name: row.driver_name,
@@ -102,15 +108,15 @@ export default function Inventory() {
                 order_no: row.order_no,
                 inward_id: row.inward_id,
                 warehouse: row.warehouse,
-                date: row.date
-              }
+                date: row.date,
+              };
             }),
             total: res.data.total,
-            isLoading: false
-          }))
+            isLoading: false,
+          }));
         }
         break;
-      case 'Outward':
+      case "Outward":
         setColumns([
           { field: "id", headerName: "ID", width: 50 },
           { field: "outward_id", headerName: "Outward Id", width: 100 },
@@ -122,19 +128,23 @@ export default function Inventory() {
           { field: "product_articles", headerName: "Product", width: 200 },
           { field: "hardware_articles", headerName: "Hardware", width: 200 },
           { field: "quantity", headerName: "Quantity", width: 100 },
-          { field: "purpose", headerName: "Purpose", width: 150 },
+          { field: "purpose", headerName: "Stage of Inventory", width: 150 },
           { field: "reason", headerName: "Reason", width: 150 },
           { field: "date", headerName: "Time", width: 150 },
-        ])
-        res = await listEntires(pageState)
+        ]);
+        res = await listEntires(pageState);
         if (res.status === 200) {
-          setPageState(lastState => ({
+          setPageState((lastState) => ({
             ...lastState,
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
-                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
+                product_articles: row.product_articles
+                  ? JSON.stringify(row.product_articles)
+                  : "",
+                hardware_articles: row.hardware_articles
+                  ? JSON.stringify(row.hardware_articles)
+                  : "",
                 supplier: row.supplier,
                 vehicle_no: row.vehicle_no,
                 driver_name: row.driver_name,
@@ -144,15 +154,15 @@ export default function Inventory() {
                 outward_id: row.outward_id,
                 purpose: row.purpose,
                 reason: row.reason,
-                date: row.date
-              }
+                date: row.date,
+              };
             }),
             total: res.data.total,
-            isLoading: false
-          }))
+            isLoading: false,
+          }));
         }
         break;
-      case 'Stock':
+      case "Stock":
         setColumns([
           { field: "id", headerName: "ID", width: 50 },
           { field: "product_id", headerName: "SKU", width: 150 },
@@ -160,11 +170,11 @@ export default function Inventory() {
           { field: "warehouse", headerName: "Wearhouse", width: 200 },
           { field: "createdAt", headerName: "Created At", width: 200 },
           { field: "lastupdated", headerName: "Last Updated", width: 200 },
-        ])
-        res = await listEntires(pageState)
+        ]);
+        res = await listEntires(pageState);
         if (res.status === 200) {
-          console.log(res.data.data)
-          setPageState(lastState => ({
+          console.log(res.data.data);
+          setPageState((lastState) => ({
             ...lastState,
             data: res.data.data.map((row, index) => {
               return {
@@ -174,14 +184,14 @@ export default function Inventory() {
                 warehouse: row.warehouse,
                 lastupdated: row.updatedAt,
                 createdAt: row.createdAt,
-              }
+              };
             }),
             total: res.data.total,
-            isLoading: false
-          }))
+            isLoading: false,
+          }));
         }
         break;
-      case 'Transfer':
+      case "Transfer":
         setColumns([
           { field: "id", headerName: "ID", width: 50 },
           { field: "transfer_id", headerName: "Transfer Id", width: 150 },
@@ -189,45 +199,47 @@ export default function Inventory() {
           { field: "warehouse", headerName: "Warehouse", width: 150 },
           { field: "product_articles", headerName: "Product", width: 200 },
           { field: "hardware_articles", headerName: "Hardware", width: 200 },
-          { field: "quantity", headerName: "Quantity", width: 100 },
-          { field: "purpose", headerName: "Purpose", width: 150 },
+          // { field: "quantity", headerName: "Quantity", width: 100 },
+          { field: "purpose", headerName: "Stage of Inventory", width: 150 },
           { field: "reason", headerName: "Reason", width: 150 },
           { field: "date", headerName: "Time", width: 150 },
-        ])
-        res = await listEntires(pageState)
+        ]);
+        res = await listEntires(pageState);
         if (res.status === 200) {
-          setPageState(lastState => ({
+          setPageState((lastState) => ({
             ...lastState,
             data: res.data.data.map((row, index) => {
               return {
                 id: index + 1,
-                product_articles: row.product_articles ? JSON.stringify(row.product_articles) : '',
-                hardware_articles: row.hardware_articles ? JSON.stringify(row.hardware_articles) : '',
+                product_articles: row.product_articles
+                  ? JSON.stringify(row.product_articles)
+                  : "",
+                hardware_articles: row.hardware_articles
+                  ? JSON.stringify(row.hardware_articles)
+                  : "",
                 quantity: row.quantity,
                 order_no: row.order_no,
                 transfer_id: row.transfer_id,
                 purpose: row.purpose,
                 reason: row.reason,
                 warehouse: row.warehouse,
-                date: row.date
-              }
+                date: row.date,
+              };
             }),
             total: res.data.total,
-            isLoading: false
-          }))
+            isLoading: false,
+          }));
         }
         break;
       default:
-        break
+        break;
     }
-
   }
-
 
   const handelSearch = (e) => {
     //console.log(e)
-    setSearch(e.target.value)
-  }
+    setSearch(e.target.value);
+  };
 
   const warehouse = [
     {
@@ -239,12 +251,11 @@ export default function Inventory() {
       label: "Jodhpur (Rajasthan)",
     },
   ];
-  const Entires = ['Inward', 'Outward', 'Transfer', 'Stock'];
-
+  const Entires = ["Inward", "Outward", "Transfer", "Stock"];
 
   function DataGridView() {
     return (
-      <div style={{ marginTop: '1%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: "1%", height: 400, width: "100%" }}>
         <DataGrid
           rows={pageState.data}
           rowCount={pageState.total}
@@ -264,40 +275,57 @@ export default function Inventory() {
           pageSize={pageState.pageSize}
           paginationMode="server"
           onPageChange={(newPage) => {
-            setPageState(old => ({ ...old, page: newPage + 1 }))
+            setPageState((old) => ({ ...old, page: newPage + 1 }));
           }}
-          onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
+          onPageSizeChange={(newPageSize) =>
+            setPageState((old) => ({ ...old, pageSize: newPageSize }))
+          }
           columns={columns}
         />
       </div>
     );
   }
 
-
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
-      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
+      <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Inventory
       </Typography>
       <br></br>
 
-      <Grid className='actionDash' container>
-        <Grid sx={{ backgroundColor: '#40b13e' }} item xs={12} className='card' md={3.8}>
-          <AddIcon fontSize={'large'} />
-          <Typography variant='h6'>Inward Entires</Typography>
-          <Typography variant='h4'>{meta.inward}</Typography>
+      <Grid className="actionDash" container>
+        <Grid
+          sx={{ backgroundColor: "#40b13e" }}
+          item
+          xs={12}
+          className="card"
+          md={3.8}
+        >
+          <AddIcon fontSize={"large"} />
+          <Typography variant="h6">Inward Entires</Typography>
+          <Typography variant="h4">{meta.inward}</Typography>
         </Grid>
-        <Grid sx={{ backgroundColor: '#ff0000b3' }} className='card' item xs={12} md={3.8}>
-          <RemoveIcon fontSize={'large'} />
-          <Typography variant='h6'>Outward Entires</Typography>
-          <Typography variant='h4'>{meta.outward}</Typography>
-
+        <Grid
+          sx={{ backgroundColor: "#ff0000b3" }}
+          className="card"
+          item
+          xs={12}
+          md={3.8}
+        >
+          <RemoveIcon fontSize={"large"} />
+          <Typography variant="h6">Outward Entires</Typography>
+          <Typography variant="h4">{meta.outward}</Typography>
         </Grid>
-        <Grid sx={{ backgroundColor: '#ffbd29' }} item xs={12} className='card' md={3.8}>
-          <RepeatIcon fontSize={'large'} />
-          <Typography variant='h6'>Transfer Entires</Typography>
-          <Typography variant='h4'>{meta.transfer}</Typography>
-
+        <Grid
+          sx={{ backgroundColor: "#ffbd29" }}
+          item
+          xs={12}
+          className="card"
+          md={3.8}
+        >
+          <RepeatIcon fontSize={"large"} />
+          <Typography variant="h6">Transfer Entires</Typography>
+          <Typography variant="h4">{meta.transfer}</Typography>
         </Grid>
       </Grid>
 
@@ -319,23 +347,26 @@ export default function Inventory() {
           <TextField
             fullWidth
             id="outlined-select"
-            size='small'
+            size="small"
             name="warehouse"
             label="SKU Search For Stocks"
-            value={search || ''}
+            value={search || ""}
             onChange={handelSearch}
             multiple
           />
-          </Grid>
+        </Grid>
 
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch(setForm({
-                state: true, formType: "inward", row: Row,
-                setRow: setRows
-              }
-              ));
+              dispatch(
+                setForm({
+                  state: true,
+                  formType: "inward",
+                  row: Row,
+                  setRow: setRows,
+                })
+              );
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -349,10 +380,14 @@ export default function Inventory() {
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch(setForm({
-                state: true, formType: "outward", row: Row,
-                setRow: setRows
-              }));
+              dispatch(
+                setForm({
+                  state: true,
+                  formType: "outward",
+                  row: Row,
+                  setRow: setRows,
+                })
+              );
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -366,10 +401,14 @@ export default function Inventory() {
         <Grid xs={12} md={1.5}>
           <Button
             onClick={() => {
-              dispatch(setForm({
-                state: true, formType: "transfer", row: Row,
-                setRow: setRows
-              }));
+              dispatch(
+                setForm({
+                  state: true,
+                  formType: "transfer",
+                  row: Row,
+                  setRow: setRows,
+                })
+              );
             }}
             sx={{ width: "100%" }}
             color="primary"
@@ -381,42 +420,54 @@ export default function Inventory() {
         </Grid>
       </Grid>
 
-
       {/* Section 1 ends  */}
       <br></br>
 
       {/* data grid  */}
 
-      <Grid container sx={{
-        display: 'flex', justifyContent: 'space-between', alignItem: 'center'
-      }}>
-        <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5, maxHeight: 500 }}>
-          <Box p={1} sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItem: 'center'
-          }}>
-            <Typography component={'span'} variant="h6">{pageState.entires} Entries</Typography>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItem: "center",
+        }}
+      >
+        <Grid
+          item
+          p={2}
+          xs={12}
+          sx={{ boxShadow: 2, borderRadius: 5, maxHeight: 500 }}
+        >
+          <Box
+            p={1}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItem: "center",
+            }}
+          >
+            <Typography component={"span"} variant="h6">
+              {pageState.entires} Entries
+            </Typography>
             <TextField
               id="outlined-select"
-              sx={{ width: '15%' }}
+              sx={{ width: "15%" }}
               select
-              size='small'
+              size="small"
               name="warehouse"
               label="Select Entries..."
-              value={pageState.entires || ''}
-              onChange={(e) => { setPageState(old => ({ ...old, entires: e.target.value })) }}
+              value={pageState.entires || ""}
+              onChange={(e) => {
+                setPageState((old) => ({ ...old, entires: e.target.value }));
+              }}
               multiple
             >
-              {Entires.map(
-                (option) =>
-                  <MenuItem
-                    key={option}
-                    value={option}
-                  >
-                    {option}
-                  </MenuItem>
-              )}
+              {Entires.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
             </TextField>
           </Box>
           {DataGridView()}

@@ -5,26 +5,23 @@ import {
   Grid,
   InputAdornment,
   IconButton,
-  Button, Box
+  Button,
+  Box,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import { listCustomer, deleteCustomer } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
-import {
-  DataGrid
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 import { useDispatch } from "react-redux";
 import { setAlert, setForm } from "../../../store/action/action";
 
-import question from '../../../assets/img/question.svg'
-
+import question from "../../../assets/img/question.svg";
 
 // import Pagination from "@mui/material/Pagination";
-
 
 // function CustomPagination() {
 //   const apiRef = useGridApiContext();
@@ -45,8 +42,7 @@ export default function Customer() {
   const [search, setSearch] = useState({
     email: undefined,
     CID: undefined,
-    date: ''
-
+    date: "",
   });
 
   const dispatch = useDispatch();
@@ -59,7 +55,6 @@ export default function Customer() {
       .then((data) => {
         let final = [];
 
-
         data.data.map((row) => {
           if (search.CID !== undefined) {
             if (row.CID === `CID-${search.CID}`) final.push(row);
@@ -69,7 +64,6 @@ export default function Customer() {
         });
 
         //console.log(final)
-
 
         setRows(
           final.map((row, index) => {
@@ -95,8 +89,6 @@ export default function Customer() {
       });
   }, [search]);
 
-
-
   const columns = [
     {
       field: "id",
@@ -104,11 +96,15 @@ export default function Customer() {
       width: 50,
     },
     {
-      field: 'profile_image',
-      align: 'center',
-      headerName: 'Image',
+      field: "profile_image",
+      align: "center",
+      headerName: "Image",
       width: 200,
-      renderCell: (params) => <div className="categoryImage" >{<img src={params.formattedValue || question} alt='profile_image' />}</div>,
+      renderCell: (params) => (
+        <div className="categoryImage">
+          {<img src={params.formattedValue || question} alt="profile_image" />}
+        </div>
+      ),
     },
     {
       field: "CID",
@@ -159,22 +155,27 @@ export default function Customer() {
           >
             <CreateIcon />
           </IconButton> */}
-          <IconButton onClick={() => {
-            deleteCustomer(params.formattedValue).then((res) => {
-
-              setRows(Row.filter((set) => {
-                return set.action._id !== params.formattedValue._id
-              }))
-              dispatch(setAlert({
-                open: true,
-                variant: 'success',
-                message: 'Customer Deleted !!!'
-              }))
-            })
-          }} aria-label="delete"  >
+          <IconButton
+            onClick={() => {
+              deleteCustomer(params.formattedValue).then((res) => {
+                setRows(
+                  Row.filter((set) => {
+                    return set.action._id !== params.formattedValue._id;
+                  })
+                );
+                dispatch(
+                  setAlert({
+                    open: true,
+                    variant: "success",
+                    message: "Customer Deleted !!!",
+                  })
+                );
+              });
+            }}
+            aria-label="delete"
+          >
             <DeleteIcon />
           </IconButton>
-
         </div>
       ),
     },
@@ -220,7 +221,7 @@ export default function Customer() {
 
   function DataGridView() {
     return (
-      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: "2%", height: 400, width: "100%" }}>
         <DataGrid
           filterModel={{
             items: [
@@ -233,8 +234,6 @@ export default function Customer() {
           }}
           rows={Row}
           columns={columns}
-
-
           disableSelectionOnClick
           pagination
           pageSize={pageSize}
@@ -247,7 +246,7 @@ export default function Customer() {
 
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
-      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
+      <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Customer
       </Typography>
 
@@ -257,7 +256,7 @@ export default function Customer() {
 
       <Grid
         container
-        p={3}
+        p={2}
         sx={{
           boxShadow: 1,
           borderRadius: 2,
@@ -270,6 +269,7 @@ export default function Customer() {
           <TextField
             fullWidth
             // autoComplete={false}
+            size="small"
             id="demo-helper-text-aligned-no-helper"
             type="text"
             InputProps={{
@@ -286,6 +286,7 @@ export default function Customer() {
           <TextField
             fullWidth
             // autoComplete={false}
+            size="small"
             id="demo-helper-text-aligned-no-helper"
             InputProps={{
               startAdornment: (
@@ -301,6 +302,7 @@ export default function Customer() {
         <Grid xs={12} md={4}>
           <TextField
             fullWidth
+            size="small"
             // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             type="date"
@@ -308,8 +310,6 @@ export default function Customer() {
             onChange={handelSearch}
           />
         </Grid>
-
-
       </Grid>
 
       {/* Section 1 ends  */}
@@ -319,23 +319,31 @@ export default function Customer() {
 
       <Grid container scaping={2} className="overviewContainer">
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-          <div style={
-            {
-              display: 'flex',
-              justifyContent: 'space-between',
-            }
-          } >
-
-            <Typography component={'span'} variant="h6"> Customer List </Typography>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography component={"span"} variant="h6">
+              {" "}
+              Customer List{" "}
+            </Typography>
             <Button
               onClick={() => {
-                dispatch(setForm({ state: true, formType: "add_customer", row: Row, setRow: setRows }));
+                dispatch(
+                  setForm({
+                    state: true,
+                    formType: "add_customer",
+                    row: Row,
+                    setRow: setRows,
+                  })
+                );
               }}
               color="primary"
               variant="contained"
             >
               <AddIcon />
-
             </Button>
           </div>
           {DataGridView()}
