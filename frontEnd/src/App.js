@@ -17,6 +17,7 @@ import { setRefreshBox } from "../src/store/action/action";
 import { useDispatch, useSelector } from "react-redux";
 // json decode
 import decode from "jwt-decode";
+import ImageSquence from "./components/Utility/ImageSquence";
 
 // component
 const EntryPoints = lazy(() => import("./components/EntryPoints"));
@@ -157,6 +158,11 @@ function MyRoutes() {
           path="/variation"
           element={<Variation history={history} />}
         />
+        {/* <Route
+          exact
+          path="/image"
+          element={<ImageSquence history={history} />}
+        />{" "} */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

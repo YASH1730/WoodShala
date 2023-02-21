@@ -35,6 +35,9 @@ import "../../../assets/custom/css/sideForm.css";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddIcon from "@mui/icons-material/Add";
+
+// component
+import ImageSquence from "../../Utility/ImageSquence";
 // service APIS
 import {
   addCategory,
@@ -108,8 +111,8 @@ const thumb = {
   border: "1px solid #eaeaea",
   marginBottom: 8,
   marginRight: 8,
-  width: 100,
-  height: 100,
+  width: 50,
+  height: 50,
   padding: 4,
   boxSizing: "border-box",
 };
@@ -6140,12 +6143,17 @@ const SideForm = () => {
                             ></ProductsPreviews>
                             {files.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
+                                <Grid xs={12}>
+                                  <Typography variant="h6">
+                                    Uploaded Images
+                                  </Typography>
+                                </Grid>
                                 {files.map((img, index) => {
                                   return (
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -6169,6 +6177,15 @@ const SideForm = () => {
                                   );
                                 })}
                               </Grid>
+                            )}
+                            {/* // image Squence  Images */}
+                            {files.length > 0 && (
+                              <ImageSquence
+                                text={"New Images"}
+                                image={files}
+                                setImage={setFiles}
+                                savedImage={false}
+                              />
                             )}
                             {/* // featured images */}
                             <TextField
@@ -8798,6 +8815,7 @@ const SideForm = () => {
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
+                            {/* // image selection  */}
                             {files.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 {files.map((img, index) => {
@@ -8805,7 +8823,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -8830,6 +8848,16 @@ const SideForm = () => {
                                 })}
                               </Grid>
                             )}
+                            {/* // image Squence  Images */}
+                            {files.length > 0 && (
+                              <ImageSquence
+                                text={"New Images"}
+                                image={files}
+                                setImage={setFiles}
+                                savedImage={false}
+                              />
+                            )}
+                            {/* saved Image */}
                             {changeData.savedImages.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 <FormLabel id="demo-radio-buttons-group-label">
@@ -8840,7 +8868,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -8866,6 +8894,15 @@ const SideForm = () => {
                                   );
                                 })}
                               </Grid>
+                            )}
+                            {/* // image Squence saved Images */}
+                            {changeData.savedImages.length > 0 && (
+                              <ImageSquence
+                                text={"Saved Images"}
+                                image={changeData.savedImages}
+                                setImage={setData}
+                                savedImage={true}
+                              />
                             )}
                             {/* // featured images */}
                             <TextField
@@ -11618,6 +11655,7 @@ const SideForm = () => {
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
+                            {/* // image selection  */}
                             {files.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 {files.map((img, index) => {
@@ -11625,7 +11663,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -11650,6 +11688,16 @@ const SideForm = () => {
                                 })}
                               </Grid>
                             )}
+                            {/* // image Squence  Images */}
+                            {files.length > 0 && (
+                              <ImageSquence
+                                text={"New Images"}
+                                image={files}
+                                setImage={setFiles}
+                                savedImage={false}
+                              />
+                            )}
+                            {/* saved Image */}
                             {changeData.savedImages.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 <FormLabel id="demo-radio-buttons-group-label">
@@ -11660,7 +11708,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -11686,6 +11734,15 @@ const SideForm = () => {
                                   );
                                 })}
                               </Grid>
+                            )}
+                            {/* // image Squence saved Images */}
+                            {changeData.savedImages.length > 0 && (
+                              <ImageSquence
+                                text={"Saved Images"}
+                                image={changeData.savedImages}
+                                setImage={setData}
+                                savedImage={true}
+                              />
                             )}
                             {/* // featured images */}
                             <TextField
@@ -14191,7 +14248,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -15206,7 +15263,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -15241,7 +15298,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -18294,6 +18351,7 @@ const SideForm = () => {
                                 "Make Sure the picture ratio should be in 1:1."
                               }
                             ></ProductsPreviews>
+                            {/* // image selection  */}
                             {files.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 {files.map((img, index) => {
@@ -18301,7 +18359,48 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
+                                        sx={{ position: "relative" }}
+                                      >
+                                        <CancelIcon
+                                          onClick={() => {
+                                            // this function is for removing the image from savedImage array
+                                            let temp = files;
+                                            console.log(">>>>>>", temp, files);
+                                            temp.splice(index, 1);
+                                            setFiles([...temp]);
+                                          }}
+                                          className="imageCross"
+                                          color="primary"
+                                        />
+                                        <img
+                                          style={{ width: "100%" }}
+                                          src={URL.createObjectURL(img)}
+                                          alt={img.name}
+                                        />
+                                      </Grid>
+                                    </>
+                                  );
+                                })}
+                              </Grid>
+                            )}
+                            {/* // image Squence  Images */}
+                            {files.length > 0 && (
+                              <ImageSquence
+                                text={"New Images"}
+                                image={files}
+                                setImage={setFiles}
+                                savedImage={false}
+                              />
+                            )}
+                            {files.length > 0 && (
+                              <Grid sx={{ p: 2 }} spacing={2} container>
+                                {files.map((img, index) => {
+                                  return (
+                                    <>
+                                      <Grid
+                                        item
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -19483,6 +19582,7 @@ const SideForm = () => {
                             <ProductsPreviews
                               text={"Please Drag and Drop the product images"}
                             ></ProductsPreviews>
+                            {/* // image selection  */}
                             {files.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 {files.map((img, index) => {
@@ -19490,7 +19590,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -19515,6 +19615,16 @@ const SideForm = () => {
                                 })}
                               </Grid>
                             )}
+                            {/* // image Squence  Images */}
+                            {files.length > 0 && (
+                              <ImageSquence
+                                text={"New Images"}
+                                image={files}
+                                setImage={setFiles}
+                                savedImage={false}
+                              />
+                            )}
+                            {/* saved Image */}
                             {changeData.savedImages.length > 0 && (
                               <Grid sx={{ p: 2 }} spacing={2} container>
                                 <FormLabel id="demo-radio-buttons-group-label">
@@ -19525,7 +19635,7 @@ const SideForm = () => {
                                     <>
                                       <Grid
                                         item
-                                        xs={2}
+                                        xs={1.5}
                                         sx={{ position: "relative" }}
                                       >
                                         <CancelIcon
@@ -19551,6 +19661,15 @@ const SideForm = () => {
                                   );
                                 })}
                               </Grid>
+                            )}
+                            {/* // image Squence saved Images */}
+                            {changeData.savedImages.length > 0 && (
+                              <ImageSquence
+                                text={"Saved Images"}
+                                image={changeData.savedImages}
+                                setImage={setData}
+                                savedImage={true}
+                              />
                             )}
                             {/* // featured images */}
                             <TextField

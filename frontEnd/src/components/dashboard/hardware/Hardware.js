@@ -296,7 +296,7 @@ export default function Hardware() {
 
       <Grid
         container
-        p={3}
+        p={2}
         sx={{
           boxShadow: 1,
           borderRadius: 2,
