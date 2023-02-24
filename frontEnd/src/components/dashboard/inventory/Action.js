@@ -27,6 +27,9 @@ import {
   getMetaDraft,
   getCategoryDetails,
   getSubCategoryDetails,
+  getMaterialDetails,
+  getPolishDetails,
+  getBlog,
 } from "../../../services/service";
 
 import {
@@ -115,7 +118,7 @@ export default function Action() {
               type: row.type,
               operation: row.operation,
               message: row.message,
-              status: row.status,
+              status: row.draftStatus,
               action: row,
             };
           }),
@@ -381,6 +384,38 @@ export default function Action() {
             display.data.status = true;
             sendResponse(display.data);
             break;
+          case "insertMaterial":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            display.data.SKU = SKU;
+            display.data.AID = SKU;
+            sendResponse(display.data);
+            break;
+          case "updateMaterial":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
+          case "insertPolish":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
+          case "updatePolish":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
+          case "insertBlog":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
+          case "updateBlog":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
           default:
             console.log("no operation found");
             break;
@@ -442,6 +477,36 @@ export default function Action() {
               res.data = JSON.stringify(res.data);
               res.data = JSON.parse(res.data);
               console.log(res.data);
+              if (res.data) setPeer(res.data);
+            }
+            break;
+          case "updateMaterial":
+            res = await getMaterialDetails(display.data.AID);
+            if (res) {
+              // res.data = JSON.stringify(res.data);
+              // res.data = JSON.parse(res.data);
+              console.log(res.data);
+              if (res.data) setPeer(res.data);
+            }
+            break;
+          case "updatePolish":
+            console.log(display.data.AID);
+            res = await getPolishDetails(display.data.AID);
+            if (res) {
+              // res.data = JSON.stringify(res.data);
+              // res.data = JSON.parse(res.data);
+              // console.log(res.data);
+              if (res.data) setPeer(res.data);
+            }
+
+            break;
+          case "updateBlog":
+            console.log(display.data.AID);
+            res = await getBlog(display.data.AID);
+            if (res) {
+              // res.data = JSON.stringify(res.data);
+              // res.data = JSON.parse(res.data);
+              // console.log(res.data);
               if (res.data) setPeer(res.data);
             }
             break;
@@ -686,6 +751,9 @@ export default function Action() {
             {(display.operation === "updateProduct" ||
               display.operation === "updateHardware" ||
               display.operation === "updateSubCategory" ||
+              display.operation === "updateMaterial" ||
+              display.operation === "updatePolish" ||
+              display.operation === "updateBlog" ||
               display.operation === "updateCategory") && (
               <Grid item xs={6} p={1}>
                 <Typography variant="h6" sx={{ textAlign: "center" }}>
@@ -728,6 +796,9 @@ export default function Action() {
                 display.operation === "updateProduct" ||
                 display.operation === "updateHardware" ||
                 display.operation === "updateSubCategory" ||
+                display.operation === "updateMaterial" ||
+                display.operation === "updateBlog" ||
+                display.operation === "updatePolish" ||
                 display.operation === "updateCategory"
                   ? 6
                   : 12
@@ -737,14 +808,20 @@ export default function Action() {
                 {display.operation === "updateProduct" ||
                 display.operation === "updateHardware" ||
                 display.operation === "updateSubCategory" ||
+                display.operation === "updateMaterial" ||
+                display.operation === "updateBlog" ||
+                display.operation === "updatePolish" ||
                 display.operation === "updateCategory"
                   ? "After"
-                  : "Product Details"}
+                  : "Article Details"}
               </Typography>
               <Box sx={{ height: "300px", overflow: "scroll", p: 2 }}>
                 {display.operation === "updateProduct" ||
                 display.operation === "updateHardware" ||
                 display.operation === "updateSubCategory" ||
+                display.operation === "updateMaterial" ||
+                display.operation === "updateBlog" ||
+                display.operation === "updatePolish" ||
                 display.operation === "updateCategory"
                   ? Object.keys(display.data).map(function (key) {
                       return (

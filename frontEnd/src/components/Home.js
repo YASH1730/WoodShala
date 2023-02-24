@@ -48,6 +48,7 @@ import HardwareIcon from "@mui/icons-material/Hardware";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import SecurityIcon from "@mui/icons-material/Security";
 import PolicyIcon from "@mui/icons-material/Policy";
+import ReviewsIcon from "@mui/icons-material/Reviews";
 // import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 // import redux
@@ -287,6 +288,33 @@ const Home = (props) => {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText primary="Hardware" />
+                </ListItem>
+
+                <ListItem
+                  onClick={() => {
+                    handleClose("/review");
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: "30px",
+                        height: "30px",
+                        svg: {
+                          fontSize: "1.1rem",
+                        },
+                      }}
+                    >
+                      <ReviewsIcon
+                        color={
+                          window.location.pathname === "/review"
+                            ? "primary"
+                            : ""
+                        }
+                      />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Review" />
                 </ListItem>
 
                 <ListItem

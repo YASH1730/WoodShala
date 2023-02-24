@@ -46,6 +46,7 @@ const Accessories = lazy(() => import("./components/Accessories"));
 const Hardware = lazy(() => import("./components/dashboard/hardware/Hardware"));
 const BlogModule = lazy(() => import("./components/dashboard/blog/Blog"));
 const Merge = lazy(() => import("./components/dashboard/product/Merge"));
+const Review = lazy(() => import("./components/dashboard/review/Review"));
 const ProductDetails = lazy(() =>
   import("./components/Utility/ProductDetails")
 );
@@ -158,11 +159,7 @@ function MyRoutes() {
           path="/variation"
           element={<Variation history={history} />}
         />
-        {/* <Route
-          exact
-          path="/image"
-          element={<ImageSquence history={history} />}
-        />{" "} */}
+        <Route exact path="/review" element={<Review history={history} />} />{" "}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

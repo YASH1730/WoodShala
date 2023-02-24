@@ -46,7 +46,7 @@ import {
 //   );
 // }
 
-export default function Knob() {
+export default function Bolg() {
   const [search, setSearch] = useState("");
 
   const dispatch = useDispatch();

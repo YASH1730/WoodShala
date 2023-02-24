@@ -90,6 +90,14 @@ export const statusCategory = async (data) => {
     },
   });
 };
+// for status the category
+export const getMaterialDetails = async (data) => {
+  return await axios.get(`${API}/getMaterialDetails?ID=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
 
 // =========================== CURD FOR PRODUCTS  ===========================
 
@@ -368,6 +376,15 @@ export const changePolishStatus = async (data) => {
 
 export const editPolish = async (data) => {
   return await axios.patch(`${API}/editPolish`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+// details
+
+export const getPolishDetails = async (data) => {
+  return await axios.get(`${API}/getPolishDetails?ID=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -661,7 +678,7 @@ export const getBlogHome = async () => {
 // getBlog description
 
 export const getBlog = async (data) => {
-  return await axios.get(`${API}/getBlog?uuid=${data}`, {
+  return await axios.get(`${API}/getBlog?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -1241,6 +1258,59 @@ export const deleteDelivery = async (data) => {
 // for Dwnload CSV
 export const downloadCSV = async (data) => {
   return await axios.get(`${API}/downloadCSV`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// ================ Review =============
+export const getReview = async (data) => {
+  return await axios.get(`${API}/getReview/?filter=${JSON.stringify(data)}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// for status the review
+export const statusReview = async (data) => {
+  return await axios.post(`${API}/changeStatus`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+// for status the review
+export const addReply = async (data) => {
+  return await axios.post(`${API}/addReply`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// for adding review
+export const addReview = async (data) => {
+  return await axios.post(`${API}/addReview`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// for delete Review
+export const deleteReview = async (data) => {
+  return await axios.delete(`${API}/deleteReview?_id=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// for meta Review
+export const metaReview = async (data) => {
+  return await axios.get(`${API}/metaReview?_id=${data}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },

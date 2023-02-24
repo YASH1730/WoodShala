@@ -27,6 +27,7 @@ import {
   ListItemText,
   InputLabel,
   Autocomplete,
+  Rating,
 } from "@mui/material";
 import { Editor } from "@tinymce/tinymce-react";
 import Slide from "@mui/material/Slide";
@@ -40,22 +41,16 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageSquence from "../../Utility/ImageSquence";
 // service APIS
 import {
-  addCategory,
-  editCategory,
   getLastProduct,
   categoryList,
-  addSubCategories,
   getSubCatagories,
-  editSubCatagories,
-  addPrimaryMaterial,
-  editPrimaryMaterial,
+  // addPrimaryMaterial,
+  // editPrimaryMaterial,
   getPrimaryMaterial,
   addSupplier,
   editSupplier,
   createBlog,
   updateBlog,
-  addHardware,
-  editHardware,
   getLastHardware,
   addMergeProduct,
   updateMergeProduct,
@@ -78,22 +73,24 @@ import {
   uploadImage,
   addTransfer,
   getStockSKU,
-  addPolish,
-  editPolish,
+  // addPolish,
+  // editPolish,
   getCategoryList,
   applyDiscount,
+  addReview,
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
 import { setAlert, setForm } from "../../../store/action/action";
 import { useSelector, useDispatch } from "react-redux";
 
+import StarIcon from "@mui/icons-material/Star";
 import size from "react-image-size";
 import { fromUnixTime } from "date-fns/esm";
 
 const option = {
   labels: {
-    confirmable: "Procced",
+    confirmable: "Proceed",
     cancellable: "Cancel",
   },
 };
@@ -144,7 +141,7 @@ const SideForm = () => {
   // multiple images
   const [files, setFiles] = useState([]);
   const [featured, setFeatured] = useState([]);
-
+  const [hover, setHover] = React.useState(-1); // for rating in review
   // image link
   const imageLink = "https://admin.woodshala.in/upload/";
 
@@ -212,6 +209,19 @@ const SideForm = () => {
       </section>
     );
   }
+
+  const labels = {
+    0.5: "Useless",
+    1: "Useless+",
+    1.5: "Poor",
+    2: "Poor+",
+    2.5: "Ok",
+    3: "Ok+",
+    3.5: "Good",
+    4: "Good+",
+    4.5: "Excellent",
+    5: "Excellent+",
+  };
 
   // function for the filter the image to the basis of ratio 1:1
   function Dimension(images, setFiles) {
@@ -860,6 +870,10 @@ const SideForm = () => {
     marketing: false,
   });
 
+  function getLabelText(value) {
+    return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
+  }
+
   // function for generating Merged product  ID
 
   const getMKU = () => {
@@ -1297,6 +1311,7 @@ const SideForm = () => {
         });
         break;
       case "update_PrimaryMaterial":
+        getDID();
         console.log(form.payload.row);
         setData({
           primaryMaterial_name: form.payload.row.primaryMaterial_name,
@@ -1330,6 +1345,7 @@ const SideForm = () => {
         });
         break;
       case "update_blog":
+        getDID();
         setData({
           title: form.payload.value.title,
           card_image: form.payload.value.card_image,
@@ -1637,6 +1653,7 @@ const SideForm = () => {
         break;
       case "update_polish":
         // console.log(form.payload.row)
+        getDID();
         setData({
           ...changeData,
           _id: form.payload.row.action._id,
@@ -1651,6 +1668,15 @@ const SideForm = () => {
           lock: form.payload.row.action.lock,
           price: form.payload.row.action.price,
         });
+        break;
+      case "primaryMaterial":
+        getDID();
+        break;
+      case "addPolish":
+        getDID();
+        break;
+      case "addBlog":
+        getDID();
         break;
       default:
     }
@@ -3876,6 +3902,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Matrial");
+    FD.append("operation", "insertMaterial");
+
     Image.map((element) => {
       return FD.append("primaryMaterial_image", element);
     });
@@ -3893,7 +3924,8 @@ const SideForm = () => {
 
     // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
 
-    const res = addPrimaryMaterial(FD);
+    // const res = addPrimaryMaterial(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -3909,22 +3941,22 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              primaryMaterial_name: data.data.response.primaryMaterial_name,
-              primaryMaterial_description:
-                data.data.response.primaryMaterial_description,
-              primaryMaterial_image: data.data.response.primaryMaterial_image,
-              primaryMaterial_status: data.data.response.primaryMaterial_status,
-              action: data.data.response,
-            },
-          ]);
-          form.setCheck((old) => [
-            ...old,
-            data.data.response.primaryMaterial_status,
-          ]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     primaryMaterial_name: data.data.response.primaryMaterial_name,
+          //     primaryMaterial_description:
+          //       data.data.response.primaryMaterial_description,
+          //     primaryMaterial_image: data.data.response.primaryMaterial_image,
+          //     primaryMaterial_status: data.data.response.primaryMaterial_status,
+          //     action: data.data.response,
+          //   },
+          // ]);
+          // form.setCheck((old) => [
+          //   ...old,
+          //   data.data.response.primaryMaterial_status,
+          // ]);
           setImages([]);
           handleClose();
           dispatch(
@@ -3954,6 +3986,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", form.payload.row.action);
+    FD.append("type", "Material");
+    FD.append("operation", "updateMaterial");
+
     FD.append("_id", form.payload.row.action);
 
     Image.map((element) => {
@@ -3969,7 +4006,8 @@ const SideForm = () => {
 
     FD.append("customizations", e.target.customizations.checked);
 
-    const res = editPrimaryMaterial(FD);
+    // const res = editPrimaryMaterial(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -3985,21 +4023,21 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.primaryMaterial_description =
-                  e.target.primaryMaterial_description.value;
-                set.primaryMaterial_name = e.target.primaryMaterial_name.value;
-                set.customizations = changeData.customizations;
-                set.primaryMaterial_image =
-                  Image[0] !== undefined
-                    ? `${imageLink}${Image[0].path}`
-                    : changeData.primaryMaterial_image;
-              }
-              return set;
-            })
-          );
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.primaryMaterial_description =
+          //         e.target.primaryMaterial_description.value;
+          //       set.primaryMaterial_name = e.target.primaryMaterial_name.value;
+          //       set.customizations = changeData.customizations;
+          //       set.primaryMaterial_image =
+          //         Image[0] !== undefined
+          //           ? `${imageLink}${Image[0].path}`
+          //           : changeData.primaryMaterial_image;
+          //     }
+          //     return set;
+          //   })
+          // );
           setImages([]);
           handleClose();
           dispatch(
@@ -4716,6 +4754,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Blog");
+    FD.append("operation", "insertBlog");
+
     featured.map((element) => {
       return FD.append("banner_image", element);
     });
@@ -4725,7 +4768,8 @@ const SideForm = () => {
     FD.append("card_description", e.target.card_description.value);
     FD.append("seo_title", e.target.seo_title.value);
     FD.append("seo_description", e.target.seo_description.value);
-    const res = createBlog(FD);
+    // const res = createBlog(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -4741,20 +4785,20 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              uuid: data.data.response.uuid,
-              seo_title: data.data.response.seo_title,
-              seo_description: data.data.response.seo_description,
-              title: data.data.response.title,
-              card_image: data.data.response.card_image,
-              card_description: data.data.response.card_description,
-              description: data.data.response.description,
-              action: data.data.response,
-            },
-          ]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     uuid: data.data.response.uuid,
+          //     seo_title: data.data.response.seo_title,
+          //     seo_description: data.data.response.seo_description,
+          //     title: data.data.response.title,
+          //     card_image: data.data.response.card_image,
+          //     card_description: data.data.response.card_description,
+          //     description: data.data.response.description,
+          //     action: data.data.response,
+          //   },
+          // ]);
           setImages([]);
           setUrl(data.data.url);
           handleClose();
@@ -4785,6 +4829,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", form.payload.value._id);
+    FD.append("type", "Blog");
+    FD.append("operation", "updateBlog");
+
     featured.map((element) => {
       return FD.append("banner_image", element);
     });
@@ -4797,7 +4846,8 @@ const SideForm = () => {
     FD.append("seo_description", e.target.seo_description.value);
     FD.append("card_description", e.target.card_description.value);
 
-    const res = updateBlog(FD);
+    // const res = updateBlog(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -4813,23 +4863,23 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.seo_title = e.target.seo_title.value;
-                set.seo_description = e.target.seo_description.value;
-                set.title = e.target.title.value;
-                set.card_image =
-                  featured[0] !== undefined
-                    ? `${imageLink}${Image[0].path}`
-                    : changeData.card_image;
-                set.card_description = e.target.card_description.value;
-                set.description =
-                  editorRef.current.getContent() || set.description;
-              }
-              return set;
-            })
-          );
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.seo_title = e.target.seo_title.value;
+          //       set.seo_description = e.target.seo_description.value;
+          //       set.title = e.target.title.value;
+          //       set.card_image =
+          //         featured[0] !== undefined
+          //           ? `${imageLink}${Image[0].path}`
+          //           : changeData.card_image;
+          //       set.card_description = e.target.card_description.value;
+          //       set.description =
+          //         editorRef.current.getContent() || set.description;
+          //     }
+          //     return set;
+          //   })
+          // );
           setImages([]);
           setUrl(data.data.url);
           handleClose();
@@ -5281,6 +5331,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", "Not Assigned " + SKU);
+    FD.append("type", "Polish");
+    FD.append("operation", "insertPolish");
+
     FD.append("polish_name", e.target.polish_name.value);
     FD.append("polish_type", changeData.polish_type);
     FD.append("polish_finish", changeData.polish_finish);
@@ -5295,7 +5350,8 @@ const SideForm = () => {
       if (element.validate) return FD.append("inDoor_image", element);
     });
 
-    const res = addPolish(FD);
+    // const res = addPolish(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -5310,20 +5366,20 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow([
-            ...form.row,
-            {
-              id: form.row.length + 1,
-              polish_name: data.data.response.polish_name,
-              polish_type: data.data.response.polish_type,
-              polish_finish: data.data.response.polish_finish,
-              outDoor_image: data.data.response.outDoor_image,
-              inDoor_image: data.data.response.inDoor_image,
-              lock: data.data.response.lock,
-              price: data.data.response.price,
-              action: data.data.response,
-            },
-          ]);
+          // form.setRow([
+          //   ...form.row,
+          //   {
+          //     id: form.row.length + 1,
+          //     polish_name: data.data.response.polish_name,
+          //     polish_type: data.data.response.polish_type,
+          //     polish_finish: data.data.response.polish_finish,
+          //     outDoor_image: data.data.response.outDoor_image,
+          //     inDoor_image: data.data.response.inDoor_image,
+          //     lock: data.data.response.lock,
+          //     price: data.data.response.price,
+          //     action: data.data.response,
+          //   },
+          // ]);
           handleClose();
           dispatch(
             setAlert({
@@ -5349,6 +5405,11 @@ const SideForm = () => {
 
     const FD = new FormData();
 
+    FD.append("DID", SKU);
+    FD.append("AID", changeData._id);
+    FD.append("type", "Polish");
+    FD.append("operation", "updatePolish");
+
     FD.append("_id", changeData._id);
 
     FD.append("polish_type", changeData.polish_type);
@@ -5367,7 +5428,7 @@ const SideForm = () => {
       if (element.validate) return FD.append("inDoor_image", element);
     });
 
-    const res = editPolish(FD);
+    const res = addDraft(FD);
 
     res
       .then((data) => {
@@ -5382,21 +5443,21 @@ const SideForm = () => {
             })
           );
         } else {
-          form.setRow(
-            form.row.map((set) => {
-              if (set.action === form.payload.row.action) {
-                set.polish_name = changeData.polish_name;
-                set.polish_type = changeData.polish_type;
-                set.polish_finish = changeData.polish_finish;
-                set.level = changeData.level;
-                set.outDoor_image = changeData.outDoor_image;
-                set.inDoor_image = changeData.inDoor_image;
-                set.lock = changeData.lock;
-                set.price = changeData.price;
-              }
-              return set;
-            })
-          );
+          // form.setRow(
+          //   form.row.map((set) => {
+          //     if (set.action === form.payload.row.action) {
+          //       set.polish_name = changeData.polish_name;
+          //       set.polish_type = changeData.polish_type;
+          //       set.polish_finish = changeData.polish_finish;
+          //       set.level = changeData.level;
+          //       set.outDoor_image = changeData.outDoor_image;
+          //       set.inDoor_image = changeData.inDoor_image;
+          //       set.lock = changeData.lock;
+          //       set.price = changeData.price;
+          //     }
+          //     return set;
+          //   })
+          // );
           handleClose();
           dispatch(
             setAlert({
@@ -5420,6 +5481,108 @@ const SideForm = () => {
         );
       });
   };
+
+  // getting current data
+  function getTime() {
+    const currentDate = new Date();
+    const date =
+      currentDate.getDate() +
+      "/" +
+      (currentDate.getMonth() + 1) +
+      "/" +
+      currentDate.getFullYear() +
+      " @ " +
+      currentDate.getHours() +
+      ":" +
+      currentDate.getMinutes() +
+      ":" +
+      currentDate.getSeconds();
+
+    return date;
+  }
+  async function handleReview(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      console.log(changeData);
+
+      FD.append("product_id", changeData.product_id);
+      FD.append("rating", changeData.rating);
+      FD.append(
+        "review",
+        JSON.stringify([
+          { message: changeData.review, time: getTime(), date: new Date() },
+        ])
+      );
+      FD.append("review_title", changeData.review_title);
+      FD.append("yourTube_url", changeData.yourTube_url);
+      FD.append("reviewer_name", changeData.reviewer_name);
+      FD.append("reviewer_email", changeData.reviewer_email);
+      files.map((element) => {
+        if (element.validate) return FD.append("review_images", element);
+      });
+      const res = await addReview(FD);
+      if (res) {
+        //console.log(data.status);
+
+        if (res.status === 203) {
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: res.data.message,
+            })
+          );
+        } else {
+          form.setCheck((old) => [...old, true]);
+          form.setRow((old) => ({
+            ...old,
+            data: [
+              ...old.data,
+              {
+                id: old.data.length + 1,
+                CID: res.data.response.CID,
+                product_id: res.data.response.product_id,
+                rating: res.data.response.rating,
+                review: res.data.response.review,
+                admin_reply: res.data.response.admin_reply,
+                review_title: res.data.response.review_title,
+                review_images: res.data.response.review_images,
+                review_videos: res.data.response.review_videos,
+                yourTube_url: res.data.response.yourTube_url,
+                reviewer_name: res.data.response.reviewer_name,
+                reviewer_email: res.data.response.reviewer_email,
+                hide: res.data.response.hide,
+                date: res.data.response.date,
+                action: res.data.response,
+              },
+            ],
+          }));
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: res.data.message,
+            })
+          );
+        }
+      }
+    } catch (err) {
+      //console.log(err);
+      setImages([]);
+      setIndoor([]);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
+  }
 
   // load new searchList
   const handleSupplierList = async (e) => {
@@ -16410,7 +16573,7 @@ const SideForm = () => {
                     <FormGroup>
                       <FormControlLabel
                         control={<Checkbox name="customizations" />}
-                        label="Weather they accept customizations."
+                        label="Can Be Customised"
                       />
                     </FormGroup>
 
@@ -16499,7 +16662,7 @@ const SideForm = () => {
                             onChange={handleProductFields}
                           />
                         }
-                        label="Weather they accept customizations."
+                        label="Can Be Customised"
                       />
                     </FormGroup>
 
@@ -19166,7 +19329,7 @@ const SideForm = () => {
                               fullWidth
                               // autoComplete={false}
                               id="fullWidth"
-                              label="Wood Weight"
+                              label="Product Weight"
                               type="number"
                               InputProps={{
                                 startAdornment: (
@@ -20431,7 +20594,7 @@ const SideForm = () => {
                               fullWidth
                               // autoComplete={false}
                               id="fullWidth"
-                              label="Weight"
+                              label="Product Weight"
                               type="number"
                               InputProps={{
                                 startAdornment: (
@@ -21858,11 +22021,308 @@ const SideForm = () => {
               </Grid>
             )}
             {/* update addPolish  Ends */}
+
+            {/* add Review */}
+
+            {form.formType === "review" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Add Review
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add review from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleReview);
+                    }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+                    <Autocomplete
+                      freeSolo
+                      size="small"
+                      fullWidth
+                      noOptionsText={"ex : P-01001"}
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.P_SKU.map((row) => {
+                        return row.SKU;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearch}
+                          value={changeData.product_articles || ""}
+                          {...params}
+                          label="Product SKU"
+                        />
+                      )}
+                      onChange={(e, val) =>
+                        setData((old) => ({
+                          ...old,
+                          product_id: val,
+                        }))
+                      }
+                    />
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Review Images
+                    </FormLabel>
+                    <ProductsPreviews
+                      text={"Please Drag and Drop the review image"}
+                    >
+                      {" "}
+                    </ProductsPreviews>
+
+                    {files.length > 0 && (
+                      <Grid sx={{ p: 2 }} spacing={2} container>
+                        {files.map((img, index) => {
+                          return (
+                            <>
+                              <Grid item xs={2} sx={{ position: "relative" }}>
+                                <CancelIcon
+                                  onClick={() => {
+                                    // this function is for removing the image from savedImage array
+                                    let temp = files;
+                                    console.log(">>>>>>", temp, files);
+                                    temp.splice(index, 1);
+                                    setFiles([...temp]);
+                                  }}
+                                  className="imageCross"
+                                  color="primary"
+                                />
+                                <img
+                                  style={{ width: "100%" }}
+                                  src={URL.createObjectURL(img)}
+                                  alt={img.name}
+                                />
+                              </Grid>
+                            </>
+                          );
+                        })}
+                      </Grid>
+                    )}
+
+                    {/* // image Squence  Images */}
+                    {files.length > 0 && (
+                      <ImageSquence
+                        text={"New Images"}
+                        image={files}
+                        setImage={setFiles}
+                        savedImage={false}
+                      />
+                    )}
+
+                    {/* rating */}
+                    <Box className="rating">
+                      <Typography vriatn="h6">
+                        How much you want to rate it?
+                      </Typography>
+                      <Rating
+                        name="hover-feedback"
+                        // value={reviewData.data.rating || 4}
+                        precision={0.5}
+                        getLabelText={getLabelText}
+                        onChange={(event, newValue) => {
+                          setData((old) => ({ ...old, rating: newValue }));
+                        }}
+                        onChangeActive={(event, newHover) => {
+                          setHover(newHover);
+                        }}
+                        emptyIcon={
+                          <StarIcon
+                            style={{ opacity: 0.55 }}
+                            fontSize="inherit"
+                          />
+                        }
+                      />
+                      {changeData.rating !== null && (
+                        <Box sx={{ ml: 2 }}>
+                          {labels[hover !== -1 ? hover : changeData.rating]}
+                        </Box>
+                      )}
+                    </Box>
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      label="Review Title"
+                      size="small"
+                      value={changeData.review_title}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="review_title"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      size="small"
+                      label="YouTube URL"
+                      value={changeData.yourTube_url}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="yourTube_url"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      size="small"
+                      label="Reviewer Name (Name you want to show on review)"
+                      value={changeData.reviewer_name}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="reviewer_name"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      size="small"
+                      label="Reviewer Email"
+                      value={changeData.reviewer_email}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="reviewer_email"
+                    />
+                    <TextareaAutosize
+                      minRows={5}
+                      maxRows={5}
+                      required
+                      name="review"
+                      className="customTextArea"
+                      placeholder="Write something beautiful..."
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      value={changeData.review}
+                      onChange={handleProductFields}
+                    />
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Review
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add REview ends */}
+
+            {/*  update Review */}
+
+            {form.formType === "update_review" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Edit Review
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Edit review from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={5}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdatePolish);
+                    }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+                    <Autocomplete
+                      disablePortal
+                      size="small"
+                      fullWidth
+                      noOptionsText={"ex : P-01001"}
+                      // multiple
+                      autoHighlight
+                      id="combo-box-demo"
+                      options={productSKU.P_SKU.map((row) => {
+                        return row.SKU;
+                      })}
+                      renderInput={(params) => (
+                        <TextField
+                          onKeyUpCapture={handleSearch}
+                          value={changeData.product_articles || ""}
+                          {...params}
+                          label="Product SKU"
+                        />
+                      )}
+                      onChange={(e) =>
+                        setData((old) => ({
+                          ...old,
+                          product_id: e.target.value,
+                        }))
+                      }
+                    />
+
+                    <TextField
+                      sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="polish_name"
+                      value={changeData.polish_name || ""}
+                      onChange={handleProductFields}
+                      label="Polish Name"
+                      type="text"
+                      helperText="Please enter your primary material"
+                    />
+
+                    <TextField
+                      sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      name="price"
+                      value={changeData.price || 0}
+                      onChange={handleProductFields}
+                      label="Price (per Inch)"
+                      type="number"
+                    />
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Review
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* update Review  Ends */}
           </Box>
         </Backdrop>
       </Slide>
     </>
   );
 };
+
+// for label the ratting
 
 export default SideForm;
