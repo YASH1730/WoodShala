@@ -227,7 +227,7 @@ const Review = () => {
       renderCell: (params) => (
         <Rating
           readOnly
-          defaultValue={parseInt(params.formattedValue)}
+          value={parseInt(params.formattedValue)}
           precision={0.5}
         />
       ),
@@ -263,7 +263,7 @@ const Review = () => {
       renderCell: (params) => (
         <Box sx={{ display: "flex", gap: "5px" }}>
           {/* // update  */}
-          {/* <Tooltip title="Update">
+          <Tooltip title="Update">
             <IconButton
               onClick={() => {
                 //console.log(params)
@@ -273,6 +273,7 @@ const Review = () => {
                     state: true,
                     formType: "update_review",
                     payload: params,
+                    setRow: setPageState,
                   })
                 );
               }}
@@ -280,10 +281,10 @@ const Review = () => {
             >
               <CreateIcon />
             </IconButton>
-          </Tooltip> */}
+          </Tooltip>
 
           {/* reply */}
-          <Tooltip title="Reply">
+          {/* <Tooltip title="Reply">
             <IconButton
               onClick={() => {
                 setReplyState((old) => ({
@@ -298,7 +299,7 @@ const Review = () => {
             >
               <SendIcon />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
 
           {/* // ============== delete product */}
           <Tooltip title="Delete">
@@ -548,146 +549,146 @@ const Review = () => {
       {/* data grid ends  */}
 
       {/* reply */}
-      <ReplyModal state={replyState} setState={setReplyState} />
+      {/* <ReplyModal state={replyState} setState={setReplyState} /> */}
       {/* reply ends */}
     </Box>
   );
 };
 
-function Conversation({ admin, customer }) {
-  return (
-    <Box className="displayScreen">
-      {[...customer, ...admin]
-        .sort((a, b) => {
-          return new Date(a.date) - new Date(b.date);
-        })
-        .map((row, index) => {
-          return (
-            <Box
-              className={customer.includes(row) ? "message" : "message right"}
-            >
-              {console.log(customer.includes(row))}
-              <Typography sx={{ display: "block" }} variant="body1">
-                {row.message}
-              </Typography>
-              <Typography sx={{ fontSize: "0.6rem !important" }}>
-                {row.time}
-              </Typography>
-            </Box>
-          );
-        })}
-    </Box>
-  );
-}
+// function Conversation({ admin, customer }) {
+//   return (
+//     <Box className="displayScreen">
+//       {[...customer, ...admin]
+//         .sort((a, b) => {
+//           return new Date(a.date) - new Date(b.date);
+//         })
+//         .map((row, index) => {
+//           return (
+//             <Box
+//               className={customer.includes(row) ? "message" : "message right"}
+//             >
+//               {console.log(customer.includes(row))}
+//               <Typography sx={{ display: "block" }} variant="body1">
+//                 {row.message}
+//               </Typography>
+//               <Typography sx={{ fontSize: "0.6rem !important" }}>
+//                 {row.time}
+//               </Typography>
+//             </Box>
+//           );
+//         })}
+//     </Box>
+//   );
+// }
 
-function ReplyModal({ state, setState }) {
-  const handleClose = () => setState((old) => ({ ...old, open: false }));
+// function ReplyModal({ state, setState }) {
+//   const handleClose = () => setState((old) => ({ ...old, open: false }));
 
-  // getting current data
-  function getTime() {
-    const currentDate = new Date();
-    const date =
-      currentDate.getDate() +
-      "/" +
-      (currentDate.getMonth() + 1) +
-      "/" +
-      currentDate.getFullYear() +
-      " @ " +
-      currentDate.getHours() +
-      ":" +
-      currentDate.getMinutes() +
-      ":" +
-      currentDate.getSeconds();
+//   // getting current data
+//   function getTime() {
+//     const currentDate = new Date();
+//     const date =
+//       currentDate.getDate() +
+//       "/" +
+//       (currentDate.getMonth() + 1) +
+//       "/" +
+//       currentDate.getFullYear() +
+//       " @ " +
+//       currentDate.getHours() +
+//       ":" +
+//       currentDate.getMinutes() +
+//       ":" +
+//       currentDate.getSeconds();
 
-    return date;
-  }
+//     return date;
+//   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    try {
-      console.log(e.target.reply.value);
+//   async function handleSubmit(e) {
+//     e.preventDefault();
+//     try {
+//       console.log(e.target.reply.value);
 
-      let data = {
-        message: e.target.reply.value,
-        time: getTime(),
-        date: new Date(),
-      };
+//       let data = {
+//         message: e.target.reply.value,
+//         time: getTime(),
+//         date: new Date(),
+//       };
 
-      const FD = new FormData();
-      FD.append("reply", JSON.stringify([data]));
-      FD.append("_id", state.ID);
+//       const FD = new FormData();
+//       FD.append("reply", JSON.stringify([data]));
+//       FD.append("_id", state.ID);
 
-      let res = await addReply(FD);
+//       let res = await addReply(FD);
 
-      if (res.status === 200) {
-        setState((old) => ({
-          ...old,
-          admin: [...old.admin, data],
-        }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+//       if (res.status === 200) {
+//         setState((old) => ({
+//           ...old,
+//           admin: [...old.admin, data],
+//         }));
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-  return (
-    <div>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={state.open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={state.open}>
-          <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              Reply Box
-            </Typography>
-            <Box
-              className="messageContainer"
-              component={"form"}
-              onSubmit={handleSubmit}
-              method="post"
-              action=""
-            >
-              <Grid container className="innerMessageContainer">
-                <Grid xs={12}>
-                  <Conversation customer={state.customer} admin={state.admin} />
-                </Grid>
-                <Grid xs={9.5} className="messageField">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    label="Reply"
-                    type="text"
-                    name="reply"
-                    variant="outlined"
-                  ></TextField>
-                </Grid>
-                <Grid xs={2} className="sendButton">
-                  <Button
-                    fullWidth
-                    color="primary"
-                    variant="contained"
-                    size="small"
-                    type="submit"
-                    endIcon={<SendIcon />}
-                  >
-                    Send
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </Fade>
-      </Modal>
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       <Modal
+//         aria-labelledby="transition-modal-title"
+//         aria-describedby="transition-modal-description"
+//         open={state.open}
+//         onClose={handleClose}
+//         closeAfterTransition
+//         BackdropComponent={Backdrop}
+//         BackdropProps={{
+//           timeout: 500,
+//         }}
+//       >
+//         <Fade in={state.open}>
+//           <Box sx={style}>
+//             <Typography id="transition-modal-title" variant="h6" component="h2">
+//               Reply Box
+//             </Typography>
+//             <Box
+//               className="messageContainer"
+//               component={"form"}
+//               onSubmit={handleSubmit}
+//               method="post"
+//               action=""
+//             >
+//               <Grid container className="innerMessageContainer">
+//                 <Grid xs={12}>
+//                   <Conversation customer={state.customer} admin={state.admin} />
+//                 </Grid>
+//                 <Grid xs={9.5} className="messageField">
+//                   <TextField
+//                     fullWidth
+//                     size="small"
+//                     label="Reply"
+//                     type="text"
+//                     name="reply"
+//                     variant="outlined"
+//                   ></TextField>
+//                 </Grid>
+//                 <Grid xs={2} className="sendButton">
+//                   <Button
+//                     fullWidth
+//                     color="primary"
+//                     variant="contained"
+//                     size="small"
+//                     type="submit"
+//                     endIcon={<SendIcon />}
+//                   >
+//                     Send
+//                   </Button>
+//                 </Grid>
+//               </Grid>
+//             </Box>
+//           </Box>
+//         </Fade>
+//       </Modal>
+//     </div>
+//   );
+// }
 
 export default Review;

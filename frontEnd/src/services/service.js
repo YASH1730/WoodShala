@@ -1299,6 +1299,15 @@ export const addReview = async (data) => {
   });
 };
 
+// for update Review
+export const updateReview = async (data) => {
+  return await axios.patch(`${API}/updateReview`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
 // for delete Review
 export const deleteReview = async (data) => {
   return await axios.delete(`${API}/deleteReview?_id=${data}`, {

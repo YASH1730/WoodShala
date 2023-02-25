@@ -75,6 +75,7 @@ import {
   getStockSKU,
   // addPolish,
   // editPolish,
+  updateReview,
   getCategoryList,
   applyDiscount,
   addReview,
@@ -1677,6 +1678,19 @@ const SideForm = () => {
         break;
       case "addBlog":
         getDID();
+        break;
+      case "update_review":
+        console.log(form.payload);
+        setData((old) => ({
+          ...old,
+          _id: form.payload.formattedValue._id,
+          product_id: form.payload.row.product_id,
+          rating: parseInt(form.payload.row.rating),
+          review: form.payload.row.review,
+          review_title: form.payload.row.review_title,
+          yourTube_url: form.payload.row.yourTube_url,
+          action: form.payload.row.action,
+        }));
         break;
       default:
     }
@@ -5510,12 +5524,7 @@ const SideForm = () => {
 
       FD.append("product_id", changeData.product_id);
       FD.append("rating", changeData.rating);
-      FD.append(
-        "review",
-        JSON.stringify([
-          { message: changeData.review, time: getTime(), date: new Date() },
-        ])
-      );
+      FD.append("review", changeData.review);
       FD.append("review_title", changeData.review_title);
       FD.append("yourTube_url", changeData.yourTube_url);
       FD.append("reviewer_name", changeData.reviewer_name);
@@ -5572,6 +5581,68 @@ const SideForm = () => {
       }
     } catch (err) {
       //console.log(err);
+      setImages([]);
+      setIndoor([]);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
+  }
+  async function handleUpdateReview(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      console.log(changeData);
+
+      FD.append("_id", changeData._id);
+      FD.append("rating", changeData.rating);
+      FD.append("review", changeData.review);
+      FD.append("review_title", changeData.review_title);
+      FD.append("yourTube_url", changeData.yourTube_url);
+      const res = await updateReview(FD);
+      if (res) {
+        //console.log(data.status);
+
+        if (res.status === 203) {
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "error",
+              message: res.data.message,
+            })
+          );
+        } else {
+          form.setRow((old) => ({
+            ...old,
+            data: old.data.map((row, index) => {
+                console.log(row)
+                if (row.action._id === changeData._id) {
+                  row.rating = changeData.rating;
+                  row.review = changeData.review;
+                  row.review_title = changeData.review_title;
+                  row.yourTube_url = changeData.yourTube_url;
+                }
+                return row;
+              }),
+          }));
+          handleClose();
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: res.data.message,
+            })
+          );
+        }
+      }
+    } catch (err) {
+      console.log(err);
       setImages([]);
       setIndoor([]);
       dispatch(
@@ -22240,76 +22311,96 @@ const SideForm = () => {
                   </Typography>
                 </Grid>
 
-                <Grid item xs={12} mt={5}>
+                <Grid item xs={12} mt={2}>
                   <form
                     className="form"
                     onSubmit={(e) => {
-                      confirmBox(e, handleUpdatePolish);
+                      confirmBox(e, handleUpdateReview);
                     }}
                     id="myForm"
                     encType="multipart/form-data"
                     method="post"
                   >
-                    <Autocomplete
-                      disablePortal
+                    <TextField
+                      disabled
+                      onKeyUpCapture={handleSearch}
                       size="small"
-                      fullWidth
-                      noOptionsText={"ex : P-01001"}
-                      // multiple
-                      autoHighlight
-                      id="combo-box-demo"
-                      options={productSKU.P_SKU.map((row) => {
-                        return row.SKU;
-                      })}
-                      renderInput={(params) => (
-                        <TextField
-                          onKeyUpCapture={handleSearch}
-                          value={changeData.product_articles || ""}
-                          {...params}
-                          label="Product SKU"
-                        />
+                      value={changeData.product_id}
+                      label="Product SKU"
+                    />
+
+                    {/* rating */}
+                    <Box className="rating">
+                      <Typography vriatn="h6">
+                        How much you want to rate it?
+                      </Typography>
+                      <Rating
+                        name="hover-feedback"
+                        value={changeData.rating || 4}
+                        precision={0.5}
+                        getLabelText={getLabelText}
+                        onChange={(event, newValue) => {
+                          setData((old) => ({ ...old, rating: newValue }));
+                        }}
+                        onChangeActive={(event, newHover) => {
+                          setHover(newHover);
+                        }}
+                        emptyIcon={
+                          <StarIcon
+                            style={{ opacity: 0.55 }}
+                            fontSize="inherit"
+                          />
+                        }
+                      />
+                      {changeData.rating !== null && (
+                        <Box sx={{ ml: 2 }}>
+                          {labels[hover !== -1 ? hover : changeData.rating]}
+                        </Box>
                       )}
-                      onChange={(e) =>
-                        setData((old) => ({
-                          ...old,
-                          product_id: e.target.value,
-                        }))
-                      }
+                    </Box>
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 2 }}
+                      label="Review Title"
+                      size="small"
+                      value={changeData.review_title}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="review_title"
                     />
 
                     <TextField
+                      fullWidth
                       sx={{ mb: 2 }}
                       size="small"
-                      fullWidth
-                      // required
-                      id="outlined-select"
-                      name="polish_name"
-                      value={changeData.polish_name || ""}
+                      label="YouTube URL"
+                      value={changeData.yourTube_url}
                       onChange={handleProductFields}
-                      label="Polish Name"
-                      type="text"
-                      helperText="Please enter your primary material"
+                      variant="outlined"
+                      name="yourTube_url"
                     />
 
-                    <TextField
-                      sx={{ mb: 2 }}
-                      size="small"
+                    <TextareaAutosize
+                      minRows={5}
+                      maxRows={5}
+                      required
+                      name="review"
+                      className="customTextArea"
+                      placeholder="Write something beautiful..."
                       fullWidth
-                      // required
-                      id="outlined-select"
-                      name="price"
-                      value={changeData.price || 0}
+                      sx={{ mb: 2 }}
+                      value={changeData.review}
                       onChange={handleProductFields}
-                      label="Price (per Inch)"
-                      type="number"
                     />
+
                     <Button
                       color="primary"
                       type="submit"
                       fullWidth
                       variant="contained"
                     >
-                      Add Review
+                      Update Review
                     </Button>
                   </form>
                 </Grid>
