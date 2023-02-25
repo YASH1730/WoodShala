@@ -38,13 +38,13 @@ import SecurityIcon from "@mui/icons-material/Security";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import Suppliers from "./dashboard/accessories/Suppliers";
 import Security from "./dashboard/accessories/Security";
-import Pincode from "./dashboard/accessories/Pincode";
+import COD from "./dashboard/accessories/COD";
 const components = [
   Category,
   SubCategory,
   PrimaryMaterial,
   Polish,
-  Pincode,
+  COD,
   Security,
   Suppliers,
   // Fitting,

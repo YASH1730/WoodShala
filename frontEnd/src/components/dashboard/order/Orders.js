@@ -8,25 +8,25 @@ import {
   MenuItem,
   Grid,
   Box,
-  Button
+  Button,
 } from "@mui/material";
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useDispatch } from 'react-redux'
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useDispatch } from "react-redux";
 import { setAlert } from "../../../store/action/action";
-import { getOrder, changeOrderStatus, deleteOrder } from "../../../services/service";
+import {
+  getOrder,
+  changeOrderStatus,
+  deleteOrder,
+} from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
-import {
-  DataGrid,
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 
 export default function Order() {
-
   const [Row, setRows] = useState([]);
-
 
   // context
   const dispatch = useDispatch();
@@ -40,15 +40,14 @@ export default function Order() {
     customer_name: undefined,
     customer_email: undefined,
     date: "",
-    filter: false
-  })
-
+    filter: false,
+  });
 
   async function fetchData() {
-    setPageState(lastState => ({
+    setPageState((lastState) => ({
       ...lastState,
-      isLoading: true
-    }))
+      isLoading: true,
+    }));
     getOrder({
       page: pageState.page,
       limit: pageState.limit,
@@ -58,7 +57,7 @@ export default function Order() {
       customer_email: pageState.customer_email,
     })
       .then((data) => {
-        setPageState(lastState => ({
+        setPageState((lastState) => ({
           ...lastState,
           data: data.data.data.map((row, index) => {
             return {
@@ -75,27 +74,23 @@ export default function Order() {
               shipping: row.shipping,
               quantity: JSON.stringify(row.quantity),
               discount: row.discount,
-              paid:
-                parseInt((row.paid / row.total) * 100) + "%",
+              paid: parseInt((row.paid / row.total) * 100) + "%",
               total: row.total,
-              note: row.note || '',
+              note: row.note || "",
               action: row._id,
-            }
+            };
           }),
           isLoading: false,
           total: data.data.total,
-          filter: false
-        }))
+          filter: false,
+        }));
       })
-      .catch((err) => {
-      })
+      .catch((err) => {});
   }
 
   useMemo(() => {
     fetchData();
   }, [pageState.page, pageState.limit, pageState.filter]);
-
-
 
   const [status, setStatus] = useState({});
 
@@ -129,7 +124,8 @@ export default function Order() {
       headerName: "Status",
       width: 150,
       renderCell: (params) => (
-        <TextField size='small'
+        <TextField
+          size="small"
           fullWidth
           size="small"
           id="outlined-select"
@@ -138,10 +134,10 @@ export default function Order() {
               params.formattedValue === "completed"
                 ? "#52ffc9"
                 : params.formattedValue === "cancel"
-                  ? "#fdabab"
-                  : params.formattedValue === "processing"
-                    ? "#b9abfd"
-                    : "",
+                ? "#fdabab"
+                : params.formattedValue === "processing"
+                ? "#b9abfd"
+                : "",
           }}
           value={status[params.row.action] || params.formattedValue}
           select
@@ -252,7 +248,7 @@ export default function Order() {
           >
             <CreateIcon />
           </IconButton> */}
-          <IconButton onClick={() => {
+          {/* <IconButton onClick={() => {
             deleteOrder(params.formattedValue).then((res) => {
               setPageState(old => ({
                 ...old, total: old.total - 1,
@@ -269,26 +265,24 @@ export default function Order() {
             })
           }} aria-label="delete"  >
             <DeleteIcon />
-          </IconButton>
-
+          </IconButton> */}
         </div>
       ),
     },
   ];
 
-
   const clearFilter = () => {
-    return setPageState(old => ({
+    return setPageState((old) => ({
       ...old,
       O: undefined,
       date: "",
       customer_name: undefined,
       customer_email: undefined,
-      order_time: '',
-      filter: !old.filter
-    }))
-  }
-  // status update 
+      order_time: "",
+      filter: !old.filter,
+    }));
+  };
+  // status update
   const handleStatus = (e) => {
     setStatus({ ...status, [e.target.name]: e.target.value });
 
@@ -304,28 +298,29 @@ export default function Order() {
     res
       .then((data) => {
         console.log(data);
-        dispatch(setAlert({
-          open: true,
-          variant: "success",
-          message: " Order Status Updated Successfully !!!",
-        }
-        ));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: " Order Status Updated Successfully !!!",
+          })
+        );
       })
       .catch((err) => {
         console.log(err);
-        dispatch(setAlert({
-          open: true,
-          variant: "error",
-          message: "Something Went Wrong !!!",
-        }));
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: "Something Went Wrong !!!",
+          })
+        );
       });
   };
 
   const handleSearch = (e) => {
-    return setPageState(old => ({ ...old, [e.target.name]: e.target.value }));
-  }
-
-
+    return setPageState((old) => ({ ...old, [e.target.name]: e.target.value }));
+  };
 
   //   setData({
   //     OID: '',
@@ -373,19 +368,20 @@ export default function Order() {
           limit={pageState.limit}
           paginationMode="server"
           onPageChange={(newPage) => {
-            setPageState(old => ({ ...old, page: newPage + 1 }))
+            setPageState((old) => ({ ...old, page: newPage + 1 }));
           }}
-          onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, limit: newPageSize }))}
+          onPageSizeChange={(newPageSize) =>
+            setPageState((old) => ({ ...old, limit: newPageSize }))
+          }
           columns={columns}
         />
       </div>
     );
   }
 
-
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
-      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
+      <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Order
       </Typography>
       <br></br>
@@ -403,23 +399,25 @@ export default function Order() {
         }}
       >
         <Grid xs={12} md={2.5}>
-          <TextField size='small'
+          <TextField
+            size="small"
             fullWidth
             id="demo-helper-text-aligned-no-helper"
             type="text"
-            placeholder='ex O-01001'
+            placeholder="ex O-01001"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">O</InputAdornment>
               ),
             }}
-            value={pageState.O || ''}
+            value={pageState.O || ""}
             name="O"
             onChange={handleSearch}
           />
         </Grid>
         <Grid xs={12} md={2.5}>
-          <TextField size='small'
+          <TextField
+            size="small"
             fullWidth
             id="demo-helper-text-aligned-no-helper"
             type="text"
@@ -428,13 +426,14 @@ export default function Order() {
                 <InputAdornment position="start">Name</InputAdornment>
               ),
             }}
-            value={pageState.customer_name || ''}
+            value={pageState.customer_name || ""}
             name="customer_name"
             onChange={handleSearch}
           />
         </Grid>
         <Grid xs={12} md={2.5}>
-          <TextField size='small'
+          <TextField
+            size="small"
             fullWidth
             // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
@@ -443,14 +442,15 @@ export default function Order() {
                 <InputAdornment position="start">Email</InputAdornment>
               ),
             }}
-            value={pageState.customer_email || ''}
+            value={pageState.customer_email || ""}
             name="customer_email"
             type="email"
             onChange={handleSearch}
           />
         </Grid>
         <Grid xs={12} md={2.5}>
-          <TextField size='small'
+          <TextField
+            size="small"
             fullWidth
             // autoComplete={false}
             value={pageState.date}
@@ -461,16 +461,22 @@ export default function Order() {
           />
         </Grid>
 
-        <Grid xs={12} md={1.5} sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: '5px'
-        }} >
+        <Grid
+          xs={12}
+          md={1.5}
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "5px",
+          }}
+        >
           <Button
             color="primary"
             fullWidth
             variant="contained"
-            onClick={() => { setPageState(old => ({ ...old, filter: !old.filter })) }}
+            onClick={() => {
+              setPageState((old) => ({ ...old, filter: !old.filter }));
+            }}
           >
             <FilterAltIcon />
           </Button>
@@ -483,8 +489,6 @@ export default function Order() {
             <FilterAltOffIcon />
           </Button>
         </Grid>
-
-
       </Grid>
 
       {/* Section 1 ends  */}
@@ -492,18 +496,31 @@ export default function Order() {
 
       {/* data grid & create order  */}
 
-      <Grid container scaping={2} sx={{
-        display: 'flex', justifyContent: 'space-between', alignItem: 'center'
-      }}>
-        <Grid item p={2} xs={12} sx={{ boxShadow: 1, borderRadius: 5, maxHeight: 500 }}>
-          <div style={
-            {
-              display: 'flex',
-              justifyContent: 'space-between',
-            }
-          } >
-
-            <Typography component={'span'} variant="h6"> Order List </Typography>
+      <Grid
+        container
+        scaping={2}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItem: "center",
+        }}
+      >
+        <Grid
+          item
+          p={2}
+          xs={12}
+          sx={{ boxShadow: 1, borderRadius: 5, maxHeight: 500 }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography component={"span"} variant="h6">
+              {" "}
+              Order List{" "}
+            </Typography>
             {/* <Button
               onClick={() => {
                dispatch({type : OpenBox,payload : { state: true, formType: "add_order" }});
@@ -518,8 +535,6 @@ export default function Order() {
           <br></br>
           {DataGridView(Row, columns, 400)}
         </Grid>
-
-
       </Grid>
 
       {/* data grid ends  */}

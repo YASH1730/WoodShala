@@ -3597,7 +3597,7 @@ const SideForm = () => {
     if (changeData.product_articles.length > 0)
       Product_SKU = changeData.product_articles.map((SKU) => ({
         SKU: SKU,
-        qty: changeData[SKU] || 0,
+        qty: changeData[SKU] || 1,
       }));
 
     FD.append("product_articles", JSON.stringify(Product_SKU));
@@ -5621,15 +5621,15 @@ const SideForm = () => {
           form.setRow((old) => ({
             ...old,
             data: old.data.map((row, index) => {
-                console.log(row)
-                if (row.action._id === changeData._id) {
-                  row.rating = changeData.rating;
-                  row.review = changeData.review;
-                  row.review_title = changeData.review_title;
-                  row.yourTube_url = changeData.yourTube_url;
-                }
-                return row;
-              }),
+              console.log(row);
+              if (row.action._id === changeData._id) {
+                row.rating = changeData.rating;
+                row.review = changeData.review;
+                row.review_title = changeData.review_title;
+                row.yourTube_url = changeData.yourTube_url;
+              }
+              return row;
+            }),
           }));
           handleClose();
           dispatch(
@@ -14175,7 +14175,6 @@ const SideForm = () => {
                               name="SKU"
                             />
                             <Autocomplete
-                              disablePortal
                               size="small"
                               fullWidth
                               multiple
@@ -14185,6 +14184,7 @@ const SideForm = () => {
                               options={productSKU.P_SKU.map((row) => {
                                 return row.SKU;
                               })}
+                              value={changeData.product_articles}
                               renderInput={(params) => (
                                 <TextField
                                   onKeyUpCapture={handleSearch}
@@ -14200,7 +14200,7 @@ const SideForm = () => {
                                 }))
                               }
                             />
-                            {/* {changeData.product_articles.length > 0 && (
+                            {changeData.product_articles.length > 0 && (
                               <Box mt={1}>
                                 <Typography component={"span"} variant="body1">
                                   Product Quantities
@@ -14230,12 +14230,12 @@ const SideForm = () => {
                                       }}
                                       placeholder={item}
                                       onChange={handleProductFields}
-                                      value={changeData[item] || 0}
+                                      value={changeData[item] || 1}
                                     />
                                   ))}
                                 </Box>
                               </Box>
-                            )} */}
+                            )}
                             <TextField
                               size="small"
                               fullWidth
@@ -15217,7 +15217,7 @@ const SideForm = () => {
                                 }))
                               }
                             />
-                            {/* {changeData.product_articles.length > 0 && (
+                            {changeData.product_articles.length > 0 && (
                               <Box mt={1}>
                                 <Typography component={"span"} variant="body1">
                                   Product Quantities
@@ -15247,12 +15247,12 @@ const SideForm = () => {
                                       }}
                                       placeholder={item}
                                       onChange={handleProductFields}
-                                      value={changeData[item] || 0}
+                                      value={changeData[item] || 1}
                                     />
                                   ))}
                                 </Box>
                               </Box>
-                            )} */}
+                            )}
                             <TextField
                               size="small"
                               fullWidth

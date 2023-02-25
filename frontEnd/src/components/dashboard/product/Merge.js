@@ -6,22 +6,24 @@ import {
   Grid,
   Button,
   IconButton,
-  Modal
+  Modal,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import CreateIcon from '@mui/icons-material/Create';
+import DeleteIcon from "@mui/icons-material/Delete";
+import CreateIcon from "@mui/icons-material/Create";
 // import AddIcon from "@mui/icons-material/Add";
-import { getListProduct, deleteProduct, getListMergeProduct, deleteMergeProduct } from '../../../services/service'
-import MergeIcon from '@mui/icons-material/Merge';
-import question from '../../../assets/img/question.svg'
 import {
-  DataGrid,
-} from '@mui/x-data-grid';
-import { setAlert, setForm } from '../../../store/action/action'
-import { useDispatch } from 'react-redux'
+  getListProduct,
+  deleteProduct,
+  getListMergeProduct,
+  deleteMergeProduct,
+} from "../../../services/service";
+import MergeIcon from "@mui/icons-material/Merge";
+import question from "../../../assets/img/question.svg";
+import { DataGrid } from "@mui/x-data-grid";
+import { setAlert, setForm } from "../../../store/action/action";
+import { useDispatch } from "react-redux";
 
 export default function Products(props) {
-
   // store
   const dispatch = useDispatch();
 
@@ -41,21 +43,19 @@ export default function Products(props) {
     category: undefined,
     SKU: undefined,
     subCategory: undefined,
-    filter: false
-  })
+    filter: false,
+  });
 
   const [search, setSearch] = useState({
-    P: '',
-    MS: ''
-  })
-
-
+    P: "",
+    MS: "",
+  });
 
   const fetchData = async () => {
-    setPageState(lastState => ({
+    setPageState((lastState) => ({
       ...lastState,
-      isLoading: true
-    }))
+      isLoading: true,
+    }));
     const response = await getListMergeProduct({
       page: pageState.page,
       limit: pageState.limit,
@@ -63,10 +63,10 @@ export default function Products(props) {
       title: pageState.title,
       category: pageState.category,
       SKU: pageState.SKU,
-      subCategory: pageState.subCategory
-    })
+      subCategory: pageState.subCategory,
+    });
 
-    setPageState(lastState => ({
+    setPageState((lastState) => ({
       ...lastState,
       data: response.data.data.map((row, index) => {
         return {
@@ -105,22 +105,18 @@ export default function Products(props) {
           seo_title: row.seo_title,
           seo_description: row.seo_description,
           seo_keyword: row.seo_keyword,
-          action: row._id
-
-        }
+          action: row._id,
+        };
       }),
       isLoading: false,
       total: response.data.total,
-      filter: false
-    }))
-
-  }
+      filter: false,
+    }));
+  };
 
   useMemo(() => {
     fetchData();
   }, [pageState.page, pageState.limit, pageState.filter]);
-
-
 
   const columns = [
     { field: "id", headerName: "ID", width: 50 },
@@ -134,29 +130,33 @@ export default function Products(props) {
       field: "featured_image",
       headerName: "Featured Image",
       width: 160,
-      align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
-
+      align: "center",
+      renderCell: (params) => (
+        <div className="categoryImage">
+          <img src={params.formattedValue || question} alt="featured" />
+        </div>
+      ),
     },
     {
       field: "specification_image",
       headerName: "Specification Image",
       width: 160,
-      align: 'center',
-      renderCell: (params) => <div className="categoryImage" ><img src={params.formattedValue || question} alt='featured' /></div>,
-
+      align: "center",
+      renderCell: (params) => (
+        <div className="categoryImage">
+          <img src={params.formattedValue || question} alt="featured" />
+        </div>
+      ),
     },
     {
       field: "product_title",
       headerName: "Product Title",
       width: 300,
-
     },
     {
       field: "category_name",
       headerName: "Category Name",
       width: 150,
-
     },
     {
       field: "sub_category_name",
@@ -169,60 +169,68 @@ export default function Products(props) {
       field: "action",
       headerName: "Actions",
       width: 200,
-      renderCell: (params) =>
+      renderCell: (params) => (
         <div>
-
-          <IconButton onClick={() => {
-
-            dispatch(setForm({
-              state: true,
-              formType: 'update_merge',
-              payload: params,
-              row: pageState.data,
-              setRow: setPageState
-            }))
-
-          }} aria-label="update"  >
+          <IconButton
+            onClick={() => {
+              dispatch(
+                setForm({
+                  state: true,
+                  formType: "update_merge",
+                  payload: params,
+                  row: pageState.data,
+                  setRow: setPageState,
+                })
+              );
+            }}
+            aria-label="update"
+          >
             <CreateIcon />
           </IconButton>
 
-          <IconButton onClick={async () => {
-            let res = await deleteMergeProduct(params.formattedValue)
+          <IconButton
+            onClick={async () => {
+              let res = await deleteMergeProduct(params.formattedValue);
 
-            if (res.status !== 200) {
-              return dispatch(setAlert({
-                open: true,
-                variant: 'error',
-                message: "Please provide valid ID !!!"
+              if (res.status !== 200) {
+                return dispatch(
+                  setAlert({
+                    open: true,
+                    variant: "error",
+                    message: "Please provide valid ID !!!",
+                  })
+                );
+              }
+              setPageState((old) => ({
+                ...old,
+                total: old - 1,
+                data: old.data.filter((set) => {
+                  return set.action !== params.formattedValue;
+                }),
+              }));
 
-              }))
-            }
-            setPageState(old => ({
-              ...old, total: old - 1, data: old.data.filter((set) => {
-                return set.action !== params.formattedValue;
-              })
-            }))
-
-            dispatch(setAlert({
-              open: true,
-              variant: 'success',
-              message: "Merged Product deleted successfully !!!"
-
-            }))
-          }} aria-label="delete"  >
+              dispatch(
+                setAlert({
+                  open: true,
+                  variant: "success",
+                  message: "Merged Product deleted successfully !!!",
+                })
+              );
+            }}
+            aria-label="delete"
+          >
             <DeleteIcon />
           </IconButton>
-
-        </div>,
-    }
-
+        </div>
+      ),
+    },
   ];
 
   // data grid for table data
 
   function DataGridView() {
     return (
-      <div style={{ marginTop: '2%', height: 400, width: "100%" }}>
+      <div style={{ marginTop: "2%", height: 400, width: "100%" }}>
         <DataGrid
           rows={pageState.data}
           rowCount={pageState.total}
@@ -242,45 +250,46 @@ export default function Products(props) {
           limit={pageState.limit}
           paginationMode="server"
           onPageChange={(newPage) => {
-            setPageState(old => ({ ...old, page: newPage + 1 }))
+            setPageState((old) => ({ ...old, page: newPage + 1 }));
           }}
-          onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, limit: newPageSize }))}
+          onPageSizeChange={(newPageSize) =>
+            setPageState((old) => ({ ...old, limit: newPageSize }))
+          }
           columns={columns}
         />
       </div>
-
     );
   }
 
   const handleSearch = (e) => {
-    setSearch({ ...search, [e.target.name]: e.target.value })
-  }
+    setSearch({ ...search, [e.target.name]: e.target.value });
+  };
 
   // modal Style
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    bgcolor: "background.paper",
+    border: "2px solid #000",
     boxShadow: 24,
     p: 4,
   };
 
   const handleQuantity = (e) => {
-    setUnit({ ...productUnit, [e.target.name]: e.target.value })
-  }
-
-
+    setUnit({ ...productUnit, [e.target.name]: e.target.value });
+  };
 
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
       {/* <QuantityBox pu={productUnit} su={setUnit} /> */}
       <Modal
         open={modalState}
-        onClose={() => { setModal(!modalState) }}
+        onClose={() => {
+          setModal(!modalState);
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -291,51 +300,81 @@ export default function Products(props) {
           <Typography id="modal-modal-title" variant="caption" component="span">
             Enter the number of Unit...
           </Typography>
-          <Box sx={
-            {
+          <Box
+            sx={{
               mt: 2,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
-            }
-          }>
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
             {selectedSKU.map((set) => {
-              return (<TextField value={productUnit[set.SKU] || ''} fullWidth onChange={handleQuantity} sx={{ p: 0.8, pb: 1 }} size='small' label={set.SKU} type='Number' name={set.SKU} />)
+              return (
+                <TextField
+                  value={productUnit[set.SKU] || ""}
+                  fullWidth
+                  onChange={handleQuantity}
+                  sx={{ p: 0.8, pb: 1 }}
+                  size="small"
+                  label={set.SKU}
+                  type="Number"
+                  name={set.SKU}
+                />
+              );
             })}
 
-            <Box sx={{
-              mt: 2,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%'
-            }} >
-              <Button onClick={() => { setModal(false) }} variant='outlined' size='small'>Cancel</Button>
-              <Button onClick={() => {
-                setModal(false)
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Button
+                onClick={() => {
+                  setModal(false);
+                }}
+                variant="outlined"
+                size="small"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  setModal(false);
 
-                const unit = selectedSKU.map((row) => {
-                  if (productUnit.hasOwnProperty(row.SKU)) return { [row.SKU]: productUnit[row.SKU] }
-                })
+                  const unit = selectedSKU.map((row) => {
+                    if (productUnit.hasOwnProperty(row.SKU))
+                      return { [row.SKU]: productUnit[row.SKU] };
+                  });
 
-                console.log(unit)
-                dispatch(setForm({
-                  state: true,
-                  formType: 'merge_product',
-                  payload: selectedSKU,
-                  unit: JSON.stringify(unit),
-                  // row: MergeRow,
-                  // setRow: setMergeRows
-                }))
-                setSelection([])
-                setUnit([])
-              }} variant='contained' size='small'>Merge</Button>
+                  console.log(unit);
+                  dispatch(
+                    setForm({
+                      state: true,
+                      formType: "merge_product",
+                      payload: selectedSKU,
+                      unit: JSON.stringify(unit),
+                      // row: MergeRow,
+                      // setRow: setMergeRows
+                    })
+                  );
+                  setSelection([]);
+                  setUnit([]);
+                }}
+                variant="contained"
+                size="small"
+              >
+                Merge
+              </Button>
             </Box>
           </Box>
         </Box>
       </Modal>
-      <Typography component={'span'} sx={{ display: "block" }} variant="h5">
+      <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Merge Products
       </Typography>
 
@@ -345,7 +384,7 @@ export default function Products(props) {
 
       <Grid
         container
-        p={3}
+        p={2}
         sx={{
           boxShadow: 1,
           borderRadius: 2,
@@ -354,19 +393,18 @@ export default function Products(props) {
           gap: "15px",
         }}
       >
-        <Grid xs={12} >
+        <Grid xs={12}>
           <TextField
             fullWidth
+            size="small"
             // autoComplete={false}
             id="demo-helper-text-aligned-no-helper"
             label="Search By MS"
             onChange={handleSearch}
-            name='MS'
+            name="MS"
             type="search"
           />
         </Grid>
-
-
 
         {/* <Grid xs={12} md={2.8}>
           <Button
@@ -386,15 +424,33 @@ export default function Products(props) {
       {/* data grid  */}
 
       <Grid container scaping={2} className="overviewContainer">
-
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
-
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} >
-            <Typography component={'span'} variant="h6"> Merge Product List </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography component={"span"} variant="h6">
+              {" "}
+              Merge Product List{" "}
+            </Typography>
             <Button
-              variant='outlined'
-              onClick={() => { dispatch(setForm({ state: true, formType: 'merge_product', setRow: setPageState, row: pageState.data })) }}
-            >Merge Product</Button>
+              variant="outlined"
+              onClick={() => {
+                dispatch(
+                  setForm({
+                    state: true,
+                    formType: "merge_product",
+                    setRow: setPageState,
+                    row: pageState.data,
+                  })
+                );
+              }}
+            >
+              Merge Product
+            </Button>
           </Box>
           {DataGridView()}
         </Grid>
