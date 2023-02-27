@@ -68,7 +68,7 @@ export default function Action() {
     data: [],
     isLoading: false,
     page: 1,
-    limit: 100,
+    limit: 10,
     total: 0,
     title: "",
     category: undefined,
@@ -177,7 +177,7 @@ export default function Action() {
       renderCell: (params) => (
         <div>
           <IconButton
-            disabled={params.formattedValue.draftStatus === "Approved" && true}
+            // disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={() => {
               console.log(params);
               setDisplay({
@@ -978,6 +978,7 @@ export default function Action() {
           pagination
           page={pageState.page - 1}
           limit={pageState.limit}
+          pageSize={pageState.limit}
           paginationMode="server"
           onPageChange={(newPage) => {
             setPageState((old) => ({ ...old, page: newPage + 1 }));

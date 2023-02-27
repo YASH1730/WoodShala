@@ -66,7 +66,7 @@ export default function Products(props) {
     data: [],
     isLoading: false,
     page: 1,
-    limit: 50,
+    limit: 10,
     total: 0,
     title: "",
     category: undefined,
@@ -304,6 +304,7 @@ export default function Products(props) {
           pagination
           page={pageState.page - 1}
           limit={pageState.limit}
+          pageSize={pageState.limit}
           paginationMode="server"
           onPageChange={(newPage) => {
             setPageState((old) => ({ ...old, page: newPage + 1 }));

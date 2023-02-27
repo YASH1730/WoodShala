@@ -64,7 +64,7 @@ const Review = () => {
     data: [],
     isLoading: false,
     page: 1,
-    limit: 50,
+    limit: 10,
     total: 0,
     product_id: "",
     total_review: 0,
@@ -376,6 +376,7 @@ const Review = () => {
             ],
           }}
           pagination
+          pageSize={pageState.limit}
           page={pageState.page - 1}
           limit={pageState.limit}
           paginationMode="server"

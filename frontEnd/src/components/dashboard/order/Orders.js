@@ -34,7 +34,7 @@ export default function Order() {
     data: [],
     isLoading: false,
     page: 1,
-    limit: 50,
+    limit: 10,
     total: 0,
     O: undefined,
     customer_name: undefined,
@@ -364,6 +364,7 @@ export default function Order() {
           loading={pageState.isLoading}
           rowsPerPageOptions={[10, 30, 50, 70, 100]}
           pagination
+          pageSize={pageState.limit}
           page={pageState.page - 1}
           limit={pageState.limit}
           paginationMode="server"
