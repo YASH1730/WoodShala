@@ -4297,11 +4297,13 @@ const SideForm = () => {
 
     FD.append("product_articles", JSON.stringify(Product_SKU));
     FD.append("hardware_articles", JSON.stringify(Hardware_SKU));
+    FD.append("challan_no", e.target.challan_no.value);
     FD.append("warehouse", changeData.warehouse);
     FD.append("supplier", changeData.supplier);
     FD.append("vehicle_no", e.target.vehicle_no.value.toUpperCase());
     FD.append("driver_name", e.target.driver_name.value);
     FD.append("driver_no", e.target.driver_no.value);
+    FD.append("purpose", changeData.purpose);
 
     const res = addInward(FD);
 
@@ -4388,6 +4390,7 @@ const SideForm = () => {
     FD.append("supplier", changeData.supplier);
     FD.append("purpose", changeData.purpose);
     FD.append("reason", e.target.reason.value);
+    FD.append("challan_no", e.target.challan_no.value);
     FD.append("vehicle_no", e.target.vehicle_no.value.toUpperCase());
     FD.append("driver_name", e.target.driver_name.value);
     FD.append("driver_no", e.target.driver_no.value);
@@ -6064,7 +6067,7 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                            <TextField
+                            {/* <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -6087,7 +6090,7 @@ const SideForm = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -8739,7 +8742,7 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                            <TextField
+                            {/* <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -8762,7 +8765,7 @@ const SideForm = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -11579,7 +11582,7 @@ const SideForm = () => {
                                 </MenuItem>
                               ))}
                             </Select>
-                            <TextField
+                            {/* <TextField
                               size="small"
                               fullWidth
                               id="outlined-select"
@@ -11602,7 +11605,7 @@ const SideForm = () => {
                               <MenuItem key={"none"} value="None">
                                 {"None"}
                               </MenuItem>
-                            </TextField>
+                            </TextField> */}
                             <InputLabel id="demo-multiple-checkbox-label">
                               Polish
                             </InputLabel>
@@ -18388,9 +18391,9 @@ const SideForm = () => {
                                     </MenuItem>
                                   )
                               )}
-                              <MenuItem key={"none"} value="None">
+                              {/* <MenuItem key={"none"} value="None">
                                 {"None"}
-                              </MenuItem>
+                              </MenuItem> */}
                             </TextField>
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
@@ -19594,9 +19597,9 @@ const SideForm = () => {
                                     </MenuItem>
                                   )
                               )}
-                              <MenuItem key={"none"} value="None">
+                              {/* <MenuItem key={"none"} value="None">
                                 {"None"}
-                              </MenuItem>
+                              </MenuItem> */}
                             </TextField>
                             <TextField
                               size="small"
@@ -19623,9 +19626,9 @@ const SideForm = () => {
                                     </MenuItem>
                                   )
                               )}
-                              <MenuItem key={"none"} value="None">
+                              {/* <MenuItem key={"none"} value="None">
                                 {"None"}
-                              </MenuItem>
+                              </MenuItem> */}
                             </TextField>
                             <InputLabel id="demo-multiple-checkbox-label">
                               Material
@@ -20957,6 +20960,15 @@ const SideForm = () => {
                       size="small"
                       fullWidth
                       id="fullWidth"
+                      label="Challan No."
+                      type="number"
+                      variant="outlined"
+                      name="challan_no"
+                    />
+                    <TextField
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
                       label="Vehicle No."
                       type="text"
                       inputProps={{ style: { textTransform: "uppercase" } }}
@@ -20981,6 +20993,30 @@ const SideForm = () => {
                       variant="outlined"
                       name="driver_no"
                     />
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      // required
+                      id="outlined-select"
+                      select
+                      name="purpose"
+                      label="Stage of Inventory"
+                      value={changeData.purpose || ""}
+                      multiple
+                      onChange={handleProductFields}
+                      helperText="Please select your purpose"
+                      required
+                    >
+                      {purpose.map(
+                        (option) =>
+                          option && (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          )
+                      )}
+                    </TextField>
 
                     <Button
                       color="primary"
@@ -21237,6 +21273,16 @@ const SideForm = () => {
                       type="text"
                       variant="outlined"
                       name="vehicle_no"
+                    />
+
+                    <TextField
+                      size="small"
+                      fullWidth
+                      id="fullWidth"
+                      label="Challan No."
+                      type="number"
+                      variant="outlined"
+                      name="challan_no"
                     />
 
                     {/* <TextField  

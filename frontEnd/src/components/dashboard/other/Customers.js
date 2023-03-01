@@ -7,11 +7,16 @@ import {
   IconButton,
   Button,
   Box,
+  Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
-import { listCustomer, deleteCustomer } from "../../../services/service";
+import {
+  listCustomer,
+  deleteCustomer,
+  addDraft,
+} from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
 import { DataGrid } from "@mui/x-data-grid";
@@ -155,27 +160,37 @@ export default function Customer() {
           >
             <CreateIcon />
           </IconButton> */}
-          <IconButton
-            onClick={() => {
-              deleteCustomer(params.formattedValue).then((res) => {
-                setRows(
-                  Row.filter((set) => {
-                    return set.action._id !== params.formattedValue._id;
-                  })
-                );
-                dispatch(
-                  setAlert({
-                    open: true,
-                    variant: "success",
-                    message: "Customer Deleted !!!",
-                  })
-                );
-              });
-            }}
-            aria-label="delete"
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="delete">
+            <IconButton
+              onClick={async () => {
+                let res = await addDraft({
+                  DID: "",
+                  AID: params.formattedValue.CID,
+                  type: "Customer",
+                  operation: "deleteCustomer",
+                  _id: params.formattedValue,
+                });
+                // deleteCustomer(params.formattedValue).then((res) => {
+                //   setRows(
+                //     Row.filter((set) => {
+                //       return set.action._id !== params.formattedValue._id;
+                //     })
+                //   );
+                if (res) {
+                  dispatch(
+                    setAlert({
+                      open: true,
+                      variant: "success",
+                      message: res.data.message,
+                    })
+                  );
+                }
+              }}
+              aria-label="delete"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </div>
       ),
     },
