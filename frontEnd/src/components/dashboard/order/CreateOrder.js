@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import {
   Typography,
@@ -49,6 +49,8 @@ import {
   getLastCp,
   addCustomProduct,
   getArticlesId,
+  addDraft,
+  getDraftID,
 } from "../../../services/service";
 import { useConfirm } from "material-ui-confirm";
 import { Editor } from "@tinymce/tinymce-react";
@@ -136,6 +138,8 @@ export default function CreateOrder() {
   const editorRef = useRef();
   const [value, setValue] = useState(0);
   const [productRow, setProductRows] = useState([]);
+
+  const [SKU, setSKU] = useState("");
 
   // confirm box
 
@@ -265,13 +269,13 @@ export default function CreateOrder() {
   const steps = ["Select Customer", "Select Product", "Receipt"];
 
   // catalog reload
-  useMemo(() => {
+  useEffect(() => {
     customerCatalog().then(async (cus) => {
       setCatalogs({
         ...catalogs,
         customer: cus.data,
       });
-      getO();
+      getDID();
     });
   }, []);
 
@@ -320,7 +324,7 @@ export default function CreateOrder() {
   // }, [search]);
 
   // for product data row
-  useMemo(() => {
+  useEffect(() => {
     const rows = catalogs.product.filter((row) => {
       return data.product_array.includes(row.SKU) && row;
     });
@@ -378,7 +382,7 @@ export default function CreateOrder() {
       </div>
     ));
 
-    useMemo(() => {
+    useEffect(() => {
       // Make sure to revoke the data uris to avO memory leaks, will run on unmount
       return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     }, []);
@@ -478,24 +482,6 @@ export default function CreateOrder() {
       width: 200,
     },
   ];
-
-  async function getO() {
-    await getLastOrder()
-      .then((res) => {
-        console.log(res);
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].O.split("-")[1]) + 1;
-          setData({ ...data, O: `O-0${index}` });
-          // return `O-0${index}`
-        } else {
-          setData({ ...data, O: "O-01001" });
-          // return 'O-01001'
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  }
 
   const resetValue = () => {
     setData({
@@ -614,6 +600,23 @@ export default function CreateOrder() {
       });
   };
 
+  // DID
+  const getDID = () => {
+    getDraftID()
+      .then((res) => {
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
+
+          setSKU(`DID-0${index}`);
+        } else {
+          setSKU("DID-01001");
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  };
+
   // custom product submit
   const handleCustomProduct = async (e) => {
     e.preventDefault();
@@ -677,7 +680,7 @@ export default function CreateOrder() {
 
   // custom product model
   function CustomProduct() {
-    useMemo(() => {
+    useEffect(() => {
       getCUS();
     }, [open]);
 
@@ -844,71 +847,80 @@ export default function CreateOrder() {
     );
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     /// for adding the note
 
     setData({
       ...data,
+      DID: SKU,
+      AID: "Not Assigned " + SKU,
+      type: "Order",
+      operation: "createOrder",
       note: editorRef.current.getContent()
         ? editorRef.current.getContent()
         : "",
     });
 
-    // console.log(data.note)
+    console.log(data);
 
-    const res = addOrder(data);
+    const res = await addDraft({
+      ...data,
+      DID: SKU,
+      AID: "Not Assigned " + SKU,
+      type: "Order",
+      operation: "createOrder",
+    });
 
-    res
-      .then((data) => {
-        if (data.status !== 200) {
-          setData({
-            O: "",
-            CUS: "",
-            CID: null,
-            customer_email: "",
-            customer_mobile: "",
-            customer_name: "",
-            shipping: "",
-            product_array: [],
-            quantity: [],
-            subTotal: 0,
-            discount: 0,
-            total: 0,
-            status: "processing",
-            city: "",
-            state: "",
-            paid: 0,
-            note: "",
-            sale_channel: "Online",
-            PO: "",
-          });
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "error",
-              message: data.data.message || "Something Went Wrong !!!",
-            })
-          );
-        } else {
-          dispatch(
-            setAlert({
-              open: true,
-              variant: "success",
-              message: data.data.message,
-            })
-          );
-          resetValue();
-        }
-      })
-      .catch((err) => {
+    try {
+      if (res.status !== 200) {
+        setData({
+          O: "",
+          CUS: "",
+          CID: null,
+          customer_email: "",
+          customer_mobile: "",
+          customer_name: "",
+          shipping: "",
+          product_array: [],
+          quantity: [],
+          subTotal: 0,
+          discount: 0,
+          total: 0,
+          status: "processing",
+          city: "",
+          state: "",
+          paid: 0,
+          note: "",
+          sale_channel: "Online",
+          PO: "",
+        });
         dispatch(
           setAlert({
             open: true,
             variant: "error",
-            message: "Something Went Wrong !!!",
+            message: res.data.message || "Something Went Wrong !!!",
           })
         );
-      });
+      } else {
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+        resetValue();
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
   }
 
   return (

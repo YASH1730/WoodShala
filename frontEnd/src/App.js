@@ -35,6 +35,9 @@ const Dashboard = lazy(() => import("./components/dashboard/Dashboard"));
 const Products = lazy(() => import("./components/dashboard/product/Products"));
 const Customers = lazy(() => import("./components/dashboard/other/Customers"));
 const Orders = lazy(() => import("./components/dashboard/order/Orders"));
+const AbandonedOrders = lazy(() =>
+  import("./components/dashboard/order/AbandonedOrders")
+);
 const CreateOrder = lazy(() =>
   import("./components/dashboard/order/CreateOrder")
 );
@@ -137,6 +140,11 @@ function MyRoutes() {
         />
         <Route exact path="/merge" element={<Merge history={history} />} />
         <Route exact path="/order" element={<Orders history={history} />} />
+        <Route
+          exact
+          path="/abandoned_orders"
+          element={<AbandonedOrders history={history} />}
+        />
         <Route
           exact
           path="/products"

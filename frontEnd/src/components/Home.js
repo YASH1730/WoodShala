@@ -403,6 +403,33 @@ const Home = (props) => {
                     <ListItem
                       sx={{ pl: 4 }}
                       onClick={() => {
+                        handleClose("/abandoned_orders");
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            width: "30px",
+                            height: "30px",
+                            svg: {
+                              fontSize: "1rem",
+                            },
+                          }}
+                        >
+                          <AddIcon
+                            color={
+                              window.location.pathname === "/abandoned_orders"
+                                ? "primary"
+                                : ""
+                            }
+                          />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary="Abandoned Orders" />
+                    </ListItem>
+                    <ListItem
+                      sx={{ pl: 4 }}
+                      onClick={() => {
                         handleClose("/create_order");
                       }}
                     >

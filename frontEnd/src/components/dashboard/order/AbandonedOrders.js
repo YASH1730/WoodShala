@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 // import PropTypes from 'prop-types';
 import {
   Typography,
@@ -17,7 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch } from "react-redux";
 import { setAlert } from "../../../store/action/action";
 import {
-  getOrder,
+  getAbandonedOrder,
   changeOrderStatus,
   deleteOrder,
 } from "../../../services/service";
@@ -34,7 +34,7 @@ export default function Order() {
     page: 1,
     limit: 10,
     total: 0,
-    O: undefined,
+    uuid: undefined,
     customer_name: undefined,
     customer_email: undefined,
     date: "",
@@ -46,11 +46,11 @@ export default function Order() {
       ...lastState,
       isLoading: true,
     }));
-    getOrder({
+    getAbandonedOrder({
       page: pageState.page,
       limit: pageState.limit,
       total: pageState.total,
-      O: pageState.O,
+      uuid: pageState.uuid,
       customer_name: pageState.customer_name,
       customer_email: pageState.customer_email,
     })
@@ -60,7 +60,7 @@ export default function Order() {
           data: data.data.data.map((row, index) => {
             return {
               id: index + 1,
-              O: row.O,
+              uuid: row.uuid,
               order_time: row.order_time,
               status: row.status,
               CID: row.CID,
@@ -86,7 +86,7 @@ export default function Order() {
       .catch((err) => {});
   }
 
-  useMemo(() => {
+  useEffect(() => {
     fetchData();
   }, [pageState.page, pageState.limit, pageState.filter]);
 
@@ -124,7 +124,6 @@ export default function Order() {
       renderCell: (params) => (
         <TextField
           size="small"
-          fullWidth
           id="outlined-select"
           sx={{
             background:
@@ -151,8 +150,8 @@ export default function Order() {
       ),
     },
     {
-      field: "O",
-      headerName: "Order ID",
+      field: "uuid",
+      headerName: "UUID",
       width: 100,
     },
     {
@@ -225,47 +224,47 @@ export default function Order() {
       align: "center",
     },
 
-    {
-      field: "action",
-      headerName: "Actions",
-      width: 200,
-      renderCell: (params) => (
-        <div className="categoryImage">
-          {/* <IconButton
-            onClick={() => {
-              dispatch(setForm({
-                state: true,
-                formType: "update_order",
-                payload: params,
-                row: Row,
-                setRow: setRows
-              }));
-            }}
-            aria-label="delete"
-          >
-            <CreateIcon />
-          </IconButton> */}
-          {/* <IconButton onClick={() => {
-            deleteOrder(params.formattedValue).then((res) => {
-              setPageState(old => ({
-                ...old, total: old.total - 1,
-                data: old.data.filter((set) => {
-                  return set.action !== params.formattedValue;
-                })
-              }));
+    // {
+    //   field: "action",
+    //   headerName: "Actions",
+    //   width: 200,
+    //   renderCell: (params) => (
+    //     <div className="categoryImage">
+    //       {/* <IconButton
+    //         onClick={() => {
+    //           dispatch(setForm({
+    //             state: true,
+    //             formType: "update_order",
+    //             payload: params,
+    //             row: Row,
+    //             setRow: setRows
+    //           }));
+    //         }}
+    //         aria-label="delete"
+    //       >
+    //         <CreateIcon />
+    //       </IconButton> */}
+    //       {/* <IconButton onClick={() => {
+    //         deleteOrder(params.formattedValue).then((res) => {
+    //           setPageState(old => ({
+    //             ...old, total: old.total - 1,
+    //             data: old.data.filter((set) => {
+    //               return set.action !== params.formattedValue;
+    //             })
+    //           }));
 
-              dispatch(setAlert({
-                open: true,
-                variant: 'success',
-                message: 'Order Deleted !!!'
-              }))
-            })
-          }} aria-label="delete"  >
-            <DeleteIcon />
-          </IconButton> */}
-        </div>
-      ),
-    },
+    //           dispatch(setAlert({
+    //             open: true,
+    //             variant: 'success',
+    //             message: 'Order Deleted !!!'
+    //           }))
+    //         })
+    //       }} aria-label="delete"  >
+    //         <DeleteIcon />
+    //       </IconButton> */}
+    //     </div>
+    //   ),
+    // },
   ];
 
   const clearFilter = () => {
@@ -380,7 +379,7 @@ export default function Order() {
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
-        Order
+        Abandoned Orders
       </Typography>
       <br></br>
 
@@ -402,14 +401,14 @@ export default function Order() {
             fullWidth
             id="demo-helper-text-aligned-no-helper"
             type="text"
-            placeholder="ex O-01001"
+            placeholder="ex xxx-xxx-xxx"
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">O</InputAdornment>
+                <InputAdornment position="start">UUID</InputAdornment>
               ),
             }}
-            value={pageState.O || ""}
-            name="O"
+            value={pageState.uuid || ""}
+            name="uuid"
             onChange={handleSearch}
           />
         </Grid>

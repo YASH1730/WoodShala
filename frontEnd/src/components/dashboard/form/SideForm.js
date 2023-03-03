@@ -6472,7 +6472,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -9208,7 +9208,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -12048,7 +12048,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -14558,7 +14558,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -15629,7 +15629,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -18708,9 +18708,9 @@ const SideForm = () => {
                               // required
                               id="outlined-select"
                               select
-                              name="specificaiton_image"
+                              name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."
@@ -19975,7 +19975,7 @@ const SideForm = () => {
                               select
                               name="specification_image"
                               label="Specification Image"
-                              value={changeData.specificaiton_image}
+                              value={changeData.specification_image}
                               multiple
                               onChange={handleProductFields}
                               helperText="Please select your specification image."

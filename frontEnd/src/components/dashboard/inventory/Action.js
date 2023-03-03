@@ -30,6 +30,7 @@ import {
   getMaterialDetails,
   getPolishDetails,
   getBlog,
+  getLastOrder,
 } from "../../../services/service";
 
 import {
@@ -177,7 +178,7 @@ export default function Action() {
       renderCell: (params) => (
         <div>
           <IconButton
-            // disabled={params.formattedValue.draftStatus === "Approved" && true}
+            disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={() => {
               console.log(params);
               setDisplay({
@@ -195,7 +196,7 @@ export default function Action() {
           </IconButton>
 
           <IconButton
-            // disabled={params.formattedValue.draftStatus === "Approved" && true}
+            disabled={params.formattedValue.draftStatus === "Approved" && true}
             onClick={async () => {
               let response = await deleteDraft(params.formattedValue._id);
               if (response) {
@@ -275,6 +276,24 @@ export default function Action() {
     }
   };
 
+  async function getO() {
+    await getLastOrder()
+      .then((res) => {
+        console.log(res);
+        if (res.data.length > 0) {
+          let index = parseInt(res.data[0].O.split("-")[1]) + 1;
+          setSKU(`O-0${index}`);
+          // return `O-0${index}`
+        } else {
+          setSKU("O-01001");
+          // return 'O-01001'
+        }
+      })
+      .catch((err) => {
+        // //console.log(err);
+      });
+  }
+
   const handleClose = () => setDisplay({ status: false });
 
   // Permission Box
@@ -282,15 +301,24 @@ export default function Action() {
     async function sendResponse(data) {
       let response = await dropDraft(data);
       if (response.status === 200) {
-        setRows(
-          Row.map((item) => {
-            if (item.DID === display.data.DID) {
-              item.status = "Approved";
-              item.AID = SKU;
-            }
-            return item;
-          })
-        );
+        console.log(display.data.DID);
+        setPageState((old) => ({
+          ...old,
+          data: [
+            ...old.data.map((item) => {
+              if (item.DID === display.data.DID) {
+                item.status = "Approved";
+                item.AID = SKU;
+              }
+              return item;
+            }),
+          ],
+        }));
+        setMeta((old) => ({
+          ...old,
+          resolved: old.resolved + 1,
+          pending: old.pending - 1,
+        }));
         dispatch(
           setAlert({
             open: true,
@@ -314,7 +342,6 @@ export default function Action() {
     // final approval and submission of the product
     const handleSubmit = async (e) => {
       e.preventDefault();
-      let response = "";
       if (e.target.action.value === "Approved") {
         // console.log(typeof (display.operation))
         switch (display.operation) {
@@ -423,6 +450,12 @@ export default function Action() {
             display.data.status = true;
             sendResponse(display.data);
             break;
+          case "createOrder":
+            display.data.draftStatus = e.target.action.value;
+            display.data.O = SKU;
+            display.data.AID = SKU;
+            sendResponse(display.data);
+            break;
           default:
             console.log("no operation found");
             break;
@@ -516,6 +549,9 @@ export default function Action() {
               // console.log(res.data);
               if (res.data) setPeer(res.data);
             }
+            break;
+          case "createOrder":
+            getO();
             break;
           default:
             setPeer([]);
@@ -785,7 +821,11 @@ export default function Action() {
                             {peer[key]}
                           </Typography>
                         ) : (
-                          <Typography variant="button">{peer[key]}</Typography>
+                          <Typography variant="button">
+                            {console.log(typeof display.data[key])}
+
+                            {peer[key]}
+                          </Typography>
                         )}
                       </>
                     );
@@ -845,11 +885,18 @@ export default function Action() {
                               sx={{ color: "green !important" }}
                               variant="button"
                             >
-                              {display.data[key]}
+                              {console.log(typeof display.data[key])}
+
+                              {typeof display.data[key] == "object"
+                                ? JSON.stringify(display.data[key])
+                                : display.data[key]}
                             </Typography>
                           ) : (
                             <Typography variant="button">
-                              {display.data[key]}
+                              {console.log(typeof display.data[key])}
+                              {typeof display.data[key] == "object"
+                                ? JSON.stringify(display.data[key])
+                                : display.data[key]}
                             </Typography>
                           )}
                         </>
@@ -866,7 +913,9 @@ export default function Action() {
                             {key + " :: "}
                           </Typography>
                           <Typography variant="button">
-                            {display.data[key]}
+                            {typeof display.data[key] == "object"
+                              ? JSON.stringify(display.data[key])
+                              : display.data[key]}
                           </Typography>
                         </>
                       );

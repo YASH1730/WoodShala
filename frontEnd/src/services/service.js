@@ -947,6 +947,18 @@ export const getOrder = async (data) => {
     },
   });
 };
+// for  get order list
+
+export const getAbandonedOrder = async (data) => {
+  return await axios.get(
+    `${API}/listAbandonedOrder?filter=${JSON.stringify(data)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+};
 // for  get customOrderList list
 
 export const customOrderList = async () => {
