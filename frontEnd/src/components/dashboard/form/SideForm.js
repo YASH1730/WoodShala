@@ -874,7 +874,7 @@ const SideForm = () => {
     web_banner_status: false,
     mobile_banner_status: false,
     marketing: false,
-    sequence_no :  ""
+    sequence_no: "",
   });
 
   function getLabelText(value) {
@@ -1725,7 +1725,7 @@ const SideForm = () => {
 
   async function setSequenceFunc() {
     const data = await getSequence();
-    console.log(data)
+    console.log(data);
     if (data.status === 200) {
       return setSequence([...data.data]);
     }
@@ -2221,7 +2221,7 @@ const SideForm = () => {
       web_banner_status: false,
       mobile_banner_status: false,
       warehouse_to: "",
-      sequence_no :  "",
+      sequence_no: "",
       marketing: false,
       primary_material: [],
       product_articles: [],
@@ -22524,7 +22524,7 @@ const SideForm = () => {
             )}
             {/* update Review  Ends */}
 
-            {/* add Review */}
+            {/* add Banner */}
 
             {form.formType === "add_banner" && (
               <Grid container p={5}>
@@ -22605,8 +22605,6 @@ const SideForm = () => {
                       variant="outlined"
                       name="mobile_url"
                     />
-                    
-
 
                     <TextField
                       fullWidth
@@ -22614,8 +22612,13 @@ const SideForm = () => {
                       label="Sequence Number"
                       size="small"
                       required
-                      error = {sequence.includes(parseInt(changeData.sequence_no))}
-                      helperText = {sequence.includes(parseInt(changeData.sequence_no)) && "Index is already in use."}
+                      error={sequence.includes(
+                        parseInt(changeData.sequence_no)
+                      )}
+                      helperText={
+                        sequence.includes(parseInt(changeData.sequence_no)) &&
+                        "Index is already in use."
+                      }
                       type="number"
                       value={
                         changeData.sequence_no < 0 ? 0 : changeData.sequence_no
@@ -22623,9 +22626,7 @@ const SideForm = () => {
                       onChange={handleProductFields}
                       variant="outlined"
                       name="sequence_no"
-
                     />
-
 
                     <FormGroup>
                       <FormControlLabel
@@ -22662,8 +22663,8 @@ const SideForm = () => {
                 </Grid>
               </Grid>
             )}
-            {/* add REview ends */}
-            {/* Update Review */}
+            {/* add Banner ends */}
+            {/* Update Banner */}
 
             {form.formType === "update_banner" && (
               <Grid container p={5}>
@@ -22705,8 +22706,15 @@ const SideForm = () => {
                         <FormLabel id="demo-radio-buttons-group-label">
                           Present Banner
                         </FormLabel>
-                        <Box sx={{ width: 200 }}>
-                          <img alt="web_banner" scr={changeData.web_banner} />
+                        <Box
+                          sx={{
+                            width: "200px",
+                            img: {
+                              width: "100%",
+                            },
+                          }}
+                        >
+                          <img alt="web_banner" src={changeData.web_banner} />
                         </Box>
                       </>
                     )}
@@ -22726,10 +22734,17 @@ const SideForm = () => {
                         <FormLabel id="demo-radio-buttons-group-label">
                           Present Banner
                         </FormLabel>
-                        <Box sx={{ width: 200 }}>
+                        <Box
+                          sx={{
+                            width: "200px",
+                            img: {
+                              width: "100%",
+                            },
+                          }}
+                        >
                           <img
                             alt="mobile_banner"
-                            scr={changeData.mobile_banner}
+                            src={changeData.mobile_banner}
                           />
                         </Box>
                       </>
@@ -22767,17 +22782,25 @@ const SideForm = () => {
                       name="mobile_url"
                     />
 
-          
                     <TextField
                       fullWidth
                       sx={{ mb: 1 }}
-                      error = {sequence.includes(changeData.sequence_no)}
+                      // error={sequence.includes(changeData.sequence_no)}
                       label={`Sequence Number`}
                       size="small"
                       type="number"
                       required
-                      error = {parseInt(changeData.old_sequence_no) !== parseInt(changeData.sequence_no)  && sequence.includes(parseInt(changeData.sequence_no))}
-                      helperText = {(parseInt(changeData.old_sequence_no) !== parseInt(changeData.sequence_no)  && sequence.includes(parseInt(changeData.sequence_no))) && "Index is already in use."}
+                      error={
+                        parseInt(changeData.old_sequence_no) !==
+                          parseInt(changeData.sequence_no) &&
+                        sequence.includes(parseInt(changeData.sequence_no))
+                      }
+                      helperText={
+                        parseInt(changeData.old_sequence_no) !==
+                          parseInt(changeData.sequence_no) &&
+                        sequence.includes(parseInt(changeData.sequence_no)) &&
+                        "Index is already in use."
+                      }
                       value={
                         changeData.sequence_no < 0 ? 0 : changeData.sequence_no
                       }

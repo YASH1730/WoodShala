@@ -99,9 +99,11 @@ export default function Banner() {
       field: "sequence_no",
       headerName: "Sequence No.",
       width: 170,
+      type: "number",
+      align: "center",
     },
     {
-      field: "web_banner_image",
+      field: "web_banner",
       align: "center",
       headerName: "Web Banner",
       width: 150,
@@ -110,7 +112,7 @@ export default function Banner() {
           {
             <img
               src={
-                params.formattedValue !== "undefined"
+                params.formattedValue !== undefined
                   ? params.formattedValue
                   : question
               }
@@ -121,7 +123,7 @@ export default function Banner() {
       ),
     },
     {
-      field: "mobile_banner_image",
+      field: "mobile_banner",
       align: "center",
       headerName: "Mobile Banner",
       width: 150,
@@ -130,7 +132,7 @@ export default function Banner() {
           {
             <img
               src={
-                params.formattedValue !== "undefined"
+                params.formattedValue !== undefined
                   ? params.formattedValue
                   : question
               }
