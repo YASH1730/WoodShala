@@ -38,12 +38,13 @@ const Orders = lazy(() => import("./components/dashboard/order/Orders"));
 const AbandonedOrders = lazy(() =>
   import("./components/dashboard/order/AbandonedOrders")
 );
+const Wishlist = lazy(() => import("./components/dashboard/order/Wishlist"));
 const CreateOrder = lazy(() =>
   import("./components/dashboard/order/CreateOrder")
 );
 const Coupons = lazy(() => import("./components/dashboard/other/Coupons"));
 const Profile = lazy(() => import("./components/dashboard/admin/Setting"));
-const Banner = lazy(() => import("./components/dashboard/other/Banner"));
+const Banner = lazy(() => import("./components/dashboard/banner/Banner"));
 const Action = lazy(() => import("./components/dashboard/inventory/Action"));
 const Accessories = lazy(() => import("./components/Accessories"));
 const Hardware = lazy(() => import("./components/dashboard/hardware/Hardware"));
@@ -144,6 +145,11 @@ function MyRoutes() {
           exact
           path="/abandoned_orders"
           element={<AbandonedOrders history={history} />}
+        />
+        <Route
+          exact
+          path="/wishlist"
+          element={<Wishlist history={history} />}
         />
         <Route
           exact

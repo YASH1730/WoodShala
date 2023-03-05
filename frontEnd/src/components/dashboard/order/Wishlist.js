@@ -19,13 +19,13 @@ import { setAlert } from "../../../store/action/action";
 import {
   getAbandonedOrder,
   changeOrderStatus,
-  deleteOrder,
+  getWishlist,
 } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
 import { DataGrid } from "@mui/x-data-grid";
 
-export default function AbandonedOrders() {
+export default function Wishlist() {
   // context
   const dispatch = useDispatch();
   const [pageState, setPageState] = useState({
@@ -34,9 +34,7 @@ export default function AbandonedOrders() {
     page: 1,
     limit: 10,
     total: 0,
-    uuid: undefined,
-    customer_name: undefined,
-    customer_email: undefined,
+    CID: undefined,
     date: "",
     filter: false,
   });
@@ -46,13 +44,11 @@ export default function AbandonedOrders() {
       ...lastState,
       isLoading: true,
     }));
-    getAbandonedOrder({
+    getWishlist({
       page: pageState.page,
       limit: pageState.limit,
       total: pageState.total,
-      uuid: pageState.uuid,
-      customer_name: pageState.customer_name,
-      customer_email: pageState.customer_email,
+      CID: pageState.CID,
     })
       .then((data) => {
         setPageState((lastState) => ({
@@ -60,21 +56,21 @@ export default function AbandonedOrders() {
           data: data.data.data.map((row, index) => {
             return {
               id: index + 1,
-              uuid: row.uuid,
-              order_time: row.order_time,
-              status: row.status,
               CID: row.CID,
-              customer_name: row.customer_name,
-              customer_email: row.customer_email,
-              customer_mobile: row.customer_mobile,
-              city: row.city,
-              state: row.state,
-              shipping: row.shipping,
-              quantity: JSON.stringify(row.quantity),
-              discount: row.discount,
-              paid: parseInt((row.paid / row.total) * 100) + "%",
-              total: row.total,
-              note: row.note || "",
+              product_id: row.product_id,
+              username:
+                row.customer.length > 0
+                  ? row.customer[0].username
+                  : "Not Provided",
+              email:
+                row.customer.length > 0
+                  ? row.customer[0].email
+                  : "Not Provided",
+              mobile:
+                row.customer.length > 0
+                  ? row.customer[0].mobile
+                  : "Not Provided",
+              quantity: row.quantity,
               action: row._id,
             };
           }),
@@ -117,113 +113,35 @@ export default function AbandonedOrders() {
       width: 50,
     },
     {
-      field: "status",
-      editable: true,
-      headerName: "Status",
-      width: 150,
-      renderCell: (params) => (
-        <TextField
-          size="small"
-          id="outlined-select"
-          sx={{
-            background:
-              params.formattedValue === "completed"
-                ? "#52ffc9"
-                : params.formattedValue === "cancel"
-                ? "#fdabab"
-                : params.formattedValue === "processing"
-                ? "#b9abfd"
-                : "",
-          }}
-          value={status[params.row.action] || params.formattedValue}
-          select
-          name={params.row.action}
-          multiple
-          onChange={handleStatus}
-        >
-          {statusCatalog.map((option) => (
-            <MenuItem key={option.key} value={option.value}>
-              {option.value}
-            </MenuItem>
-          ))}
-        </TextField>
-      ),
-    },
-    {
-      field: "uuid",
-      headerName: "UUID",
-      width: 100,
-    },
-    {
       field: "CID",
       headerName: "Customer ID",
-      width: 100,
+      width: 150,
     },
     {
-      field: "customer_name",
+      field: "username",
       headerName: "Customer Name",
       width: 150,
       align: "center",
     },
     {
-      field: "customer_email",
+      field: "email",
       headerName: "Customer Email",
       width: 250,
       align: "center",
     },
     {
-      field: "city",
-      headerName: "City",
-      width: 100,
-    },
-    {
-      field: "state",
-      headerName: "State",
-      width: 100,
-    },
-    {
-      field: "shipping",
-      headerName: "Shipping Address",
-      width: 200,
-    },
-    {
-      field: "order_time",
-      headerName: "Order Time/Date",
-      width: 200,
+      field: "mobile",
+      headerName: "Customer Mobile",
+      width: 250,
+      // type: "number",
       align: "center",
     },
+
     {
       field: "quantity",
       headerName: "Product $ Quantity",
       width: 200,
     },
-
-    {
-      field: "discount",
-      headerName: "Discount",
-      width: 80,
-      align: "center",
-    },
-
-    {
-      field: "paid",
-      headerName: "Paid Amount",
-      width: 80,
-      align: "center",
-    },
-    {
-      field: "total",
-      headerName: "Total Amount",
-      width: 80,
-      align: "center",
-    },
-    {
-      field: "note",
-      headerName: "Note",
-      width: 80,
-      align: "center",
-    },
-
     // {
     //   field: "action",
     //   headerName: "Actions",
@@ -318,29 +236,6 @@ export default function AbandonedOrders() {
     return setPageState((old) => ({ ...old, [e.target.name]: e.target.value }));
   };
 
-  //   setData({
-  //     OID: '',
-  //     CUS: '',
-  //     CID: null,
-  //     customer_email: '',
-  //     customer_mobile: '',
-  //     customer_name: '',
-  //     shipping: '',
-  //     product_array: [],
-  //     quantity: [],
-  //     subTotal: 0,
-  //     discount: 0,
-  //     total: 0,
-  //     status: 'processing',
-  //     city: '',
-  //     state: '',
-  //     paid: 0,
-  //     note: ''
-  //   })
-  //   setActiveStep(0)
-  //   setValue(0)
-  // }
-
   // data grid for data view
   function DataGridView(columns, height) {
     return (
@@ -379,7 +274,7 @@ export default function AbandonedOrders() {
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
-        Abandoned Orders
+        Wishlist
       </Typography>
       <br></br>
 
@@ -395,7 +290,7 @@ export default function AbandonedOrders() {
           gap: "10px",
         }}
       >
-        <Grid xs={12} md={2.5}>
+        <Grid xs={12} md={10.4}>
           <TextField
             size="small"
             fullWidth
@@ -404,56 +299,11 @@ export default function AbandonedOrders() {
             placeholder="ex xxx-xxx-xxx"
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">UUID</InputAdornment>
+                <InputAdornment position="start">CID</InputAdornment>
               ),
             }}
-            value={pageState.uuid || ""}
-            name="uuid"
-            onChange={handleSearch}
-          />
-        </Grid>
-        <Grid xs={12} md={2.5}>
-          <TextField
-            size="small"
-            fullWidth
-            id="demo-helper-text-aligned-no-helper"
-            type="text"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">Name</InputAdornment>
-              ),
-            }}
-            value={pageState.customer_name || ""}
-            name="customer_name"
-            onChange={handleSearch}
-          />
-        </Grid>
-        <Grid xs={12} md={2.5}>
-          <TextField
-            size="small"
-            fullWidth
-            // autoComplete={false}
-            id="demo-helper-text-aligned-no-helper"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">Email</InputAdornment>
-              ),
-            }}
-            value={pageState.customer_email || ""}
-            name="customer_email"
-            type="email"
-            onChange={handleSearch}
-          />
-        </Grid>
-        <Grid xs={12} md={2.5}>
-          <TextField
-            size="small"
-            fullWidth
-            // autoComplete={false}
-            value={pageState.date}
-            id="demo-helper-text-aligned-no-helper"
-            type="date"
-            name="date"
+            value={pageState.CID || ""}
+            name="CID"
             onChange={handleSearch}
           />
         </Grid>

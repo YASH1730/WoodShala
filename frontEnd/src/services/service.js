@@ -206,8 +206,8 @@ export const addBanner = async (data) => {
 
 // list banner
 
-export const listBanner = async () => {
-  return await axios.get(`${API}/listBanner`, {
+export const listBanner = async (data) => {
+  return await axios.get(`${API}/listBanner?filter=${JSON.stringify(data)}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -216,15 +216,22 @@ export const listBanner = async () => {
 
 // change status banner
 
-export const changeStatus = async (data) => {
-  return await axios.patch(`${API}/changeStatusBanner`, data, {
+export const getBannerDetails = async (data) => {
+  return await axios.get(`${API}/getBannerDetails?uuid=${data}`, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
 };
+// change status banner
 
+export const getSequence = async () => {
+  return await axios.get(`${API}/getSequence?uuid`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
 //  =========================== CURD For Sub Categories ========================
 
 export const addSubCategories = async (data) => {
@@ -958,6 +965,15 @@ export const getAbandonedOrder = async (data) => {
       },
     }
   );
+};
+// for  get wishlist
+
+export const getWishlist = async (data) => {
+  return await axios.get(`${API}/getWishlist?filter=${JSON.stringify(data)}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
 };
 // for  get customOrderList list
 

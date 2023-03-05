@@ -31,6 +31,7 @@ import {
   getPolishDetails,
   getBlog,
   getLastOrder,
+  getBannerDetails,
 } from "../../../services/service";
 
 import {
@@ -298,6 +299,7 @@ export default function Action() {
 
   // Permission Box
   function SpringModal() {
+    // final response function
     async function sendResponse(data) {
       let response = await dropDraft(data);
       if (response.status === 200) {
@@ -308,7 +310,13 @@ export default function Action() {
             ...old.data.map((item) => {
               if (item.DID === display.data.DID) {
                 item.status = "Approved";
-                item.AID = SKU;
+                item.AID =
+                  display.data.SKU ||
+                  display.data.uuid ||
+                  display.data.O ||
+                  display.data.CID ||
+                  display.data.AID ||
+                  display.data._id;
               }
               return item;
             }),
@@ -456,6 +464,22 @@ export default function Action() {
             display.data.AID = SKU;
             sendResponse(display.data);
             break;
+          case "addBanner":
+            display.data.draftStatus = e.target.action.value;
+            sendResponse(display.data);
+            break;
+          case "updateBanner":
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
+          case "deleteBanner":
+            display.data.operation = display.operation;
+            display.data.DID = display.DID;
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break;
           default:
             console.log("no operation found");
             break;
@@ -552,6 +576,17 @@ export default function Action() {
             break;
           case "createOrder":
             getO();
+            break;
+          case "updateBanner":
+            console.log(display.data.AID);
+            res = await getBannerDetails(display.data.AID);
+            if (res) {
+              // res.data = JSON.stringify(res.data);
+              // res.data = JSON.parse(res.data);
+              // console.log(res.data);
+              if (res.data) setPeer(res.data);
+            }
+            break;
             break;
           default:
             setPeer([]);
@@ -797,6 +832,7 @@ export default function Action() {
               display.operation === "updateMaterial" ||
               display.operation === "updatePolish" ||
               display.operation === "updateBlog" ||
+              display.operation === "updateBanner" ||
               display.operation === "updateCategory") && (
               <Grid item xs={6} p={1}>
                 <Typography variant="h6" sx={{ textAlign: "center" }}>
@@ -845,6 +881,7 @@ export default function Action() {
                 display.operation === "updateSubCategory" ||
                 display.operation === "updateMaterial" ||
                 display.operation === "updateBlog" ||
+                display.operation === "updateBanner" ||
                 display.operation === "updatePolish" ||
                 display.operation === "updateCategory"
                   ? 6
@@ -855,6 +892,7 @@ export default function Action() {
                 {display.operation === "updateProduct" ||
                 display.operation === "updateHardware" ||
                 display.operation === "updateSubCategory" ||
+                display.operation === "updateBanner" ||
                 display.operation === "updateMaterial" ||
                 display.operation === "updateBlog" ||
                 display.operation === "updatePolish" ||
@@ -867,6 +905,7 @@ export default function Action() {
                 display.operation === "updateHardware" ||
                 display.operation === "updateSubCategory" ||
                 display.operation === "updateMaterial" ||
+                display.operation === "updateBanner" ||
                 display.operation === "updateBlog" ||
                 display.operation === "updatePolish" ||
                 display.operation === "updateCategory"

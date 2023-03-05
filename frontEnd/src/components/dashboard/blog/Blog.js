@@ -12,9 +12,7 @@ import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import {
   getBlogHome,
-  deleteBLog,
   addDraft,
-  getDraftID,
 } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -51,7 +49,6 @@ export default function Bolg() {
 
   const dispatch = useDispatch();
   const [pageSize, setPageSize] = useState(50);
-  const [SKU, setSKU] = useState("");
 
   const [Row, setRows] = useState([]);
   // function for get  list
@@ -136,7 +133,7 @@ export default function Bolg() {
             onClick={async () => {
               console.log(params);
               let res = await addDraft({
-                DID: SKU,
+                DID: '',
                 AID: params.formattedValue.uuid,
                 type: "Blog",
                 operation: "deleteBlog",

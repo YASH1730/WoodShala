@@ -79,6 +79,7 @@ import {
   getCategoryList,
   applyDiscount,
   addReview,
+  getSequence,
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -141,8 +142,12 @@ const style = {
 const SideForm = () => {
   // multiple images
   const [files, setFiles] = useState([]);
+  const [webBanner, setWebBanner] = useState([]);
+  const [mobileBanner, setMobileBanner] = useState([]);
   const [featured, setFeatured] = useState([]);
   const [hover, setHover] = React.useState(-1); // for rating in review
+
+  const [sequence, setSequence] = useState([]);
   // image link
   const imageLink = "https://admin.woodshala.in/upload/";
 
@@ -241,7 +246,6 @@ const SideForm = () => {
       })
     );
   }
-
   function ProductsPreviews(props) {
     const [acceptedFileItems, setAcceptedFileItems] = useState([]);
     const [fileRejectionItems, setFileRejectionItems] = useState([]);
@@ -366,7 +370,6 @@ const SideForm = () => {
       </section>
     );
   }
-
   function IndoorPreviews(props) {
     const [acceptedFileItems, setAcceptedFileItems] = useState([]);
     const [fileRejectionItems, setFileRejectionItems] = useState([]);
@@ -868,7 +871,10 @@ const SideForm = () => {
     price: 0,
     indoorSavedImage: [],
     status: true,
+    web_banner_status: false,
+    mobile_banner_status: false,
     marketing: false,
+    sequence_no :  ""
   });
 
   function getLabelText(value) {
@@ -1692,9 +1698,38 @@ const SideForm = () => {
           action: form.payload.row.action,
         }));
         break;
+      case "add_banner":
+        getDID();
+        setSequenceFunc();
+        break;
+      case "update_banner":
+        setSequenceFunc();
+        getDID();
+        console.log(form.payload);
+        setData({
+          uuid: form.payload.value.uuid,
+          web_banner: form.payload.value.web_banner,
+          web_url: form.payload.value.web_url,
+          sequence_no: form.payload.value.sequence_no,
+          old_sequence_no: form.payload.value.sequence_no,
+          mobile_banner: form.payload.value.mobile_banner,
+          mobile_url: form.payload.value.mobile_url,
+          banner_title: form.payload.value.banner_title,
+          web_banner_status: form.payload.value.web_banner_status,
+          mobile_banner_status: form.payload.value.mobile_banner_status,
+        });
+        break;
       default:
     }
   }, [form.formType, form.state]);
+
+  async function setSequenceFunc() {
+    const data = await getSequence();
+    console.log(data)
+    if (data.status === 200) {
+      return setSequence([...data.data]);
+    }
+  }
 
   // stepper button
   const handleNextStep = () => {
@@ -1810,6 +1845,8 @@ const SideForm = () => {
   };
 
   const feature = [
+    "web_banner_status",
+    "mobile_banner_status",
     "rotating_seats",
     "eatable_oil_polish",
     "no_chemical",
@@ -2172,6 +2209,8 @@ const SideForm = () => {
       supplier: [],
       category: [],
     });
+    setWebBanner([]);
+    setMobileBanner([]);
     setImages([]);
     setFeatured([]);
     setFiles([]);
@@ -2179,7 +2218,10 @@ const SideForm = () => {
     setData({
       CVW: 0,
       ACIN: "",
+      web_banner_status: false,
+      mobile_banner_status: false,
       warehouse_to: "",
+      sequence_no :  "",
       marketing: false,
       primary_material: [],
       product_articles: [],
@@ -5499,24 +5541,6 @@ const SideForm = () => {
       });
   };
 
-  // getting current data
-  function getTime() {
-    const currentDate = new Date();
-    const date =
-      currentDate.getDate() +
-      "/" +
-      (currentDate.getMonth() + 1) +
-      "/" +
-      currentDate.getFullYear() +
-      " @ " +
-      currentDate.getHours() +
-      ":" +
-      currentDate.getMinutes() +
-      ":" +
-      currentDate.getSeconds();
-
-    return date;
-  }
   async function handleReview(e) {
     try {
       e.preventDefault();
@@ -5734,6 +5758,144 @@ const SideForm = () => {
         });
     }, 1000);
     return () => clearTimeout(delayDebounceFn);
+  }
+
+  // function for handling banner
+  async function handleBanner(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      FD.append("DID", SKU);
+      FD.append("AID", "Not Assigned " + SKU);
+      FD.append("type", "Banner");
+      FD.append("operation", "addBanner");
+      FD.append("banner_title", changeData.banner_title);
+      FD.append("web_banner", webBanner[0]);
+      FD.append("mobile_banner", mobileBanner[0]);
+      FD.append("mobile_url", changeData.mobile_url);
+      FD.append("web_url", changeData.web_url);
+      FD.append("web_banner_status", changeData.web_banner_status);
+      FD.append("mobile_banner_status", changeData.mobile_banner_status);
+      FD.append("sequence_no", changeData.sequence_no);
+
+      // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
+
+      const res = await addDraft(FD);
+
+      if (res.status === 203) {
+        setImages([]);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: res.data.message,
+          })
+        );
+      } else {
+        // form.setRow([
+        //   ...form.row,
+        //   {
+        //     id: form.row.length + 1,
+        //     category_name: data.data.response.category_name,
+        //     category_status: data.data.response.category_status,
+        //     category_image: data.data.response.category_image,
+        //     seo_title: data.data.response.seo_title,
+        //     seo_description: data.data.response.seo_description,
+        //     seo_keyword: data.data.response.seo_keyword,
+        //     product_description: data.data.response.product_description,
+        //     action: data.data.response,
+        //   },
+        // ]);
+        // form.setCheck((old) => [...old, data.data.response.category_status]);
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
+  }
+  async function handleUpdateBanner(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      FD.append("DID", SKU);
+      FD.append("AID", changeData.uuid);
+      FD.append("type", "Banner");
+      FD.append("operation", "updateBanner");
+      FD.append("banner_title", changeData.banner_title);
+      webBanner.length > 0 && FD.append("web_banner", webBanner[0]);
+      mobileBanner.length > 0 && FD.append("mobile_banner", mobileBanner[0]);
+      FD.append("mobile_url", changeData.mobile_url);
+      FD.append("web_url", changeData.web_url);
+      FD.append("web_banner_status", changeData.web_banner_status);
+      FD.append("mobile_banner_status", changeData.mobile_banner_status);
+      FD.append("sequence_no", changeData.sequence_no);
+
+      // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
+
+      const res = await addDraft(FD);
+
+      if (res.status === 203) {
+        setImages([]);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: res.data.message,
+          })
+        );
+      } else {
+        // form.setRow([
+        //   ...form.row,
+        //   {
+        //     id: form.row.length + 1,
+        //     category_name: data.data.response.category_name,
+        //     category_status: data.data.response.category_status,
+        //     category_image: data.data.response.category_image,
+        //     seo_title: data.data.response.seo_title,
+        //     seo_description: data.data.response.seo_description,
+        //     seo_keyword: data.data.response.seo_keyword,
+        //     product_description: data.data.response.product_description,
+        //     action: data.data.response,
+        //   },
+        // ]);
+        // form.setCheck((old) => [...old, data.data.response.category_status]);
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
   }
 
   return (
@@ -6541,25 +6703,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                            {/* 
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Featured Images
-                          </FormLabel>
-                          <FeaturesPreviews
-                            text={"Please Drag and Drop featured images"}
-                          ></FeaturesPreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Specification Images
-                          </FormLabel>
-                          <ImagePreviews
-                            text={"Please Drag and Drop specification images"}
-                          ></ImagePreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Mannequin Images
-                          </FormLabel>
-                          <MannequinPreviews
-                            text={"Please Drag and Drop mannequin images"}
-                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -9314,24 +9457,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                            {/* <FormLabel id="demo-radio-buttons-group-label">
-                            Featured Images
-                          </FormLabel>
-                          <FeaturesPreviews
-                            text={"Please Drag and Drop featured images"}
-                          ></FeaturesPreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Specification Images
-                          </FormLabel>
-                          <ImagePreviews
-                            text={"Please Drag and Drop specification images"}
-                          ></ImagePreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Mannequin Images
-                          </FormLabel>
-                          <MannequinPreviews
-                            text={"Please Drag and Drop mannequin images"}
-                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -12154,24 +12279,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                            {/* <FormLabel id="demo-radio-buttons-group-label">
-                            Featured Images
-                          </FormLabel>
-                          <FeaturesPreviews
-                            text={"Please Drag and Drop featured images"}
-                          ></FeaturesPreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Specification Images
-                          </FormLabel>
-                          <ImagePreviews
-                            text={"Please Drag and Drop specification images"}
-                          ></ImagePreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Mannequin Images
-                          </FormLabel>
-                          <MannequinPreviews
-                            text={"Please Drag and Drop mannequin images"}
-                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -15735,24 +15842,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                            {/* <FormLabel id="demo-radio-buttons-group-label">
-                            Featured Images
-                          </FormLabel>
-                          <FeaturesPreviews
-                            text={"Please Drag and Drop featured images"}
-                          ></FeaturesPreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Specification Images
-                          </FormLabel>
-                          <ImagePreviews
-                            text={"Please Drag and Drop specification images"}
-                          ></ImagePreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Mannequin Images
-                          </FormLabel>
-                          <MannequinPreviews
-                            text={"Please Drag and Drop mannequin images"}
-                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -18740,25 +18829,6 @@ const SideForm = () => {
                                 {"None"}
                               </MenuItem>
                             </TextField>
-                            {/* 
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Featured Images
-                          </FormLabel>
-                          <FeaturesPreviews
-                            text={"Please Drag and Drop featured images"}
-                          ></FeaturesPreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Specification Images
-                          </FormLabel>
-                          <ImagePreviews
-                            text={"Please Drag and Drop specification images"}
-                          ></ImagePreviews>
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Mannequin Images
-                          </FormLabel>
-                          <MannequinPreviews
-                            text={"Please Drag and Drop mannequin images"}
-                          ></MannequinPreviews> */}
                           </Box>
                           <Box className="stepAction">
                             <Button
@@ -21633,7 +21703,7 @@ const SideForm = () => {
                     method="post"
                   >
                     <TextField
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
@@ -21801,7 +21871,7 @@ const SideForm = () => {
                     </TextField>
 
                     <TextField
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
@@ -21864,7 +21934,7 @@ const SideForm = () => {
                     method="post"
                   >
                     <TextField
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
@@ -22102,7 +22172,7 @@ const SideForm = () => {
                     </TextField>
 
                     <TextField
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       fullWidth
                       // required
@@ -22272,7 +22342,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       label="Review Title"
                       size="small"
                       value={changeData.review_title}
@@ -22283,7 +22353,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       label="YouTube URL"
                       value={changeData.yourTube_url}
@@ -22294,7 +22364,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       label="Reviewer Name (Name you want to show on review)"
                       value={changeData.reviewer_name}
@@ -22305,7 +22375,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       label="Reviewer Email"
                       value={changeData.reviewer_email}
@@ -22321,7 +22391,7 @@ const SideForm = () => {
                       className="customTextArea"
                       placeholder="Write something beautiful..."
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       value={changeData.review}
                       onChange={handleProductFields}
                     />
@@ -22407,7 +22477,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       label="Review Title"
                       size="small"
                       value={changeData.review_title}
@@ -22418,7 +22488,7 @@ const SideForm = () => {
 
                     <TextField
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       size="small"
                       label="YouTube URL"
                       value={changeData.yourTube_url}
@@ -22435,7 +22505,7 @@ const SideForm = () => {
                       className="customTextArea"
                       placeholder="Write something beautiful..."
                       fullWidth
-                      sx={{ mb: 2 }}
+                      sx={{ mb: 1 }}
                       value={changeData.review}
                       onChange={handleProductFields}
                     />
@@ -22453,6 +22523,305 @@ const SideForm = () => {
               </Grid>
             )}
             {/* update Review  Ends */}
+
+            {/* add Review */}
+
+            {form.formType === "add_banner" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Add Banner
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add banner details from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleBanner);
+                    }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Web View Banner Image (1920*1080)
+                    </FormLabel>
+                    <WebBannerPreviews
+                      webBanner={webBanner}
+                      setWebBanner={setWebBanner}
+                      text={"Please Drag and Drop the Web Banner."}
+                    >
+                      {" "}
+                    </WebBannerPreviews>
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Mobile View Banner Image (800*200)
+                    </FormLabel>
+                    <MobileBannerPreviews
+                      mobileBanner={mobileBanner}
+                      setMobileBanner={setMobileBanner}
+                      text={"Please Drag and Drop the Mobile Banner."}
+                    >
+                      {" "}
+                    </MobileBannerPreviews>
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      label="Banner Title"
+                      size="small"
+                      value={changeData.banner_title}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="banner_title"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Redirecting URL for Web"
+                      value={changeData.web_url}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="web_url"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Redirecting URL for Mobile"
+                      value={changeData.mobile_url}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="mobile_url"
+                    />
+                    
+
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      label="Sequence Number"
+                      size="small"
+                      required
+                      error = {sequence.includes(parseInt(changeData.sequence_no))}
+                      helperText = {sequence.includes(parseInt(changeData.sequence_no)) && "Index is already in use."}
+                      type="number"
+                      value={
+                        changeData.sequence_no < 0 ? 0 : changeData.sequence_no
+                      }
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="sequence_no"
+
+                    />
+
+
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.web_banner_status}
+                            onChange={handleProductFields}
+                            name="web_banner_status"
+                          />
+                        }
+                        label="Web Banner Status"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.mobile_banner_status}
+                            onChange={handleProductFields}
+                            name="mobile_banner_status"
+                          />
+                        }
+                        label="Mobile Banner Status"
+                      />
+                    </FormGroup>
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add Banner
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add REview ends */}
+            {/* Update Review */}
+
+            {form.formType === "update_banner" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Update Banner
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Update banner details from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateBanner);
+                    }}
+                    id="myForm"
+                    encType="multipart/form-data"
+                    method="post"
+                  >
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Web View Banner Image (1920*1080)
+                    </FormLabel>
+                    <WebBannerPreviews
+                      webBanner={webBanner}
+                      setWebBanner={setWebBanner}
+                      text={"Please Drag and Drop the Web Banner."}
+                    >
+                      {" "}
+                    </WebBannerPreviews>
+                    {changeData.web_banner && (
+                      <>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Present Banner
+                        </FormLabel>
+                        <Box sx={{ width: 200 }}>
+                          <img alt="web_banner" scr={changeData.web_banner} />
+                        </Box>
+                      </>
+                    )}
+
+                    <FormLabel id="demo-radio-buttons-group-label">
+                      Mobile View Banner Image (800*200)
+                    </FormLabel>
+                    <MobileBannerPreviews
+                      mobileBanner={mobileBanner}
+                      setMobileBanner={setMobileBanner}
+                      text={"Please Drag and Drop the Mobile Banner."}
+                    >
+                      {" "}
+                    </MobileBannerPreviews>
+                    {changeData.mobile_banner && (
+                      <>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                          Present Banner
+                        </FormLabel>
+                        <Box sx={{ width: 200 }}>
+                          <img
+                            alt="mobile_banner"
+                            scr={changeData.mobile_banner}
+                          />
+                        </Box>
+                      </>
+                    )}
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      label="Banner Title"
+                      size="small"
+                      value={changeData.banner_title}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="banner_title"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Redirecting URL for Web"
+                      value={changeData.web_url}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="web_url"
+                    />
+
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Redirecting URL for Mobile"
+                      value={changeData.mobile_url}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="mobile_url"
+                    />
+
+          
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      error = {sequence.includes(changeData.sequence_no)}
+                      label={`Sequence Number`}
+                      size="small"
+                      type="number"
+                      required
+                      error = {parseInt(changeData.old_sequence_no) !== parseInt(changeData.sequence_no)  && sequence.includes(parseInt(changeData.sequence_no))}
+                      helperText = {(parseInt(changeData.old_sequence_no) !== parseInt(changeData.sequence_no)  && sequence.includes(parseInt(changeData.sequence_no))) && "Index is already in use."}
+                      value={
+                        changeData.sequence_no < 0 ? 0 : changeData.sequence_no
+                      }
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="sequence_no"
+                    />
+
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.web_banner_status}
+                            onChange={handleProductFields}
+                            name="web_banner_status"
+                          />
+                        }
+                        label="Web Banner Status"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={changeData.mobile_banner_status}
+                            onChange={handleProductFields}
+                            name="mobile_banner_status"
+                          />
+                        }
+                        label="Mobile Banner Status"
+                      />
+                    </FormGroup>
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Update Banner
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* Update REview ends */}
           </Box>
         </Backdrop>
       </Slide>
@@ -22463,3 +22832,199 @@ const SideForm = () => {
 // for label the ratting
 
 export default SideForm;
+
+// banner dimension for web 1920*1080
+function WebBannerDimension(images, setWebBanner) {
+  let result = images.map(async (image) => {
+    let { width, height } = await size(URL.createObjectURL(image));
+    console.log(width, height);
+    Object.assign(image, {
+      preview: URL.createObjectURL(image),
+      validate: width === 1920 && height === 1080 ? true : false,
+    });
+    return image;
+  });
+  Promise.all(result).then((res) => setWebBanner([...res]));
+}
+
+function WebBannerPreviews({ text, webBanner, setWebBanner }) {
+  const [acceptedFileItems, setAcceptedFileItems] = useState([]);
+  const [fileRejectionItems, setFileRejectionItems] = useState([]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    multiple: false,
+    onDrop: (acceptedFiles) => {
+      WebBannerDimension(acceptedFiles, setWebBanner);
+    },
+  });
+
+  // for check the file state in done or
+  useMemo(() => {
+    if (webBanner) {
+      // REJECTED FILES
+      setFileRejectionItems(
+        webBanner.map((file) => {
+          return !file.validate ? (
+            <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div>
+          ) : null;
+        })
+      );
+
+      // accepted
+      setAcceptedFileItems(
+        webBanner.map((file, index) => {
+          return file.validate ? (
+            <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div>
+          ) : null;
+        })
+      );
+    }
+  }, [webBanner]);
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => webBanner.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, []);
+
+  return (
+    <section className="container dorpContainer">
+      <div {...getRootProps({ className: "dropzone" })}>
+        <input {...getInputProps()} />
+        <p>{text}</p>
+      </div>
+      <aside>
+        <h4>Accepted files</h4>
+        <aside style={thumbsContainer}>{acceptedFileItems}</aside>
+        <h4>Rejected files</h4>
+        <aside style={thumbsContainer}>{fileRejectionItems}</aside>
+      </aside>
+    </section>
+  );
+}
+// banner dimension for mobile 800*200
+function MobileBannerDimension(images, setMobileBanner) {
+  let result = images.map(async (image) => {
+    let { width, height } = await size(URL.createObjectURL(image));
+    // console.log(width,height)
+    Object.assign(image, {
+      preview: URL.createObjectURL(image),
+      validate: width === 800 && height === 200 ? true : false,
+    });
+    return image;
+  });
+  Promise.all(result).then((res) => setMobileBanner([...res]));
+}
+
+function MobileBannerPreviews({ text, mobileBanner, setMobileBanner }) {
+  const [acceptedFileItems, setAcceptedFileItems] = useState([]);
+  const [fileRejectionItems, setFileRejectionItems] = useState([]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    multiple: false,
+    onDrop: (acceptedFiles) => {
+      MobileBannerDimension(acceptedFiles, setMobileBanner);
+    },
+  });
+
+  // for check the file state in done or
+  useMemo(() => {
+    if (mobileBanner) {
+      // REJECTED FILES
+      setFileRejectionItems(
+        mobileBanner.map((file) => {
+          return !file.validate ? (
+            <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div>
+          ) : null;
+        })
+      );
+
+      // accepted
+      setAcceptedFileItems(
+        mobileBanner.map((file, index) => {
+          return file.validate ? (
+            <div style={thumb} key={file.name}>
+              <div style={thumbInner}>
+                {/* {console.log(file.validate)} */}
+
+                <img
+                  src={URL.createObjectURL(file)}
+                  style={img}
+                  alt="Images"
+                  // Revoke data uri after image is loaded
+                  onLoad={() => {
+                    URL.revokeObjectURL(file.preview);
+                  }}
+                />
+              </div>
+            </div>
+          ) : null;
+        })
+      );
+    }
+  }, [mobileBanner]);
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () =>
+      mobileBanner.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, []);
+
+  return (
+    <section className="container dorpContainer">
+      <div {...getRootProps({ className: "dropzone" })}>
+        <input {...getInputProps()} />
+        <p>{text}</p>
+      </div>
+      <aside>
+        <h4>Accepted files</h4>
+        <aside style={thumbsContainer}>{acceptedFileItems}</aside>
+        <h4>Rejected files</h4>
+        <aside style={thumbsContainer}>{fileRejectionItems}</aside>
+      </aside>
+    </section>
+  );
+}
