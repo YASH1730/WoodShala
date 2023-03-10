@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkadminpanel=self.webpackChunkadminpanel||[]).push([[2],{2002:function(n,e,r){r.r(e);r(2791);var u=r(184);e.default=function(){return(0,u.jsx)("center",{children:(0,u.jsx)("h1",{children:"Sorry Not Found 404"})})}}}]);
+//# sourceMappingURL=2.0f739389.chunk.js.map
