@@ -480,7 +480,15 @@ export default function Action() {
             display.data.status = true;
             sendResponse(display.data);
             break;
-          default:
+          case "applyCOD":
+            display.data.operation = display.operation;
+            display.data.DID = display.DID;
+            display.data.limit = "CODLIMIT2023"
+            display.data.draftStatus = e.target.action.value;
+            display.data.status = true;
+            sendResponse(display.data);
+            break
+            default:
             console.log("no operation found");
             break;
         }

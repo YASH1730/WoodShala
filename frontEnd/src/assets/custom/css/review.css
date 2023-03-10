@@ -1,5 +1,6 @@
 .reviewMeta {
     justify-content: space-between;
+    gap: 1rem;
     /* border: 2px solid black; */
 }
 

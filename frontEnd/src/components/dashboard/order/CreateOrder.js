@@ -22,6 +22,11 @@ import {
   Tabs,
   Tab,
   FormLabel,
+  FormControl,
+  FormControlLabel,
+  InputAdornment,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import CreateIcon from "@mui/icons-material/Create";
@@ -31,7 +36,7 @@ import "../../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
 import { useDispatch } from "react-redux";
 import { setAlert } from "../../../store/action/action";
-
+import defaultIMg from "../../../assets/img/question.svg"
 import {
   DataGrid,
   // gridPageCountSelector,
@@ -51,9 +56,11 @@ import {
   getArticlesId,
   addDraft,
   getDraftID,
+  getHardwareDropdown,
 } from "../../../services/service";
 import { useConfirm } from "material-ui-confirm";
 import { Editor } from "@tinymce/tinymce-react";
+import { CheckBox } from "@mui/icons-material";
 
 // style for drop box in custom
 const thumbsContainer = {
@@ -93,7 +100,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 800,
   maxHeight: 500,
   overflow: "scroll",
   bgcolor: "background.paper",
@@ -158,11 +165,18 @@ export default function CreateOrder() {
 
   // multiple images
   const [files, setFiles] = useState([]);
+  const [polish, setPolish] = useState([]);
+  const [cusProductData, setCustomProduct] = useState({ cusPolish: 'no' })
 
   const [catalogs, setCatalogs] = useState({
     customer: [],
     product: [],
     address: [],
+    polish: [],
+    customer_type: [
+      'Interior', 'Architect', 'VIP', 'VVIP'
+    ],
+    warehouse: ['Jodhpur', 'Bangalore'],
     channel: [
       {
         key: "3rd Party Vendor",
@@ -205,13 +219,14 @@ export default function CreateOrder() {
         value: "Others",
       },
     ],
+    pay: ['Razorpay', "PayTM", 'Bank Transfer', 'COD']
   });
 
   // for dynamic product SKUs
   const handleSearch = async (e) => {
     const delayDebounceFn = setTimeout(() => {
       getPresentSKUs(e.target.value).then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setCatalogs((old) => ({ ...old, product: res.data }));
       }, 1000);
       return () => clearTimeout(delayDebounceFn);
@@ -223,6 +238,17 @@ export default function CreateOrder() {
     O: "",
     CUS: "",
     CID: null,
+    GST: null,
+    classification: 'personal',
+    customer_type: '',
+    has_GST: 'no',
+    fulfilled: false,
+    advance_received: false,
+    pay_method_remaining: '',
+    pay_method_advance: '',
+    inventory_location: '',
+    courier_company: '',
+    AWB: '',
     customer_email: "",
     customer_mobile: "",
     customer_name: "",
@@ -266,17 +292,11 @@ export default function CreateOrder() {
   };
 
   // step label
-  const steps = ["Select Customer", "Select Product", "Receipt"];
+  const steps = ["Select Customer", "Select Product", "Fulfillment", "Receipt"];
 
   // catalog reload
   useEffect(() => {
-    customerCatalog().then(async (cus) => {
-      setCatalogs({
-        ...catalogs,
-        customer: cus.data,
-      });
-      getDID();
-    });
+    getCatalogs();
   }, []);
 
   // order filter
@@ -350,52 +370,28 @@ export default function CreateOrder() {
     );
   }, [data.product_array]);
 
-  // for image drop
-  function ProductsPreviews(props) {
-    const { getRootProps, getInputProps } = useDropzone({
-      accept: "image/*",
-      multiple: true,
-      onDrop: (acceptedFiles) => {
-        setFiles(
-          acceptedFiles.map((file) =>
-            Object.assign(file, {
-              preview: URL.createObjectURL(file),
-            })
-          )
-        );
-      },
-    });
+  // polish 
+  async function getCatalogs() {
+    let polish = await getHardwareDropdown()
+    let cus = await customerCatalog()
+    let DID = await getDraftID()
 
-    const thumbs = files.map((file) => (
-      <div style={thumb} key={file.name}>
-        <div style={thumbInner}>
-          <img
-            src={file.preview}
-            style={img}
-            alt="Images"
-            // Revoke data uri after image is loaded
-            onLoad={() => {
-              URL.revokeObjectURL(file.preview);
-            }}
-          />
-        </div>
-      </div>
-    ));
+    // draft 
+    if (DID.status === 200) {
+      if (DID.data.length > 0) {
+        let index = parseInt(DID.data[0].DID.split("-")[1]) + 1;
+        setSKU(`DID-0${index}`);
+      } else {
+        setSKU("DID-01001");
+      }
+    }
+    // customer
+    if (cus.status === 200)
+      setCatalogs(old => ({ ...old, customer: cus.data, }));
+    // for polish
+    if (polish.status === 200)
+      setCatalogs(old => ({ ...old, polish: [...polish.data.polish] }))
 
-    useEffect(() => {
-      // Make sure to revoke the data uris to avO memory leaks, will run on unmount
-      return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, []);
-
-    return (
-      <section className="container dorpContainer">
-        <div {...getRootProps({ className: "dropzone" })}>
-          <input {...getInputProps()} />
-          <p>{props.text}</p>
-        </div>
-        <aside style={thumbsContainer}>{thumbs}</aside>
-      </section>
-    );
   }
 
   // for calculating subtotal
@@ -451,10 +447,10 @@ export default function CreateOrder() {
       width: 200,
       renderCell: (params) => (
         <div className="categoryImage">
-          {params.formattedValue !== "undefined" ? (
-            <img src={params.formattedValue} alt="category" />
+          {params.formattedValue !== undefined ? (
+            <img src={params.formattedValue || defaultIMg} alt="productImg" />
           ) : (
-            "Image Not Give"
+            <img src={defaultIMg} alt="productImg" />
           )}
         </div>
       ),
@@ -464,13 +460,6 @@ export default function CreateOrder() {
       headerName: "Product Title",
       width: 200,
     },
-
-    {
-      field: "MRP",
-      headerName: "MRP",
-      width: 200,
-    },
-
     {
       field: "selling_price",
       headerName: "Selling price",
@@ -529,6 +518,8 @@ export default function CreateOrder() {
 
   const handelData = (e) => {
     console.log(e.target.name);
+    console.log(e.target.value);
+
     if (e.target.name === "shipping" && catalogs.address.length > 0) {
       const row = catalogs.address.filter((data) => {
         return data.address === e.target.value;
@@ -540,7 +531,22 @@ export default function CreateOrder() {
         city: row[0].city,
         state: row[0].state,
       });
-    } else if (e.target.name !== "discount")
+    }
+    else if (e.target.name === 'pic_before_dispatch')
+      setData({ ...data, [e.target.name]: e.target.checked });
+    else if (e.target.name === 'advance_received') {
+      if (e.target.checked)
+        setData({ ...data, [e.target.name]: e.target.checked });
+      else
+        setData({ ...data, [e.target.name]: e.target.checked, pay_method_advance: '', pay_method_remaining: "" });
+    }
+    else if (e.target.name === 'fulfilled') {
+      if (e.target.checked)
+        setData({ ...data, [e.target.name]: e.target.checked });
+      else
+        setData({ ...data, [e.target.name]: e.target.checked, inventory_location: '', AWB: "", courier_company: '' });
+    }
+    else if (e.target.name !== "discount")
       setData({ ...data, [e.target.name]: e.target.value });
     else {
       setData({
@@ -580,41 +586,23 @@ export default function CreateOrder() {
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setFiles([]);
+    setPolish([]);
+    setCustomProduct({ cusPolish: 'no' });
     setOpen(false);
   };
 
   // customer id
   const getCUS = async () => {
-    await getLastCp()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
+    let res = await getLastCp()
+    if (res.status === 200) {
+      if (res.data.length > 0) {
+        let index = parseInt(res.data[0].CUS.split("-")[1]) + 1;
 
-          setData({ ...data, CUS: `CUS-0${index}` });
-        } else {
-          setData({ ...data, CUS: "CUS-01001" });
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
-  };
-
-  // DID
-  const getDID = () => {
-    getDraftID()
-      .then((res) => {
-        if (res.data.length > 0) {
-          let index = parseInt(res.data[0].DID.split("-")[1]) + 1;
-
-          setSKU(`DID-0${index}`);
-        } else {
-          setSKU("DID-01001");
-        }
-      })
-      .catch((err) => {
-        // //console.log(err);
-      });
+        setCustomProduct(old => ({ ...old, CUS: `CUS-0${index}` }));
+      } else {
+        setCustomProduct(old => ({ ...old, CUS: "CUS-01001" }));
+      }
+    }
   };
 
   // custom product submit
@@ -627,225 +615,74 @@ export default function CreateOrder() {
       return FD.append("product_image", element);
     });
 
-    FD.append("CUS", e.target.CUS.value);
-    FD.append("product_title", e.target.product_title.value);
-    FD.append("length", e.target.length.value);
-    FD.append("height", e.target.height.value);
-    FD.append("breadth", e.target.breadth.value);
-    FD.append("selling_price", e.target.selling_price.value);
-    FD.append("MRP", e.target.MRP.value);
-    FD.append("discount", e.target.discount.value);
-    FD.append("polish_time", e.target.polish_time.value);
-    FD.append("note", e.target.note.value);
+    if (cusProductData.cusPolish === 'yes') {
+      polish.map((element) => {
+        return FD.append("polish_image", element);
+      });
+      FD.append("polish_note", cusProductData.polish_note);
+
+    }
+
+    FD.append("CUS", cusProductData.CUS);
+    FD.append("product_title", cusProductData.product_title);
+    FD.append("length", cusProductData.length);
+    FD.append("height", cusProductData.height);
+    FD.append("breadth", cusProductData.breadth);
+    FD.append("selling_price", cusProductData.selling_price);
+    FD.append("MRP", cusProductData.MRP);
+    FD.append("discount", cusProductData.discount);
+    FD.append("note", cusProductData.note);
+    FD.append("polish_time", cusProductData.polish_time);
+    FD.append("polish", cusProductData.polish);
+    FD.append("cusPolish", cusProductData.cusPolish);
+
+    console.log(cusProductData)
+    // return 1
 
     let response = await addCustomProduct(FD);
 
-    setData({
-      ...data,
-      quantity: {
-        ...data.quantity,
-        [e.target.CUS.value]: e.target.quantity.value,
-      },
-    });
-    console.log(response);
-    setProductRows([
-      ...productRow,
-      {
-        id: productRow.length + 1,
-        SKU: response.data.data.CUS,
-        product_title: response.data.data.product_title,
-        product_image:
-          response.data.data.product_image.length > 0
-            ? response.data.data.product_image[0]
-            : "",
-        dimension:
-          response.data.data.length +
-          "x" +
-          response.data.data.breadth +
-          "x" +
-          response.data.data.height,
-        MRP: response.data.data.MRP,
-        qty: response.data.data.quantity,
-        selling_price:
-          response.data.data.MRP -
-          (response.data.data.MRP / 100) * response.data.data.discount,
-        discount_limit: response.data.data.discount,
-      },
-    ]);
+    if (response.status === 200) {
+      setData({
+        ...data,
+        quantity: {
+          ...data.quantity,
+          [e.target.CUS.value]: e.target.quantity.value,
+        },
+      });
+      setProductRows([
+        ...productRow,
+        {
+          id: productRow.length + 1,
+          SKU: response.data.data.CUS,
+          product_title: response.data.data.product_title,
+          product_image:
+            response.data.data.product_image.length > 0
+              ? response.data.data.product_image[0]
+              : defaultIMg,
+          dimension:
+            response.data.data.length +
+            "x" +
+            response.data.data.breadth +
+            "x" +
+            response.data.data.height,
+          MRP: response.data.data.MRP,
+          qty: response.data.data.quantity,
+          selling_price:
+            response.data.data.MRP -
+            (response.data.data.MRP / 100) * response.data.data.discount,
+          discount_limit: response.data.data.discount,
+        },
+      ]);
+      setFiles([]);
+      setPolish([]);
+      setCustomProduct({ cusPolish: 'no' });
+      handleClose();
+    }
 
-    setFiles([]);
 
-    handleClose();
   };
 
-  // custom product model
-  function CustomProduct() {
-    useEffect(() => {
-      getCUS();
-    }, [open]);
 
-    return (
-      <div>
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={open}
-          onClose={handleClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={open}>
-            <Box sx={style}>
-              <Grid container>
-                <Grid item xs={12} sx={{ mb: 2 }}>
-                  <Typography
-                    component={"span"}
-                    id="transition-modal-title"
-                    variant="h6"
-                  >
-                    Create Product
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sx={{ pb: 2 }}>
-                  <form
-                    enctype="multipart/form-data"
-                    method="get"
-                    onSubmit={handleCustomProduct}
-                  >
-                    {/* <FormLabel id="demo-radio-buttons-group-label">
-                              Product Images
-                            </FormLabel> */}
-                    <ProductsPreviews
-                      text={"Please Drag and Drop the product images"}
-                    ></ProductsPreviews>
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="CUS"
-                      disabled
-                      value={data.CUS}
-                      type="text"
-                      label="Custom SKU"
-                      variant="outlined"
-                    />
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="product_title"
-                      type="text"
-                      label="Title"
-                      variant="outlined"
-                    />
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="length"
-                      type="text"
-                      label="Length"
-                      variant="outlined"
-                    />
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="breadth"
-                      type="text"
-                      label="Breadth"
-                      variant="outlined"
-                    />
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="height"
-                      type="text"
-                      label="Height"
-                      variant="outlined"
-                    />
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="quantity"
-                      type="number"
-                      label="Quantity"
-                      variant="outlined"
-                    />
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="selling_price"
-                      type="number"
-                      label="Selling Price"
-                      variant="outlined"
-                    />
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="MRP"
-                      type="number"
-                      label="MRP"
-                      variant="outlined"
-                    />
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="discount"
-                      type="number"
-                      label="Discount"
-                      variant="outlined"
-                    />
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 1 }}
-                      fullWidth
-                      name="polish_time"
-                      type="number"
-                      label="Polish Time"
-                      variant="outlined"
-                      helperText="Polish time in days..."
-                    />
-
-                    <TextField
-                      size="small"
-                      sx={{ mb: 2 }}
-                      fullWidth
-                      name="note"
-                      type="text"
-                      label="Note"
-                      variant="outlined"
-                    />
-                    <Button
-                      size="small"
-                      fullWidth
-                      variant="contained"
-                      type="submit"
-                    >
-                      Add
-                    </Button>
-                  </form>
-                </Grid>
-              </Grid>
-            </Box>
-          </Fade>
-        </Modal>
-      </div>
-    );
-  }
 
   async function handleSubmit(e) {
     /// for adding the note
@@ -928,7 +765,18 @@ export default function CreateOrder() {
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Create Order
       </Typography>
-      {CustomProduct()}
+      <CustomProduct cusProductData={cusProductData} setCustomProduct={setCustomProduct}
+        open={open} getCUS={getCUS} handleCustomProduct={handleCustomProduct}
+        ProductsPreviews={ProductsPreviews}
+        PolishPreviews={PolishPreviews}
+        data={data}
+        catalogs={catalogs}
+        handleClose={handleClose}
+        files={files}
+        setFiles={setFiles}
+        polish={polish}
+        setPolish={setPolish}
+      />
 
       {/* data grid & create order  */}
 
@@ -1005,8 +853,63 @@ export default function CreateOrder() {
                             here
                           </Typography>
                         </Typography>
+
+                        <FormControl sx={{ mt: 1 }}>
+
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Classification
+                          </FormLabel>
+                          <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            name="classification"
+                            size='small'
+                            value={data.classification}
+                            onChange={handelData}
+                          >
+                            <FormControlLabel
+                              value="personal"
+                              control={<Radio />}
+                              label="Personal"
+                              size='small'
+
+                            />
+                            <FormControlLabel
+                              size='small'
+                              value="business"
+                              control={<Radio />}
+                              label="Business"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+
+                        {data.classification === 'personal' &&
+                          <TextField
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            value={data.customer_type}
+                            onChange={handelData}
+                            select
+                            sx={{ mb: 2, mt: 1 }}
+                            name="customer_type"
+                            label="Customer Type"
+                            multiple
+                            helperText="Please select customer type."
+                          >
+                            {catalogs.customer_type.map(
+                              (option) =>
+                                <MenuItem
+                                  key={option}
+                                  value={option}
+                                >
+                                  {option}
+                                </MenuItem>
+                            )}
+                          </TextField>}
+
+
                         <TextField
-                          sx={{ mt: 2, pb: 2 }}
+                          sx={{ pb: 2 }}
                           size="small"
                           fullWidth
                           //required
@@ -1070,6 +973,52 @@ export default function CreateOrder() {
                           type="text"
                         />
 
+                        <FormControl>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            GST
+                          </FormLabel>
+                          <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            name="has_GST"
+                            size='small'
+                            value={data.has_GST}
+                            onChange={handelData}
+                          >
+                            <FormControlLabel
+                              value="yes"
+                              control={<Radio />}
+                              label="Yes"
+                              size='small'
+
+                            />
+                            <FormControlLabel
+                              size='small'
+                              value="no"
+                              control={<Radio />}
+                              label="No"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+
+                        {data.has_GST === "yes" &&
+                          <TextField
+                            size="small"
+                            sx={{ mb: 2 }}
+                            fullWidth
+                            value={data.GST}
+                            onChange={handelData}
+                            minRows={5}
+                            maxRows={5}
+                            style={{ width: "100%", resize: 'none' }}
+                            name="GST"
+                            type="text"
+                            label="GST Number"
+                            variant="outlined"
+                          />
+
+                        }
+                        <br />
+
                         <FormLabel id="demo-radio-buttons-group-label">
                           Shipping Address
                         </FormLabel>
@@ -1128,10 +1077,63 @@ export default function CreateOrder() {
                           </Typography>
                         </Typography>
 
+                        <FormControl sx={{ mt: 1 }}>
+
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            Classification
+                          </FormLabel>
+                          <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            name="classification"
+                            size='small'
+                            value={data.classification}
+                            onChange={handelData}
+                          >
+                            <FormControlLabel
+                              value="personal"
+                              control={<Radio />}
+                              label="Personal"
+                              size='small'
+
+                            />
+                            <FormControlLabel
+                              size='small'
+                              value="business"
+                              control={<Radio />}
+                              label="Business"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+                        <br></br>
+                        {data.classification === 'personal' &&
+                          <TextField
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            value={data.customer_type}
+                            onChange={handelData}
+                            select
+                            sx={{ mb: 2, mt: 1 }}
+                            name="customer_type"
+                            label="Customer Type"
+                            multiple
+                            helperText="Please select customer type."
+                          >
+                            {catalogs.customer_type.map(
+                              (option) =>
+                                <MenuItem
+                                  key={option}
+                                  value={option}
+                                >
+                                  {option}
+                                </MenuItem>
+                            )}
+                          </TextField>}
+
+
                         <Autocomplete
                           id="free-solo-demo"
                           freeSolo
-                          sx={{ mt: 1 }}
                           onChange={(event, val) => handleAutoFillCustomer(val)}
                           options={catalogs.customer.map(
                             (option) => option.username + " - " + option.mobile
@@ -1211,6 +1213,54 @@ export default function CreateOrder() {
                           label="State"
                           type="text"
                         />
+
+                        <FormControl>
+                          <FormLabel id="demo-radio-buttons-group-label">
+                            GST
+                          </FormLabel>
+                          <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            name="has_GST"
+                            size='small'
+                            value={data.has_GST}
+                            onChange={handelData}
+                          >
+                            <FormControlLabel
+                              value="yes"
+                              control={<Radio />}
+                              label="Yes"
+                              size='small'
+
+                            />
+                            <FormControlLabel
+                              size='small'
+                              value="no"
+                              control={<Radio />}
+                              label="No"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+
+                        {data.has_GST === "yes" &&
+                          <TextField
+                            size="small"
+                            sx={{ mb: 2 }}
+                            fullWidth
+                            value={data.GST}
+                            onChange={handelData}
+                            minRows={5}
+                            maxRows={5}
+                            style={{ width: "100%", resize: 'none' }}
+                            name="GST"
+                            type="text"
+                            label="GST Number"
+                            variant="outlined"
+                          />
+
+                        }
+                        <br />
+
+
 
                         {catalogs.address.length > 0 ? (
                           <TextField
@@ -1348,8 +1398,98 @@ export default function CreateOrder() {
                 )}
                 {/* // Select products ends */}
 
-                {/* // Preview receipt */}
+                {/* // Fulfillment */}
                 {activeStep === 2 && (
+                  <Box
+                    sx={{
+                      p: 2.5,
+                    }}
+                  >
+                    <FormControl
+                      sx={{ mb: 2 }}
+                    >
+                      <FormControlLabel label='Pictures Before Dispatch'
+                        control={<Checkbox name='pic_before_dispatch' onChange={handelData} size={'small'}
+                          checked={data.pic_before_dispatch} />}
+                      // labelPlacement="start"
+                      />
+                    </FormControl>
+                    {/* <FormControl
+                      sx={{ mb: 2 }}
+                    >
+                      <FormControlLabel label='Any Advance Received?'
+                        control={<Checkbox name='advance_received' onChange={handelData} size={'small'} 
+                        checked={data.advance_received} />}
+                      // labelPlacement="start"
+                      />
+                    </FormControl> */}
+
+
+                    <br />
+
+                    <FormControl
+                      sx={{ mb: 2 }}
+                    >
+                      <FormControlLabel label='Is Fulfilled'
+                        control={<Checkbox name='fulfilled' onChange={handelData} size={'small'} checked={data.fulfilled} />}
+                      // labelPlacement="start"
+                      />
+                    </FormControl>
+
+                    {data.fulfilled && <>
+                      <TextField
+                        sx={{ mb: 2, mt: 2 }}
+                        size="small"
+                        fullWidth
+                        id="outlined-select"
+                        select
+                        name="inventory_location"
+                        label="Inventory Location"
+                        multiple
+                        value={data.inventory_location}
+                        onChange={handelData}
+                      >
+                        {catalogs.warehouse.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <TextField
+                        sx={{ mb: 2 }}
+                        size="small"
+                        fullWidth
+                        id="outlined-select"
+                        type="text"
+                        name="courier_company"
+                        label="Courier Company"
+                        value={data.courier_company}
+                        onChange={handelData}
+                      />
+                      <TextField
+                        sx={{ mb: 2 }}
+                        size="small"
+                        fullWidth
+                        id="outlined-select"
+                        type="text"
+                        name="AWB"
+                        label="AWB"
+                        value={data.AWB}
+                        onChange={handelData}
+                      />
+
+                    </>
+
+                    }
+
+
+                  </Box>
+                )}
+                {/* // Full Filament ends */}
+
+
+                {/* // Preview receipt */}
+                {activeStep === 3 && (
                   <Box
                     sx={{
                       p: 2.5,
@@ -1377,7 +1517,7 @@ export default function CreateOrder() {
                       multiple
                       value={data.sale_channel || "Online"}
                       onChange={handelData}
-                      helperText="Please select your Back Style."
+
                     >
                       {catalogs.channel.map((option) => (
                         <MenuItem key={option.key} value={option.value}>
@@ -1404,7 +1544,7 @@ export default function CreateOrder() {
 
                       <br></br>
 
-                      <Grid item xs={12}>
+                      {/* <Grid item xs={12}>
                         <TextField
                           fullWidth
                           sx={{ mb: 2 }}
@@ -1414,15 +1554,18 @@ export default function CreateOrder() {
                           label="O"
                           value={data.O}
                         ></TextField>
-                      </Grid>
+                      </Grid> */}
 
                       <Grid item xs={12}>
                         <TextField
                           fullWidth
-                          sx={{ mb: 2 }}
+                          sx={{ mb: 2, mt: 2 }}
                           size="small"
                           disabled
                           label="CID"
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">CID</InputAdornment>,
+                          }}
                           value={data.CID}
                         ></TextField>
                       </Grid>
@@ -1433,6 +1576,9 @@ export default function CreateOrder() {
                           sx={{ mb: 2 }}
                           size="small"
                           disabled
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                          }}
                           label="Subtotal"
                           value={calSubtotal()}
                         ></TextField>
@@ -1445,7 +1591,10 @@ export default function CreateOrder() {
                           label="Discount"
                           type="number"
                           size="small"
-                          value={data.discount}
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">%</InputAdornment>,
+                          }}
+                          value={(100 >= data.discount && data.discount > -1) ? data.discount : setData(old => ({ ...old, discount: 0 }))}
                           name="discount"
                           onChange={handelData}
                         />
@@ -1455,20 +1604,69 @@ export default function CreateOrder() {
                         <TextField
                           fullWidth
                           sx={{ mb: 2 }}
-                          label="Paid"
+                          label="Advance Payment"
                           type="number"
                           size="small"
-                          value={data.paid}
                           name="paid"
                           onChange={handelData}
+                          value={data.paid >= 0 ? data.paid : setData(old => ({ ...old, paid: 0 }))}
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                          }}
                         />
                       </Grid>
+
+
+                      {
+                        data.paid > 0 &&
+                        <>
+                          <TextField
+                            sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="pay_method_advance"
+                            label="Payment Method for Advance"
+                            multiple
+                            value={data.pay_method_advance}
+                            onChange={handelData}
+                          >
+                            {catalogs.pay.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                          <TextField
+                            sx={{ mb: 2 }}
+                            size="small"
+                            fullWidth
+                            id="outlined-select"
+                            select
+                            name="pay_method_remaining"
+                            label="Payment Method for Remaining"
+                            multiple
+                            value={data.pay_method_remaining}
+                            onChange={handelData}
+                          >
+                            {catalogs.pay.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </>
+                      }
 
                       <Grid item xs={12}>
                         <TextField
                           disabled
                           fullWidth
                           label="Total"
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                          }}
                           type="number"
                           size="small"
                           value={data.total !== 0 ? data.total : calSubtotal()}
@@ -1500,9 +1698,9 @@ export default function CreateOrder() {
                   <Button
                     variant="contained"
                     size="small"
-                    onClick={activeStep === 2 ? confirmBox : handleNextStep}
+                    onClick={activeStep === 3 ? confirmBox : handleNextStep}
                   >
-                    {activeStep === 2 ? "Save Order" : "Continue"}
+                    {activeStep === 3 ? "Save Order" : "Continue"}
                   </Button>
                 </Box>
               </form>
@@ -1513,5 +1711,388 @@ export default function CreateOrder() {
 
       {/* data grid ends  */}
     </Box>
+  );
+}
+
+// for image drop
+function ProductsPreviews({ files, setFiles, text }) {
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    multiple: true,
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const thumbs = files.map((file) => (
+    <div style={thumb} key={file.name}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview}
+          style={img}
+          alt="Images"
+          // Revoke data uri after image is loaded
+          onLoad={() => {
+            URL.revokeObjectURL(file.preview);
+          }}
+        />
+      </div>
+    </div>
+  ));
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avO memory leaks, will run on unmount
+    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, []);
+
+  return (
+    <section className="container dorpContainer">
+      <div {...getRootProps({ className: "dropzone" })}>
+        <input {...getInputProps()} />
+        <p>{text}</p>
+      </div>
+      <aside style={thumbsContainer}>{thumbs}</aside>
+    </section>
+  );
+}
+// for image drop
+function PolishPreviews({ polish, setPolish, text }) {
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    multiple: true,
+    onDrop: (acceptedFiles) => {
+      setPolish(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const thumbs = polish.map((file) => (
+    <div style={thumb} key={file.name}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview}
+          style={img}
+          alt="Images"
+          // Revoke data uri after image is loaded
+          onLoad={() => {
+            URL.revokeObjectURL(file.preview);
+          }}
+        />
+      </div>
+    </div>
+  ));
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avO memory leaks, will run on unmount
+    return () => polish.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, []);
+
+  return (
+    <section className="container dorpContainer">
+      <div {...getRootProps({ className: "dropzone" })}>
+        <input {...getInputProps()} />
+        <p>{text}</p>
+      </div>
+      <aside style={thumbsContainer}>{thumbs}</aside>
+    </section>
+  );
+}
+
+// custom product model
+function CustomProduct({ PolishPreviews, cusProductData, setCustomProduct, open, getCUS, handleCustomProduct, ProductsPreviews, catalogs, handleClose, files, setFiles, polish, setPolish }) {
+
+  function handleCusProduct(e) {
+    setCustomProduct(old => ({ ...old, [e.target.name]: e.target.value }))
+  }
+
+  useEffect(() => {
+    getCUS();
+  }, [open]);
+
+  return (
+    <div>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <Grid container>
+              <Grid item xs={12} sx={{ mb: 2 }}>
+                <Typography
+                  component={"span"}
+                  id="transition-modal-title"
+                  variant="h6"
+                >
+                  Create Product
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sx={{ pb: 2 }}>
+                <Grid container component='form'
+                  sx={{
+                    gap: '1rem',
+                  }}
+                  enctype="multipart/form-data"
+                  method="post"
+                  onSubmit={handleCustomProduct}
+                >
+                  <Grid item xs={5.8}>
+
+                    {/* <FormLabel id="demo-radio-buttons-group-label">
+                            Product Images
+                          </FormLabel> */}
+                    <ProductsPreviews files={files} setFiles={setFiles}
+                      text={"Please Drag and Drop the product images"}
+                    ></ProductsPreviews>
+
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="CUS"
+                      disabled
+                      value={cusProductData.CUS}
+                      type="text"
+                      label="Custom SKU"
+                      variant="outlined"
+                    />
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      value={cusProductData.product_title}
+                      onChange={handleCusProduct}
+                      name="product_title"
+                      type="text"
+                      label="Title"
+                      variant="outlined"
+                    />
+
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="length"
+                      value={cusProductData.length}
+                      onChange={handleCusProduct}
+                      type="text"
+                      label="Length"
+                      variant="outlined"
+                    />
+
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="breadth"
+                      value={cusProductData.breadth}
+                      onChange={handleCusProduct}
+                      type="text"
+                      label="Breadth"
+                      variant="outlined"
+                    />
+
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      value={cusProductData.height}
+                      onChange={handleCusProduct}
+                      fullWidth
+                      name="height"
+                      type="text"
+                      label="Height"
+                      variant="outlined"
+                    />
+                    <TextField
+                      size="small"
+                      value={cusProductData.quantity}
+                      onChange={handleCusProduct}
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="quantity"
+                      type="number"
+                      label="Quantity"
+                      variant="outlined"
+                    />
+                    <TextField
+                      size="small"
+                      value={cusProductData.selling_price}
+                      onChange={handleCusProduct}
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="selling_price"
+                      type="number"
+                      label="Selling Price"
+                      variant="outlined"
+                    />
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      fullWidth
+                      name="MRP"
+                      value={cusProductData.MRP}
+                      onChange={handleCusProduct}
+                      type="number"
+                      label="MRP"
+                      variant="outlined"
+                    />
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      value={cusProductData.discount}
+                      onChange={handleCusProduct}
+                      fullWidth
+                      name="discount"
+                      type="number"
+                      label="Discount"
+                      variant="outlined"
+                    />
+
+                  </Grid>
+
+                  <Grid item xs={5.8}>
+
+
+
+                    <FormControl>
+                      <FormLabel id="demo-radio-buttons-group-label">
+                        Customize Polish
+                      </FormLabel>
+                      <RadioGroup
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        name="cusPolish"
+                        size='small'
+                        value={cusProductData.cusPolish}
+                        onChange={handleCusProduct}
+                      >
+                        <FormControlLabel
+                          value="yes"
+                          control={<Radio />}
+                          label="Yes"
+                          size='small'
+
+                        />
+                        <FormControlLabel
+                          size='small'
+
+                          value="no"
+                          control={<Radio />}
+                          label="No"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+
+                    {cusProductData.cusPolish === 'yes' ?
+                      <>
+                        <PolishPreviews polish={polish} setPolish={setPolish} text={"Please Drag and Drop the polish images"} />
+                        <TextareaAutosize
+                          size="small"
+                          sx={{ mb: 2 }}
+                          fullWidth
+                          value={cusProductData.polish_note}
+                          onChange={handleCusProduct}
+                          minRows={5}
+                          maxRows={5}
+                          style={{ width: "100%", resize: 'none' }}
+                          name="polish_note"
+                          placeholder="Polish Note..."
+                          type="text"
+                          label="Note"
+                          variant="outlined"
+                        />
+                      </> :
+                      <TextField
+                        size="small"
+                        fullWidth
+                        id="outlined-select"
+                        value={cusProductData.polish}
+                        onChange={handleCusProduct}
+                        select
+                        sx={{ mb: 2 }}
+                        name="polish"
+                        label="Polish"
+                        multiple
+                        helperText="Please select your polish."
+                      >
+                        {catalogs.polish.map(
+                          (option) =>
+                            <MenuItem
+                              key={option.polish_name}
+                              value={option.polish_name}
+                            >
+                              {option.polish_name}
+                            </MenuItem>
+                        )}
+                      </TextField>
+
+                    }
+
+                    <TextField
+                      size="small"
+                      sx={{ mb: 2 }}
+                      value={cusProductData.polish_time}
+                      onChange={handleCusProduct}
+                      fullWidth
+                      name="polish_time"
+                      type="number"
+                      label="Polish Time"
+                      variant="outlined"
+                      helperText="Polish time in days..."
+                    />
+
+                    <TextareaAutosize
+                      size="small"
+                      fullWidth
+                      value={cusProductData.note}
+                      onChange={handleCusProduct}
+                      minRows={5}
+                      maxRows={5}
+                      sx={{ mb: 2 }}
+                      style={{ width: "100%", resize: 'none' }}
+                      name="note"
+                      placeholder="Product Note..."
+                      type="text"
+                      label="Note"
+                      variant="outlined"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+
+
+                    <Button
+                      size="small"
+                      fullWidth
+                      variant="contained"
+                      type="submit"
+                    >
+                      Add
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Box>
+        </Fade>
+      </Modal>
+    </div>
   );
 }

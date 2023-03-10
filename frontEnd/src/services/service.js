@@ -1353,3 +1353,11 @@ export const metaReview = async (data) => {
     },
   });
 };
+// for meta COD
+export const getCOD = async () => {
+  return await axios.get(`${API}/getCOD`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};

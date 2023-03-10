@@ -179,7 +179,7 @@ const Home = (props) => {
                       <ShoppingBagOutlinedIcon
                         color={
                           window.location.pathname === "/merge" ||
-                          window.location.pathname === "/products"
+                            window.location.pathname === "/products"
                             ? "primary"
                             : ""
                         }
@@ -456,35 +456,35 @@ const Home = (props) => {
                       </ListItemAvatar>
                       <ListItemText primary="Orders" />
                     </ListItem>
-                    <ListItem
-                      sx={{ pl: 4 }}
-                      onClick={() => {
-                        handleClose("/wishlist");
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            width: "30px",
-                            height: "30px",
-                            svg: {
-                              fontSize: "1rem",
-                            },
-                          }}
-                        >
-                          <PlaylistAddCheckCircleIcon
-                            color={
-                              window.location.pathname === "/wishlist"
-                                ? "primary"
-                                : ""
-                            }
-                          />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText primary="Wishlist" />
-                    </ListItem>
                   </List>
                 </Collapse>
+
+                <ListItem
+                  onClick={() => {
+                    handleClose("/wishlist");
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        width: "30px",
+                        height: "30px",
+                        svg: {
+                          fontSize: "1rem",
+                        },
+                      }}
+                    >
+                      <PlaylistAddCheckCircleIcon
+                        color={
+                          window.location.pathname === "/wishlist"
+                            ? "primary"
+                            : ""
+                        }
+                      />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Wishlist" />
+                </ListItem>
 
                 <ListItem
                   onClick={() => {

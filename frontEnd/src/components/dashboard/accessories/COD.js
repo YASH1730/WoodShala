@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,21 +8,27 @@ import {
   Switch,
   IconButton,
   Link,
+  InputAdornment,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+// import '../../../assets/custom/css/review.css'
 // import AddIcon from '@mui/icons-material/Add';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { DataGrid } from "@mui/x-data-grid";
 import {
   listPincode,
   statusDelivery,
   deleteDelivery,
   downloadCSV,
+  addDraft,
+  getCOD,
 } from "../../../services/service";
 import UploadCSV from "../../Utility/UploadCSV";
 import { setAlert } from "../../../store/action/action";
 import { useDispatch } from "react-redux";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import { Lock, LockOpen } from "@mui/icons-material";
 export default function Pincode() {
   const dispatch = useDispatch();
 
@@ -35,6 +41,7 @@ export default function Pincode() {
     pincode: "",
   });
   const [check, setCheck] = useState([]);
+  const [value, setValue] = useState({ disabled: true });
 
   const [uploadBox, setUploadBox] = useState(false);
 
@@ -149,15 +156,36 @@ export default function Pincode() {
     }
   };
 
-  useMemo(() => {
+
+  useEffect(()=>{
+    fetchCOD();
+  },[])
+
+  async function fetchCOD(){
+    let COD = await getCOD()
+
+    if(COD)
+    {
+      setValue(old=>({...old,...COD.data}))
+    }
+  }
+
+  useEffect(() => {
     fetchData();
   }, [pageState.page, pageState.limit, pageState.filter]);
 
   // filter search
-  useMemo(() => {
+  useEffect(() => {
     if (pageState.pincode > 99999) fetchData();
     if (pageState.pincode === "") fetchData();
   }, [pageState.pincode]);
+
+  function handleValue(e) {
+    if(e.target.name === "max_advance_limit" || e.target.name === "min_advance_limit")
+    setValue(old => ({ ...old, [e.target.name]: (e.target.value <= 100 && e.target.value > -1) ? e.target.value : 0}));
+    else
+    setValue(old => ({ ...old, [e.target.name]: e.target.value > -1 && e.target.value }));
+  }
 
   async function fetchData() {
     try {
@@ -232,6 +260,39 @@ export default function Pincode() {
     );
   }
 
+  async function handleSubmit(e) {
+    try {
+      e.preventDefault()
+      const FD = new FormData();
+      FD.append("DID", '');
+      FD.append("AID", "Not Assigned ");
+      FD.append("type", "COD");
+      FD.append("operation", "applyCOD");
+      FD.append('limit_without_advance', value.limit_without_advance)
+      FD.append('max_advance_limit', value.max_advance_limit)
+      FD.append('min_advance_limit', value.min_advance_limit)
+
+      let res = await addDraft(FD)
+
+      if (res.status === 200) {
+        setValue({ disabled: true })
+        dispatch(setAlert({
+          open: true,
+          message: res.data.message,
+          variant: 'success'
+        }))
+      }
+    }
+    catch (err) {
+      console.log(err)
+      dispatch(setAlert({
+        open: true,
+        message: 'Something Went Wrong !!!',
+        variant: 'error'
+      }))
+    }
+  }
+
   return (
     <>
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
@@ -241,6 +302,7 @@ export default function Pincode() {
       <br></br>
 
       {/* Section 1  */}
+
 
       <Grid
         container
@@ -337,30 +399,58 @@ export default function Pincode() {
                 COD Settings
               </Typography>
             </Grid>
-            <Grid item xs={12} p={1}>
-              <Box>
-                <Typography mb={1}>COD limit for without advance?</Typography>
-                <TextField
-                  size="small"
-                  label="COD Limit"
-                  fullWidth
-                  variant="outlined"
-                  name="limit_without_advance"
-                />
-              </Box>
-              <br></br>
-              <Box>
-                <Typography mb={1}>
-                  How much advance should be charge above the limit?
-                </Typography>
-                <TextField
-                  size="small"
-                  fullWidth
-                  label="Advance Limit"
-                  variant="outlined"
-                  name="advance_limit"
-                />
-              </Box>
+            <Grid item xs={12} p={1} component = 'form' method = 'post' encType = {'multipart/form-data'} onSubmit = {handleSubmit}>
+              <TextField
+                sx={{ marginBottom: 2 }}
+                size="small"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                }}
+                label="COD Limit"
+                fullWidth
+                disabled={value.disabled}
+                type='number'
+                onChange={handleValue}
+                value={value.limit_without_advance}
+                variant="outlined"
+                name="limit_without_advance"
+                helperText={'COD limit for without advance?'}
+              />
+              <TextField
+                sx={{ marginBottom: 2 }}
+                size="small"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">%</InputAdornment>,
+                }}
+                fullWidth
+                type='number'
+                disabled={value.disabled}
+                onChange={handleValue}
+                value={value.max_advance_limit}
+                label="Max Advance Limit"
+                variant="outlined"
+                name="max_advance_limit"
+                helperText={'Max advance should be charge above the limit?'}
+              />
+              <br />
+
+              <TextField
+                sx={{ marginBottom: 2 }}
+
+                size="small"
+                disabled={value.disabled}
+                fullWidth
+                type='number'
+                onChange={handleValue}
+                value={value.min_advance_limit}
+                label="Min Advance Limit"
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">%</InputAdornment>,
+                }}
+                variant="outlined"
+                name="min_advance_limit"
+                helperText={'Min advance should be charge above the limit?'}
+              />
               <Box
                 pt={2}
                 sx={{
@@ -368,10 +458,10 @@ export default function Pincode() {
                   justifyContent: "space-between",
                 }}
               >
-                <Button size="small" variant="contained">
-                  Change Limits
+                <Button size="small" startIcon={value.disabled ? <Lock /> : <LockOpen />} onClick={() => setValue(old => ({ ...old, disabled: !old.disabled }))} variant="contained">
+                  Limits
                 </Button>
-                <Button size="small" variant="outlined">
+                <Button size="small" type='submit' variant="outlined">
                   Apply Limits
                 </Button>
               </Box>
