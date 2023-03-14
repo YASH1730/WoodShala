@@ -1,11 +1,19 @@
-.categoryImage{
-   width: 50px;
-   /* border-radius: 50%;   */
+.categoryImage {
+    width: 50px;
+    /* border-radius: 50%;   */
 }
 
-.categoryImage img{
-     vertical-align: middle;
+.categoryImage img {
+    vertical-align: middle;
     width: 50px;
     height: 50px;
     border-radius: 50%;
+}
+
+.previewBox {
+    display: flex;
+    justify-content: space-between;
+    padding: 1%;
+    gap: 1rem;
+    /* align-items: ; */
 }

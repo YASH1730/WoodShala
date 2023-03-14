@@ -27,6 +27,8 @@ import {
   InputAdornment,
   Radio,
   RadioGroup,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 // import CreateIcon from "@mui/icons-material/Create";
@@ -34,7 +36,7 @@ import {
 // import { customOrderList} from "../../services/service";
 import "../../../assets/custom/css/category.css";
 import { useDropzone } from "react-dropzone";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAlert } from "../../../store/action/action";
 import defaultIMg from "../../../assets/img/question.svg"
 import {
@@ -57,10 +59,13 @@ import {
   addDraft,
   getDraftID,
   getHardwareDropdown,
+  uploadAllImage,
+  getAddress,
+  listPincode,
 } from "../../../services/service";
 import { useConfirm } from "material-ui-confirm";
 import { Editor } from "@tinymce/tinymce-react";
-import { CheckBox } from "@mui/icons-material";
+import { CheckBox, Edit } from "@mui/icons-material";
 
 // style for drop box in custom
 const thumbsContainer = {
@@ -163,16 +168,39 @@ export default function CreateOrder() {
       });
   };
 
+  // context
+  const dispatch = useDispatch();
+  const { auth } = useSelector(state => state)
+  const [pageSize, setPageSize] = useState(50);
+
   // multiple images
   const [files, setFiles] = useState([]);
   const [polish, setPolish] = useState([]);
-  const [cusProductData, setCustomProduct] = useState({ cusPolish: 'no' })
+  const [cusProductData, setCustomProduct] = useState({
+    cusPolish: 'no',
+    product_title: '',
+    product_image: [],
+    polish_image: [],
+    length: 0,
+    height: 0,
+    breadth: 0,
+    selling_price: 0,
+    MRP: 0,
+    quantity: 1,
+    discount: 0,
+    polish_time: 0,
+    note: '',
+    polish: '',
+    polish_note: '',
+  })
 
   const [catalogs, setCatalogs] = useState({
     customer: [],
     product: [],
     address: [],
     polish: [],
+    pincode : [],
+    city: [],
     customer_type: [
       'Interior', 'Architect', 'VIP', 'VVIP'
     ],
@@ -239,6 +267,8 @@ export default function CreateOrder() {
     CUS: "",
     CID: null,
     GST: null,
+    open: false,
+    payload: {},
     classification: 'personal',
     customer_type: '',
     has_GST: 'no',
@@ -255,11 +285,13 @@ export default function CreateOrder() {
     shipping: "",
     billing: "",
     product_array: [],
+    customizations: [],
     quantity: [],
     subTotal: 0,
     discount: 0,
     total: 0,
     status: "processing",
+    country: "India",
     city: "",
     state: "",
     paid: 0,
@@ -267,6 +299,8 @@ export default function CreateOrder() {
     custom_order: true,
     sale_channel: "Online",
     PO: "",
+    refresh: 0,
+    sales_person: auth.role
   });
 
   //  State for stepper
@@ -277,9 +311,6 @@ export default function CreateOrder() {
     setValue(newValue);
   };
 
-  // context
-  const dispatch = useDispatch();
-  const [pageSize, setPageSize] = useState(50);
 
   // stepper button
   const handleNextStep = () => {
@@ -297,51 +328,9 @@ export default function CreateOrder() {
   // catalog reload
   useEffect(() => {
     getCatalogs();
-  }, []);
+  }, [data.refresh]);
 
-  // order filter
-  // useEffect(() => {
-  //     customOrderList()
-  //         .then((data) => {
-  //             let final = [];
 
-  //             data.data.map((row) => {
-  //                 if (search.O !== undefined) {
-  //                     if (row.O === `O-${search.O}`) final.push(row);
-  //                 } else if (search.customer_email !== undefined) {
-  //                     if (row.customer_email === search.customer_email) final.push(row);
-  //                 } else final.push(row);
-  //             });
-
-  //             setRows(
-  //                 final.map((row, index) => {
-  //                     return {
-  //                         id: index + 1,
-  //                         O: row.O,
-  //                         order_time: row.order_time,
-  //                         status: row.status,
-  //                         CID: row.CID,
-  //                         customer_name: row.customer_name,
-  //                         customer_email: row.customer_email,
-  //                         customer_mobile: row.customer_mobile,
-  //                         city: row.city,
-  //                         state: row.state,
-  //                         shipping: row.shipping,
-  //                         quantity: JSON.stringify(row.quantity),
-  //                         discount: row.discount,
-  //                         paid:
-  //                             parseInt((row.paid / row.total) * 100) + "%",
-  //                         total: row.total,
-  //                         note: row.note || '',
-  //                         action: row._id,
-  //                     };
-  //                 })
-  //             );
-  //         })
-  //         .catch((err) => {
-  //             //console.log(err);
-  //         });
-  // }, [search]);
 
   // for product data row
   useEffect(() => {
@@ -365,10 +354,26 @@ export default function CreateOrder() {
           selling_price: dataOBJ.selling_price,
           discount_limit: dataOBJ.discount_limit,
           range: dataOBJ.range,
+          action: dataOBJ,
         };
       })
     );
   }, [data.product_array]);
+
+  useEffect(()=>{handelPincode()},[data.pincode])
+
+  // for fetching pin address
+  async function handelPincode() {
+
+    if (data.pincode.toString().length === 6) {
+      let res = await getAddress(data.pincode)
+      if (res.status === 200) {
+        let pincode = res.data.results[data.pincode] || []
+        setCatalogs(old => ({ ...old, city: pincode }))
+        setData(old => ({ ...old, state: pincode[0].state }));
+      }
+    }
+  }
 
   // polish 
   async function getCatalogs() {
@@ -426,7 +431,7 @@ export default function CreateOrder() {
                   ...data,
                   quantity: {
                     ...data.quantity,
-                    [params.row.SKU]: parseInt(e.target.value),
+                    [params.row.SKU]: parseInt(e.target.value) > 0 ? parseInt(e.target.value) : 1,
                   },
                 })
               }
@@ -468,8 +473,22 @@ export default function CreateOrder() {
     {
       field: "dimension",
       headerName: "Dimension",
-      width: 200,
+      width: 150,
     },
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 100,
+      renderCell: (params) => (
+        <>
+          <Tooltip title='customization'>
+            <IconButton disabled={!params.formattedValue.SKU && true} onClick={() => setData(old => ({ ...old, open: !data.open, payload: params.formattedValue }))} >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    }
   ];
 
   const resetValue = () => {
@@ -482,6 +501,8 @@ export default function CreateOrder() {
       customer_name: "",
       shipping: "",
       product_array: [],
+      customizations: [],
+      payload: [],
       quantity: [],
       subTotal: 0,
       discount: 0,
@@ -495,6 +516,8 @@ export default function CreateOrder() {
     });
     setActiveStep(0);
     setValue(0);
+
+    setSKU('');
   };
 
   // data grid for data view
@@ -517,8 +540,8 @@ export default function CreateOrder() {
   // for handling the form data
 
   const handelData = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
+    // console.log(e.target.name);
+    // console.log(e.target.value);
 
     if (e.target.name === "shipping" && catalogs.address.length > 0) {
       const row = catalogs.address.filter((data) => {
@@ -587,7 +610,23 @@ export default function CreateOrder() {
   const handleClose = () => {
     setFiles([]);
     setPolish([]);
-    setCustomProduct({ cusPolish: 'no' });
+    setCustomProduct({
+      cusPolish: 'no',
+      product_title: '',
+      product_image: [],
+      polish_image: [],
+      length: 0,
+      height: 0,
+      breadth: 0,
+      selling_price: 0,
+      MRP: 0,
+      discount: 0,
+      quantity: 1,
+      polish_time: 0,
+      note: '',
+      polish: '',
+      polish_note: ''
+    });
     setOpen(false);
   };
 
@@ -646,7 +685,7 @@ export default function CreateOrder() {
         ...data,
         quantity: {
           ...data.quantity,
-          [e.target.CUS.value]: e.target.quantity.value,
+          [e.target.CUS.value]: parseInt(e.target.quantity.value),
         },
       });
       setProductRows([
@@ -671,18 +710,33 @@ export default function CreateOrder() {
             response.data.data.MRP -
             (response.data.data.MRP / 100) * response.data.data.discount,
           discount_limit: response.data.data.discount,
+          action: response.data.data
         },
       ]);
       setFiles([]);
       setPolish([]);
-      setCustomProduct({ cusPolish: 'no' });
+      setCustomProduct({
+        cusPolish: 'no',
+        product_title: '',
+        product_image: [],
+        polish_image: [],
+        length: 0,
+        height: 0,
+        breadth: 0,
+        selling_price: 0,
+        MRP: 0,
+        discount: 0,
+        quantity: 1,
+        polish_time: 0,
+        note: '',
+        polish: '',
+        polish_note: ''
+      });
       handleClose();
     }
 
 
   };
-
-
 
   async function handleSubmit(e) {
     /// for adding the note
@@ -730,6 +784,7 @@ export default function CreateOrder() {
           note: "",
           sale_channel: "Online",
           PO: "",
+          refresh: data.refresh + 1
         });
         dispatch(
           setAlert({
@@ -760,11 +815,25 @@ export default function CreateOrder() {
     }
   }
 
+  async function handlePincodeSearch(e) {
+    console.log(e.target.value)
+    let res = await listPincode({
+      page: 1,
+      limit: 10,
+      total: 10,
+      pincode: e.target.value,
+    });
+    if (res.status === 200) {
+      setCatalogs(old => ({ ...old, pincode: [...res.data.data] }))
+    }
+  }
+
   return (
     <Box sx={{ pl: 4, pr: 4 }}>
       <Typography component={"span"} sx={{ display: "block" }} variant="h5">
         Create Order
       </Typography>
+      {/* // modal for adding custom product */}
       <CustomProduct cusProductData={cusProductData} setCustomProduct={setCustomProduct}
         open={open} getCUS={getCUS} handleCustomProduct={handleCustomProduct}
         ProductsPreviews={ProductsPreviews}
@@ -776,6 +845,14 @@ export default function CreateOrder() {
         setFiles={setFiles}
         polish={polish}
         setPolish={setPolish}
+      />
+
+      {/* MOdal for adding customization in existing products */}
+      <Customization
+        data={data}
+        setData={setData}
+        catalogs={catalogs}
+
       />
 
       {/* data grid & create order  */}
@@ -882,7 +959,6 @@ export default function CreateOrder() {
                           </RadioGroup>
                         </FormControl>
 
-                        {data.classification === 'personal' &&
                           <TextField
                             size="small"
                             fullWidth
@@ -905,7 +981,7 @@ export default function CreateOrder() {
                                   {option}
                                 </MenuItem>
                             )}
-                          </TextField>}
+                          </TextField>
 
 
                         <TextField
@@ -951,20 +1027,75 @@ export default function CreateOrder() {
                           sx={{ pb: 2 }}
                           size="small"
                           fullWidth
+                          disabled
                           //required
                           id="outlined-select"
-                          name="city"
-                          value={data.city || ""}
+                          name="country"
+                          value={data.country || ""}
                           onChange={handelData}
-                          label="City"
+                          label="Country"
                           type="text"
                         />
+
+                        <Autocomplete
+                          freeSolo
+                          size="small"
+                          fullWidth
+                          noOptionsText={"ex : 305001"}
+                          autoHighlight
+                          id="combo-box-demo"
+                          options={catalogs.pincode.map((row) => {
+                            return row.pincode;
+                          })}
+                          renderInput={(params) => (
+                            <TextField
+                              onKeyUpCapture={handlePincodeSearch}
+                              value={data.pincode || ""}
+                              {...params}
+                              label="Pincode"
+                            />
+                          )}
+                          onChange={(e, val) =>
+                            setData((old) => ({
+                              ...old,
+                              pincode: val,
+                            }))
+                          }
+                        />
+
+                      
+
+                        <TextField
+                          size="small"
+                          fullWidth
+                          id="outlined-select"
+                          value={data.city}
+                          onChange={handelData}
+                          select
+                          sx={{ mb: 2, mt: 1 }}
+                          name="city"
+                          label="City"
+                          multiple
+                          helperText="Please select your city."
+                        >
+                          {catalogs.city.map(
+                            (option) =>
+                              <MenuItem
+                                key={option.city}
+                                value={option.city}
+                              >
+                                {option.city}
+                              </MenuItem>
+                          )}
+                        </TextField>
+
 
                         <TextField
                           sx={{ pb: 2 }}
                           size="small"
                           fullWidth
                           //required
+                          disabled
                           id="outlined-select"
                           name="state"
                           value={data.state || ""}
@@ -1105,7 +1236,6 @@ export default function CreateOrder() {
                           </RadioGroup>
                         </FormControl>
                         <br></br>
-                        {data.classification === 'personal' &&
                           <TextField
                             size="small"
                             fullWidth
@@ -1128,7 +1258,7 @@ export default function CreateOrder() {
                                   {option}
                                 </MenuItem>
                             )}
-                          </TextField>}
+                          </TextField>
 
 
                         <Autocomplete
@@ -1352,6 +1482,7 @@ export default function CreateOrder() {
                       disablePortal
                       size="small"
                       fullWidth
+                      noOptionsText={"ex : P-01001"}
                       multiple
                       autoHighlight
                       id="combo-box-demo"
@@ -1501,6 +1632,18 @@ export default function CreateOrder() {
                       fullWidth
                       id="outlined-select"
                       type="text"
+                      disabled
+                      name="sales_person"
+                      label="Sales Person"
+                      value={data.sales_person || ""}
+                      onChange={handelData}
+                    />
+                    <TextField
+                      sx={{ mb: 2 }}
+                      size="small"
+                      fullWidth
+                      id="outlined-select"
+                      type="text"
                       name="PO"
                       label="PO"
                       value={data.PO || ""}
@@ -1580,6 +1723,8 @@ export default function CreateOrder() {
                             startAdornment: <InputAdornment position="start">₹</InputAdornment>,
                           }}
                           label="Subtotal"
+                          onChange={handelData}
+                          name='subtotal'
                           value={calSubtotal()}
                         ></TextField>
                       </Grid>
@@ -1663,7 +1808,9 @@ export default function CreateOrder() {
                         <TextField
                           disabled
                           fullWidth
+                          name='total'
                           label="Total"
+                          onChange={handelData}
                           InputProps={{
                             startAdornment: <InputAdornment position="start">₹</InputAdornment>,
                           }}
@@ -1720,12 +1867,14 @@ function ProductsPreviews({ files, setFiles, text }) {
     accept: "image/*",
     multiple: true,
     onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
+      setFiles(old => ([
+        ...old,
+        ...acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
           })
         )
+      ])
       );
     },
   });
@@ -1767,12 +1916,12 @@ function PolishPreviews({ polish, setPolish, text }) {
     accept: "image/*",
     multiple: true,
     onDrop: (acceptedFiles) => {
-      setPolish(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          })
-        )
+      setPolish(old => ([...old,
+      ...acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      )])
       );
     },
   });
@@ -2095,4 +2244,270 @@ function CustomProduct({ PolishPreviews, cusProductData, setCustomProduct, open,
       </Modal>
     </div>
   );
+}
+// customizations
+function Customization({ data, setData, catalogs }) {
+
+  const [custom, setCustom] = useState({
+    polish_images: [],
+    design_images: [],
+    cusPolish: 'no',
+    design: 'no'
+  })
+  const [design, setDesign] = useState([])
+  const [polish, setPolish] = useState([])
+
+  function handleData(e) {
+    setCustom(old => ({ ...old, [e.target.name]: e.target.value }))
+  }
+
+  // while edit the customization
+  useEffect(() => {
+    // console.log(data.customizations.filter(row => row.SKU === data.payload.SKU))
+
+    if (data.customizations.filter(row => row.SKU === data.payload.SKU).length > 0) {
+      // console.log('i am in')
+      let finalData = data.customizations.filter(row => row.SKU === data.payload.SKU)[0]
+      setCustom(finalData)
+    }
+    else setCustom({
+      SKU: data.payload.SKU, cusPolish: 'no',
+      design: 'no'
+    })
+  }, [data.open])
+
+  function handleClose() {
+    setData(old => ({ ...old, open: false }))
+    setPolish([])
+    setDesign([])
+  }
+
+  async function handleCustomValue(e) {
+    e.preventDefault();
+
+    const FD = new FormData()
+    if (polish.length > 0) {
+      polish.map((row) => {
+        return FD.append('polish_image', row)
+      })
+    }
+    if (design.length > 0) {
+      design.map((row) => {
+        return FD.append('design_image', row)
+      })
+    }
+
+    let res = await uploadAllImage(FD)
+
+    if (res.status === 200) {
+      console.log(data.customizations.filter(row => row.SKU === custom.SKU))
+      setData(old => ({
+        ...old,
+        customizations: old.customizations.filter(row => row.SKU === custom.SKU).length > 0 ? old.customizations.map(row => {
+          console.log(row)
+          if (row.SKU === custom.SKU) {
+            console.log(custom)
+            row = {
+              ...custom, polish_images: [...row.polish_images, ...res.data.polish],
+              design_images: [...row.design_images, ...res.data.design]
+            }
+
+            return row
+          }
+          else return row
+        }) : [...old.customizations, {
+          ...custom,
+          polish_images: [...res.data.polish],
+          design_images: [...res.data.design]
+        }]
+      }))
+
+      handleClose();
+    }
+
+
+
+  }
+
+  return (<>
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={data.open}
+      onClose={handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+      <Fade in={data.open}>
+        <Box sx={style}>
+          <Grid container component='form' method='post' onSubmit={handleCustomValue} >
+            <Grid item xs={12}>
+              <Typography variant={'h6'}>Product Customization </Typography>
+              <Typography variant={'caption'}>SKU {custom.SKU}</Typography>
+            </Grid>
+            {/* // for polish  */}
+            <Grid item xs={5.8} p={1}>
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">
+                  Customize Polish
+                </FormLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="cusPolish"
+                  size='small'
+                  value={custom.cusPolish || 'no'}
+                  onChange={handleData}
+                >
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                    size='small'
+
+                  />
+                  <FormControlLabel
+                    size='small'
+
+                    value="no"
+                    control={<Radio />}
+                    label="No"
+                  />
+                </RadioGroup>
+              </FormControl>
+
+              {custom.cusPolish === 'yes' ?
+                <>
+                  <PolishPreviews polish={polish} setPolish={setPolish} text={"Please Drag and Drop the polish images"} />
+                  {custom.polish_images && <>
+                    <Typography variant='caption'>Uploaded Image</Typography>
+                    <Box sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      width: '100%'
+                    }}>
+                      {custom.polish_images.map(row => {
+                        // console.log(row)
+                        return <img width='70px' src={row} alt={'p_image'} />
+                      })}
+                    </Box>
+                  </>}
+                  <TextareaAutosize
+                    size="small"
+                    sx={{ mb: 2 }}
+                    fullWidth
+                    value={custom.polish_note || ''}
+                    onChange={handleData}
+                    minRows={5}
+                    maxRows={5}
+                    style={{ width: "100%", resize: 'none' }}
+                    name="polish_note"
+                    placeholder="Polish Note..."
+                    type="text"
+                    label="Note"
+                    variant="outlined"
+                  />
+                </> :
+                <TextField
+                  size="small"
+                  fullWidth
+                  id="outlined-select"
+                  value={custom.polish || ''}
+                  onChange={handleData}
+                  select
+                  sx={{ mb: 2 }}
+                  name="polish"
+                  label="Polish"
+                  multiple
+                  helperText="Please select your polish."
+                >
+                  {catalogs.polish.map(
+                    (option) =>
+                      <MenuItem
+                        key={option.polish_name}
+                        value={option.polish_name}
+                      >
+                        {option.polish_name}
+                      </MenuItem>
+                  )}
+                </TextField>
+
+              }
+            </Grid>
+            {/* // for design  */}
+            <Grid item xs={5.8} p={1}>
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">
+                  Customize Design
+                </FormLabel>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="design"
+                  size='small'
+                  value={custom.design || 'no'}
+                  onChange={handleData}
+                >
+                  <FormControlLabel
+                    value="yes"
+                    control={<Radio />}
+                    label="Yes"
+                    size='small'
+
+                  />
+                  <FormControlLabel
+                    size='small'
+
+                    value="no"
+                    control={<Radio />}
+                    label="No"
+                  />
+                </RadioGroup>
+              </FormControl>
+
+              {custom.design === 'yes' &&
+                <>
+                  <ProductsPreviews files={design} setFiles={setDesign} text={"Please Drag and Drop the design images"} />
+                  {custom.design_images && <>
+                    <Typography variant='caption'>Uploaded Image</Typography>
+                    <Box sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '1rem',
+                      width: '100%'
+                    }}>
+                      {custom.design_images.map(row => {
+                        // console.log(row)
+                        return <img width='70px' src={row} alt={'p_image'} />
+                      })}
+                    </Box>
+                  </>}
+                  <TextareaAutosize
+                    size="small"
+                    sx={{ mb: 2 }}
+                    fullWidth
+                    value={custom.design_note || ''}
+                    onChange={handleData}
+                    minRows={5}
+                    maxRows={5}
+                    style={{ width: "100%", resize: 'none' }}
+                    name="design_note"
+                    placeholder="Design Note..."
+                    type="text"
+                    label="Note"
+                    variant="outlined"
+                  />
+                </>
+              }
+            </Grid>
+            <Grid item xs={12}><Button type='submit' variant='contained'>Apply</Button></Grid>
+          </Grid>
+        </Box>
+      </Fade>
+    </Modal>
+  </>)
 }

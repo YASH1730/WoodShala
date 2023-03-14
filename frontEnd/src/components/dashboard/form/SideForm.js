@@ -80,6 +80,8 @@ import {
   applyDiscount,
   addReview,
   getSequence,
+  getAddress,
+  listPincode
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -6041,7 +6043,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -6209,7 +6211,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -6263,7 +6265,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -6358,7 +6360,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                    changeData.assembly_part < 3
+                                      changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -7096,17 +7098,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                              <TextField
-                                size="small"
-                                fullWidth
-                                type="number"
-                                id="outlined-select"
-                                name="drawer_count"
-                                label="Drawer Count"
-                                value={changeData.drawer_count}
-                                onChange={handleProductFields}
-                              />
-                            )}
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  type="number"
+                                  id="outlined-select"
+                                  name="drawer_count"
+                                  label="Drawer Count"
+                                  value={changeData.drawer_count}
+                                  onChange={handleProductFields}
+                                />
+                              )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -8697,7 +8699,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -8865,7 +8867,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -8919,7 +8921,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -9015,7 +9017,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                    changeData.assembly_part < 3
+                                      changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -9850,17 +9852,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                              <TextField
-                                size="small"
-                                fullWidth
-                                type="number"
-                                id="outlined-select"
-                                name="drawer_count"
-                                label="Drawer Count"
-                                value={changeData.drawer_count}
-                                onChange={handleProductFields}
-                              />
-                            )}
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  type="number"
+                                  id="outlined-select"
+                                  name="drawer_count"
+                                  label="Drawer Count"
+                                  value={changeData.drawer_count}
+                                  onChange={handleProductFields}
+                                />
+                              )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -11519,7 +11521,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -11687,7 +11689,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -11741,7 +11743,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -11837,7 +11839,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                    changeData.assembly_part < 3
+                                      changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -12672,17 +12674,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                              <TextField
-                                size="small"
-                                fullWidth
-                                type="number"
-                                id="outlined-select"
-                                name="drawer_count"
-                                label="Drawer Count"
-                                value={changeData.drawer_count}
-                                onChange={handleProductFields}
-                              />
-                            )}
+                                <TextField
+                                  size="small"
+                                  fullWidth
+                                  type="number"
+                                  id="outlined-select"
+                                  name="drawer_count"
+                                  label="Drawer Count"
+                                  value={changeData.drawer_count}
+                                  onChange={handleProductFields}
+                                />
+                              )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -14390,7 +14392,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -15407,7 +15409,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -17742,134 +17744,15 @@ const SideForm = () => {
                     </Typography>
                   </Typography>
                 </Grid>
-
+                {/* addres form */}
+                <AddressForm
+                  setOpen={setOpen}
+                  open={open}
+                  confirmBox={confirmBox}
+                  handleAddress={handleAddress}
+                />
+                {/* addres form */}
                 <Grid item xs={12} mt={5}>
-                  <Modal
-                    aria-labelledby="transition-modal-title"
-                    aria-describedby="transition-modal-description"
-                    open={open}
-                    onClose={() => {
-                      setOpen(false);
-                    }}
-                    closeAfterTransition
-                    BackdropComponent={Backdrop}
-                    BackdropProps={{
-                      timeout: 500,
-                    }}
-                  >
-                    <Fade in={open}>
-                      <Box sx={style}>
-                        <Typography sx={{ pb: 1 }} variant="h6">
-                          Address
-                        </Typography>
-                        <form
-                          className="form"
-                          id="myForm"
-                          onSubmit={(e) => {
-                            confirmBox(e, handleAddress);
-                          }}
-                          encType="multipart/form-data"
-                          method="post"
-                        >
-                          <TextField
-                            size="small"
-                            fullWidth
-                            // required
-                            id="outlined-select"
-                            name="customer_name"
-                            label="Name"
-                            type="text"
-                          />
-                          <TextField
-                            size="small"
-                            fullWidth
-                            // required
-                            id="outlined-select"
-                            name="mobile"
-                            label="Mobile"
-                            type="number"
-                          />
-                          <TextField
-                            size="small"
-                            fullWidth
-                            // required
-                            id="outlined-select"
-                            name="pincode"
-                            label="Pin Code"
-                            type="number"
-                          />
-
-                          <TextField
-                            size="small"
-                            fullWidth
-                            // required
-                            id="outlined-select"
-                            name="city"
-                            label="City"
-                            type="text"
-                          />
-
-                          <TextField
-                            size="small"
-                            fullWidth
-                            // required
-                            id="outlined-select"
-                            name="state"
-                            label="State"
-                            type="text"
-                          />
-
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Address
-                          </FormLabel>
-
-                          <TextareaAutosize
-                            fullWidth
-                            minRows={5}
-                            id="outlined-select"
-                            name="address"
-                            type="text"
-                            placeholder="Please enter your address"
-                          />
-
-                          <FormLabel id="demo-radio-buttons-group-label">
-                            Address Type
-                          </FormLabel>
-
-                          <TextField
-                            size="small"
-                            fullWidth
-                            id="outlined-select"
-                            select
-                            name="type"
-                            displayEmpty
-                            value={cat}
-                            multiple
-                            onChange={handleChange}
-                            helperText="Please select your address type"
-                          >
-                            <MenuItem key={"home"} value={"home"}>
-                              Home
-                            </MenuItem>
-                            <MenuItem key={"office"} value={"office"}>
-                              Office
-                            </MenuItem>
-                            <MenuItem key={"none"} value={"none"}>
-                              None
-                            </MenuItem>
-                          </TextField>
-
-                          <Button
-                            color="primary"
-                            type="submit"
-                            variant="contained"
-                          >
-                            Add Address
-                          </Button>
-                        </form>
-                      </Box>
-                    </Fade>
-                  </Modal>
 
                   <form
                     className="form"
@@ -18211,7 +18094,7 @@ const SideForm = () => {
                           width: "88%",
                           display:
                             changeData.searchCustomer !== "" &&
-                            changeData.searchCustomer !== changeData.display
+                              changeData.searchCustomer !== changeData.display
                               ? "block"
                               : "none",
                         }}
@@ -18471,7 +18354,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -18494,7 +18377,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -19687,7 +19570,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                    option.category_id && (
+                                  option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -19710,7 +19593,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                              // MenuProps={MenuProps}
+                            // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -22792,12 +22675,12 @@ const SideForm = () => {
                       required
                       error={
                         parseInt(changeData.old_sequence_no) !==
-                          parseInt(changeData.sequence_no) &&
+                        parseInt(changeData.sequence_no) &&
                         sequence.includes(parseInt(changeData.sequence_no))
                       }
                       helperText={
                         parseInt(changeData.old_sequence_no) !==
-                          parseInt(changeData.sequence_no) &&
+                        parseInt(changeData.sequence_no) &&
                         sequence.includes(parseInt(changeData.sequence_no)) &&
                         "Index is already in use."
                       }
@@ -23050,4 +22933,213 @@ function MobileBannerPreviews({ text, mobileBanner, setMobileBanner }) {
       </aside>
     </section>
   );
+}
+
+
+function AddressForm({ setOpen, open, confirmBox, handleAddress }) {
+
+  const [data, setData] = useState({
+    pincode: '',
+    city: '',
+    state: ''
+  })
+
+  const [catalog, setCatalogs] = useState({
+    city: [],
+    pincode: [],
+  })
+
+  useEffect(()=>{
+    handelPincode()
+  },[data.pincode])
+
+  const handleValue = (e)=>{
+setData(old=>({...old,[e.target.name] : e.target.value}))
+  }
+
+  async function handleSearch(e) {
+    console.log(e.target.value)
+    let res = await listPincode({
+      page: 1,
+      limit: 10,
+      total: 10,
+      pincode: e.target.value,
+    });
+    if (res.status === 200) {
+      setCatalogs(old=>({...old, pincode : [...res.data.data]}))
+    }
+  }
+
+  async function handelPincode() {
+
+    if (data.pincode.toString().length === 6) {
+      let res = await getAddress(data.pincode)
+      if (res.status === 200) {
+        let pincode = res.data.results[data.pincode] || []
+        setCatalogs(old => ({ ...old, city: pincode }))
+        setData(old => ({ ...old, pincode: data.pincode, state: pincode[0].state }));
+      }
+    }
+    else {
+      setData(old => ({ ...old, pincode: data.pincode }));
+    }
+  }
+
+  return (
+
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={open}
+      onClose={() => {
+        setOpen(false);
+      }}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+      <Fade in={open}>
+        <Box sx={style}>
+          <Typography sx={{ pb: 1 }} variant="h6">
+            Address
+          </Typography>
+          <form
+            className="form"
+            id="myForm"
+            onSubmit={(e) => {
+              confirmBox(e, handleAddress);
+            }}
+            encType="multipart/form-data"
+            method="post"
+          >
+            <TextField
+              size="small"
+              fullWidth
+              // required
+              id="outlined-select"
+              name="customer_name"
+              label="Name"
+              type="text"
+            />
+            <TextField
+              size="small"
+              fullWidth
+              // required
+              id="outlined-select"
+              name="mobile"
+              label="Mobile"
+              type="number"
+            />
+            <Autocomplete
+              freeSolo
+              size="small"
+              fullWidth
+              noOptionsText={"ex : 305001"}
+              autoHighlight
+              id="combo-box-demo"
+              options={catalog.pincode.map((row) => {
+                return row.pincode;
+              })}
+              renderInput={(params) => (
+                <TextField
+                  onKeyUpCapture={handleSearch}
+                  value={data.pincode || ""}
+                  {...params}
+                  label="Pincode"
+                />
+              )}
+              onChange={(e, val) =>
+                setData((old) => ({
+                  ...old,
+                  pincode: val,
+                }))
+              }
+            />
+
+<TextField
+                      fullWidth
+                      id="outlined-select"
+                      required
+                      select
+                      size={"small"}
+                      helperText="Please select the city."
+                      name="city"
+                      label="Select city..."
+                      value={data.city || ""}
+                      onChange={handleValue}
+                      multiple
+                    >
+                      {catalog.city.map((option) => (
+                        <MenuItem key={option.city} value={option.city}>
+                          {option.city}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+       
+
+            <TextField
+              size="small"
+              fullWidth
+              // required
+              id="outlined-select"
+              name="state"
+              value = {data.state || ''}
+              onChange = {handleValue}
+              label="State"
+              type="text"
+            />
+
+            <FormLabel id="demo-radio-buttons-group-label">
+              Address
+            </FormLabel>
+
+            <TextareaAutosize
+              fullWidth
+              minRows={5}
+              id="outlined-select"
+              name="address"
+              type="text"
+              placeholder="Please enter your address"
+            />
+
+            <FormLabel id="demo-radio-buttons-group-label">
+              Address Type
+            </FormLabel>
+
+            <TextField
+              size="small"
+              fullWidth
+              id="outlined-select"
+              select
+              name="type"
+              displayEmpty
+              multiple
+              helperText="Please select your address type"
+            >
+              <MenuItem key={"home"} value={"home"}>
+                Home
+              </MenuItem>
+              <MenuItem key={"office"} value={"office"}>
+                Office
+              </MenuItem>
+              <MenuItem key={"none"} value={"none"}>
+                None
+              </MenuItem>
+            </TextField>
+
+            <Button
+              color="primary"
+              type="submit"
+              variant="contained"
+            >
+              Add Address
+            </Button>
+          </form>
+        </Box>
+      </Fade>
+    </Modal>
+
+  )
 }

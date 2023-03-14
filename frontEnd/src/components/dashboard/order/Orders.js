@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 // import PropTypes from 'prop-types';
 import {
   Typography,
@@ -9,6 +9,11 @@ import {
   Grid,
   Box,
   Button,
+  Fade,
+  Modal,
+  Backdrop,
+  Tooltip,
+  Divider,
 } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
@@ -20,10 +25,69 @@ import {
   getOrder,
   changeOrderStatus,
   deleteOrder,
+  getOrderDetails,
 } from "../../../services/service";
 import "../../../assets/custom/css/category.css";
 
 import { DataGrid } from "@mui/x-data-grid";
+// import {  RemoveRedEyeIcon } from "@mui/icons-material";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Stack } from "@mui/system";
+// modal css
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  maxHeight: 500,
+  overflowY: 'scroll',
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 2,
+};
+
+const detailsObj = {
+  personal: [
+    'CID', 'customer_name', 'customer_email', 'customer_mobile', 'city'
+    , 'state', 'shipping', 'billing', 'GST', 'has_GST', 'classification', 'customer_type'
+  ],
+  order: [
+    'O',
+    'sales_person',
+    'status',
+    'sale_channel',
+    'order_time',
+    'note'
+
+  ],
+  customizations: [
+    'SKU',
+    'cusPolish',
+    'design',
+    'polish_images',
+    'design_images',
+    'polish_note',
+    'design_note'
+  ],
+  product: [
+    'quantity'
+  ],
+  payment: [
+    'paid',
+    'total',
+    'pay_method_remaining',
+    'pay_method_advance',
+    'pay_method_advance',
+  ],
+  fulfillment: [
+    'fulfilled',
+    'courier_company',
+    'inventory_location',
+    'AWB',
+    'pic_before_dispatch',
+  ]
+}
 
 export default function Order() {
   // context
@@ -40,6 +104,8 @@ export default function Order() {
     date: "",
     filter: false,
   });
+
+  const [preview, setPreview] = useState({ open: false, _id: undefined })
 
   async function fetchData() {
     setPageState((lastState) => ({
@@ -72,10 +138,10 @@ export default function Order() {
               shipping: row.shipping,
               quantity: JSON.stringify(row.quantity),
               discount: row.discount,
-              paid: parseInt((row.paid / row.total) * 100) + "%",
+              paid: row.paid,
               total: row.total,
               note: row.note || "",
-              action: row._id,
+              action: row._id
             };
           }),
           isLoading: false,
@@ -83,7 +149,7 @@ export default function Order() {
           filter: false,
         }));
       })
-      .catch((err) => {});
+      .catch((err) => { });
   }
 
   useMemo(() => {
@@ -131,10 +197,10 @@ export default function Order() {
               params.formattedValue === "completed"
                 ? "#52ffc9"
                 : params.formattedValue === "cancel"
-                ? "#fdabab"
-                : params.formattedValue === "processing"
-                ? "#b9abfd"
-                : "",
+                  ? "#fdabab"
+                  : params.formattedValue === "processing"
+                    ? "#b9abfd"
+                    : "",
           }}
           value={status[params.row.action] || params.formattedValue}
           select
@@ -231,6 +297,18 @@ export default function Order() {
       width: 200,
       renderCell: (params) => (
         <div className="categoryImage">
+          <Tooltip title='preview'>
+
+            <IconButton
+              onClick={() => {
+                setPreview(old => ({ open: true, _id: params.formattedValue }))
+              }}
+              aria-label="delete"
+            >
+              <RemoveRedEyeIcon />
+            </IconButton>
+          </Tooltip>
+
           {/* <IconButton
             onClick={() => {
               dispatch(setForm({
@@ -386,6 +464,8 @@ export default function Order() {
 
       {/* Section 1  */}
 
+      <Preview preview={preview} setPreview={setPreview} />
+
       <Grid
         container
         p={2}
@@ -538,4 +618,128 @@ export default function Order() {
       {/* data grid ends  */}
     </Box>
   );
+}
+
+
+function Preview({ preview, setPreview }) {
+
+  let [data, setData] = useState({ order: {}, custom: {} })
+
+  useEffect(() => {
+    if(preview._id)
+      getData();
+  }, [preview.open])
+
+  async function getData() {
+    let res = await getOrderDetails(preview._id)
+    if (res.status === 200) {
+      setData({ order: res.data.data, custom: res.data.custom_product })
+    }
+  }
+
+  return (<>
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={preview.open}
+      onClose={() => setPreview(old => ({ ...old, open: false }))}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+    >
+      <Fade in={preview.open}>
+        <Box sx={style}>
+          {data && <Grid container sx={{ gap: '1rem' }}>
+            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+              <Typography variant='h6'>Order Preview</Typography>
+            </Grid>
+            {/* // Customer Information */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>Customer Details</Typography>
+              <Stack>
+                {detailsObj['personal'].map((field, index) => <><Box className='previewBox' key={index}>
+                  <Typography variant='body2' >{field}</Typography>
+                  <Typography variant='body2' >{data.order[field]}</Typography>
+                </Box>
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+            {/* // Order Information */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>Order Details</Typography>
+              <Stack>
+                {detailsObj['order'].map((field, index) => <><Box className='previewBox' key={index}>
+                  <Typography variant='body2' >{field}</Typography>
+                  <Typography variant='body2' >{data.order[field]}</Typography>
+                </Box>
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+            {/* // Fulfillment Information */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>Fulfillment Details</Typography>
+              <Stack>
+                {detailsObj['fulfillment'].map((field, index) => <><Box className='previewBox' key={index}>
+                  <Typography variant='body2' >{field}</Typography>
+                  <Typography variant='body2' >{data.order[field]}</Typography>
+                </Box>
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+            {/* // SKUs Information */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>SKU Details</Typography>
+              <Stack>
+                {data.order['quantity'] && Object.keys(data.order['quantity']).map((field, index) => <><Box className='previewBox' key={index}>
+                  <Typography variant='body2' >{field}</Typography>
+                  <Typography variant='body2' >{data.order['quantity'][field]}</Typography>
+                </Box>
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+            {/* // Customization  */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>Customization Details</Typography>
+              <Stack>
+                {data.order['customizations'] && data.order['customizations'].map((field, index) => <>
+                  {detailsObj.customizations.map((sub, index) =>
+                    <Box className='previewBox' key={index}>
+                      <Typography variant='caption' >{sub}</Typography>
+                      {sub === 'polish_images' || sub === 'design_images' ?
+                        field[sub].length > 0 && field[sub].map((img, index) => <img width='50px' src={img} alt={index} ></img>)
+                        :
+                        <Typography variant='caption' >{field[sub]}</Typography>
+                      }
+                    </Box>
+                  )}
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+            {/* // Payment Information */}
+            <Grid item xs={12}>
+              <Typography variant='body1'>Payment Details</Typography>
+              <Stack>
+                {detailsObj['payment'].map((field, index) => <><Box className='previewBox' key={index}>
+                  <Typography variant='body2' >{field}</Typography>
+                  <Typography variant='body2' >{data.order[field]}</Typography>
+                </Box>
+                  <Divider />
+                </>
+                )}
+              </Stack>
+            </Grid>
+          </Grid>}
+        </Box>
+      </Fade>
+    </Modal>
+  </>)
 }

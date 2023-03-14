@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "../config.json";
 
 const API = config.Official_API;
+const apiKey = config.PINCODE;
 
 //  login
 
@@ -1360,4 +1361,29 @@ export const getCOD = async () => {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
+};
+
+
+// upload image on the go 
+export const uploadAllImage = async (data) => {
+  return await axios.post(`${API}/uploadAllImage`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+// upload image on the go 
+export const getOrderDetails = async (data) => {
+  return await axios.get(`${API}/getOrderDetails?_id=${data}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+
+// for get addres vai pincode
+export const getAddress =  async (data) => {
+  return await axios.get(`https://app.zipcodebase.com/api/v1/search?apikey=${apiKey}&codes=${data}`);
 };
