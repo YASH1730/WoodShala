@@ -71,7 +71,7 @@ function MyRoutes() {
   const { auth, form, alert } = useSelector((state) => state);
   const dispatch = useDispatch();
   const location = useLocation();
-
+  const permission = auth.access || [] 
   useEffect(() => {
     // for check the expire time for the JWT
     if (auth.isAuth === true) {
@@ -86,9 +86,9 @@ function MyRoutes() {
         );
       }
     }
-    // else {
-    //   history("/");
-    // }
+    else {
+      localStorage.clear()
+    }
   }, [location, form.state, alert.open]);
 
   return (
@@ -99,25 +99,25 @@ function MyRoutes() {
       <Routes>
         {/* All routes are in alphabetical order */}
         <Route exact path="/" element={<EntryPoints history={history} />} />
-        {auth.access.includes("Profile") &&
+        {permission.includes("Profile") &&
         <Route exact path="/profile" element={<Profile history={history} />} />}
-       {auth.access.includes("Settings") &&
+       {permission.includes("Settings") &&
         <Route
           exact
           path="/settings"
           element={<Accessories history={history} />}
         />}
 
-        {auth.access.includes("Blog") && <Route exact path="/blog" element={<BlogModule history={history} />} />}
+        {permission.includes("Blog") && <Route exact path="/blog" element={<BlogModule history={history} />} />}
         {/* <Route exact path="/blog" element={<Blog />} /> */}
         {/* <Route exact path="/blogContent" element={<BlogContent />} /> */}
-        {auth.access.includes("Banner") &&<Route exact path="/banner" element={<Banner history={history} />} />}
-     {auth.access.includes("Customer") &&   <Route
+        {permission.includes("Banner") &&<Route exact path="/banner" element={<Banner history={history} />} />}
+     {permission.includes("Customer") &&   <Route
           exact
           path="/customer"
           element={<Customers history={history} />}
         />}
-       {auth.access.includes("Order") && <Route
+       {permission.includes("Order") && <Route
           exact
           path="/create_order"
           element={<CreateOrder history={history} />}
@@ -127,63 +127,63 @@ function MyRoutes() {
           path="/dashboard"
           element={<Dashboard history={history} />}
         />
-       { auth.access.includes("Action Center")  &&<Route exact path="/action" element={<Action history={history} />} />}
+       { permission.includes("Action Center")  &&<Route exact path="/action" element={<Action history={history} />} />}
         {/* <Route
           exact
           path="/suppliers"
           element={<Suppliers history={history} />}
         /> */}
-      {auth.access.includes("Hardware") &&   <Route
+      {permission.includes("Hardware") &&   <Route
           exact
           path="/hardware"
           element={<Hardware history={history} />}
         />}
-       {auth.access.includes("Inventory") &&  <Route
+       {permission.includes("Inventory") &&  <Route
           exact
           path="/inventory"
           element={<Inventory history={history} />}
         />}
-       {auth.access.includes("Product") &&  <Route exact path="/merge" element={<Merge history={history} />} />}
-        {auth.access.includes("Order") && <Route exact path="/order" element={<Orders history={history} />} />}
-        {auth.access.includes("Order") &&  <Route
+       {permission.includes("Product") &&  <Route exact path="/merge" element={<Merge history={history} />} />}
+        {permission.includes("Order") && <Route exact path="/order" element={<Orders history={history} />} />}
+        {permission.includes("Order") &&  <Route
           exact
           path="/abandoned_orders"
           element={<AbandonedOrders history={history} />}
         />}
-        {auth.access.includes("Order") && <Route
+        {permission.includes("Order") && <Route
           exact
           path="/preview_order/:_id"
           element={<PreviewOrder history={history} />}
         />}
-        {auth.access.includes("Wishlist") && 
+        {permission.includes("Wishlist") && 
         <Route
           exact
           path="/wishlist"
           element={<Wishlist history={history} />}
         />}
-        {auth.access.includes("Product") && <Route
+        {permission.includes("Product") && <Route
           exact
           path="/products"
           element={<Products history={history} />}
         />}
-        {auth.access.includes("Product") && <Route
+        {permission.includes("Product") && <Route
           exact
           path="/productDetails/:SKU"
           element={<ProductDetails history={history} />}
         />}
-       {auth.access.includes("Reward") &&  <Route exact path="/reward" element={<Coupons history={history} />} />}
+       {permission.includes("Reward") &&  <Route exact path="/reward" element={<Coupons history={history} />} />}
         {/* <Route
           exact
           path="/security"
           element={<Security history={history} />}
         />
         <Route exact path="/pincode" element={<Pincode history={history} />} /> */}
-       {auth.access.includes("Product") &&  <Route
+       {permission.includes("Product") &&  <Route
           exact
           path="/variation"
           element={<Variation history={history} />}
         />}
-        {auth.access.includes("Review") && <Route exact path="/review" element={<Review history={history} />} />}{" "}
+        {permission.includes("Review") && <Route exact path="/review" element={<Review history={history} />} />}{" "}
         <Route path="*" element={<Dashboard />} />
       </Routes>
     </>

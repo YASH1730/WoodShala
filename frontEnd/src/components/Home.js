@@ -69,6 +69,7 @@ import RefreshToken from "./Utility/RefreshToken";
 const Home = (props) => {
   const dispatch = useDispatch();
   const { auth, mode, tab } = useSelector((state) => state);
+  const permission = auth.access || [] 
 
   const history = props.history;
 
@@ -160,7 +161,7 @@ const Home = (props) => {
                   </ListItemAvatar>
                   <ListItemText primary="Dashboard" />
                 </ListItem>
-                {auth.access.includes("Product") && (
+                {permission.includes("Product") && (
                   <ListItem
                     onClick={(e) => {
                       setType({ ...type, product: !type.product });
@@ -266,7 +267,7 @@ const Home = (props) => {
                   </List>
                 </Collapse>
 
-                {auth.access.includes("Hardware") && (
+                {permission.includes("Hardware") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/hardware");
@@ -295,7 +296,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Review") && (
+                {permission.includes("Review") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/review");
@@ -324,7 +325,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Action Center") && (
+                {permission.includes("Action Center") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/action");
@@ -353,7 +354,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Order") && (
+                {permission.includes("Order") && (
                   <ListItem
                     onClick={(e) => {
                       setType({ ...type, order: !type.order });
@@ -470,7 +471,7 @@ const Home = (props) => {
                   </List>
                 </Collapse>
 
-                {auth.access.includes("Wishlist") && (
+                {permission.includes("Wishlist") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/wishlist");
@@ -499,7 +500,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Customer") && (
+                {permission.includes("Customer") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/customer");
@@ -528,7 +529,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Reward") && (
+                {permission.includes("Reward") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/reward");
@@ -557,7 +558,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Blog") && (
+                {permission.includes("Blog") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/blog");
@@ -586,7 +587,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Banner") && (
+                {permission.includes("Banner") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/banner");
@@ -615,7 +616,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Inventory") && (
+                {permission.includes("Inventory") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/inventory");
@@ -792,7 +793,7 @@ const Home = (props) => {
                   </List>
                 </Collapse> */}
 
-                {auth.access.includes("Settings") && (
+                {permission.includes("Settings") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/settings");
@@ -821,7 +822,7 @@ const Home = (props) => {
                   </ListItem>
                 )}
 
-                {auth.access.includes("Profile") && (
+                {permission.includes("Profile") && (
                   <ListItem
                     onClick={() => {
                       handleClose("/profile");
