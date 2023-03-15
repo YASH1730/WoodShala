@@ -300,7 +300,8 @@ export default function CreateOrder() {
     sale_channel: "Online",
     PO: "",
     refresh: 0,
-    sales_person: auth.role
+    sales_person: auth.role === 'Sales Person' ? auth.name : '',
+    pincode : ''
   });
 
   //  State for stepper
@@ -329,8 +330,6 @@ export default function CreateOrder() {
   useEffect(() => {
     getCatalogs();
   }, [data.refresh]);
-
-
 
   // for product data row
   useEffect(() => {
@@ -362,6 +361,19 @@ export default function CreateOrder() {
 
   useEffect(()=>{handelPincode()},[data.pincode])
 
+  useEffect(()=>{
+
+    if(activeStep === 3)
+    {
+      let val = calSubtotal();
+      setData(old=>({
+        ...old,
+        subTotal : val,
+        total : val
+      }))
+    }
+
+  },[activeStep])
   // for fetching pin address
   async function handelPincode() {
 
@@ -400,7 +412,7 @@ export default function CreateOrder() {
   }
 
   // for calculating subtotal
-  const calSubtotal = () => {
+  function calSubtotal  ()  {
     let val = 0;
     productRow.map((row) => {
       return (val += row.selling_price * data.quantity[row.SKU]);
@@ -496,23 +508,42 @@ export default function CreateOrder() {
       O: "",
       CUS: "",
       CID: null,
+      GST: null,
+      open: false,
+      payload: {},
+      classification: 'personal',
+      customer_type: '',
+      has_GST: 'no',
+      fulfilled: false,
+      advance_received: false,
+      pay_method_remaining: '',
+      pay_method_advance: '',
+      inventory_location: '',
+      courier_company: '',
+      AWB: '',
       customer_email: "",
       customer_mobile: "",
       customer_name: "",
       shipping: "",
+      billing: "",
       product_array: [],
       customizations: [],
-      payload: [],
       quantity: [],
       subTotal: 0,
       discount: 0,
       total: 0,
       status: "processing",
+      country: "India",
       city: "",
       state: "",
       paid: 0,
       note: "",
+      custom_order: true,
       sale_channel: "Online",
+      PO: "",
+      refresh: 0,
+      sales_person: auth.role === 'Sales Person' ? auth.name : '',
+      pincode : ''
     });
     setActiveStep(0);
     setValue(0);
@@ -540,8 +571,8 @@ export default function CreateOrder() {
   // for handling the form data
 
   const handelData = (e) => {
-    // console.log(e.target.name);
-    // console.log(e.target.value);
+    console.log(e.target.name);
+    console.log(e.target.value);
 
     if (e.target.name === "shipping" && catalogs.address.length > 0) {
       const row = catalogs.address.filter((data) => {
@@ -740,52 +771,18 @@ export default function CreateOrder() {
 
   async function handleSubmit(e) {
     /// for adding the note
-
-    setData({
-      ...data,
-      DID: SKU,
-      AID: "Not Assigned " + SKU,
-      type: "Order",
-      operation: "createOrder",
-      note: editorRef.current.getContent()
-        ? editorRef.current.getContent()
-        : "",
-    });
-
+    try {
     console.log(data);
-
     const res = await addDraft({
       ...data,
+      note : editorRef.current.getContent(),
       DID: SKU,
       AID: "Not Assigned " + SKU,
       type: "Order",
       operation: "createOrder",
     });
-
-    try {
+  
       if (res.status !== 200) {
-        setData({
-          O: "",
-          CUS: "",
-          CID: null,
-          customer_email: "",
-          customer_mobile: "",
-          customer_name: "",
-          shipping: "",
-          product_array: [],
-          quantity: [],
-          subTotal: 0,
-          discount: 0,
-          total: 0,
-          status: "processing",
-          city: "",
-          state: "",
-          paid: 0,
-          note: "",
-          sale_channel: "Online",
-          PO: "",
-          refresh: data.refresh + 1
-        });
         dispatch(
           setAlert({
             open: true,
@@ -1632,7 +1629,7 @@ export default function CreateOrder() {
                       fullWidth
                       id="outlined-select"
                       type="text"
-                      disabled
+                      disabled = {auth.role === 'Super Admin' || auth.role === 'Admin' ? false : true }
                       name="sales_person"
                       label="Sales Person"
                       value={data.sales_person || ""}
@@ -1724,8 +1721,8 @@ export default function CreateOrder() {
                           }}
                           label="Subtotal"
                           onChange={handelData}
-                          name='subtotal'
-                          value={calSubtotal()}
+                          name='subTotal'
+                          value={data.subTotal}
                         ></TextField>
                       </Grid>
 

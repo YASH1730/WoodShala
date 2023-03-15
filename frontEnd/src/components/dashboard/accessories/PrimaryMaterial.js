@@ -286,7 +286,7 @@ export default function PrimaryMaterial() {
             Material List{" "}
           </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

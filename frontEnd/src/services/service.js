@@ -10,6 +10,29 @@ export const login = async (data) => {
   return await axios.post(`${API}/login`, data);
 };
 
+export const addUser = async (data) => {
+  return await axios.post(`${API}/register`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+export const listUser = async () => {
+  return await axios.get(`${API}/listUser`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+export const updateUser = async (data) => {
+  return await axios.patch(`${API}/updateUser`,data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+
 // =========================== CURD FOR Cetagory ===========================
 
 // for  adding category to the list
@@ -20,6 +43,8 @@ export const addCategory = async (data) => {
     },
   });
 };
+
+
 
 // for list of category
 export const categoryList = async (data) => {

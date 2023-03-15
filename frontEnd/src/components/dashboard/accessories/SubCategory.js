@@ -282,7 +282,7 @@ export default function SubCategory() {
             Sub Category{" "}
           </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

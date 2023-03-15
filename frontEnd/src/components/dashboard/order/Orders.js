@@ -89,7 +89,7 @@ const detailsObj = {
   ]
 }
 
-export default function Order() {
+export default function Order({history}) {
   // context
   const dispatch = useDispatch();
   const [pageState, setPageState] = useState({
@@ -301,8 +301,11 @@ export default function Order() {
 
             <IconButton
               onClick={() => {
-                setPreview(old => ({ open: true, _id: params.formattedValue }))
+                history(`/preview_order/${params.formattedValue}`)
               }}
+              // onClick={() => {
+              //   setPreview(old => ({ open: true, _id: params.formattedValue }))
+              // }}
               aria-label="delete"
             >
               <RemoveRedEyeIcon />

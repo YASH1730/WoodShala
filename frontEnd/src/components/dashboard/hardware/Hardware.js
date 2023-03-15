@@ -350,7 +350,7 @@ export default function Hardware() {
               Hardware List{" "}
             </Typography>
           </div>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

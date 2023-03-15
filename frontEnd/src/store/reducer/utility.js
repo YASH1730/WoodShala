@@ -17,6 +17,7 @@ const initialAuth = {
     isAuth: false,
     role: null,
     token: null,
+    access: [],
 
 }
 

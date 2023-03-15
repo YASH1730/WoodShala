@@ -1195,7 +1195,7 @@ export default function Action() {
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography variant="h6"> Notifications </Typography>
           {/* <br></br> */}
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
       {/*    

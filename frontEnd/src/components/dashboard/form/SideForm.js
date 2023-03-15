@@ -81,7 +81,9 @@ import {
   addReview,
   getSequence,
   getAddress,
-  listPincode
+  listPincode,
+  addUser,
+  updateUser,
 } from "../../../services/service.js";
 import { useConfirm } from "material-ui-confirm";
 
@@ -91,6 +93,8 @@ import { useSelector, useDispatch } from "react-redux";
 import StarIcon from "@mui/icons-material/Star";
 import size from "react-image-size";
 import { fromUnixTime } from "date-fns/esm";
+
+import config from "../../../config.json";
 
 const option = {
   labels: {
@@ -151,7 +155,7 @@ const SideForm = () => {
 
   const [sequence, setSequence] = useState([]);
   // image link
-  const imageLink = "https://admin.woodshala.in/upload/";
+  const imageLink = `${config.Official_API_Image}/upload/`;
 
   const confirm = useConfirm();
 
@@ -607,6 +611,32 @@ const SideForm = () => {
       label: "Glass Jali",
     },
   ];
+  const role = [
+    {
+      value: "Marketing",
+      label: "Marketing",
+    },
+
+    {
+      value: "Sales",
+      label: "Sales",
+    },
+
+    {
+      value: "Management & Accountant",
+      label: "Management & Accountant",
+    },
+
+    {
+      value: "Admin",
+      label: "Admin",
+    },
+
+    {
+      value: "Super Admin",
+      label: "Super Admin",
+    },
+  ];
   const rangeCatalog = [
     {
       value: "Traditional",
@@ -632,6 +662,21 @@ const SideForm = () => {
       value: "Antique",
       label: "Antique",
     },
+  ];
+
+  const modules = [
+    "Order",
+    "Product",
+    "Settings",
+    "Wishlist",
+    "Customer",
+    "Reward",
+    "Blog",
+    "Action Center",
+    "Inventory",
+    "Profile",
+    "Banner",
+    "Hardware",
   ];
 
   const assemblyLevelCatalog = [
@@ -1720,6 +1765,22 @@ const SideForm = () => {
           web_banner_status: form.payload.value.web_banner_status,
           mobile_banner_status: form.payload.value.mobile_banner_status,
         });
+        break;
+      case "update_user":
+        console.log(form.payload);
+        setData((old) => ({
+          ...old,
+          _id: form.payload.formattedValue._id,
+          user_name: form.payload.formattedValue.user_name,
+          email: form.payload.formattedValue.email,
+          mobile: form.payload.formattedValue.mobile,
+          role: form.payload.formattedValue.role,
+          access:
+            form.payload.row.access[0] !== "No Permissions Alloted"
+              ? form.payload.row.access
+              : [],
+          action: form.payload.row.action,
+        }));
         break;
       default:
     }
@@ -5800,17 +5861,14 @@ const SideForm = () => {
         //   ...form.row,
         //   {
         //     id: form.row.length + 1,
-        //     category_name: data.data.response.category_name,
-        //     category_status: data.data.response.category_status,
-        //     category_image: data.data.response.category_image,
-        //     seo_title: data.data.response.seo_title,
-        //     seo_description: data.data.response.seo_description,
-        //     seo_keyword: data.data.response.seo_keyword,
-        //     product_description: data.data.response.product_description,
-        //     action: data.data.response,
+        //     user_name : res.data.response.user_name,
+        //     email : res.data.response.email,
+        //     mobile : res.data.response.mobile,
+        //     role : res.data.response.role,
+        //     access : res.data.response.access,
+        //     action: res.data.response,
         //   },
         // ]);
-        // form.setCheck((old) => [...old, data.data.response.category_status]);
         handleClose();
         dispatch(
           setAlert({
@@ -5879,6 +5937,124 @@ const SideForm = () => {
         //   },
         // ]);
         // form.setCheck((old) => [...old, data.data.response.category_status]);
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
+  }
+  async function handleUser(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      FD.append("user_name", changeData.user_name);
+      FD.append("password", changeData.password);
+      FD.append("email", changeData.email);
+      FD.append("mobile", changeData.mobile);
+      FD.append("role", changeData.role);
+      FD.append("access", changeData.access);
+
+      // // //console.log(acceptedFiles[0].name, e.target.category_name.value)
+
+      const res = await addUser(FD);
+
+      if (res.status === 203) {
+        setImages([]);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: res.data.message,
+          })
+        );
+      } else {
+        form.setRow([
+          ...form.row,
+          {
+            id: form.row.length + 1,
+            user_name: res.data.response.user_name,
+            email: res.data.response.email,
+            mobile: res.data.response.mobile,
+            role: res.data.response.role,
+            access: res.data.response.access,
+            action: res.data.response,
+          },
+        ]);
+        handleClose();
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: res.data.message,
+          })
+        );
+      }
+    } catch (err) {
+      console.log(err);
+      dispatch(
+        setAlert({
+          open: true,
+          variant: "error",
+          message: "Something Went Wrong !!!",
+        })
+      );
+    }
+  }
+  async function handleUpdateUser(e) {
+    try {
+      e.preventDefault();
+
+      const FD = new FormData();
+
+      FD.append("_id", changeData._id);
+      FD.append("user_name", changeData.user_name);
+      FD.append("email", changeData.email);
+      FD.append("mobile", changeData.mobile);
+      FD.append("role", changeData.role);
+      FD.append("access", changeData.access);
+
+      const res = await updateUser(FD);
+
+      if (res.status === 203) {
+        setImages([]);
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: res.data.message,
+          })
+        );
+      } else {
+        console.log(changeData.access)
+        form.setRow(
+          form.row.map((set) => {
+            if (set.action === form.payload.row.action) {
+              set.user_name = changeData.user_name;
+              set.email = changeData.email;
+              set.mobile = changeData.mobile;
+              set.role = changeData.role;
+              set.access = changeData.access;
+              set.action = changeData.action;
+            }
+            return set;
+          })
+        );
         handleClose();
         dispatch(
           setAlert({
@@ -6043,7 +6219,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -6211,7 +6387,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -6265,7 +6441,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -6360,7 +6536,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                      changeData.assembly_part < 3
+                                    changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -7098,17 +7274,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFields}
-                                />
-                              )}
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFields}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -8699,7 +8875,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -8867,7 +9043,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -8921,7 +9097,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -9017,7 +9193,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                      changeData.assembly_part < 3
+                                    changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -9852,17 +10028,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFields}
-                                />
-                              )}
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFields}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -11521,7 +11697,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -11689,7 +11865,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -11743,7 +11919,7 @@ const SideForm = () => {
                               name="polish"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {catalog.polish.length > 0 &&
                                 catalog.polish.map((option, index) => (
@@ -11839,7 +12015,7 @@ const SideForm = () => {
                                   name="assembly_part"
                                   value={
                                     changeData.assembly_part > -1 &&
-                                      changeData.assembly_part < 3
+                                    changeData.assembly_part < 3
                                       ? changeData.assembly_part
                                       : 0
                                   }
@@ -12674,17 +12850,17 @@ const SideForm = () => {
                             </FormControl>
                             {(changeData.drawer === "mechanical" ||
                               changeData.drawer === "wooden") && (
-                                <TextField
-                                  size="small"
-                                  fullWidth
-                                  type="number"
-                                  id="outlined-select"
-                                  name="drawer_count"
-                                  label="Drawer Count"
-                                  value={changeData.drawer_count}
-                                  onChange={handleProductFields}
-                                />
-                              )}
+                              <TextField
+                                size="small"
+                                fullWidth
+                                type="number"
+                                id="outlined-select"
+                                name="drawer_count"
+                                label="Drawer Count"
+                                value={changeData.drawer_count}
+                                onChange={handleProductFields}
+                              />
+                            )}
                             <FormControl>
                               <FormLabel id="demo-radio-buttons-group-label">
                                 Joints ((Useful in products where info about
@@ -14392,7 +14568,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -15409,7 +15585,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -17753,7 +17929,6 @@ const SideForm = () => {
                 />
                 {/* addres form */}
                 <Grid item xs={12} mt={5}>
-
                   <form
                     className="form"
                     onSubmit={(e) => {
@@ -18094,7 +18269,7 @@ const SideForm = () => {
                           width: "88%",
                           display:
                             changeData.searchCustomer !== "" &&
-                              changeData.searchCustomer !== changeData.display
+                            changeData.searchCustomer !== changeData.display
                               ? "block"
                               : "none",
                         }}
@@ -18354,7 +18529,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -18377,7 +18552,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -19570,7 +19745,7 @@ const SideForm = () => {
                               {subCategory.map(
                                 (option) =>
                                   changeData.category_name ===
-                                  option.category_id && (
+                                    option.category_id && (
                                     <MenuItem
                                       key={option.value}
                                       value={option._id}
@@ -19593,7 +19768,7 @@ const SideForm = () => {
                               name="primary_material"
                               onChange={handleProductFields}
                               renderValue={(selected) => selected.join(", ")}
-                            // MenuProps={MenuProps}
+                              // MenuProps={MenuProps}
                             >
                               {materialCatalog.map((option) => (
                                 <MenuItem
@@ -22675,12 +22850,12 @@ const SideForm = () => {
                       required
                       error={
                         parseInt(changeData.old_sequence_no) !==
-                        parseInt(changeData.sequence_no) &&
+                          parseInt(changeData.sequence_no) &&
                         sequence.includes(parseInt(changeData.sequence_no))
                       }
                       helperText={
                         parseInt(changeData.old_sequence_no) !==
-                        parseInt(changeData.sequence_no) &&
+                          parseInt(changeData.sequence_no) &&
                         sequence.includes(parseInt(changeData.sequence_no)) &&
                         "Index is already in use."
                       }
@@ -22728,6 +22903,249 @@ const SideForm = () => {
               </Grid>
             )}
             {/* Update REview ends */}
+
+            {/* add User */}
+            {form.formType === "add_user" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Add User
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Add user details from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUser);
+                    }}
+                    id="myForm"
+                    encType="application/x-www-form-urlencoded"
+                    method="post"
+                  >
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Full Name"
+                      value={changeData.user_name}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="user_name"
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      type="email"
+                      label="Email Address"
+                      value={changeData.email}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="email"
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Mobile Number"
+                      value={changeData.mobile}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="mobile"
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      type={"password"}
+                      label="Password"
+                      value={changeData.password}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="password"
+                    />
+
+                    <TextField
+                      fullWidth
+                      id="outlined-select"
+                      required
+                      select
+                      size={"small"}
+                      helperText="Please select the role."
+                      name="role"
+                      label="Select role..."
+                      value={changeData.role || ""}
+                      onChange={handleProductFields}
+                      multiple
+                    >
+                      {role.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+
+                    <Autocomplete
+                      sx={{ mt: 1 }}
+                      multiple
+                      id="size-small-standard-multi"
+                      size="small"
+                      options={modules}
+                      value={changeData.access || []}
+                      getOptionLabel={(option) => option}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Access"
+                          placeholder="Access"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          access: newMember,
+                        }))
+                      }
+                    />
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Add User
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add User ends */}
+
+            {/* add User */}
+            {form.formType === "update_user" && (
+              <Grid container p={5}>
+                <Grid item xs={12}>
+                  <Typography component={"span"} variant="h5">
+                    Update User
+                    <Typography
+                      component={"span"}
+                      sx={{ display: "block !important" }}
+                      variant="caption"
+                    >
+                      Update usre details from here.
+                    </Typography>
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} mt={2}>
+                  <form
+                    className="form"
+                    onSubmit={(e) => {
+                      confirmBox(e, handleUpdateUser);
+                    }}
+                    id="myForm"
+                    encType="application/x-www-form-urlencoded"
+                    method="post"
+                  >
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Full Name"
+                      value={changeData.user_name}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="user_name"
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      type="email"
+                      label="Email Address"
+                      value={changeData.email}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="email"
+                    />
+                    <TextField
+                      fullWidth
+                      sx={{ mb: 1 }}
+                      size="small"
+                      label="Mobile Number"
+                      value={changeData.mobile}
+                      onChange={handleProductFields}
+                      variant="outlined"
+                      name="mobile"
+                    />
+
+                    <TextField
+                      fullWidth
+                      id="outlined-select"
+                      required
+                      select
+                      size={"small"}
+                      helperText="Please select the role."
+                      name="role"
+                      label="Select role..."
+                      value={changeData.role || ""}
+                      onChange={handleProductFields}
+                      multiple
+                    >
+                      {role.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.value}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+
+                    <Autocomplete
+                      sx={{ mt: 1 }}
+                      multiple
+                      id="size-small-standard-multi"
+                      size="small"
+                      options={modules}
+                      value={changeData.access || []}
+                      getOptionLabel={(option) => option}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          label="Select Access"
+                          placeholder="Access"
+                        />
+                      )}
+                      onChange={(e, newMember) =>
+                        setData((old) => ({
+                          ...old,
+                          access: newMember,
+                        }))
+                      }
+                    />
+
+                    <Button
+                      color="primary"
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Update User
+                    </Button>
+                  </form>
+                </Grid>
+              </Grid>
+            )}
+            {/* add User ends */}
           </Box>
         </Backdrop>
       </Slide>
@@ -22935,30 +23353,28 @@ function MobileBannerPreviews({ text, mobileBanner, setMobileBanner }) {
   );
 }
 
-
 function AddressForm({ setOpen, open, confirmBox, handleAddress }) {
-
   const [data, setData] = useState({
-    pincode: '',
-    city: '',
-    state: ''
-  })
+    pincode: "",
+    city: "",
+    state: "",
+  });
 
   const [catalog, setCatalogs] = useState({
     city: [],
     pincode: [],
-  })
+  });
 
-  useEffect(()=>{
-    handelPincode()
-  },[data.pincode])
+  useEffect(() => {
+    handelPincode();
+  }, [data.pincode]);
 
-  const handleValue = (e)=>{
-setData(old=>({...old,[e.target.name] : e.target.value}))
-  }
+  const handleValue = (e) => {
+    setData((old) => ({ ...old, [e.target.name]: e.target.value }));
+  };
 
   async function handleSearch(e) {
-    console.log(e.target.value)
+    console.log(e.target.value);
     let res = await listPincode({
       page: 1,
       limit: 10,
@@ -22966,27 +23382,28 @@ setData(old=>({...old,[e.target.name] : e.target.value}))
       pincode: e.target.value,
     });
     if (res.status === 200) {
-      setCatalogs(old=>({...old, pincode : [...res.data.data]}))
+      setCatalogs((old) => ({ ...old, pincode: [...res.data.data] }));
     }
   }
 
   async function handelPincode() {
-
     if (data.pincode.toString().length === 6) {
-      let res = await getAddress(data.pincode)
+      let res = await getAddress(data.pincode);
       if (res.status === 200) {
-        let pincode = res.data.results[data.pincode] || []
-        setCatalogs(old => ({ ...old, city: pincode }))
-        setData(old => ({ ...old, pincode: data.pincode, state: pincode[0].state }));
+        let pincode = res.data.results[data.pincode] || [];
+        setCatalogs((old) => ({ ...old, city: pincode }));
+        setData((old) => ({
+          ...old,
+          pincode: data.pincode,
+          state: pincode[0].state,
+        }));
       }
-    }
-    else {
-      setData(old => ({ ...old, pincode: data.pincode }));
+    } else {
+      setData((old) => ({ ...old, pincode: data.pincode }));
     }
   }
 
   return (
-
     <Modal
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
@@ -23058,26 +23475,25 @@ setData(old=>({...old,[e.target.name] : e.target.value}))
               }
             />
 
-<TextField
-                      fullWidth
-                      id="outlined-select"
-                      required
-                      select
-                      size={"small"}
-                      helperText="Please select the city."
-                      name="city"
-                      label="Select city..."
-                      value={data.city || ""}
-                      onChange={handleValue}
-                      multiple
-                    >
-                      {catalog.city.map((option) => (
-                        <MenuItem key={option.city} value={option.city}>
-                          {option.city}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-       
+            <TextField
+              fullWidth
+              id="outlined-select"
+              required
+              select
+              size={"small"}
+              helperText="Please select the city."
+              name="city"
+              label="Select city..."
+              value={data.city || ""}
+              onChange={handleValue}
+              multiple
+            >
+              {catalog.city.map((option) => (
+                <MenuItem key={option.city} value={option.city}>
+                  {option.city}
+                </MenuItem>
+              ))}
+            </TextField>
 
             <TextField
               size="small"
@@ -23085,15 +23501,13 @@ setData(old=>({...old,[e.target.name] : e.target.value}))
               // required
               id="outlined-select"
               name="state"
-              value = {data.state || ''}
-              onChange = {handleValue}
+              value={data.state || ""}
+              onChange={handleValue}
               label="State"
               type="text"
             />
 
-            <FormLabel id="demo-radio-buttons-group-label">
-              Address
-            </FormLabel>
+            <FormLabel id="demo-radio-buttons-group-label">Address</FormLabel>
 
             <TextareaAutosize
               fullWidth
@@ -23129,17 +23543,12 @@ setData(old=>({...old,[e.target.name] : e.target.value}))
               </MenuItem>
             </TextField>
 
-            <Button
-              color="primary"
-              type="submit"
-              variant="contained"
-            >
+            <Button color="primary" type="submit" variant="contained">
               Add Address
             </Button>
           </form>
         </Box>
       </Fade>
     </Modal>
-
-  )
+  );
 }

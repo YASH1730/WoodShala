@@ -139,7 +139,7 @@ export default function OurStaff() {
           </Typography>
           <br></br>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

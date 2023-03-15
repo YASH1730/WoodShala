@@ -470,7 +470,7 @@ export default function Inventory() {
               ))}
             </TextField>
           </Box>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

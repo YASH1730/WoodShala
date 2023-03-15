@@ -228,7 +228,7 @@ export default function Suppliers() {
             Suppliers List
           </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

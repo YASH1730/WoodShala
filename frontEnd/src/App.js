@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 // json decode
 import decode from "jwt-decode";
 import ImageSquence from "./components/Utility/ImageSquence";
+import PreviewOrder from "./components/dashboard/order/PreviewOrder";
 
 // component
 const EntryPoints = lazy(() => import("./components/EntryPoints"));
@@ -98,83 +99,92 @@ function MyRoutes() {
       <Routes>
         {/* All routes are in alphabetical order */}
         <Route exact path="/" element={<EntryPoints history={history} />} />
-        <Route exact path="/profile" element={<Profile history={history} />} />
+        {auth.access.includes("Profile") &&
+        <Route exact path="/profile" element={<Profile history={history} />} />}
+       {auth.access.includes("Settings") &&
         <Route
           exact
           path="/settings"
           element={<Accessories history={history} />}
-        />
-        <Route exact path="/blog" element={<BlogModule history={history} />} />
+        />}
+
+        {auth.access.includes("Blog") && <Route exact path="/blog" element={<BlogModule history={history} />} />}
         {/* <Route exact path="/blog" element={<Blog />} /> */}
         {/* <Route exact path="/blogContent" element={<BlogContent />} /> */}
-        <Route exact path="/banner" element={<Banner history={history} />} />
-        <Route
+        {auth.access.includes("Banner") &&<Route exact path="/banner" element={<Banner history={history} />} />}
+     {auth.access.includes("Customer") &&   <Route
           exact
           path="/customer"
           element={<Customers history={history} />}
-        />
-        <Route
+        />}
+       {auth.access.includes("Order") && <Route
           exact
           path="/create_order"
           element={<CreateOrder history={history} />}
-        />
+        />}
         <Route
           exact
           path="/dashboard"
           element={<Dashboard history={history} />}
         />
-        <Route exact path="/action" element={<Action history={history} />} />
+       { auth.access.includes("Action Center")  &&<Route exact path="/action" element={<Action history={history} />} />}
         {/* <Route
           exact
           path="/suppliers"
           element={<Suppliers history={history} />}
         /> */}
-        <Route
+      {auth.access.includes("Hardware") &&   <Route
           exact
           path="/hardware"
           element={<Hardware history={history} />}
-        />
-        <Route
+        />}
+       {auth.access.includes("Inventory") &&  <Route
           exact
           path="/inventory"
           element={<Inventory history={history} />}
-        />
-        <Route exact path="/merge" element={<Merge history={history} />} />
-        <Route exact path="/order" element={<Orders history={history} />} />
-        <Route
+        />}
+       {auth.access.includes("Product") &&  <Route exact path="/merge" element={<Merge history={history} />} />}
+        {auth.access.includes("Order") && <Route exact path="/order" element={<Orders history={history} />} />}
+        {auth.access.includes("Order") &&  <Route
           exact
           path="/abandoned_orders"
           element={<AbandonedOrders history={history} />}
-        />
+        />}
+        {auth.access.includes("Order") && <Route
+          exact
+          path="/preview_order/:_id"
+          element={<PreviewOrder history={history} />}
+        />}
+        {auth.access.includes("Wishlist") && 
         <Route
           exact
           path="/wishlist"
           element={<Wishlist history={history} />}
-        />
-        <Route
+        />}
+        {auth.access.includes("Product") && <Route
           exact
           path="/products"
           element={<Products history={history} />}
-        />
-        <Route
+        />}
+        {auth.access.includes("Product") && <Route
           exact
           path="/productDetails/:SKU"
           element={<ProductDetails history={history} />}
-        />
-        <Route exact path="/reward" element={<Coupons history={history} />} />
+        />}
+       {auth.access.includes("Reward") &&  <Route exact path="/reward" element={<Coupons history={history} />} />}
         {/* <Route
           exact
           path="/security"
           element={<Security history={history} />}
         />
         <Route exact path="/pincode" element={<Pincode history={history} />} /> */}
-        <Route
+       {auth.access.includes("Product") &&  <Route
           exact
           path="/variation"
           element={<Variation history={history} />}
-        />
-        <Route exact path="/review" element={<Review history={history} />} />{" "}
-        <Route path="*" element={<NotFound />} />
+        />}
+        {auth.access.includes("Review") && <Route exact path="/review" element={<Review history={history} />} />}{" "}
+        <Route path="*" element={<Dashboard />} />
       </Routes>
     </>
   );

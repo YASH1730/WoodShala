@@ -382,7 +382,7 @@ export default function Pincode() {
             {" "}
             PinCode{" "}
           </Typography>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
 
         {/* // COD Setting  */}

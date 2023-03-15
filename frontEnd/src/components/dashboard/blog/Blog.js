@@ -273,7 +273,7 @@ export default function Bolg() {
             Blog List
           </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

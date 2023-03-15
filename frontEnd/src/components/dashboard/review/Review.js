@@ -543,7 +543,7 @@ const Review = () => {
             Review List{" "}
           </Typography>
 
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

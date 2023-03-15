@@ -271,7 +271,7 @@ export default function Polish() {
             Polish List{" "}
           </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

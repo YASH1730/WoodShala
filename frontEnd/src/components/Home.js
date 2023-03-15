@@ -160,35 +160,36 @@ const Home = (props) => {
                   </ListItemAvatar>
                   <ListItemText primary="Dashboard" />
                 </ListItem>
-
-                <ListItem
-                  onClick={(e) => {
-                    setType({ ...type, product: !type.product });
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <ShoppingBagOutlinedIcon
-                        color={
-                          window.location.pathname === "/merge" ||
+                {auth.access.includes("Product") && (
+                  <ListItem
+                    onClick={(e) => {
+                      setType({ ...type, product: !type.product });
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <ShoppingBagOutlinedIcon
+                          color={
+                            window.location.pathname === "/merge" ||
                             window.location.pathname === "/products"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Product" />
-                  {type.product ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Product" />
+                    {type.product ? <ExpandLess /> : <ExpandMore />}
+                  </ListItem>
+                )}
                 {/* // product nested menu */}
                 <Collapse in={type.product} timeout="auto" unmountOnExit>
                   <List dense={true} component="div" disablePadding>
@@ -265,112 +266,122 @@ const Home = (props) => {
                   </List>
                 </Collapse>
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/hardware");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <HardwareIcon
-                        color={
-                          window.location.pathname === "/hardware"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Hardware" />
-                </ListItem>
+                {auth.access.includes("Hardware") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/hardware");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <HardwareIcon
+                          color={
+                            window.location.pathname === "/hardware"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Hardware" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/review");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <ReviewsIcon
-                        color={
-                          window.location.pathname === "/review"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Review" />
-                </ListItem>
+                {auth.access.includes("Review") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/review");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <ReviewsIcon
+                          color={
+                            window.location.pathname === "/review"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Review" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/action");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <DraftsIcon
-                        color={
-                          window.location.pathname === "/action"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Action Center" />
-                </ListItem>
+                {auth.access.includes("Action Center") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/action");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <DraftsIcon
+                          color={
+                            window.location.pathname === "/action"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Action Center" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={(e) => {
-                    setType({ ...type, order: !type.order });
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <InboxIcon
-                        color={
-                          window.location.pathname === "/order" ? "primary" : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Order" />
-                  {type.order ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
+                {auth.access.includes("Order") && (
+                  <ListItem
+                    onClick={(e) => {
+                      setType({ ...type, order: !type.order });
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <InboxIcon
+                          color={
+                            window.location.pathname === "/order"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Order" />
+                    {type.order ? <ExpandLess /> : <ExpandMore />}
+                  </ListItem>
+                )}
 
                 {/* // order nested menu */}
                 <Collapse in={type.order} timeout="auto" unmountOnExit>
@@ -459,167 +470,179 @@ const Home = (props) => {
                   </List>
                 </Collapse>
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/wishlist");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1rem",
-                        },
-                      }}
-                    >
-                      <PlaylistAddCheckCircleIcon
-                        color={
-                          window.location.pathname === "/wishlist"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Wishlist" />
-                </ListItem>
+                {auth.access.includes("Wishlist") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/wishlist");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1rem",
+                          },
+                        }}
+                      >
+                        <PlaylistAddCheckCircleIcon
+                          color={
+                            window.location.pathname === "/wishlist"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Wishlist" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/customer");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <PeopleAltOutlinedIcon
-                        color={
-                          window.location.pathname === "/customer"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Customer" />
-                </ListItem>
+                {auth.access.includes("Customer") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/customer");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <PeopleAltOutlinedIcon
+                          color={
+                            window.location.pathname === "/customer"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Customer" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/reward");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <EmojiEventsIcon
-                        color={
-                          window.location.pathname === "/reward"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Reward" />
-                </ListItem>
+                {auth.access.includes("Reward") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/reward");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <EmojiEventsIcon
+                          color={
+                            window.location.pathname === "/reward"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Reward" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/blog");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <ArticleIcon
-                        color={
-                          window.location.pathname === "/dashboard"
-                            ? "blog"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Blog" />
-                </ListItem>
+                {auth.access.includes("Blog") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/blog");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <ArticleIcon
+                          color={
+                            window.location.pathname === "/dashboard"
+                              ? "blog"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Blog" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/banner");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <ViewCarouselIcon
-                        color={
-                          window.location.pathname === "/banner"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Banner" />
-                </ListItem>
+                {auth.access.includes("Banner") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/banner");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <ViewCarouselIcon
+                          color={
+                            window.location.pathname === "/banner"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Banner" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/inventory");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <InventoryIcon
-                        color={
-                          window.location.pathname === "/inventory"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Inventory" />
-                </ListItem>
+                {auth.access.includes("Inventory") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/inventory");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <InventoryIcon
+                          color={
+                            window.location.pathname === "/inventory"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Inventory" />
+                  </ListItem>
+                )}
 
                 {/* <ListItem
                   onClick={(e) => {
@@ -769,59 +792,63 @@ const Home = (props) => {
                   </List>
                 </Collapse> */}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/settings");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <SettingsOutlinedIcon
-                        color={
-                          window.location.pathname === "/settings"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Settings" />
-                </ListItem>
+                {auth.access.includes("Settings") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/settings");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <SettingsOutlinedIcon
+                          color={
+                            window.location.pathname === "/settings"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Settings" />
+                  </ListItem>
+                )}
 
-                <ListItem
-                  onClick={() => {
-                    handleClose("/profile");
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        width: "30px",
-                        height: "30px",
-                        svg: {
-                          fontSize: "1.1rem",
-                        },
-                      }}
-                    >
-                      <AdminPanelSettingsIcon
-                        color={
-                          window.location.pathname === "/profile"
-                            ? "primary"
-                            : ""
-                        }
-                      />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary="Profile" />
-                </ListItem>
+                {auth.access.includes("Profile") && (
+                  <ListItem
+                    onClick={() => {
+                      handleClose("/profile");
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                          svg: {
+                            fontSize: "1.1rem",
+                          },
+                        }}
+                      >
+                        <AdminPanelSettingsIcon
+                          color={
+                            window.location.pathname === "/profile"
+                              ? "primary"
+                              : ""
+                          }
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Profile" />
+                  </ListItem>
+                )}
 
                 {/* // logout  */}
                 <Divider sx={{ margin: "auto", mt: 2 }} />
@@ -880,6 +907,7 @@ const Home = (props) => {
         isAuth: false,
         WDToken: null,
         role: null,
+        access : []
       })
     );
     dispatch(

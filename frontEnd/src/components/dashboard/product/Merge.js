@@ -452,7 +452,7 @@ export default function Products(props) {
               Merge Product
             </Button>
           </Box>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

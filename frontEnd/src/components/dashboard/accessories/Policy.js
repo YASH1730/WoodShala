@@ -434,7 +434,7 @@ const {dispatch} = Store();
         <Grid item p={2} xs={12} sx={{ boxShadow: 2, borderRadius: 5 }}>
           <Typography component={'span'} variant="h6"> Product List </Typography>
           <br></br>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

@@ -15,36 +15,33 @@ import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { Link } from "react-router-dom";
-import { login } from '../services/service'
+import { login } from "../services/service";
 
-import { useDispatch, useSelector } from 'react-redux'
-import { setAlert, setAuth, setRefreshBox } from '../store/action/action'
-
+import { useDispatch, useSelector } from "react-redux";
+import { setAlert, setAuth, setRefreshBox } from "../store/action/action";
 
 export default function EntryPoints(props) {
-
-  // history var for location and jumping throw path 
+  // history var for location and jumping throw path
   const history = props.history;
 
-  const dispatch = useDispatch()
-  // const state = useSelector(state=>state) 
+  const dispatch = useDispatch();
+  // const state = useSelector(state=>state)
 
-  // store import 
-  const { auth } = useSelector(state => state);
+  // store import
+  const { auth } = useSelector((state) => state);
 
   useEffect(() => {
-    if (auth.isAuth === true)
-      history('/dashboard')
-  }, [auth.isAuth])
+    console.log("err");
+    if (auth.isAuth === true) history("/dashboard");
+  }, [auth.isAuth]);
 
-  // context 
+  // context
 
-  const [postVal, setPostVal] = useState("catagory");
+  const [postVal, setPostVal] = useState("");
 
   const handleChangePost = (event) => {
     setPostVal(event.target.value);
   };
-
 
   const post = [
     {
@@ -55,7 +52,6 @@ export default function EntryPoints(props) {
       value: "Super Admin",
       label: "Super Admin",
     },
-
   ];
 
   const [currency, setCurrency] = React.useState("EUR");
@@ -69,49 +65,50 @@ export default function EntryPoints(props) {
 
     const FD = new FormData();
 
-    FD.append('role', postVal);
-    FD.append('email', e.target.email.value);
-    FD.append('password', e.target.password.value);
+    FD.append("role", postVal);
+    FD.append("email", e.target.email.value);
+    FD.append("password", e.target.password.value);
 
-    let res = login(FD)
+    let res = login(FD);
 
     res.then((data) => {
       //console.log(data)
 
       if (data.status === 200) {
+        dispatch(
+          setAuth({
+            isAuth: true,
+            token: data.data.token,
+            role: data.data.role,
+            name : data.data.name,
+            email: data.data.email,
+            access: data.data.access,
+            expireIn: data.data.expireIn,
+          })
+        );
 
-        dispatch(setAuth({
-          isAuth: true,
-          token: data.data.token,
-          role: data.data.role,
-          email: data.data.email,
-          expireIn: data.data.expireIn
-        }))
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "success",
+            message: data.data.message,
+          })
+        );
 
+        localStorage.setItem("token", data.data.token);
 
-
-        dispatch(setAlert({
-          open: true,
-          variant: 'success',
-          message: data.data.message
-        }))
-
-        localStorage.setItem('token', data.data.token);
-
-        history('/dashboard')
-
+        history("/dashboard");
+      } else {
+        dispatch(
+          setAlert({
+            open: true,
+            variant: "error",
+            message: data.data.message,
+          })
+        );
       }
-      else {
-        dispatch(setAlert({
-          open: true,
-          variant: 'error',
-          message: data.data.message
-        }))
-      }
-    })
-
-
-  }
+    });
+  };
 
   return (
     <>
@@ -136,29 +133,32 @@ export default function EntryPoints(props) {
 
               {/* Form Side */}
               <Grid item p={6} sm={12} md={6} lg={6}>
-                <Typography component={'span'} variant="h4">Login</Typography>
+                <Typography component={"span"} variant="h4">
+                  Login
+                </Typography>
                 <Box
                   sx={{
                     "& .MuiTextField-root": { mt: 2 },
                     margin: "auto",
                   }}
                 >
-                  <form method="post" onSubmit={handleLogin} className="formStyle">
+                  <form
+                    method="post"
+                    onSubmit={handleLogin}
+                    className="formStyle"
+                  >
                     <TextField
                       fullWidth
-
-                      id="fullWidth"
                       label="Email"
                       type="email"
-                      name='email'
+                      name="email"
                       variant="outlined"
                     />
 
                     <TextField
                       fullWidth
-                      id="fullWidth"
                       type="password"
-                      name='password'
+                      name="password"
                       label="Password"
                       variant="outlined"
                     />
@@ -169,7 +169,7 @@ export default function EntryPoints(props) {
                       label="Staff Role"
                       value={postVal}
                       multiple
-                      name='role'
+                      name="role"
                       onChange={handleChangePost}
                       helperText="Please select the staff role"
                     >
@@ -183,7 +183,7 @@ export default function EntryPoints(props) {
                     <Button
                       variant="contained"
                       color="primary"
-                      type='submit'
+                      type="submit"
                       sx={{
                         width: "100%",
                         marginTop: "5%",
@@ -224,7 +224,8 @@ export default function EntryPoints(props) {
                   className="goggleButton"
                 /> */}
 
-                <Typography component={'span'}
+                <Typography
+                  component={"span"}
                   variant="caption"
                   color="primary"
                   sx={{ display: "block", marginTop: "8%" }}
@@ -262,7 +263,9 @@ export default function EntryPoints(props) {
 
               {/* Form Side */}
               <Grid item p={6} sm={12} md={6} lg={6}>
-                <Typography component={'span'} variant="h4">Create an account</Typography>
+                <Typography component={"span"} variant="h4">
+                  Create an account
+                </Typography>
                 <form method="post" className="formStyle">
                   <Box
                     sx={{
@@ -272,8 +275,6 @@ export default function EntryPoints(props) {
                   >
                     <TextField
                       fullWidth
-
-                      id="fullWidth"
                       label="Name"
                       type="text"
                       variant="outlined"
@@ -281,8 +282,6 @@ export default function EntryPoints(props) {
 
                     <TextField
                       fullWidth
-
-                      id="fullWidth"
                       label="Email"
                       type="email"
                       variant="outlined"
@@ -290,7 +289,6 @@ export default function EntryPoints(props) {
 
                     <TextField
                       fullWidth
-                      id="fullWidth"
                       type="password"
                       label="Password"
                       variant="outlined"
@@ -355,7 +353,8 @@ export default function EntryPoints(props) {
                   className="goggleButton"
                 />
 
-                <Typography component={'span'}
+                <Typography
+                  component={"span"}
                   variant="caption"
                   sx={{ color: "#0e9f6e", display: "block", marginTop: "8%" }}
                 >

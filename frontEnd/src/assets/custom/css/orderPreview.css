@@ -1,0 +1,33 @@
+.productCard {
+    display: flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    padding: 2%;
+    align-items: normal;
+}
+
+.productCard>#title {
+    flex: 1;
+    text-overflow: clip;
+}
+
+.customCard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 2%;
+    align-items: normal;
+}
+
+.stackCustom>div {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1%;
+}
+
+.customer {
+    display: flex;
+    gap: 0.5rem;
+}

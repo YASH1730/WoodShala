@@ -485,7 +485,7 @@ export default function Products(props) {
               Add Product
             </Button>
           </div>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 

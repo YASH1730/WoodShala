@@ -19,6 +19,7 @@ import ViewCarouselIcon from "@mui/icons-material/ViewCarousel";
 // import DoorSlidingIcon from "@mui/icons-material/DoorSliding";
 // import DragHandleIcon from "@mui/icons-material/DragHandle";
 // import WavesIcon from '@mui/icons-material/Waves';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // conponents
 import Category from "./dashboard/accessories/Category";
 import SubCategory from "./dashboard/accessories/SubCategory";
@@ -38,6 +39,7 @@ import SecurityIcon from "@mui/icons-material/Security";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import Suppliers from "./dashboard/accessories/Suppliers";
 import Security from "./dashboard/accessories/Security";
+import UserSetting from "./dashboard/accessories/UserSetting";
 import COD from "./dashboard/accessories/COD";
 const components = [
   Category,
@@ -47,14 +49,7 @@ const components = [
   COD,
   Security,
   Suppliers,
-  // Fitting,
-  // Hinge,
-  // Knob,
-  // Door,
-  // Handle,
-  // Fabric,
-  // Textile,
-  // Policy
+  UserSetting,
 ];
 
 function TabPanel(props) {
@@ -157,13 +152,13 @@ export default function Admin() {
               label="Supplier"
               {...a11yProps(6)}
             />
-            {/* <Tab
+            <Tab
                   wrapped
-                  icon={<DoorSlidingIcon />}
-                  label="Door"
+                  icon={<AccountCircleIcon/>}
+                  label="User Setting"
                   {...a11yProps(7)}
                 />
-                <Tab
+                {/* <Tab
                   wrapped
                   icon={<DragHandleIcon />}
                   label="Handle Material"

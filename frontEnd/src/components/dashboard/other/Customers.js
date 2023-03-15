@@ -25,6 +25,7 @@ import { useDispatch } from "react-redux";
 import { setAlert, setForm } from "../../../store/action/action";
 
 import question from "../../../assets/img/question.svg";
+import { useConfirm } from "material-ui-confirm";
 
 // import Pagination from "@mui/material/Pagination";
 
@@ -162,29 +163,14 @@ export default function Customer() {
           </IconButton> */}
           <Tooltip title="delete">
             <IconButton
-              onClick={async () => {
-                let res = await addDraft({
-                  DID: "",
-                  AID: params.formattedValue.CID,
-                  type: "Customer",
-                  operation: "deleteCustomer",
-                  _id: params.formattedValue,
-                });
-                // deleteCustomer(params.formattedValue).then((res) => {
-                //   setRows(
-                //     Row.filter((set) => {
-                //       return set.action._id !== params.formattedValue._id;
-                //     })
-                //   );
-                if (res) {
-                  dispatch(
-                    setAlert({
-                      open: true,
-                      variant: "success",
-                      message: res.data.message,
-                    })
-                  );
-                }
+                onClick={(e) => {
+                  confirmBox(e, addDraft, {
+                    DID: "",
+                    AID: params.formattedValue.CID,
+                    type: "Customer",
+                    operation: "deleteCustomer",
+                    _id: params.formattedValue,
+                  });
               }}
               aria-label="delete"
             >
@@ -195,6 +181,38 @@ export default function Customer() {
       ),
     },
   ];
+
+
+  const confirm = useConfirm();
+
+  const option = {
+    labels: {
+      confirmable: "Proceed",
+      cancellable: "Cancel",
+    },
+  };
+  // confirmBox
+  const confirmBox = (e, action, id) => {
+    e.preventDefault();
+
+    confirm({ description: `Customer will be removed from Database !!!` }, option)
+      .then(async () => {
+        let res = await action(id);
+
+        if (res) {
+          dispatch(
+            setAlert({
+              open: true,
+              variant: "success",
+              message: res.data.message,
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.log("Operation cancelled because. ", err);
+      });
+  };
 
   // const handleStatus = (e) => {
   //   setStatus({ ...status, [e.target.name]: e.target.value });
@@ -361,7 +379,7 @@ export default function Customer() {
               <AddIcon />
             </Button>
           </div>
-          {DataGridView()}
+          <DataGridView/>
         </Grid>
       </Grid>
 
