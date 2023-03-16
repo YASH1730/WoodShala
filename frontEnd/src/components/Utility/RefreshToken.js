@@ -34,7 +34,8 @@ export default function RefreshToken() {
                 isAuth: true,
                 email: response.data.email,
                 token: response.data.token,
-                role: response.data.role
+                role: response.data.role,
+                access : response.data.access
             }))
 
             localStorage.setItem('token', response.data.token);

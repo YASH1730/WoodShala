@@ -52,8 +52,20 @@ export default function EntryPoints(props) {
       value: "Super Admin",
       label: "Super Admin",
     },
-  ];
+    {
+      value: "Management & Accountant",
+      label: "Management & Accountant",
+    },
+    {
+      value: "Marketing",
+      label: "Marketing",
+    },
 
+    {
+      value: "Sales",
+      label: "Sales",
+    },
+  ];
   const [currency, setCurrency] = React.useState("EUR");
 
   const handleChange = (event) => {
@@ -80,7 +92,7 @@ export default function EntryPoints(props) {
             isAuth: true,
             token: data.data.token,
             role: data.data.role,
-            name : data.data.name,
+            name: data.data.name,
             email: data.data.email,
             access: data.data.access,
             expireIn: data.data.expireIn,
